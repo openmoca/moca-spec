@@ -1,6 +1,6 @@
 # Contributing to MOCA
 
-MOCA is currently a solo/small-team draft (see [GOVERNANCE.md](GOVERNANCE.md)).
+MOCA is currently a solo/small-team beta project (see [GOVERNANCE.md](GOVERNANCE.md)).
 This process is intentionally lightweight — there is no formal RFC process
 at this stage.
 
@@ -14,9 +14,11 @@ at this stage.
 3. A maintainer reviews for consistency with the rest of the spec (see
    keyword conventions below) before merging.
 
-Breaking changes to already-published sections are expected to be rare given
-the "Draft — pre-adoption" status, but should still go through an issue
-first so the rationale is captured.
+Breaking changes are possible during the `0.x` beta period, but should still
+go through an issue first so the rationale and migration impact are captured.
+
+Conformance level is derived from a package's contents and validation results;
+it is not declared in `moca.json`.
 
 ## RFC 2119 Keyword Conventions
 

@@ -2,7 +2,7 @@
 
 Profile URI: `https://openmoca.org/profiles/education/v1`
 Extends: MOCA Core Specification
-Status: Draft — pre-adoption, no version pinning yet
+Status: Beta `0.1.0-beta.1` — pre-`1.0.0`, experimental
 
 ---
 

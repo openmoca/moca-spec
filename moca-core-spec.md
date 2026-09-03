@@ -2,7 +2,7 @@
 ## Core Package Specification
 
 License: MIT Specification Version
-Status: Draft — pre-adoption, no version pinning yet
+Status: Beta `0.1.0-beta.1` — pre-`1.0.0`, experimental
 
 ---
 

@@ -1,7 +1,7 @@
 # MOCA — Modular Ontology & Content Assembly
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Status: Draft](https://img.shields.io/badge/status-draft-orange.svg)](#status)
+[![Status: Beta](https://img.shields.io/badge/status-beta-orange.svg)](#status)
 
 MOCA defines a portable, storage-independent, and runtime-neutral format for
 packaging semantic knowledge, grounded content, evidence, and ontologies for
@@ -12,9 +12,10 @@ Domain-specific vocabulary lives in **profiles** layered on top of core.
 
 ## Status
 
-**Draft — pre-adoption, no version pinning yet.** The spec, schemas, and
-examples in this repo are subject to change without a deprecation cycle.
-There is no stable release yet.
+**Beta `0.1.0-beta.1` — pre-`1.0.0`, experimental.** The spec, schemas, and
+examples in this repo are subject to change as the SDK proof of concept
+exercises the format. There is no stable release or compatibility guarantee
+yet. See [Versioning and Release](docs/versioning-and-release.md).
 
 > **Note on `openmoca.org` URIs:** Schema, profile, and vocabulary URIs used
 > throughout this spec (e.g. `https://openmoca.org/vocab/core#`) are stable

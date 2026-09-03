@@ -34,7 +34,7 @@ Different kinds of changes get different scrutiny:
 As the project grows beyond solo maintenance, expect this document to add:
 co-maintainers with defined areas of ownership, a lightweight RFC process
 for core changes, and a public profile registry. None of that exists yet —
-this section exists so contributors know it's anticipated, not to promise a
+this section exists so contributors know it's anticipated, not to describe a
 timeline.
 
 ## Profile Graduation
@@ -42,7 +42,7 @@ timeline.
 New profiles start as a `moca-<name>-profile.md` file (plus its
 `schemas/<name>/` and `examples/<name>-profile/`) inside this repo, alongside
 core. This is deliberate while the project is solo-maintained and both core
-and profiles are still draft: it keeps core/profile changes reviewable in a
+and profiles are still evolving during the beta: it keeps core/profile changes reviewable in a
 single PR and validated by one CI run, instead of coordinating across repos.
 
 A profile MAY later graduate to its own `openmoca/profile-<name>` repo, once
