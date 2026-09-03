@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import matter from 'gray-matter';
 import { walkFiles } from '../walk.js';
 import { allowedEpistemicStatusValues } from '../vocab.js';
+import { resolvePackagePath } from '../paths.js';
 
 const LOCALE_SUFFIX_PATTERN = /^(.+)\.([a-zA-Z]{2,3}(?:-[A-Za-z0-9]+)*)\.md$/;
 
@@ -19,6 +20,15 @@ export function runContentPass({ rootDir, manifest, findings }) {
   const referencedConcepts = [];
 
   checkConceptRef(manifest.entryConcepts, 'moca.json', manifest, findings, referencedConcepts);
+
+  const augmentationTarget = manifest.augmentation?.target;
+  if (augmentationTarget && !resolvePackagePath(rootDir, augmentationTarget)) {
+    findings.add(
+      'E211_UNSAFE_RESOURCE_PATH',
+      `augmentation target "${augmentationTarget}" is not a safe package-relative path.`,
+      { file: 'moca.json' }
+    );
+  }
 
   if (!existsSync(contentDir)) {
     return { referencedConcepts };
@@ -84,8 +94,14 @@ export function runContentPass({ rootDir, manifest, findings }) {
 
     for (const evidence of data.evidence ?? []) {
       if (!evidence?.source) continue;
-      const evidencePath = join(rootDir, evidence.source);
-      if (!existsSync(evidencePath)) {
+      const evidencePath = resolvePackagePath(rootDir, evidence.source, ['sources', 'media', 'content']);
+      if (!evidencePath) {
+        findings.add(
+          'E211_UNSAFE_RESOURCE_PATH',
+          `evidence source "${evidence.source}" is not a safe path under sources/, media/, or content/.`,
+          { file: relPath }
+        );
+      } else if (!existsSync(evidencePath)) {
         findings.add(
           'E203_DANGLING_EVIDENCE_SOURCE',
           `evidence source "${evidence.source}" does not exist.`,

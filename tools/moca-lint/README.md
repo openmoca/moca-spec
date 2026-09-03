@@ -70,7 +70,6 @@ omitted. `--exclude` adds extra glob patterns on top of the built-in
 | `-v, --verbose` | Increase console trace output (repeatable: `-vv`). |
 | `-q, --quiet` | Suppress non-error console output. |
 | `--no-color` | Disable colored text output. |
-| `--level <n>` | Declared conformance level (`1`\|`2`\|`3`). Accepted but informational only in v1 — it is not yet used to gate which checks run. |
 | `--online-verify` | Reserved for live Sigstore/Rekor verification. Accepted but not implemented (see [Known limitations](#known-limitations-v1)). |
 
 ## Exit codes
@@ -136,7 +135,7 @@ that additively extend core vocabulary. moca-lint supports profiles in two ways:
 - **SHACL shape validation (`E302`) is not implemented.** `ontologies/*.shacl.ttl`
   is syntax-checked (`E301`) but shape conformance isn't evaluated yet; a
   shapes ontology declared in `moca.json` produces an `I301` note instead.
-- **Signature verification (`E404`) is not implemented.** `moca-lint` only
+- **Signature verification (`I404`) is not implemented.** `moca-lint` only
   checks that a `signature` object is structurally present when `skills/`
   exists (`E401`); it does not verify Sigstore/DSSE signatures. `--online-verify`
   is reserved for a future live-verification mode.
@@ -144,7 +143,10 @@ that additively extend core vocabulary. moca-lint supports profiles in two ways:
   heuristic, not full RO-Crate 1.3 conformance checking** (core §2.1) — it
   only checks for a `@context`, a `@graph` array, a metadata descriptor
   entity, and a root data entity.
-- `--level` does not yet gate which checks run.
+- Conformance level is not declared in `moca.json` or selected on the command
+  line. It is derived from validated package capabilities. The current CLI
+  does not yet print a derived level; the pass results remain the authoritative
+  detail about which requirements were satisfied.
 - `.moca`/`.zip` extraction rejects archives over 20,000 entries or 512MB
   uncompressed, and entries containing `..`, as a defense-in-depth measure
   against zip bombs and path traversal.

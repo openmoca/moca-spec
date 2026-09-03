@@ -85,6 +85,19 @@ documentation MUST NOT claim RO-Crate conformance unless
 
 ## 3. Conformance Levels
 
+Conformance level is a derived property of a package, not a manifest field.
+The manifest MUST NOT contain a declared level: a consumer determines the
+highest level supported by the package's contents and the validation results
+for the requirements of that level. This avoids two competing sources of
+truth when a manifest and the files on disk disagree.
+
+An implementation MAY report the derived level or the capabilities it found,
+but it MUST NOT treat a package as conformant to a level when a required
+condition for that level fails. Features from a higher level MAY be present
+in a package, but until their requirements are satisfied they are treated as
+unsupported or invalid features rather than silently increasing the package's
+conformance level.
+
 | Level | Name | Requirements |
 |---|---|---|
 | **1** | MOCA Core | Valid `moca.json` root manifest. Grounded CommonMark knowledge nodes (`content/`) bound to concepts via YAML frontmatter and resolvable `namespaces`. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |

@@ -11,7 +11,6 @@ program.name('moca-lint').description('Static analysis CLI for MOCA packages.');
 
 function addCommonOptions(cmd) {
   return cmd
-    .option('--level <n>', 'declared conformance level (1|2|3), informational only in v1')
     .option('--strict', 'escalate warning-level findings to errors', false)
     .option('--format <fmt>', 'output format: text|json|sarif', 'text')
     .option('--report <file>', 'write the formatted report to a file (in addition to console output)')

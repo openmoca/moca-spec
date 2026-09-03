@@ -3,9 +3,9 @@
 ## Scope
 
 This repository contains a specification, JSON Schemas, JSON-LD contexts,
-and static example packages. **It does not ship executable code** — there is
-no runtime, server, or library here to have a traditional code
-vulnerability.
+static example packages, and the executable `moca-lint` CLI. It does not ship
+a runtime or server, but the CLI and its archive-handling code are in scope
+for traditional code vulnerabilities.
 
 That said, security issues are still in scope:
 

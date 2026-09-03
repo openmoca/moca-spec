@@ -2,6 +2,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { resolvePackagePath } from '../paths.js';
 
 /**
  * @param {object} params
@@ -35,7 +36,15 @@ export function runSecurityPass({ rootDir, manifest, findings }) {
 
   const digests = new Map();
   for (const [relPath, declaredHash] of Object.entries(integrity)) {
-    const absPath = join(rootDir, relPath);
+    const absPath = resolvePackagePath(rootDir, relPath);
+    if (!absPath) {
+      findings.add(
+        'E211_UNSAFE_RESOURCE_PATH',
+        `integrity entry "${relPath}" is not a safe package-relative path.`,
+        { file: relPath }
+      );
+      continue;
+    }
     if (!existsSync(absPath)) {
       findings.add(
         'E402_INTEGRITY_MISMATCH',
@@ -96,7 +105,7 @@ function checkRoCrateMetadataValidity({ rootDir, findings }) {
 }
 
 function normalizeHash(value) {
-  return value.replace(/^sha256[:-]/i, '').toLowerCase();
+  return typeof value === 'string' ? value.replace(/^sha256[:-]/i, '').toLowerCase() : '';
 }
 
 function checkRoCrateBagitDiscrepancy({ rootDir, integrity, digests, findings }) {

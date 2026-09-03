@@ -56,12 +56,15 @@ The Markdown body a harness surfaces to a model or a user.
 
 ```sh
 npm install
-npm run validate
+npx moca-lint lint my-package
 ```
 
-This checks `my-package/moca.json` against
-[schemas/core/moca.schema.json](../schemas/core/moca.schema.json) if you add
-it to `examples/`, or run `ajv-cli` directly against any path:
+This validates the package directory using the same manifest, content, and
+referential-integrity checks used in CI. Conformance level is derived from the
+package contents; it is not added to `moca.json`.
+
+To validate only the manifest against
+[schemas/core/moca.schema.json](../schemas/core/moca.schema.json), run:
 
 ```sh
 npx ajv-cli validate -s schemas/core/moca.schema.json -d my-package/moca.json --spec=draft2020

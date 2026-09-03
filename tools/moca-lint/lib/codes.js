@@ -42,6 +42,7 @@ export const CODES = Object.freeze({
   E208_INVALID_EVIDENCE_LOCATOR: { pass: 2, summary: 'evidence[].locator has an unknown type or is missing required sub-fields.' },
   E209_INVALID_CLAIM: { pass: 2, summary: 'claims[] entry is missing a required id, subject, predicate, or object.' },
   E210_UNVERIFIABLE_EPISTEMIC_STATUS: { pass: 2, summary: 'epistemicStatus is unrecognized, but the package declares a profile moca-lint has no vocabulary extension for.' },
+  E211_UNSAFE_RESOURCE_PATH: { pass: 2, summary: 'A package resource reference is absolute, traverses outside the package, or escapes through a symlink.' },
   E301_RDF_SYNTAX_ERROR: { pass: 3, summary: 'File in ontologies/ fails JSON-LD or Turtle syntax parsing.' },
   I301_SHACL_NOT_EVALUATED: { pass: 3, summary: 'A shapes ontology is declared but SHACL shape evaluation is not implemented yet.' },
   E303_DUPLICATE_CONCEPT_DECLARATION: { pass: 3, summary: 'Multiple ontology files in this package declare the same concept with a different @type.' },
