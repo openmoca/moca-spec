@@ -3,6 +3,9 @@
   "MD013": false,
   "MD033": false,
   "MD041": false,
+  // Existing tables use compact pipe formatting; keep this style stable
+  // across the specification and generated-looking reference tables.
+  "MD060": false,
   // content/*.md nodes intentionally pair a YAML frontmatter "title" with a
   // body H1, per core spec §7.1's own example — don't flag that as two titles.
   "MD025": { "front_matter_title": "" },
