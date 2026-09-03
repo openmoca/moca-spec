@@ -1,0 +1,16 @@
+{
+  "name": "moca-spec",
+  "private": true,
+  "version": "0.0.0",
+  "description": "MOCA specification, JSON Schemas, and example packages.",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate-examples.mjs",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"!node_modules\""
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "markdownlint-cli2": "^0.13.0"
+  }
+}

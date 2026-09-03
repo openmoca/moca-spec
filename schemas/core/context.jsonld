@@ -1,0 +1,59 @@
+{
+  "@context": {
+    "moca": "https://openmoca.org/vocab/core#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "dcterms": "http://purl.org/dc/terms/",
+
+    "id": "@id",
+    "title": "dcterms:title",
+    "description": "dcterms:description",
+    "language": "dcterms:language",
+    "license": "dcterms:license",
+    "keywords": "moca:keywords",
+    "categories": "dcterms:subject",
+    "author": "dcterms:creator",
+    "publisher": "dcterms:publisher",
+    "created": {
+      "@id": "dcterms:created",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "modified": {
+      "@id": "dcterms:modified",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+
+    "profile": { "@id": "moca:profile", "@type": "@id", "@container": "@set" },
+    "entryConcepts": { "@id": "moca:entryConcepts", "@type": "@id", "@container": "@set" },
+
+    "ontologies": "moca:ontologies",
+    "domain": "moca:domainOntology",
+    "governance": "moca:governanceOntology",
+    "shapes": "moca:shapesOntology",
+    "extension": "moca:extensionOntology",
+
+    "concepts": { "@id": "moca:concepts", "@container": "@set" },
+    "role": "moca:conceptRole",
+    "epistemicStatus": "moca:epistemicStatus",
+    "summary": "moca:summary",
+    "evidence": { "@id": "moca:evidence", "@container": "@set" },
+    "source": "moca:evidenceSource",
+    "locator": "moca:locator",
+
+    "claims": { "@id": "moca:claims", "@container": "@set" },
+    "subject": "@id",
+    "predicate": { "@id": "@id" },
+    "object": "@id",
+
+    "augmentation": "moca:augmentation",
+    "target": "moca:augmentationTarget",
+    "targetType": "moca:augmentationTargetType",
+    "relationship": "moca:augmentationRelationship",
+
+    "integrity": "moca:integrity",
+    "signature": "moca:signature",
+
+    "profileData": "moca:profileData"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "id": "urn:moca:example:level-1-minimal",
+  "version": "1.0.0",
+  "title": "Level 1 Minimal Example",
+  "description": "Minimal MOCA Core package demonstrating Level 1 (MOCA Core) conformance: a valid moca.json and one grounded CommonMark knowledge node.",
+  "license": "MIT",
+  "namespaces": {
+    "ex": "https://example.org/vocab#"
+  },
+  "entryConcepts": ["ex:Introduction"]
+}

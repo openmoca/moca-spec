@@ -1,0 +1,16 @@
+{
+  "@context": {
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "ex-comp": "https://example.org/competencies#",
+    "ex": "https://example.org/vocab#"
+  },
+  "@graph": [
+    {
+      "@id": "ex-comp:SystemDesignFundamentals",
+      "@type": "skos:Concept",
+      "skos:prefLabel": "System Design Fundamentals",
+      "skos:definition": "Ability to reason about scaling, service decomposition, and data isolation tradeoffs.",
+      "skos:related": { "@id": "ex:Microservices" }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "default": true,
+  "MD013": false,
+  "MD033": false,
+  "MD041": false,
+  // content/*.md nodes intentionally pair a YAML frontmatter "title" with a
+  // body H1, per core spec §7.1's own example — don't flag that as two titles.
+  "MD025": { "front_matter_title": "" },
+  // moca-core-spec.md / moca-education-profile.md are out of scope for edits
+  // (see CONTRIBUTING.md); relax formatting-only rules they don't follow.
+  "MD022": false,
+  "MD032": false,
+  "MD034": false,
+  "MD040": false
+}

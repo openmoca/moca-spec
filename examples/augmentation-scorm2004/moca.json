@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "id": "urn:moca:aug:cs101-scorm-sidecar",
+  "version": "1.0.0",
+  "title": "CS101 SCORM Semantic Augmentation",
+  "description": "Demonstrates the education profile's expected augmentation.targetType values (education \u00a75) for sidecar-augmenting an existing SCORM 2004 course.",
+  "license": "MIT",
+  "profile": ["https://openmoca.org/profiles/education/v1"],
+  "augmentation": {
+    "target": "./raw/cs101-course.zip",
+    "targetType": "scorm-2004",
+    "relationship": "augments"
+  }
+}

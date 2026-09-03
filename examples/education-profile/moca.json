@@ -1,0 +1,53 @@
+{
+  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "@context": {
+    "moca": "https://openmoca.org/vocab/core#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "ex": "https://example.org/vocab#",
+    "ex-comp": "https://example.org/competencies#"
+  },
+  "id": "urn:moca:example:education-profile",
+  "version": "1.0.0",
+  "title": "Education Profile Example",
+  "description": "MOCA package declaring the education profile: profileData.education, the education:competencies ontology role, and a tutoring skill with metadata.competencies.",
+  "license": "MIT",
+  "profile": ["https://openmoca.org/profiles/education/v1"],
+  "namespaces": {
+    "ex": "https://example.org/vocab#",
+    "ex-comp": "https://example.org/competencies#",
+    "skos": "http://www.w3.org/2004/02/skos/core#"
+  },
+  "ontologies": {
+    "education:competencies": {
+      "iri": "https://example.org/curriculum/competencies",
+      "role": "education:competencies",
+      "format": "skos",
+      "uri": "./ontologies/competencies.jsonld"
+    }
+  },
+  "entryConcepts": ["ex:Microservices"],
+  "profileData": {
+    "education": {
+      "level": "undergraduate",
+      "subject": "Computer Science",
+      "estimatedDuration": "PT4H30M",
+      "learningObjectives": [
+        {
+          "id": "urn:lo:001",
+          "statement": "Explain the tradeoffs between horizontal and vertical scaling.",
+          "competencies": ["ex-comp:SystemDesignFundamentals"],
+          "concepts": ["ex:Microservices"]
+        }
+      ],
+      "assessment": {
+        "type": "formative",
+        "linkedNodes": ["urn:node:microservices-intro"]
+      }
+    }
+  },
+  "signature": {
+    "type": "sigstore",
+    "value": "PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST",
+    "keyid": "placeholder-key-id"
+  }
+}

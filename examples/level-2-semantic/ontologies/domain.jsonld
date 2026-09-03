@@ -1,0 +1,31 @@
+{
+  "@context": {
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "ex": "https://example.org/vocab#"
+  },
+  "@graph": [
+    {
+      "@id": "ex:ServiceBoundary",
+      "@type": "skos:Concept",
+      "skos:prefLabel": "Service Boundary",
+      "skos:definition": "The explicit ownership and data isolation perimeter of a service."
+    },
+    {
+      "@id": "ex:Microservices",
+      "@type": "skos:Concept",
+      "skos:prefLabel": "Microservices",
+      "skos:related": { "@id": "ex:ServiceBoundary" }
+    },
+    {
+      "@id": "ex:OrderService",
+      "@type": "skos:Concept",
+      "skos:prefLabel": "Order Service",
+      "skos:broader": { "@id": "ex:Microservices" }
+    },
+    {
+      "@id": "ex:OrderDatabase",
+      "@type": "skos:Concept",
+      "skos:prefLabel": "Order Database"
+    }
+  ]
+}

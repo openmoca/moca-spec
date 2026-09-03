@@ -1,0 +1,53 @@
+# Governance
+
+MOCA is currently maintained by a single maintainer. This document describes
+today's lightweight process and the intended path to formalize it as the
+project grows.
+
+## Current Model
+
+- **Solo maintainer**: one person has final say on all changes across the
+  `openmoca` org. There is no steering committee or formal voting process
+  yet.
+- **Decisions happen in the open**: proposals go through GitHub issues and
+  PRs in the relevant repo (see [CONTRIBUTING.md](CONTRIBUTING.md)), not
+  private discussion.
+
+## Decision Process
+
+Different kinds of changes get different scrutiny:
+
+- **Core spec changes** (edits to `moca-core-spec.md`, `schemas/core/`):
+  highest scrutiny, since they affect every profile and every conformance
+  level. Require an issue discussing rationale before a PR is merged.
+- **Profile additions** (new `moca-<name>-profile.md` files, or additions to
+  the education profile): lighter weight, since profiles are additive-only
+  by construction ([core §10.2](moca-core-spec.md#102-graceful-degradation),
+  [§10.4](moca-core-spec.md#104-profile-restrictions)) and cannot break
+  existing core-only consumers. Still require an issue first.
+- **Examples, schemas, docs, tooling**: normal PR review, no separate
+  proposal step required unless the change implies a spec interpretation
+  question.
+
+## Path to Formalizing
+
+As the project grows beyond solo maintenance, expect this document to add:
+co-maintainers with defined areas of ownership, a lightweight RFC process
+for core changes, and a public profile registry. None of that exists yet —
+this section exists so contributors know it's anticipated, not to promise a
+timeline.
+
+## Repository Layout (`openmoca` org)
+
+The project is split across multiple repositories by concern:
+
+| Repo | Purpose |
+|---|---|
+| `openmoca/moca-spec` (this repo) | The specification itself, JSON Schemas, JSON-LD contexts, and static example/fixture packages. No executable harness code. |
+| `openmoca/sdk-dotnet` | .NET harness SDK for consuming MOCA packages, plus its own runnable code samples. |
+| `openmoca/sdk-python` | Python harness SDK for consuming MOCA packages, plus its own runnable code samples. |
+
+`sdk-dotnet` and `sdk-python` are not yet built. Static MOCA package fixtures
+used for conformance testing live in `moca-spec/examples/` and are not
+duplicated into the SDK repos — SDKs depend on this repo's schemas and
+examples rather than vendoring copies.

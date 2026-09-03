@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openmoca.org/schemas/education/profile.schema.json",
+  "title": "MOCA Education Profile Data",
+  "description": "JSON Schema for the profileData.education object, per MOCA Education Profile \u00a74.",
+  "type": "object",
+  "properties": {
+    "level": {
+      "type": "string",
+      "description": "Learner level, e.g. beginner, undergraduate, professional-certification. Open vocabulary, no enforced enum."
+    },
+    "subject": {
+      "type": "string",
+      "description": "Subject area, freeform or taxonomy-aligned."
+    },
+    "estimatedDuration": {
+      "type": "string",
+      "pattern": "^P(?!$)(\\d+Y)?(\\d+M)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?$",
+      "description": "Expected time to complete, ISO-8601 duration."
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "URNs of other MOCA education packages expected as prior knowledge."
+    },
+    "learningObjectives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "statement"],
+        "properties": {
+          "id": { "type": "string" },
+          "statement": { "type": "string" },
+          "competencies": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "concepts": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "linkedNodes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

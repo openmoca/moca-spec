@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "@context": {
+    "moca": "https://openmoca.org/vocab/core#",
+    "ex": "https://example.org/vocab#"
+  },
+  "id": "urn:moca:example:level-3-extended",
+  "version": "1.0.0",
+  "title": "Level 3 Extended Example",
+  "description": "MOCA Core package demonstrating Level 3 (MOCA Extended) conformance: W3C Web Annotation locators, an Agent Skill, and a mandatory signature. See README.md in this folder for an important note on the signature value.",
+  "license": "MIT",
+  "namespaces": {
+    "ex": "https://example.org/vocab#"
+  },
+  "entryConcepts": ["ex:ServiceCommunication"],
+  "signature": {
+    "type": "sigstore",
+    "value": "PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST",
+    "keyid": "placeholder-key-id"
+  }
+}
