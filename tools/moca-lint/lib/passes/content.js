@@ -24,10 +24,14 @@ export function runContentPass({ rootDir, manifest, findings }) {
     return { referencedConcepts };
   }
 
-  const allowedStatus = allowedEpistemicStatusValues(manifest.profile ?? []);
+  const { allowed: allowedStatus, hasUnrecognizedProfile } = allowedEpistemicStatusValues(
+    manifest.profile ?? []
+  );
   const files = walkFiles(contentDir, rootDir).filter((f) => f.endsWith('.md'));
 
   checkLocaleFallback(files, findings);
+
+  const nodeIdsSeen = new Map();
 
   for (const relPath of files) {
     const absPath = join(rootDir, relPath);
@@ -43,34 +47,39 @@ export function runContentPass({ rootDir, manifest, findings }) {
 
     const data = parsed.data ?? {};
 
+    if (data.id) {
+      const owners = nodeIdsSeen.get(data.id) ?? [];
+      owners.push(relPath);
+      nodeIdsSeen.set(data.id, owners);
+    }
+
     for (const concept of data.concepts ?? []) {
       const curie = typeof concept === 'string' ? concept : concept?.id;
       checkConceptRef([curie], relPath, manifest, findings, referencedConcepts);
     }
 
     for (const claim of data.claims ?? []) {
+      if (!claim?.id || !claim?.subject || !claim?.predicate || !claim?.object) {
+        findings.add(
+          'E209_INVALID_CLAIM',
+          'claims[] entry is missing a required id, subject, predicate, or object.',
+          { file: relPath }
+        );
+      }
       checkConceptRef(
-        [claim?.subject, claim?.object],
+        [claim?.subject, claim?.predicate, claim?.object],
         relPath,
         manifest,
         findings,
         referencedConcepts
       );
       if (claim?.epistemicStatus && !allowedStatus.has(claim.epistemicStatus)) {
-        findings.add(
-          'E204_INVALID_EPISTEMIC_STATUS',
-          `claims[].epistemicStatus "${claim.epistemicStatus}" is not in the core or active profile vocabulary.`,
-          { file: relPath }
-        );
+        reportInvalidEpistemicStatus(claim.epistemicStatus, 'claims[].epistemicStatus', relPath, hasUnrecognizedProfile, findings);
       }
     }
 
     if (data.epistemicStatus && !allowedStatus.has(data.epistemicStatus)) {
-      findings.add(
-        'E204_INVALID_EPISTEMIC_STATUS',
-        `epistemicStatus "${data.epistemicStatus}" is not in the core or active profile vocabulary.`,
-        { file: relPath }
-      );
+      reportInvalidEpistemicStatus(data.epistemicStatus, 'epistemicStatus', relPath, hasUnrecognizedProfile, findings);
     }
 
     for (const evidence of data.evidence ?? []) {
@@ -83,13 +92,67 @@ export function runContentPass({ rootDir, manifest, findings }) {
           { file: relPath }
         );
       }
+      checkEvidenceLocator(evidence.locator, relPath, findings);
+    }
+  }
+
+  for (const [id, owners] of nodeIdsSeen) {
+    if (owners.length > 1) {
+      findings.add(
+        'E207_DUPLICATE_NODE_ID',
+        `Content node id "${id}" is declared by more than one file: ${owners.join(', ')}.`,
+        { file: owners[0] }
+      );
     }
   }
 
   return { referencedConcepts };
 }
 
-function checkConceptRef(values, file, manifest, findings, referencedConcepts) {
+// A package can declare a profile moca-lint has no vocabulary extension list for
+// (core §10.2 graceful degradation) — in that case we can't prove the value is
+// invalid, so downgrade to a warning instead of asserting a hard error.
+function reportInvalidEpistemicStatus(value, field, file, hasUnrecognizedProfile, findings) {
+  const code = hasUnrecognizedProfile ? 'E210_UNVERIFIABLE_EPISTEMIC_STATUS' : 'E204_INVALID_EPISTEMIC_STATUS';
+  const suffix = hasUnrecognizedProfile
+    ? ' (this package declares a profile moca-lint does not recognize, so this may be a valid profile-specific value).'
+    : '.';
+  findings.add(code, `${field} "${value}" is not in the core or active profile vocabulary${suffix}`, { file });
+}
+
+function checkEvidenceLocator(locator, file, findings) {
+  if (!locator) return;
+  const { type } = locator;
+  if (type === 'page') {
+    if (typeof locator.page !== 'number') {
+      findings.add('E208_INVALID_EVIDENCE_LOCATOR', 'locator of type "page" requires a numeric "page" field.', { file });
+    }
+  } else if (type === 'FragmentSelector') {
+    if (!locator.conformsTo || !locator.value) {
+      findings.add(
+        'E208_INVALID_EVIDENCE_LOCATOR',
+        'locator of type "FragmentSelector" requires "conformsTo" and "value" fields.',
+        { file }
+      );
+    }
+  } else if (type === 'TextQuoteSelector') {
+    if (!locator.exact) {
+      findings.add(
+        'E208_INVALID_EVIDENCE_LOCATOR',
+        'locator of type "TextQuoteSelector" requires an "exact" field.',
+        { file }
+      );
+    }
+  } else {
+    findings.add(
+      'E208_INVALID_EVIDENCE_LOCATOR',
+      `locator type "${type}" is not one of page, FragmentSelector, TextQuoteSelector (core §7.3).`,
+      { file }
+    );
+  }
+}
+
+export function checkConceptRef(values, file, manifest, findings, referencedConcepts) {
   const namespaces = manifest.namespaces ?? {};
   for (const value of values ?? []) {
     if (!value || typeof value !== 'string' || !value.includes(':')) continue;

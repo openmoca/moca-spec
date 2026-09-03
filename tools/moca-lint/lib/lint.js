@@ -3,6 +3,7 @@ import { performance } from 'node:perf_hooks';
 import { FindingCollector } from './findings.js';
 import { runManifestPass } from './passes/manifest.js';
 import { runContentPass } from './passes/content.js';
+import { runSkillsPass } from './passes/skills.js';
 import { runSemanticPass } from './passes/semantic.js';
 import { runSecurityPass } from './passes/security.js';
 
@@ -30,6 +31,10 @@ export function lintPackage({ rootDir, strict = false, onLog = () => {} }) {
 
   const { referencedConcepts } = log('pass2:content', () =>
     runContentPass({ rootDir, manifest, findings })
+  );
+
+  log('pass2:skills', () =>
+    runSkillsPass({ rootDir, manifest, referencedConcepts, findings })
   );
 
   log('pass3:semantic', () =>

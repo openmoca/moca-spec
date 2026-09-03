@@ -28,3 +28,33 @@ test('integrity-mismatch fixture reports E402', () => {
     'E402_INTEGRITY_MISMATCH',
   ]);
 });
+
+test('skill-frontmatter-invalid fixture reports E206 (twice: missing description, non-array allowed-tools)', () => {
+  assert.deepEqual(errorCodes(join(fixturesDir, 'skill-frontmatter-invalid')), [
+    'E206_SKILL_FRONTMATTER_INVALID',
+    'E206_SKILL_FRONTMATTER_INVALID',
+  ]);
+});
+
+test('duplicate-node-id fixture reports E207', () => {
+  assert.deepEqual(errorCodes(join(fixturesDir, 'duplicate-node-id')), [
+    'E207_DUPLICATE_NODE_ID',
+  ]);
+});
+
+test('invalid-evidence-locator fixture reports E208', () => {
+  assert.deepEqual(errorCodes(join(fixturesDir, 'invalid-evidence-locator')), [
+    'E208_INVALID_EVIDENCE_LOCATOR',
+  ]);
+});
+
+test('invalid-claim fixture reports E209', () => {
+  assert.deepEqual(errorCodes(join(fixturesDir, 'invalid-claim')), ['E209_INVALID_CLAIM']);
+});
+
+test('rocrate-metadata-invalid fixture reports E405 only under --strict', () => {
+  assert.deepEqual(errorCodes(join(fixturesDir, 'rocrate-metadata-invalid')), []);
+  assert.deepEqual(errorCodes(join(fixturesDir, 'rocrate-metadata-invalid'), { strict: true }), [
+    'E405_ROCRATE_METADATA_INVALID',
+  ]);
+});

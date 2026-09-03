@@ -1,0 +1,6 @@
+{
+  "id": "urn:moca:test:skill-frontmatter-invalid",
+  "version": "1.0.0",
+  "title": "Skill Frontmatter Invalid Fixture",
+  "signature": { "type": "sigstore", "value": "PLACEHOLDER" }
+}

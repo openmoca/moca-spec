@@ -30,6 +30,7 @@ export function runSecurityPass({ rootDir, manifest, findings }) {
   }
 
   const integrity = manifest.integrity;
+  checkRoCrateMetadataValidity({ rootDir, findings });
   if (!integrity || typeof integrity !== 'object') return;
 
   const digests = new Map();
@@ -55,6 +56,43 @@ export function runSecurityPass({ rootDir, manifest, findings }) {
   }
 
   checkRoCrateBagitDiscrepancy({ rootDir, integrity, digests, findings });
+}
+
+function checkRoCrateMetadataValidity({ rootDir, findings }) {
+  const roCratePath = join(rootDir, 'ro-crate-metadata.json');
+  if (!existsSync(roCratePath)) return;
+
+  // Minimal structural heuristic, not full RO-Crate 1.3 conformance (core §2.1:
+  // tooling MUST NOT imply RO-Crate conformance unless the file is actually valid).
+  let doc;
+  try {
+    doc = JSON.parse(readFileSync(roCratePath, 'utf8'));
+  } catch (err) {
+    findings.add('E405_ROCRATE_METADATA_INVALID', `ro-crate-metadata.json is not valid JSON: ${err.message}`, {
+      file: 'ro-crate-metadata.json',
+    });
+    return;
+  }
+
+  const graph = doc['@graph'];
+  if (!doc['@context'] || !Array.isArray(graph)) {
+    findings.add(
+      'E405_ROCRATE_METADATA_INVALID',
+      'ro-crate-metadata.json must have a top-level "@context" and "@graph" array.',
+      { file: 'ro-crate-metadata.json' }
+    );
+    return;
+  }
+
+  const descriptor = graph.find((n) => n['@id'] === 'ro-crate-metadata.json');
+  const rootEntity = graph.find((n) => n['@id'] === './');
+  if (!descriptor || !descriptor.conformsTo || !rootEntity) {
+    findings.add(
+      'E405_ROCRATE_METADATA_INVALID',
+      'ro-crate-metadata.json must declare a metadata descriptor entity (@id "ro-crate-metadata.json" with "conformsTo") and a root data entity (@id "./").',
+      { file: 'ro-crate-metadata.json' }
+    );
+  }
 }
 
 function normalizeHash(value) {

@@ -13,13 +13,19 @@ const PROFILE_EPISTEMIC_STATUS_EXTENSIONS = {
   'https://openmoca.org/profiles/education/v1': ['authoritative', 'peer-reviewed'],
 };
 
-/** @param {string[]} activeProfiles */
+/**
+ * @param {string[]} activeProfiles - profile URIs declared in moca.json
+ * @returns {{ allowed: Set<string>, hasUnrecognizedProfile: boolean }}
+ */
 export function allowedEpistemicStatusValues(activeProfiles = []) {
-  const values = new Set(CORE_EPISTEMIC_STATUS);
+  const allowed = new Set(CORE_EPISTEMIC_STATUS);
+  let hasUnrecognizedProfile = false;
   for (const profile of activeProfiles) {
-    for (const extra of PROFILE_EPISTEMIC_STATUS_EXTENSIONS[profile] ?? []) {
-      values.add(extra);
+    if (profile in PROFILE_EPISTEMIC_STATUS_EXTENSIONS) {
+      for (const extra of PROFILE_EPISTEMIC_STATUS_EXTENSIONS[profile]) allowed.add(extra);
+    } else {
+      hasUnrecognizedProfile = true;
     }
   }
-  return values;
+  return { allowed, hasUnrecognizedProfile };
 }

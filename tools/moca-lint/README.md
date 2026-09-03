@@ -87,20 +87,49 @@ Findings run across four passes, matching the package structure in
 
 | Pass | Codes | What it checks |
 |---|---|---|
-| 1. Manifest | `E101`–`E105` | `moca.json` exists, conforms to `schemas/core/moca.schema.json` (+ `schemas/education/profile.schema.json` for `profileData.education`), has no forbidden keys, valid `namespaces`, no profile data misplaced at the root. |
-| 2. Content | `E201`–`E205` | Frontmatter YAML syntax, concept CURIEs resolve to a declared namespace, `evidence[].source` files exist, `epistemicStatus` is in the core or active-profile vocabulary, locale-suffixed files have a default fallback. |
-| 3. Semantic | `E301`, `E303`, `E304`, `I301` | JSON-LD/Turtle syntax in `ontologies/`, within-package duplicate/conflicting concept declarations, concept references that don't resolve to any declared `@id`. |
-| 4. Security | `E401`–`E403`, `I404` | `skills/` requires a `signature` object, SHA-256 `integrity` map matches files on disk, RO-Crate/BagIt hash cross-check. |
+| 1. Manifest | `E101`–`E105` | `moca.json` exists, conforms to `schemas/core/moca.schema.json` (+ any declared profile's `schemas/<profile>/profile.schema.json`, auto-discovered from the profile URI — see [Profile support](#profile-support)), has no forbidden keys, valid `namespaces`, no profile data misplaced at the root. |
+| 2. Content | `E201`–`E210` | Frontmatter YAML syntax, concept/predicate CURIEs resolve to a declared namespace, `evidence[].source` files exist and `locator` shape is valid, `epistemicStatus` is in the core or active-profile vocabulary, locale-suffixed files have a default fallback, no duplicate content-node `id`s, `claims[]` has required fields, `SKILL.md` frontmatter is well-formed. |
+| 3. Semantic | `E301`, `E303`, `E304`, `I301` | JSON-LD/Turtle syntax in `ontologies/`, within-package duplicate/conflicting concept declarations, concept (and predicate/skill-metadata) references that don't resolve to any declared `@id`. |
+| 4. Security | `E401`–`E403`, `E405`, `I404` | `skills/` requires a `signature` object, SHA-256 `integrity` map matches files on disk, RO-Crate/BagIt hash cross-check, minimal `ro-crate-metadata.json` structural validity. |
 
 Run `moca-lint lint <target> --format json` and inspect `findings[].code`, or
 read [lib/codes.js](lib/codes.js) for the full registry with one-line
 summaries.
 
 **Default severity:** most codes are hard errors. `E203`, `E303`, `E304`,
-and `E403` default to `warning` (they rely on heuristics that can have
-legitimate exceptions, e.g. a documentation fixture intentionally omitting a
-media asset) and only become errors under `--strict`. `I301` and `I404` are
-always informational and never affect the exit code.
+`E403`, and `E405` default to `warning` (they rely on heuristics that can
+have legitimate exceptions, e.g. a documentation fixture intentionally
+omitting a media asset, or a predicate CURIE that's a property rather than a
+declared concept) and only become errors under `--strict`. `E210` is also a
+`warning` by default for a different reason (see below). `I301` and `I404`
+are always informational and never affect the exit code.
+
+## Profile support
+
+[core §10](../../moca-core-spec.md#10-profiles) lets a package declare zero
+or more **profiles** (e.g. `"profile": ["https://openmoca.org/profiles/education/v1"]`)
+that additively extend core vocabulary. moca-lint supports profiles in two ways:
+
+- **Generic, works for any profile automatically:** namespace/CURIE
+  resolution (`E202`, `E304`), ontology parsing (`E301`, `E303`) — these are
+  driven entirely by `moca.json`'s own `namespaces`/`ontologies`, not by any
+  hardcoded profile knowledge.
+- **Schema validation, auto-discovered by convention:** for each URI in
+  `profile`, moca-lint derives a short name (e.g. `.../profiles/education/v1`
+  → `education`) and, if `schemas/<name>/profile.schema.json` exists,
+  validates `profileData.<name>` against it and uses its field names for the
+  `E105` "misplaced profile data" hint. Adding a new profile only requires
+  publishing that schema file — no code changes.
+- **Epistemic-status vocabulary extensions are not auto-discoverable**
+  (there's no machine-readable list of a profile's extra `epistemicStatus`
+  values anywhere in the repo yet) — they're hardcoded in
+  [lib/vocab.js](lib/vocab.js), currently only for `education`
+  (`authoritative`, `peer-reviewed`). Per
+  [core §10.2](../../moca-core-spec.md#102-graceful-degradation), moca-lint
+  can't prove a status value is invalid under a profile it doesn't
+  recognize, so if a package declares an unrecognized profile, an unknown
+  `epistemicStatus` value is reported as `E210` (**warning**, not `E204`
+  error) instead of being rejected outright.
 
 ## Known limitations (v1)
 
@@ -111,7 +140,14 @@ always informational and never affect the exit code.
   checks that a `signature` object is structurally present when `skills/`
   exists (`E401`); it does not verify Sigstore/DSSE signatures. `--online-verify`
   is reserved for a future live-verification mode.
+- **`ro-crate-metadata.json` validation (`E405`) is a minimal structural
+  heuristic, not full RO-Crate 1.3 conformance checking** (core §2.1) — it
+  only checks for a `@context`, a `@graph` array, a metadata descriptor
+  entity, and a root data entity.
 - `--level` does not yet gate which checks run.
+- `.moca`/`.zip` extraction rejects archives over 20,000 entries or 512MB
+  uncompressed, and entries containing `..`, as a defense-in-depth measure
+  against zip bombs and path traversal.
 
 ## Development
 

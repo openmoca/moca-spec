@@ -13,9 +13,11 @@ export const SEVERITY = Object.freeze({
 // Codes that are `warning` by default and escalate to `error` under --strict.
 export const WARN_BY_DEFAULT = new Set([
   'E203_DANGLING_EVIDENCE_SOURCE',
+  'E210_UNVERIFIABLE_EPISTEMIC_STATUS',
   'E303_DUPLICATE_CONCEPT_DECLARATION',
   'E304_UNDEFINED_CONCEPT',
   'E403_ROCRATE_BAGIT_DISCREPANCY',
+  'E405_ROCRATE_METADATA_INVALID',
 ]);
 
 // Codes that are always informational and never affect the exit code.
@@ -35,6 +37,11 @@ export const CODES = Object.freeze({
   E203_DANGLING_EVIDENCE_SOURCE: { pass: 2, summary: 'evidence[].source file does not exist under sources/, media/, or content/.' },
   E204_INVALID_EPISTEMIC_STATUS: { pass: 2, summary: 'epistemicStatus is not in the core vocabulary or an active profile vocabulary.' },
   E205_MISSING_LOCALE_FALLBACK: { pass: 2, summary: 'Locale-suffixed content file exists without its unsuffixed default file.' },
+  E206_SKILL_FRONTMATTER_INVALID: { pass: 2, summary: 'SKILL.md frontmatter is missing name/description or allowed-tools is not an array.' },
+  E207_DUPLICATE_NODE_ID: { pass: 2, summary: 'More than one content file declares the same frontmatter id.' },
+  E208_INVALID_EVIDENCE_LOCATOR: { pass: 2, summary: 'evidence[].locator has an unknown type or is missing required sub-fields.' },
+  E209_INVALID_CLAIM: { pass: 2, summary: 'claims[] entry is missing a required id, subject, predicate, or object.' },
+  E210_UNVERIFIABLE_EPISTEMIC_STATUS: { pass: 2, summary: 'epistemicStatus is unrecognized, but the package declares a profile moca-lint has no vocabulary extension for.' },
   E301_RDF_SYNTAX_ERROR: { pass: 3, summary: 'File in ontologies/ fails JSON-LD or Turtle syntax parsing.' },
   I301_SHACL_NOT_EVALUATED: { pass: 3, summary: 'A shapes ontology is declared but SHACL shape evaluation is not implemented yet.' },
   E303_DUPLICATE_CONCEPT_DECLARATION: { pass: 3, summary: 'Multiple ontology files in this package declare the same concept with a different @type.' },
@@ -42,6 +49,7 @@ export const CODES = Object.freeze({
   E401_UNSIGNED_SKILLS: { pass: 4, summary: 'skills/ is present but moca.json has no signature object.' },
   E402_INTEGRITY_MISMATCH: { pass: 4, summary: 'SHA-256 hash of a file on disk does not match moca.json integrity.' },
   E403_ROCRATE_BAGIT_DISCREPANCY: { pass: 4, summary: 'ro-crate-metadata.json or BagIt manifest hash conflicts with moca.json integrity.' },
+  E405_ROCRATE_METADATA_INVALID: { pass: 4, summary: 'ro-crate-metadata.json is present but is not minimally valid RO-Crate 1.3 (core §2.1).' },
   I404_SIGNATURE_NOT_VERIFIED: { pass: 4, summary: 'signature object is present but cryptographic verification is not implemented yet.' },
 });
 
