@@ -29,7 +29,7 @@ and `title` ([core §5.1](../moca-core-spec.md#51-manifest-properties)):
 
 Do not add `endpoints`, `settings`, `credentials`, or `apiKeys` — these are
 explicitly excluded from any MOCA manifest
-([core §5.2](../moca-core-spec.md#52-excluded-properties)) because MOCA
+([core §5.3](../moca-core-spec.md#53-excluded-properties)) because MOCA
 packages are runtime-independent data, not configuration.
 
 ## 3. Ground content in `content/`

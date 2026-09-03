@@ -16,6 +16,6 @@
 - [ ] If this adds/changes an example package containing `skills/`, it
       includes a `signature` object (placeholder is fine pre-adoption, see
       core §8.2).
-- [ ] No new example introduces the properties excluded by core §5.2
+- [ ] No new example introduces the properties excluded by core §5.3
       (`endpoints`, `settings`, `credentials`, `apiKeys`).
 - [ ] Markdown links resolve.

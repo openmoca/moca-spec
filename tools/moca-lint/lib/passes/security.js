@@ -1,4 +1,4 @@
-// Pass 4: Security, Integrity & Signatures (E400 series, Level 3) — core §8, §5.3.
+// Pass 4: Security, Integrity & Signatures (E400 series, Level 3) — core §8, §5.4.
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -94,7 +94,7 @@ function checkRoCrateBagitDiscrepancy({ rootDir, integrity, digests, findings })
     if (declaredHash && declaredHash !== externalHash) {
       findings.add(
         'E403_ROCRATE_BAGIT_DISCREPANCY',
-        `ro-crate-metadata.json/BagIt hash for "${relPath}" conflicts with moca.json integrity (core §5.3, integrity is authoritative).`,
+        `ro-crate-metadata.json/BagIt hash for "${relPath}" conflicts with moca.json integrity (core §5.4, integrity is authoritative).`,
         { file: relPath }
       );
     }

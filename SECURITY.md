@@ -12,7 +12,7 @@ That said, security issues are still in scope:
 - Errors in `schemas/` that would let an invalid or malicious `moca.json`
   pass validation (e.g. a schema that fails to reject the excluded
   properties in
-  [core §5.2](moca-core-spec.md#52-excluded-properties)).
+  [core §5.3](moca-core-spec.md#53-excluded-properties)).
 - Errors in example packages that model insecure or misleading patterns
   implementers might copy.
 - Issues in CI tooling (`.github/workflows/`) that could be abused (e.g.

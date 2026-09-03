@@ -188,12 +188,34 @@ The root manifest MUST be named `moca.json`.
 | `ontologies` | Object | No | Map of ontology roles to file paths or structured ontology objects. Core roles: `domain`, `governance`, `shapes`, `extension`. Profiles MAY define additional roles (namespaced, see §10.3). |
 | `entryConcepts` | Array of Strings | No | Root concept URNs/CURIEs acting as semantic entry points. |
 | `augmentation` | Object | No | Declaration of target content being augmented (sidecar usage). See §9. |
-| `integrity` | Object | No | Per-resource SHA-256 digest manifest. Authoritative over any RO-Crate or BagIt checksum manifest present in the same package — see §5.3. |
+| `integrity` | Object | No | Per-resource SHA-256 digest manifest. Authoritative over any RO-Crate or BagIt checksum manifest present in the same package — see §5.4. |
 | `signature` | Object | Required if `skills/` present | Cryptographic signature object (Sigstore / DSSE). |
 | `profileData` | Object | No | Namespaced container for profile-specific manifest extensions. See §10.3. |
 | `x-*` | Any | No | Vendor extension keys. MUST be namespaced as `x-<vendor>-<key>` to avoid collision between vendors. |
 
-### 5.2 Excluded Properties
+### 5.2 Localized String Values
+
+Properties marked "String / Object" (`title`, `description`, `author`,
+`publisher`) accept either a plain string or an object mapping BCP-47
+locale codes to localized strings:
+
+```json
+{
+  "title": {
+    "en": "Introduction to Microservices",
+    "fr": "Introduction aux microservices",
+    "pt-BR": "Introdução a microsserviços"
+  },
+  "description": "A single, non-localized description is also valid."
+}
+```
+
+When an object is used, a harness resolving a display value for a given
+locale MUST fall back to the `language` manifest property, and then to any
+single key present, if no exact or partial (e.g. `pt` for `pt-BR`) locale
+match exists.
+
+### 5.3 Excluded Properties
 
 The following MUST NOT appear in a MOCA manifest, at any conformance level,
 under any profile:
@@ -204,7 +226,7 @@ under any profile:
 
 These violate the runtime-independence guarantee in §1.
 
-### 5.3 Integrity Precedence
+### 5.4 Integrity Precedence
 
 A package MAY contain integrity information in up to three places:
 `moca.json`'s `integrity` object, an RO-Crate checksum convention, and a
@@ -212,7 +234,7 @@ BagIt `manifest-sha256.txt`. When more than one is present and they disagree,
 `moca.json`'s `integrity` object is authoritative. Host adapters SHOULD warn
 on mismatch rather than silently picking one.
 
-### 5.4 Spec Evolution
+### 5.5 Spec Evolution
 
 A consumer encountering unknown top-level manifest fields MUST ignore them
 rather than reject the package, provided all required fields for the
@@ -496,7 +518,7 @@ A package declares conformance to zero or more profiles via the manifest's
 
 A harness that does not recognize a declared profile URI MUST still process
 the package as valid MOCA Core, ignoring profile-specific semantics it
-doesn't understand (per §5.4). A package MUST remain fully valid and useful
+doesn't understand (per §5.5). A package MUST remain fully valid and useful
 under MOCA Core alone, with the profile strictly additive. Profiles MUST NOT
 require behavior that would make a package invalid or unusable to a
 core-only consumer.

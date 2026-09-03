@@ -61,7 +61,7 @@ export function runManifestPass({ rootDir, findings }) {
         if (EXCLUDED_KEYS.has(badKey)) {
           findings.add(
             'E103_EXCLUDED_PROPERTIES',
-            `moca.json contains forbidden key "${badKey}" (core §5.2).`,
+            `moca.json contains forbidden key "${badKey}" (core §5.3).`,
             { file: 'moca.json' }
           );
           continue;
