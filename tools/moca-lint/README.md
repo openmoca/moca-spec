@@ -1,0 +1,126 @@
+# moca-lint
+
+Static analysis CLI for [MOCA](../../moca-core-spec.md) package directories and
+`.moca`/`.zip` archives. It runs entirely offline — no network calls, no
+script execution — and checks a package against `moca-core-spec.md`, the
+JSON Schemas in [`schemas/`](../../schemas), and referential-integrity rules
+that the schemas alone can't express (e.g. dangling concept references,
+locale fallback, the `skills/` + `signature` rule).
+
+## Install
+
+From the repo root (moca-lint is an npm workspace):
+
+```sh
+npm install
+```
+
+This links the `moca-lint` binary via the workspace. You can then run it as:
+
+```sh
+npx moca-lint --help
+# or, once installed:
+npm run lint:moca
+```
+
+## Usage
+
+### Lint
+
+```sh
+moca-lint lint <target> [<target> ...] [options]
+```
+
+`<target>` is a package directory, or a `.moca`/`.zip` archive (extracted to
+a temp directory for analysis). Multiple targets can be linted in one call.
+
+```sh
+moca-lint lint examples/level-2-semantic
+moca-lint lint examples/*                 # lint every example package
+moca-lint lint dist/my-package.moca
+```
+
+### Pack
+
+```sh
+moca-lint pack <target> -o <out.moca> [options]
+```
+
+Lints `<target>` first and **refuses to write the archive if any
+error-severity finding is present** (fail-closed). On success, zips the
+directory with `moca.json` at the archive root.
+
+```sh
+moca-lint pack examples/level-2-semantic -o level-2-semantic.moca
+moca-lint pack ./my-package -o out.moca --exclude "*.draft.md" "notes/**"
+```
+
+`-o/--out` defaults to `<target-dirname>.moca` in the current directory if
+omitted. `--exclude` adds extra glob patterns on top of the built-in
+`.git/`, `node_modules/`, and `.DS_Store` excludes.
+
+## Options
+
+| Option | Description |
+|---|---|
+| `--strict` | Escalate warning-level findings to errors (affects the exit code). |
+| `--format <fmt>` | `text` (default, human-readable), `json`, or `sarif` (for GitHub code-scanning annotations). |
+| `--report <file>` | Write the formatted report to a file. With `--format text`, the report is also still printed to the console. |
+| `--log-file <file>` | Append a full debug trace (per-pass timings) to a file, independent of `--verbose`. |
+| `-v, --verbose` | Increase console trace output (repeatable: `-vv`). |
+| `-q, --quiet` | Suppress non-error console output. |
+| `--no-color` | Disable colored text output. |
+| `--level <n>` | Declared conformance level (`1`\|`2`\|`3`). Accepted but informational only in v1 — it is not yet used to gate which checks run. |
+| `--online-verify` | Reserved for live Sigstore/Rekor verification. Accepted but not implemented (see [Known limitations](#known-limitations-v1)). |
+
+## Exit codes
+
+- `0` — no error-severity findings.
+- `1` — one or more error-severity findings (or warnings escalated by `--strict`).
+- `2` — CLI usage error (bad target path, unreadable archive, etc.).
+
+## Validation passes & finding codes
+
+Findings run across four passes, matching the package structure in
+[core §4](../../moca-core-spec.md#4-logical-package-structure) /
+[§5](../../moca-core-spec.md#5-package-manifest-mocajson-specification):
+
+| Pass | Codes | What it checks |
+|---|---|---|
+| 1. Manifest | `E101`–`E105` | `moca.json` exists, conforms to `schemas/core/moca.schema.json` (+ `schemas/education/profile.schema.json` for `profileData.education`), has no forbidden keys, valid `namespaces`, no profile data misplaced at the root. |
+| 2. Content | `E201`–`E205` | Frontmatter YAML syntax, concept CURIEs resolve to a declared namespace, `evidence[].source` files exist, `epistemicStatus` is in the core or active-profile vocabulary, locale-suffixed files have a default fallback. |
+| 3. Semantic | `E301`, `E303`, `E304`, `I301` | JSON-LD/Turtle syntax in `ontologies/`, within-package duplicate/conflicting concept declarations, concept references that don't resolve to any declared `@id`. |
+| 4. Security | `E401`–`E403`, `I404` | `skills/` requires a `signature` object, SHA-256 `integrity` map matches files on disk, RO-Crate/BagIt hash cross-check. |
+
+Run `moca-lint lint <target> --format json` and inspect `findings[].code`, or
+read [lib/codes.js](lib/codes.js) for the full registry with one-line
+summaries.
+
+**Default severity:** most codes are hard errors. `E203`, `E303`, `E304`,
+and `E403` default to `warning` (they rely on heuristics that can have
+legitimate exceptions, e.g. a documentation fixture intentionally omitting a
+media asset) and only become errors under `--strict`. `I301` and `I404` are
+always informational and never affect the exit code.
+
+## Known limitations (v1)
+
+- **SHACL shape validation (`E302`) is not implemented.** `ontologies/*.shacl.ttl`
+  is syntax-checked (`E301`) but shape conformance isn't evaluated yet; a
+  shapes ontology declared in `moca.json` produces an `I301` note instead.
+- **Signature verification (`E404`) is not implemented.** `moca-lint` only
+  checks that a `signature` object is structurally present when `skills/`
+  exists (`E401`); it does not verify Sigstore/DSSE signatures. `--online-verify`
+  is reserved for a future live-verification mode.
+- `--level` does not yet gate which checks run.
+
+## Development
+
+```sh
+cd tools/moca-lint
+npm test              # node --test test/*.test.js
+```
+
+Tests assert zero error-severity findings against every package under
+[`examples/`](../../examples) (with `--strict` fixtures covering the known,
+documented gaps in `level-3-extended` and `education-profile`), plus a few
+deliberately-broken fixtures under [test/fixtures/](test/fixtures).

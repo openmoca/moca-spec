@@ -1,0 +1,102 @@
+// Pass 4: Security, Integrity & Signatures (E400 series, Level 3) — core §8, §5.3.
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+/**
+ * @param {object} params
+ * @param {string} params.rootDir
+ * @param {object} params.manifest
+ * @param {import('../findings.js').FindingCollector} params.findings
+ */
+export function runSecurityPass({ rootDir, manifest, findings }) {
+  const skillsDirExists = existsSync(join(rootDir, 'skills'));
+  const hasSignature = manifest.signature && typeof manifest.signature === 'object';
+
+  if (skillsDirExists && !hasSignature) {
+    findings.add(
+      'E401_UNSIGNED_SKILLS',
+      'skills/ is present but moca.json has no signature object (core §3.1/§8.2).',
+      { file: 'moca.json' }
+    );
+  }
+
+  if (hasSignature) {
+    findings.add(
+      'I404_SIGNATURE_NOT_VERIFIED',
+      `signature (type=${manifest.signature.type}) is structurally present; moca-lint does not verify Sigstore/DSSE signatures yet.`,
+      { file: 'moca.json' }
+    );
+  }
+
+  const integrity = manifest.integrity;
+  if (!integrity || typeof integrity !== 'object') return;
+
+  const digests = new Map();
+  for (const [relPath, declaredHash] of Object.entries(integrity)) {
+    const absPath = join(rootDir, relPath);
+    if (!existsSync(absPath)) {
+      findings.add(
+        'E402_INTEGRITY_MISMATCH',
+        `integrity declares "${relPath}" but the file does not exist.`,
+        { file: relPath }
+      );
+      continue;
+    }
+    const actualHash = createHash('sha256').update(readFileSync(absPath)).digest('hex');
+    digests.set(relPath, actualHash);
+    if (normalizeHash(declaredHash) !== actualHash) {
+      findings.add(
+        'E402_INTEGRITY_MISMATCH',
+        `SHA-256 of "${relPath}" does not match moca.json integrity.`,
+        { file: relPath }
+      );
+    }
+  }
+
+  checkRoCrateBagitDiscrepancy({ rootDir, integrity, digests, findings });
+}
+
+function normalizeHash(value) {
+  return value.replace(/^sha256[:-]/i, '').toLowerCase();
+}
+
+function checkRoCrateBagitDiscrepancy({ rootDir, integrity, digests, findings }) {
+  const external = new Map();
+
+  const roCratePath = join(rootDir, 'ro-crate-metadata.json');
+  if (existsSync(roCratePath)) {
+    try {
+      const doc = JSON.parse(readFileSync(roCratePath, 'utf8'));
+      for (const node of doc['@graph'] ?? []) {
+        if (node['@id'] && node.sha256) {
+          external.set(node['@id'].replace(/^\.\//, ''), normalizeHash(node.sha256));
+        }
+      }
+    } catch {
+      // Malformed ro-crate-metadata.json is out of scope for this cross-check.
+    }
+  }
+
+  const bagitPath = join(rootDir, 'manifest-sha256.txt');
+  if (existsSync(bagitPath)) {
+    const lines = readFileSync(bagitPath, 'utf8').split('\n');
+    for (const line of lines) {
+      const [hash, ...pathParts] = line.trim().split(/\s+/);
+      if (!hash || pathParts.length === 0) continue;
+      const path = pathParts.join(' ').replace(/^data\//, '');
+      external.set(path, normalizeHash(hash));
+    }
+  }
+
+  for (const [relPath, externalHash] of external) {
+    const declaredHash = integrity[relPath] ? normalizeHash(integrity[relPath]) : digests.get(relPath);
+    if (declaredHash && declaredHash !== externalHash) {
+      findings.add(
+        'E403_ROCRATE_BAGIT_DISCREPANCY',
+        `ro-crate-metadata.json/BagIt hash for "${relPath}" conflicts with moca.json integrity (core §5.3, integrity is authoritative).`,
+        { file: relPath }
+      );
+    }
+  }
+}

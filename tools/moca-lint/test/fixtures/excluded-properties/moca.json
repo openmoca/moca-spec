@@ -1,0 +1,6 @@
+{
+  "id": "urn:moca:test:excluded-properties",
+  "version": "1.0.0",
+  "title": "Excluded Properties Fixture",
+  "endpoints": { "api": "https://example.org/api" }
+}

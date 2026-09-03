@@ -4,9 +4,13 @@
   "version": "0.0.0",
   "description": "MOCA specification, JSON Schemas, and example packages.",
   "type": "module",
+  "workspaces": [
+    "tools/*"
+  ],
   "scripts": {
     "validate": "node scripts/validate-examples.mjs",
-    "lint:md": "markdownlint-cli2 \"**/*.md\" \"!node_modules\""
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"!node_modules\"",
+    "lint:moca": "moca-lint lint examples/level-1-minimal examples/level-2-semantic examples/level-3-extended examples/education-profile examples/augmentation-generic examples/augmentation-scorm2004"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

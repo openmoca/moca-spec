@@ -1,0 +1,22 @@
+{
+  "name": "moca-lint",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Static analysis CLI for MOCA package directories and .moca archives.",
+  "type": "module",
+  "bin": {
+    "moca-lint": "./bin/moca-lint.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "commander": "^12.1.0",
+    "gray-matter": "^4.0.3",
+    "n3": "^1.24.1",
+    "picocolors": "^1.1.1"
+  }
+}
