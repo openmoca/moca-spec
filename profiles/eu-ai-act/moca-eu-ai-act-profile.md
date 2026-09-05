@@ -29,7 +29,7 @@ legal compliance advice, certification, or a substitute for legal review. A
 package's self-declared risk tier and governance data are the author's
 assertion only; a conforming consumer MUST NOT treat this profile's contents
 as establishing legal compliance without independent validation. See
-[docs/versioning-and-release.md](docs/versioning-and-release.md) for an
+[docs/versioning-and-release.md](../../docs/versioning-and-release.md) for an
 analogous note on external-standard validation by tooling.
 
 Declare the profile in the manifest:
@@ -144,6 +144,6 @@ An EU AI Act profile package:
 
 ## See Also
 
-- [MOCA Core Specification §10.5](moca-core-spec.md#105-compliance--standards-profiles) — overview of compliance profiles
+- [MOCA Core Specification §10.5](../../moca-core-spec.md#105-compliance--standards-profiles) — overview of compliance profiles
 - [Example EU AI Act package](examples/eu-ai-act-profile/) — runnable fixture demonstrating this profile
-- [JSON Schema for profileData.euAiAct](schemas/eu-ai-act/profile.schema.json)
+- [JSON Schema for profileData.euAiAct](profile.schema.json)

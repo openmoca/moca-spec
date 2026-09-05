@@ -39,11 +39,12 @@ timeline.
 
 ## Profile Graduation
 
-New profiles start as a `moca-<name>-profile.md` file (plus its
-`schemas/<name>/` and `examples/<name>-profile/`) inside this repo, alongside
-core. This is deliberate while the project is solo-maintained and both core
-and profiles are still evolving during the beta: it keeps core/profile changes reviewable in a
-single PR and validated by one CI run, instead of coordinating across repos.
+New profiles start as a self-contained `profiles/<name>/` directory containing
+`moca-<name>-profile.md`, `profile.schema.json`, and its `examples/` inside
+this repo, alongside core. This is deliberate while the project is
+solo-maintained and both core and profiles are still evolving during the beta:
+it keeps core/profile changes reviewable in a single PR and validated by one
+CI run, instead of coordinating across repos.
 
 A profile MAY later graduate to its own `openmoca/profile-<name>` repo, once
 any of the following becomes true:
@@ -55,10 +56,10 @@ any of the following becomes true:
 
 Graduation is a non-breaking move for existing consumers: a profile's
 identity is its URI (e.g. `https://openmoca.org/profiles/education/v1`,
-declared in a package's `profile` array), not its repo location. Moving the
-spec file, schema, and examples to a new repo does not change that URI or
-require any already-published package to change. When a profile graduates,
-this repo keeps a short pointer to the new repo in place of the local copy.
+declared in a package's `profile` array), not its repo location. Copying the
+profile directory to a new repo does not change that URI or require any
+already-published package to change. When a profile graduates, this repo keeps
+a short pointer to the new repo in place of the local directory.
 
 ## Repository Layout (`openmoca` org)
 

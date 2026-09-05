@@ -31,7 +31,6 @@ export const CODES = Object.freeze({
   E102_SCHEMA_INVALID: { pass: 1, summary: 'moca.json fails JSON Schema validation.' },
   E103_EXCLUDED_PROPERTIES: { pass: 1, summary: 'moca.json contains a forbidden runtime/execution key.' },
   E104_INVALID_CONTEXT_PREFIX: { pass: 1, summary: '@context contains a malformed CURIE prefix.' },
-  E105_PROFILE_DATA_MISPLACED: { pass: 1, summary: 'Profile-specific field found at manifest root instead of under profileData.<profile>.' },
   E106_LEVEL1_REMOTE_CONTEXT: { pass: 1, summary: 'Level 1 packages must use an inline @context object.' },
   E201_FRONTMATTER_SYNTAX: { pass: 2, summary: 'Content file has invalid YAML frontmatter.' },
   E202_UNRESOLVED_NAMESPACE_PREFIX: { pass: 2, summary: 'Concept CURIE uses a prefix not declared in an inline manifest @context.' },

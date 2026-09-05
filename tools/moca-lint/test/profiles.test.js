@@ -2,23 +2,15 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { deriveProfileName, loadProfileSchema } from '../lib/profiles.js';
 import { lintPackage } from '../lib/lint.js';
 
 const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 
-test('deriveProfileName extracts the short name from a profile URI', () => {
-  assert.equal(deriveProfileName('https://openmoca.org/profiles/education/v1'), 'education');
-  assert.equal(deriveProfileName('https://example.org/profiles/customprofile/v1'), 'customprofile');
-  assert.equal(deriveProfileName('not-a-url'), null);
-  assert.equal(deriveProfileName('https://example.org/no-profiles-segment'), null);
-});
-
-test('loadProfileSchema discovers a schema by convention under a given schemasRoot', () => {
-  const schemasRoot = join(fixturesDir, 'profile-schemas');
-  const schema = loadProfileSchema('sampleprofile', schemasRoot);
-  assert.equal(schema.title, 'Sample Profile Data (test fixture)');
-  assert.equal(loadProfileSchema('no-such-profile', schemasRoot), null);
+test('profileData is opaque to core-only validation', () => {
+  const rootDir = join(fixturesDir, 'opaque-profile-data');
+  const { findings } = lintPackage({ rootDir });
+  assert.equal(findings.some((finding) => finding.code === 'E102_SCHEMA_INVALID'), false);
+  assert.equal(findings.some((finding) => finding.severity === 'error'), false);
 });
 
 test('unrecognized-profile fixture: unknown epistemicStatus is a warning, not an error', () => {

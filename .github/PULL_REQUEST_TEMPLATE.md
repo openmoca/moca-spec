@@ -8,7 +8,7 @@
 
 ## Checklist
 
-- [ ] If this changes `moca-core-spec.md` or `moca-education-profile.md`,
+- [ ] If this changes `moca-core-spec.md` or a profile specification under `profiles/`,
       the corresponding `schemas/` were updated to match.
 - [ ] If this changes `schemas/`, all packages under `examples/` still
       validate (`npx ajv-cli validate -s schemas/core/moca.schema.json -d

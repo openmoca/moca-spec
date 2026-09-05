@@ -107,27 +107,21 @@ are always informational and never affect the exit code.
 
 [core §10](../../moca-core-spec.md#10-profiles) lets a package declare zero
 or more **profiles** (e.g. `"profile": ["https://openmoca.org/profiles/education/v1"]`)
-that additively extend core vocabulary. moca-lint supports profiles in two ways:
+that additively extend core vocabulary. moca-lint handles profiles as follows:
 
 - **Generic, works for any profile automatically:** namespace/CURIE
   resolution (`E202`, `E304`), ontology parsing (`E301`, `E303`) — these are
   driven entirely by `moca.json`'s own `@context`/`ontologies`, not by any
   hardcoded profile knowledge.
-- **Schema validation, auto-discovered by convention:** for each URI in
-  `profile`, moca-lint derives a short name (e.g. `.../profiles/education/v1`
-  → `education`) and, if `schemas/<name>/profile.schema.json` exists,
-  validates `profileData.<name>` against it and uses its field names for the
-  `E105` "misplaced profile data" hint. Adding a new profile only requires
-  publishing that schema file — no code changes.
-- **Epistemic-status vocabulary extensions are not auto-discoverable**
-  (there's no machine-readable list of a profile's extra `epistemicStatus`
-  values anywhere in the repo yet) — they're hardcoded in
-  [lib/vocab.js](lib/vocab.js), currently only for `education`
-  (`authoritative`, `peer-reviewed`). Per
+- **Profile data is opaque:** moca-lint validates only the core schema and does
+  not inspect or validate `profileData.<name>` against a profile schema.
+  Profile owners MAY ship or link to separate validation tooling for their
+  profile-specific requirements.
+- **Profile epistemic-status vocabularies are opaque:** Per
   [core §10.2](../../moca-core-spec.md#102-graceful-degradation), moca-lint
-  can't prove a status value is invalid under a profile it doesn't
-  recognize, so if a package declares an unrecognized profile, an unknown
-  `epistemicStatus` value is reported as `E210` (**warning**, not `E204`
+  can't prove a status value is invalid under a declared profile, so an
+  unknown `epistemicStatus` in a profiled package is reported as `E210`
+  (**warning**, not `E204`
   error) instead of being rejected outright.
 
 ## Known limitations (v1)

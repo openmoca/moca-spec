@@ -616,12 +616,12 @@ classified against.
 
 The following table tracks profiles following this pattern to help contributors
 coordinate and avoid namespace collisions. Profiles listed as "not yet authored"
-are candidates for future contribution; see [CONTRIBUTING.md](../CONTRIBUTING.md)
+are candidates for future contribution; see [CONTRIBUTING.md](CONTRIBUTING.md)
 for the proposal process.
 
 | Standard | Scope | Status |
 |---|---|---|
-| EU AI Act (Regulation 2024/1689) | Legal — risk-tiered obligations, Annex III high-risk categories, Article 14 human oversight | Example profile in this repo ([moca-eu-ai-act-profile.md](../moca-eu-ai-act-profile.md)) |
+| EU AI Act (Regulation 2024/1689) | Legal — risk-tiered obligations, Annex III high-risk categories, Article 14 human oversight | Example profile in this repo ([moca-eu-ai-act-profile.md](profiles/eu-ai-act/moca-eu-ai-act-profile.md)) |
 | NIST AI RMF 1.0 | Voluntary framework — Govern, Map, Measure, Manage functions | Not yet authored |
 | ISO/IEC 42001:2023 | AI management system standard | Not yet authored |
 | ISO/IEC 23894:2023 | AI risk management guidance | Not yet authored |

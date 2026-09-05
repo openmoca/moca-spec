@@ -1,5 +1,5 @@
-// Validates every examples/*/moca.json against the core (and, if present,
-// education) JSON Schemas, and cross-checks the skills/ + signature rule
+// Validates every example package's moca.json against the core JSON Schema and
+// cross-checks the skills/ + signature rule
 // from core §3.1/§8.2 that the schema itself can't express (see CONTRIBUTING.md).
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -13,24 +13,23 @@ addFormats(ajv);
 const coreSchema = JSON.parse(
   readFileSync(join(root, 'schemas/core/moca.schema.json'), 'utf8')
 );
-const eduSchema = JSON.parse(
-  readFileSync(join(root, 'schemas/education/profile.schema.json'), 'utf8')
-);
 // Sanity-check the JSON-LD context is at least well-formed JSON.
 JSON.parse(readFileSync(join(root, 'schemas/core/context.jsonld'), 'utf8'));
 
 const validateCore = ajv.compile(coreSchema);
-const validateEdu = ajv.compile(eduSchema);
 
-const examplesDir = join(root, 'examples');
-const exampleDirs = readdirSync(examplesDir).filter((name) =>
-  statSync(join(examplesDir, name)).isDirectory()
-);
+const exampleDirs = [
+  ...readdirSync(join(root, 'examples'))
+    .filter((name) => statSync(join(root, 'examples', name)).isDirectory())
+    .map((name) => join('examples', name)),
+  'profiles/education/examples/education-profile',
+  'profiles/eu-ai-act/examples/eu-ai-act-profile',
+];
 
 let failed = false;
 
 for (const dir of exampleDirs) {
-  const manifestPath = join(examplesDir, dir, 'moca.json');
+  const manifestPath = join(root, dir, 'moca.json');
   if (!existsSync(manifestPath)) {
     console.error(`[FAIL] ${dir}: missing moca.json`);
     failed = true;
@@ -49,20 +48,7 @@ for (const dir of exampleDirs) {
     console.log(`[OK]   ${dir}/moca.json conforms to core schema`);
   }
 
-  const eduData = manifest.profileData?.education;
-  if (eduData) {
-    if (!validateEdu(eduData)) {
-      failed = true;
-      console.error(`[FAIL] ${dir}/moca.json profileData.education does not conform to schemas/education/profile.schema.json:`);
-      for (const err of validateEdu.errors) {
-        console.error(`  ${err.instancePath || '/'} ${err.message}`);
-      }
-    } else {
-      console.log(`[OK]   ${dir}/moca.json profileData.education conforms to education schema`);
-    }
-  }
-
-  const skillsDirExists = existsSync(join(examplesDir, dir, 'skills'));
+  const skillsDirExists = existsSync(join(root, dir, 'skills'));
   const hasSignature = manifest.signature && typeof manifest.signature === 'object';
   if (skillsDirExists && !hasSignature) {
     failed = true;

@@ -83,9 +83,9 @@ npx ajv-cli validate -s schemas/core/moca.schema.json -d my-package/moca.json --
 |---|---|
 | Add JSON-LD, ontologies, SHACL validation, and RDF-interpretable claims (Level 2) | [examples/level-2-semantic](../examples/level-2-semantic) |
 | Add Web Annotation evidence locators and a signed Agent Skill (Level 3) | [examples/level-3-extended](../examples/level-3-extended) |
-| Build a tutoring/courseware package | [examples/education-profile](../examples/education-profile), [moca-education-profile.md](../moca-education-profile.md) |
+| Build a tutoring/courseware package | [examples/education-profile](../profiles/education/examples/education-profile), [moca-education-profile.md](../profiles/education/moca-education-profile.md) |
 | Ground an AI harness against existing content without modifying it | [examples/augmentation-generic](../examples/augmentation-generic), [examples/augmentation-scorm2004](../examples/augmentation-scorm2004) |
-| Apply a regulatory/compliance standard to a package | [examples/eu-ai-act-profile](../examples/eu-ai-act-profile), [moca-eu-ai-act-profile.md](../moca-eu-ai-act-profile.md) |
+| Apply a regulatory/compliance standard to a package | [examples/eu-ai-act-profile](../profiles/eu-ai-act/examples/eu-ai-act-profile), [moca-eu-ai-act-profile.md](../profiles/eu-ai-act/moca-eu-ai-act-profile.md) |
 
 For the full normative rules, see
 [moca-core-spec.md](../moca-core-spec.md).

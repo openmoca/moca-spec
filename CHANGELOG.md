@@ -26,10 +26,18 @@ and compatibility policy.
 
 ## [Unreleased]
 
+### Changed
+
+- Reorganized profile specifications, schemas, and examples into self-contained
+  bundles under `profiles/` for independent extraction.
+- Narrowed repository validation to MOCA Core conformance and structural checks;
+  `moca-lint` no longer validates profile-owned `profileData` against profile
+  schemas.
+
 ### Added
 
-- `moca-eu-ai-act-profile.md` — MOCA EU AI Act compliance profile (beta), demonstrating how regulatory and compliance standards are modeled as ordinary MOCA profiles.
-- `schemas/eu-ai-act/profile.schema.json` — JSON Schema for `profileData.euAiAct` with open-string classification fields.
-- Example EU AI Act package under `examples/eu-ai-act-profile/` with profileData, governance ontology (SHACL), and human oversight content node.
+- `profiles/eu-ai-act/moca-eu-ai-act-profile.md` — MOCA EU AI Act compliance profile (beta), demonstrating how regulatory and compliance standards are modeled as ordinary MOCA profiles.
+- `profiles/eu-ai-act/profile.schema.json` — JSON Schema for `profileData.euAiAct` with open-string classification fields.
+- Example EU AI Act package under `profiles/eu-ai-act/examples/eu-ai-act-profile/` with profileData, governance ontology (SHACL), and human oversight content node.
 - New subsection [core §10.5](moca-core-spec.md#105-compliance--standards-profiles) documenting compliance and standards profiles, their relationship to the ordinary profile mechanism, and a reference table of candidate profiles (EU AI Act, NIST AI RMF, ISO/IEC 42001, etc.).
 - Cross-reference updates: README.md Specification list, CONTRIBUTING.md compliance profile guidance, docs/quickstart.md "Going further" table.

@@ -69,21 +69,25 @@ details.
 ## Specification
 
 - [MOCA Core Package Specification](moca-core-spec.md)
-- [MOCA Education Profile](moca-education-profile.md)
-- [MOCA EU AI Act Profile](moca-eu-ai-act-profile.md)
+- [MOCA Education Profile](profiles/education/moca-education-profile.md)
+- [MOCA EU AI Act Profile](profiles/eu-ai-act/moca-eu-ai-act-profile.md)
 
 ## Repository Layout
 
 ```text
 moca-spec/
 ├── moca-core-spec.md          # Core specification
-├── moca-education-profile.md  # Education profile
 ├── schemas/                    # JSON Schema + JSON-LD context definitions
-│   ├── core/
-│   └── education/
-├── examples/                   # Runnable fixture packages at each conformance level
+│   └── core/
+├── profiles/                   # Self-contained, independently extractable profile bundles
+│   ├── education/              # Spec, schema, and examples
+│   └── eu-ai-act/              # Spec, schema, and examples
+├── examples/                   # Runnable core fixture packages at each conformance level
 └── docs/                       # Guides (quickstart, etc.)
 ```
+
+Each directory under [profiles/](profiles/) contains a profile specification,
+its schema, and its examples so it can be extracted independently.
 
 ## Quickstart
 

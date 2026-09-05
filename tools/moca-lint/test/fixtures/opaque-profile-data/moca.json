@@ -1,0 +1,12 @@
+{
+  "id": "urn:moca:test:opaque-profile-data",
+  "version": "1.0.0",
+  "title": "Opaque Profile Data Fixture",
+  "profile": ["https://openmoca.org/profiles/education/v1"],
+  "profileData": {
+    "education": {
+      "level": 42,
+      "learningObjectives": "not an array"
+    }
+  }
+}

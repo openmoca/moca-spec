@@ -45,9 +45,13 @@ Profiles are additive extensions to MOCA Core (see
 2. A profile MUST comply with the restrictions in
    [core §10.4](moca-core-spec.md#104-profile-restrictions) — additive only,
    namespaced fields, no redefinition of core semantics.
-3. Once agreed, the profile is authored as its own
-   `moca-<profile-name>-profile.md` file at the repo root, following the
-   structure of [moca-education-profile.md](moca-education-profile.md).
+3. Once agreed, the profile is authored at
+   `profiles/<profile-name>/moca-<profile-name>-profile.md`, alongside its
+   own `profile.schema.json` and `examples/`, following the structure of
+   [moca-education-profile.md](profiles/education/moca-education-profile.md).
+
+Profile-specific linting is the profile owner's responsibility and is not part
+of this repository's `moca-lint`.
 
 **Compliance and regulatory-standard profiles** follow the same process. See
 [core §10.5](moca-core-spec.md#105-compliance--standards-profiles) for how regulatory

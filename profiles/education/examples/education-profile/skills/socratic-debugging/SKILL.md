@@ -18,7 +18,7 @@ per
 It does not implement real tutoring logic — it exists so this example
 package has something for the mandatory `signature` in `moca.json` (required
 because `skills/` is present, per
-[core §8.2](../../../../moca-core-spec.md#82-security--trust-boundary-rule))
+[core §8.2](../../../../../../moca-core-spec.md#82-security--trust-boundary-rule))
 to cover. See the placeholder-signature note in
-[../../level-3-extended/README.md](../../level-3-extended/README.md) — the
+[../../../../../../examples/level-3-extended/README.md](../../../../../../examples/level-3-extended/README.md) — the
 same caveat applies here.

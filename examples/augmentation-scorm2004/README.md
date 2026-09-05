@@ -2,7 +2,7 @@
 
 Demonstrates the education profile's `augmentation.targetType` convention
 for legacy courseware
-([education §5](../../moca-education-profile.md#5-sidecar-augmentation-for-courseware)),
+([education §5](../../profiles/education/moca-education-profile.md#5-sidecar-augmentation-for-courseware)),
 built on top of the same core `augmentation` mechanism shown in
 [../augmentation-generic](../augmentation-generic).
 
