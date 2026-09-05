@@ -100,8 +100,8 @@ conformance level.
 
 | Level | Name | Requirements |
 |---|---|---|
-| **1** | MOCA Core | Valid `moca.json` root manifest. Grounded CommonMark knowledge nodes (`content/`) bound to concepts via YAML frontmatter and resolvable `namespaces`. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |
-| **2** | MOCA Semantic | Adds JSON-LD `@context` in `moca.json`. Formal ontologies (`ontologies/`) using RDF, SKOS, or OWL. SHACL shape validation. `claims` are interpretable as RDF triples. `evidence` links resolve against PROV-O provenance records. |
+| **1** | MOCA Core | Valid `moca.json` root manifest. Grounded CommonMark knowledge nodes (`content/`) bound to concepts via YAML frontmatter and a resolvable inline `@context` prefix map. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |
+| **2** | MOCA Semantic | Adds formal ontologies (`ontologies/`) using RDF, SKOS, or OWL. SHACL shape validation. `claims` are interpretable as RDF triples. `evidence` links resolve against PROV-O provenance records. |
 | **3** | MOCA Extended | Adds W3C Web Annotation selectors for precise multi-modal locators. Cryptographic digests and digital signatures (Sigstore / DSSE / in-toto) — **mandatory, not optional, for any package containing `skills/`** (see §8.2). Optional Agent Skills. |
 
 ### 3.1 Level Requirement Clarification
@@ -182,7 +182,7 @@ The root manifest MUST be named `moca.json`.
 | Property | Type | Required | Description |
 |---|---|---|---|
 | `$schema` | String (URI) | No | Canonical JSON Schema URI. |
-| `@context` | Object / String | No | JSON-LD 1.1 context definition or URL mapping terms to standard IRIs. |
+| `@context` | Object / String | Required if any CURIE appears anywhere in the package | JSON-LD 1.1 context. At Level 1 it MUST be an inline prefix map; at Level 2 and above it MAY be a URI or a fuller inline context object. |
 | `id` | String (URN/URI) | Yes | Canonical unique identifier for the package. |
 | `version` | String | Yes | Semantic version string of the *content* (independent of any spec version). |
 | `profile` | Array of Strings (URI) | No | Zero or more profile URIs this package declares conformance to. See §10. |
@@ -197,7 +197,6 @@ The root manifest MUST be named `moca.json`.
 | `publisher` | String / Object | No | Publishing entity. |
 | `created` | String (ISO-8601) | No | Package creation UTC timestamp. |
 | `modified` | String (ISO-8601) | No | Last modification UTC timestamp. |
-| `namespaces` | Object | Required if any CURIE appears anywhere in the package | Dictionary mapping CURIE prefixes to full IRIs. |
 | `ontologies` | Object | No | Map of ontology roles to file paths or structured ontology objects. Core roles: `domain`, `governance`, `shapes`, `extension`. Profiles MAY define additional roles (namespaced, see §10.3). |
 | `entryConcepts` | Array of Strings | No | Root concept URNs/CURIEs acting as semantic entry points. |
 | `augmentation` | Object | No | Declaration of target content being augmented (sidecar usage). See §9. |
@@ -264,6 +263,12 @@ MOCA manifests are JSON-LD 1.1 compatible. A semantic consumer can process
 the manifest as an RDF graph, while a standard JSON consumer can parse it as
 plain JSON:
 
+At Level 1, `@context` MUST be an inline object whose CURIE prefixes map to
+full IRIs; it MUST NOT be a remote URI string. This lets a plain JSON consumer
+resolve CURIEs without JSON-LD processing. At Level 2 and above, `@context` MAY
+instead be a URI string as allowed by JSON-LD 1.1, or an inline context object
+with prefix and term mappings.
+
 ```json
 {
   "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
@@ -275,10 +280,6 @@ plain JSON:
   "id": "urn:moca:example:system-design",
   "version": "1.0.0",
   "title": "System Architecture Knowledge",
-  "namespaces": {
-    "ex": "https://example.org/vocab#",
-    "skos": "http://www.w3.org/2004/02/skos/core#"
-  },
   "ontologies": {
     "domain": {
       "iri": "https://example.org/architecture",

@@ -10,10 +10,6 @@
   "title": "Level 2 Semantic Example",
   "description": "MOCA Core package demonstrating Level 2 (MOCA Semantic) conformance: JSON-LD @context, formal ontologies, SHACL validation, and an explicit claims graph.",
   "license": "MIT",
-  "namespaces": {
-    "ex": "https://example.org/vocab#",
-    "skos": "http://www.w3.org/2004/02/skos/core#"
-  },
   "ontologies": {
     "domain": {
       "iri": "https://example.org/architecture",

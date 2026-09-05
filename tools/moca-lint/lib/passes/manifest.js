@@ -95,12 +95,20 @@ export function runManifestPass({ rootDir, findings }) {
     }
   }
 
-  if (manifest.namespaces && typeof manifest.namespaces === 'object') {
-    for (const prefix of Object.keys(manifest.namespaces)) {
+  if (typeof manifest['@context'] === 'string' && isLevelOnePackage(manifest)) {
+    findings.add(
+      'E106_LEVEL1_REMOTE_CONTEXT',
+      'A Level 1 package must use an inline @context object, not a remote URI string.',
+      { file: 'moca.json' }
+    );
+  }
+
+  if (manifest['@context'] && typeof manifest['@context'] === 'object') {
+    for (const prefix of Object.keys(manifest['@context'])) {
       if (!CURIE_PREFIX_PATTERN.test(prefix)) {
         findings.add(
-          'E104_INVALID_NAMESPACES',
-          `namespaces prefix "${prefix}" is not a valid CURIE prefix.`,
+          'E104_INVALID_CONTEXT_PREFIX',
+          `@context prefix "${prefix}" is not a valid CURIE prefix.`,
           { file: 'moca.json' }
         );
       }
@@ -123,5 +131,9 @@ export function runManifestPass({ rootDir, findings }) {
   }
 
   return manifest;
+}
+
+function isLevelOnePackage(manifest) {
+  return !manifest.ontologies && !manifest.signature;
 }
 

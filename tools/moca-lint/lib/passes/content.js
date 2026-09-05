@@ -169,15 +169,24 @@ function checkEvidenceLocator(locator, file, findings) {
 }
 
 export function checkConceptRef(values, file, manifest, findings, referencedConcepts) {
-  const namespaces = manifest.namespaces ?? {};
+  const context = typeof manifest['@context'] === 'object' && manifest['@context'] !== null
+    ? manifest['@context']
+    : {};
+  const usesRemoteSemanticContext =
+    typeof manifest['@context'] === 'string' &&
+    (manifest.ontologies || manifest.signature);
   for (const value of values ?? []) {
     if (!value || typeof value !== 'string' || !value.includes(':')) continue;
     const prefix = value.slice(0, value.indexOf(':'));
     if (prefix === 'urn' || value.startsWith('http://') || value.startsWith('https://')) continue;
-    if (!(prefix in namespaces)) {
+    if (usesRemoteSemanticContext) {
+      referencedConcepts.push({ curie: value, file });
+      continue;
+    }
+    if (!(prefix in context)) {
       findings.add(
         'E202_UNRESOLVED_NAMESPACE_PREFIX',
-        `Concept reference "${value}" uses prefix "${prefix}" which is not declared in namespaces.`,
+        `Concept reference "${value}" uses prefix "${prefix}" which is not declared in an inline @context.`,
         { file }
       );
       continue;

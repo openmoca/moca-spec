@@ -3,5 +3,5 @@
   "version": "1.0.0",
   "title": "Unrecognized Profile Fixture",
   "profile": ["https://example.org/profiles/customprofile/v1"],
-  "namespaces": { "ex": "https://example.org/vocab#" }
+  "@context": { "ex": "https://example.org/vocab#" }
 }

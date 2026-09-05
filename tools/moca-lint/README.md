@@ -86,7 +86,7 @@ Findings run across four passes, matching the package structure in
 
 | Pass | Codes | What it checks |
 |---|---|---|
-| 1. Manifest | `E101`–`E105` | `moca.json` exists, conforms to `schemas/core/moca.schema.json` (+ any declared profile's `schemas/<profile>/profile.schema.json`, auto-discovered from the profile URI — see [Profile support](#profile-support)), has no forbidden keys, valid `namespaces`, no profile data misplaced at the root. |
+| 1. Manifest | `E101`–`E106` | `moca.json` exists, conforms to `schemas/core/moca.schema.json` (+ any declared profile's `schemas/<profile>/profile.schema.json`, auto-discovered from the profile URI — see [Profile support](#profile-support)), has no forbidden keys, valid inline `@context` prefixes, no profile data misplaced at the root, and no remote `@context` in Level 1. |
 | 2. Content | `E201`–`E210` | Frontmatter YAML syntax, concept/predicate CURIEs resolve to a declared namespace, `evidence[].source` files exist and `locator` shape is valid, `epistemicStatus` is in the core or active-profile vocabulary, locale-suffixed files have a default fallback, no duplicate content-node `id`s, `claims[]` has required fields, `SKILL.md` frontmatter is well-formed. |
 | 3. Semantic | `E301`, `E303`, `E304`, `I301` | JSON-LD/Turtle syntax in `ontologies/`, within-package duplicate/conflicting concept declarations, concept (and predicate/skill-metadata) references that don't resolve to any declared `@id`. |
 | 4. Security | `E401`–`E403`, `E405`, `I404` | `skills/` requires a `signature` object, SHA-256 `integrity` map matches files on disk, RO-Crate/BagIt hash cross-check, minimal `ro-crate-metadata.json` structural validity. |
@@ -111,7 +111,7 @@ that additively extend core vocabulary. moca-lint supports profiles in two ways:
 
 - **Generic, works for any profile automatically:** namespace/CURIE
   resolution (`E202`, `E304`), ontology parsing (`E301`, `E303`) — these are
-  driven entirely by `moca.json`'s own `namespaces`/`ontologies`, not by any
+  driven entirely by `moca.json`'s own `@context`/`ontologies`, not by any
   hardcoded profile knowledge.
 - **Schema validation, auto-discovered by convention:** for each URI in
   `profile`, moca-lint derives a short name (e.g. `.../profiles/education/v1`

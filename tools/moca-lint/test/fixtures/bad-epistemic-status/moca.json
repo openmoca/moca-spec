@@ -2,5 +2,5 @@
   "id": "urn:moca:test:bad-epistemic-status",
   "version": "1.0.0",
   "title": "Bad Epistemic Status Fixture",
-  "namespaces": { "ex": "https://example.org/vocab#" }
+  "@context": { "ex": "https://example.org/vocab#" }
 }

@@ -24,7 +24,7 @@
         { "type": "string", "format": "uri" },
         { "type": "object" }
       ],
-      "description": "JSON-LD 1.1 context definition or URL mapping terms to standard IRIs."
+      "description": "JSON-LD 1.1 context definition. Required when any CURIE appears. At Level 1 it must be an inline object with CURIE prefix mappings; Level 2 and above may use a URI string or a fuller inline context object."
     },
     "id": {
       "type": "string",
@@ -72,11 +72,6 @@
     "modified": {
       "type": "string",
       "format": "date-time"
-    },
-    "namespaces": {
-      "type": "object",
-      "additionalProperties": { "type": "string", "format": "uri" },
-      "description": "Dictionary mapping CURIE prefixes to full IRIs."
     },
     "ontologies": {
       "type": "object",

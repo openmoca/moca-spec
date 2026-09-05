@@ -2,5 +2,5 @@
   "id": "urn:moca:test:invalid-evidence-locator",
   "version": "1.0.0",
   "title": "Invalid Evidence Locator Fixture",
-  "namespaces": { "ex": "https://example.org/vocab#" }
+  "@context": { "ex": "https://example.org/vocab#" }
 }

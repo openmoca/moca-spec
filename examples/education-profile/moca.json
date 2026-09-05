@@ -2,6 +2,7 @@
   "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
   "@context": {
     "moca": "https://openmoca.org/vocab/core#",
+    "education": "https://openmoca.org/vocab/education#",
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "ex": "https://example.org/vocab#",
     "ex-comp": "https://example.org/competencies#"
@@ -12,11 +13,6 @@
   "description": "MOCA package declaring the education profile: profileData.education, the education:competencies ontology role, and a tutoring skill with metadata.competencies.",
   "license": "MIT",
   "profile": ["https://openmoca.org/profiles/education/v1"],
-  "namespaces": {
-    "ex": "https://example.org/vocab#",
-    "ex-comp": "https://example.org/competencies#",
-    "skos": "http://www.w3.org/2004/02/skos/core#"
-  },
   "ontologies": {
     "education:competencies": {
       "iri": "https://example.org/curriculum/competencies",

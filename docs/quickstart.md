@@ -21,11 +21,18 @@ and `title` ([core §5.1](../moca-core-spec.md#51-manifest-properties)):
 
 ```json
 {
+  "@context": {
+    "ex": "https://example.org/vocab#"
+  },
   "id": "urn:moca:example:my-package",
   "version": "1.0.0",
   "title": "My Package"
 }
 ```
+
+When a package uses CURIEs such as `ex:MyConcept`, `@context` is required. At
+Level 1 it is an inline prefix map, so ordinary JSON tooling can resolve those
+CURIEs without JSON-LD processing.
 
 Do not add `endpoints`, `settings`, `credentials`, or `apiKeys` — these are
 explicitly excluded from any MOCA manifest

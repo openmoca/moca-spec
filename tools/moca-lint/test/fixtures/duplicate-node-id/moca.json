@@ -2,5 +2,5 @@
   "id": "urn:moca:test:duplicate-node-id",
   "version": "1.0.0",
   "title": "Duplicate Node Id Fixture",
-  "namespaces": { "ex": "https://example.org/vocab#" }
+  "@context": { "ex": "https://example.org/vocab#" }
 }
