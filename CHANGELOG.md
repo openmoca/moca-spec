@@ -28,15 +28,8 @@ and compatibility policy.
 
 ### Added
 
-- `moca-core-spec.md` — MOCA Core Package Specification (beta).
-- `moca-education-profile.md` — MOCA Education Profile (beta).
-- Repository community files (README, CONTRIBUTING, CODE_OF_CONDUCT,
-  GOVERNANCE, SECURITY) for public release under `openmoca/moca-spec`.
-- `schemas/core/moca.schema.json` — JSON Schema for the root manifest.
-- `schemas/core/context.jsonld` — canonical JSON-LD context for the core
-  vocabulary.
-- `schemas/education/profile.schema.json` — JSON Schema for
-  `profileData.education`.
-- Example packages under `examples/` covering Level 1–3 conformance, the
-  education profile, and the sidecar augmentation pattern.
-- CI validation workflow (`.github/workflows/validate.yml`).
+- `moca-eu-ai-act-profile.md` — MOCA EU AI Act compliance profile (beta), demonstrating how regulatory and compliance standards are modeled as ordinary MOCA profiles.
+- `schemas/eu-ai-act/profile.schema.json` — JSON Schema for `profileData.euAiAct` with open-string classification fields.
+- Example EU AI Act package under `examples/eu-ai-act-profile/` with profileData, governance ontology (SHACL), and human oversight content node.
+- New subsection [core §10.5](moca-core-spec.md#105-compliance--standards-profiles) documenting compliance and standards profiles, their relationship to the ordinary profile mechanism, and a reference table of candidate profiles (EU AI Act, NIST AI RMF, ISO/IEC 42001, etc.).
+- Cross-reference updates: README.md Specification list, CONTRIBUTING.md compliance profile guidance, docs/quickstart.md "Going further" table.

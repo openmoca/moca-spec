@@ -49,6 +49,12 @@ Profiles are additive extensions to MOCA Core (see
    `moca-<profile-name>-profile.md` file at the repo root, following the
    structure of [moca-education-profile.md](moca-education-profile.md).
 
+**Compliance and regulatory-standard profiles** follow the same process. See
+[core §10.5](moca-core-spec.md#105-compliance--standards-profiles) for how regulatory
+standards (EU AI Act, NIST AI RMF, etc.) are modeled using the ordinary profile mechanism.
+When proposing a compliance profile, the reference table in §10.5 should be updated
+to avoid namespace collisions with other contributors working on compliance profiles.
+
 ## Schemas and Examples
 
 Changes to `schemas/` or `examples/` should keep pace with the prose spec —

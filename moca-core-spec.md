@@ -528,6 +528,9 @@ A package declares conformance to zero or more profiles via the manifest's
 }
 ```
 
+A package MAY declare multiple profiles. For an example of compliance standards
+modeled as profiles, see §10.5.
+
 ### 10.2 Graceful Degradation
 
 A harness that does not recognize a declared profile URI MUST still process
@@ -574,6 +577,58 @@ A profile MUST NOT:
 - Make any core-required field optional, or any core-optional field
   core-required (a profile can only add its *own* additional requirements,
   scoped to packages declaring that profile)
+
+### 10.5 Compliance & Standards Profiles
+
+Regulatory and compliance standards (e.g. AI risk-management frameworks, governance
+regulations, sectoral standards) are **not a special mechanism**. They are modeled
+as ordinary profiles under the system described in §10.1–§10.4, with no additional
+top-level manifest properties, no compliance-specific profile classes, and no
+profile-of-profile inheritance.
+
+A package MAY declare multiple independent compliance profiles simultaneously
+(e.g. both an EU AI Act profile and a NIST AI RMF profile on the same package),
+each with its own `profileData` namespace. Neither profile has any dependency
+on the other; they are orthogonal classification systems.
+
+Compliance profiles SHOULD reuse the core `governance` ontology role (§6.2) for
+any machine-checkable formal rules (e.g. SHACL shapes encoding an oversight
+constraint or a risk-category decision tree). Reserve `profileData` fields for
+human-authored classification data: risk tiers, oversight levels, category
+labels, provenance URIs, and cross-references to specific content nodes
+representing compliance procedures.
+
+Classification-style fields (risk tier, oversight level, category name) SHOULD
+be open strings rather than closed enums. Legal and regulatory text evolves on
+a different cadence than the MOCA specification itself; hardcoding an enum in
+the schema creates a maintenance burden and makes field values brittle as the
+underlying regulation is amended. Instead, provide examples in the profile's
+prose documentation, and allow consumers and authors to extend the set of valid
+values.
+
+Each compliance profile SHOULD include a field (e.g. `regulationVersion`) naming
+the specific version, edition, or date of the standard being applied, so that
+classifications remain traceable as the regulation changes. This also helps
+tooling and auditors understand which version of a standard a package was
+classified against.
+
+#### Candidate Compliance & Standards Profiles
+
+The following table tracks profiles following this pattern to help contributors
+coordinate and avoid namespace collisions. Profiles listed as "not yet authored"
+are candidates for future contribution; see [CONTRIBUTING.md](../CONTRIBUTING.md)
+for the proposal process.
+
+| Standard | Scope | Status |
+|---|---|---|
+| EU AI Act (Regulation 2024/1689) | Legal — risk-tiered obligations, Annex III high-risk categories, Article 14 human oversight | Example profile in this repo ([moca-eu-ai-act-profile.md](../moca-eu-ai-act-profile.md)) |
+| NIST AI RMF 1.0 | Voluntary framework — Govern, Map, Measure, Manage functions | Not yet authored |
+| ISO/IEC 42001:2023 | AI management system standard | Not yet authored |
+| ISO/IEC 23894:2023 | AI risk management guidance | Not yet authored |
+| OECD AI Principles | Non-binding international principles | Not yet authored |
+
+See the EU AI Act profile example to understand how to construct a compliance
+profile following the pattern in this section.
 
 ---
 

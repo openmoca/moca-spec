@@ -70,6 +70,7 @@ details.
 
 - [MOCA Core Package Specification](moca-core-spec.md)
 - [MOCA Education Profile](moca-education-profile.md)
+- [MOCA EU AI Act Profile](moca-eu-ai-act-profile.md)
 
 ## Repository Layout
 

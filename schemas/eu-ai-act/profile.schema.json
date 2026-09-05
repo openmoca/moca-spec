@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openmoca.org/schemas/eu-ai-act/profile.schema.json",
+  "title": "MOCA EU AI Act Profile Data",
+  "description": "JSON Schema for the profileData.euAiAct object, per MOCA EU AI Act Profile §3.",
+  "type": "object",
+  "properties": {
+    "riskTier": {
+      "type": "string",
+      "description": "Regulatory risk classification, e.g. prohibited, high_risk, limited, minimal. Open vocabulary — no enforced enum, allowing for regulatory evolution and domain-specific variants."
+    },
+    "regulationVersion": {
+      "type": "string",
+      "description": "Version, edition, or regulation ID being applied, e.g. 2024/1689. Allows classifications to remain traceable as regulation is amended."
+    },
+    "intendedPurpose": {
+      "type": "string",
+      "description": "Natural-language description of the system's intended purpose and use case."
+    },
+    "annexIiiCategory": {
+      "type": "string",
+      "description": "Annex III high-risk category, e.g. Employment decision-making, Biometric identification. Open string; applicable if the package is classified as high-risk."
+    },
+    "dataGovernance": {
+      "type": "object",
+      "properties": {
+        "provenanceUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "Reference (URL or URN) to documentation or a knowledge node describing data provenance, collection method, and preprocessing."
+        },
+        "dataCutoff": {
+          "type": "string",
+          "format": "date",
+          "description": "Most recent date of data collection or update (ISO-8601), e.g. 2024-06-30."
+        }
+      }
+    },
+    "humanOversight": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "string",
+          "description": "Oversight model, e.g. human_in_the_loop (human reviews every decision), human_on_the_loop (human available for monitoring/override), human_in_command (human retains final authority). Open vocabulary; variations allowed."
+        },
+        "overrideNode": {
+          "type": "string",
+          "description": "URN reference to a content node documenting the human override or escalation procedure, e.g. urn:node:override-procedure."
+        },
+        "requiredRole": {
+          "type": "string",
+          "description": "Role or team responsible for oversight, e.g. compliance-officer, ethics-review-board."
+        }
+      }
+    }
+  },
+  "required": ["riskTier", "regulationVersion", "intendedPurpose"],
+  "additionalProperties": false
+}

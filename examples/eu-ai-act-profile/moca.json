@@ -1,0 +1,45 @@
+{
+  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "@context": {
+    "moca": "https://openmoca.org/vocab/core#",
+    "euAiAct": "https://openmoca.org/vocab/eu-ai-act#",
+    "ex": "https://example.org/vocab#"
+  },
+  "id": "urn:moca:example:eu-ai-act-profile",
+  "version": "1.0.0",
+  "title": "EU AI Act Profile Example",
+  "description": "MOCA package declaring the EU AI Act profile: profileData.euAiAct with risk classification, data governance metadata, and human oversight references.",
+  "license": "MIT",
+  "profile": ["https://openmoca.org/profiles/eu-ai-act/v1"],
+  "ontologies": {
+    "governance": {
+      "iri": "https://example.org/eu-ai-act/governance",
+      "role": "governance",
+      "format": "turtle",
+      "uri": "./ontologies/governance.shacl.ttl"
+    }
+  },
+  "entryConcepts": ["ex:AISystem"],
+  "profileData": {
+    "euAiAct": {
+      "riskTier": "high_risk",
+      "regulationVersion": "2024/1689",
+      "intendedPurpose": "Employment screening system using AI to assess candidate compatibility with role requirements",
+      "annexIiiCategory": "Employment decision-making",
+      "dataGovernance": {
+        "provenanceUri": "https://example.org/datasets/employment-data-v2",
+        "dataCutoff": "2024-06-30"
+      },
+      "humanOversight": {
+        "level": "human_in_the_loop",
+        "overrideNode": "urn:node:override-procedure",
+        "requiredRole": "compliance-officer"
+      }
+    }
+  },
+  "signature": {
+    "type": "sigstore",
+    "value": "PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST",
+    "keyid": "placeholder-key-id"
+  }
+}

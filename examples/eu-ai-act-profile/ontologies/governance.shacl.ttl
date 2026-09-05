@@ -1,0 +1,86 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix moca: <https://openmoca.org/vocab/core#> .
+@prefix euAiAct: <https://openmoca.org/vocab/eu-ai-act#> .
+@prefix ex: <https://example.org/vocab#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ========================================================================
+# EU AI Act Governance Shapes (ILLUSTRATIVE PLACEHOLDER)
+# ========================================================================
+#
+# This file demonstrates the kind of machine-checkable governance rules
+# that could be expressed in SHACL for an EU AI Act compliance package.
+# It is NOT a real regulatory rule-check and should not be treated as
+# establishing compliance with any actual regulation.
+#
+# Real governance rules would require:
+# - Formal legal interpretation by compliance experts
+# - Mapping to specific regulatory text (e.g. Annex III, Article 14)
+# - Validation against real systems and datasets
+# - Audit by external experts
+#
+# This file serves only to illustrate the pattern.
+#
+# ========================================================================
+
+# Example 1: High-risk packages MUST declare a human oversight level
+ex:HighRiskOversightShape
+    a sh:NodeShape ;
+    sh:targetNode ex:AISystem ;
+    sh:rule [
+        a sh:SPARQLRule ;
+        sh:construct """
+            CONSTRUCT {
+              ?this euAiAct:oversightConfigured true .
+            }
+            WHERE {
+              ?this euAiAct:riskTier "high_risk" .
+              ?this euAiAct:humanOversight ?oversight .
+            }
+        """ ;
+        sh:message "High-risk systems must declare humanOversight configuration." ;
+    ] .
+
+# Example 2: All high-risk packages SHOULD reference an override procedure node
+ex:OverrideProcedureReferenceShape
+    a sh:NodeShape ;
+    sh:targetNode ex:AISystem ;
+    sh:sparql [
+        sh:message "High-risk system missing reference to override procedure node (overrideNode)" ;
+        sh:prefixes (
+            [ sh:prefix "euAiAct" ;
+              sh:namespace "https://openmoca.org/vocab/eu-ai-act#"^^xsd:anyURI ]
+            [ sh:prefix "moca" ;
+              sh:namespace "https://openmoca.org/vocab/core#"^^xsd:anyURI ]
+        ) ;
+        sh:select """
+            SELECT $this
+            WHERE {
+              $this euAiAct:riskTier "high_risk" .
+              FILTER NOT EXISTS { $this euAiAct:humanOversight/euAiAct:overrideNode ?override }
+            }
+        """ ;
+    ] .
+
+# Example 3: Data cutoff SHOULD be recent (within 12 months, illustratively)
+# This is a simplified example; real temporal constraints would need domain expertise.
+ex:DataFreshnessShape
+    a sh:NodeShape ;
+    sh:targetNode ex:AISystem ;
+    sh:message "Data governance cutoff should be recent (typically within 12 months for employment screening)." ;
+    sh:sparql [
+        sh:prefixes (
+            [ sh:prefix "euAiAct" ;
+              sh:namespace "https://openmoca.org/vocab/eu-ai-act#"^^xsd:anyURI ]
+        ) ;
+        sh:select """
+            SELECT $this
+            WHERE {
+              $this euAiAct:dataGovernance/euAiAct:dataCutoff ?cutoff .
+              BIND (NOW() AS ?today)
+              BIND (YEAR(?today) - YEAR(?cutoff) AS ?yearDiff)
+              FILTER (?yearDiff > 1)
+            }
+        """ ;
+    ] .
