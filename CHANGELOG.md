@@ -33,6 +33,8 @@ and compatibility policy.
 - Narrowed repository validation to MOCA Core conformance and structural checks;
   `moca-lint` no longer validates profile-owned `profileData` against profile
   schemas.
+- Revised `ROADMAP.md` to add signature and trust infrastructure, operationalize
+  the `1.0.0` stability review, and reflect the completed EU AI Act profile.
 
 ### Added
 

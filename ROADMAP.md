@@ -68,8 +68,6 @@ Planned capabilities include:
 
 - `moca-convert` to create Level 1 packages from directories, Markdown sources,
   Obsidian vaults, and suitable OpenAPI inputs.
-- `moca-lint` to validate manifests, package structure, profiles, references,
-  integrity metadata, and supported conformance requirements.
 - `moca-pack` or equivalent archive creation and extraction workflows.
 - `moca-index` to generate optional search indexes and associated embeddings.
 - Machine-readable output for CI, JSON, SARIF, and human-readable reports.
@@ -78,10 +76,55 @@ Planned capabilities include:
 - Cross-platform installation, versioned command behavior, and documented exit
   codes.
 
+#### moca-lint Validation Contract
+
+Treat `moca-lint` as an independently versioned validation contract within the
+CLI ecosystem.
+
+- Define which schema, package-boundary, integrity, profile, and conformance
+  checks are normative for each release.
+- Treat schema or lint errors that allow invalid manifests to pass as
+  security-sensitive issues, consistent with [SECURITY.md](SECURITY.md).
+- Track contract changes explicitly in [CHANGELOG.md](CHANGELOG.md), including
+  the existing change that removed profile-owned `profileData` validation and
+  added path-boundary checks.
+- Keep profile-specific linting out of this repository's core linter; profile
+  owners may provide separate validation tooling as documented in
+  [profiles/README.md](profiles/README.md).
+- Publish compatibility fixtures and migration notes when validation behavior
+  changes.
+
 **Outcome:** Developers can create, inspect, validate, package, and prepare
 MOCA assets from a documented open-source command line.
 
-### 4. Core SDKs Across Languages
+### 4. Signature & Trust Infrastructure
+
+Establish the signing and verification path required for packages containing
+`skills/`.
+
+- Provide reference Sigstore/DSSE signing and verification tooling.
+- Document the key, certificate, identity, and signer trust model for package
+  authors and consumers.
+- Integrate signature verification into `moca-lint` and expose actionable
+  diagnostics for unsigned, malformed, or unverifiable skill-bearing packages.
+- Define offline and online verification behavior, including how trust roots,
+  identity constraints, and revocation information are handled.
+- Add conformance fixtures for valid, invalid, missing, and placeholder
+  signatures.
+
+This work operationalizes [core §8.2](moca-core-spec.md#82-security--trust-boundary-rule)
+and [core §3.1](moca-core-spec.md#31-level-requirement-clarification), which
+make signatures mandatory for any package containing `skills/`. The current
+skill-bearing examples (`examples/level-3-extended`,
+`profiles/education/examples/education-profile`, and
+`profiles/eu-ai-act/examples/eu-ai-act-profile`) ship only placeholder
+signatures, as explained in their README disclaimers. This is currently a
+specification requirement without an implementation path.
+
+**Outcome:** Hosts can make a defensible trust decision before loading or
+executing skill content.
+
+### 5. Core SDKs Across Languages
 
 Define and implement a language-neutral core SDK contract so applications do not
 need to manipulate package files directly.
@@ -108,7 +151,7 @@ Additional languages should be prioritized by adopter demand and ecosystem fit.
 **Outcome:** Applications can integrate MOCA through stable, idiomatic libraries
 while sharing one format contract and cross-language test suite.
 
-### 5. Generic AI Harness
+### 6. Generic AI Harness
 
 Provide a reference generic AI harness that demonstrates how MOCA can be
 consumed without coupling the package format to a single model provider or agent
@@ -127,7 +170,7 @@ The harness should demonstrate:
 **Outcome:** MOCA has a neutral reference consumer that illustrates graceful
 degradation from simple content access to richer retrieval and reasoning.
 
-### 6. Framework and Enterprise Integration
+### 7. Framework and Enterprise Integration
 
 Connect MOCA to commonly used agent frameworks and enterprise hosting patterns.
 
@@ -148,7 +191,7 @@ MOCA data, harness behavior, and host security policy.
 **Outcome:** MOCA can participate in existing AI application ecosystems without
 making any one framework part of the core specification.
 
-### 7. Full End-to-End Reference Example
+### 8. Full End-to-End Reference Example
 
 Deliver a complete, runnable example that connects all major roadmap outputs.
 The example should include:
@@ -170,15 +213,18 @@ The example should include:
 MOCA moves from source material to validated package, optional search, and
 framework-integrated AI consumption.
 
-### 8. Compliance and Standards Profiles
+### 9. Compliance and Standards Profiles
 
-Establish profiles that extend the core format for regulated, standards-driven,
-and domain-specific use cases without burdening Level 1 packages.
+Partially delivered: the EU AI Act profile has shipped with its specification,
+schema, example package, and SHACL governance shapes under
+[profiles/eu-ai-act/](profiles/eu-ai-act/). The remaining roadmap work is to
+extend the profile ecosystem without burdening Level 1 packages.
 
 - Define a consistent profile registration and versioning model.
 - Document how profiles add vocabulary, validation rules, provenance, evidence,
   governance, and conformance requirements.
-- Prioritize compliance profiles such as EU AI Act governance and oversight.
+- Add candidate profiles for NIST AI RMF, ISO/IEC 42001, ISO/IEC 23894, and
+  OECD AI Principles, as listed in [core §10.5](moca-core-spec.md#105-compliance--standards-profiles).
 - Add standards alignment for relevant areas including JSON-LD, RDF, SHACL,
   W3C Web Annotation, PROV-O, RO-Crate, and Agent Skills.
 - Make profile requirements explicit, testable, and independently distributable.
@@ -188,11 +234,14 @@ and domain-specific use cases without burdening Level 1 packages.
 **Outcome:** Compliance and standards support is composable, auditable, and
 separate from the minimum MOCA package contract.
 
-### 9. Website and Documentation
+### 10. Website and Documentation
 
 Create a public-facing information and learning experience that makes MOCA
 understandable before developers need to inspect the specification.
 
+- Foundational documentation should track the timeline of item 1; it should
+  not wait for a complete public website. The existing
+  [docs/quickstart.md](docs/quickstart.md) is the starting point.
 - Build a website for the project, specification, profiles, SDKs, tools, and
   examples.
 - Publish a short Level 1 quickstart and progressively deeper guides.
@@ -207,11 +256,32 @@ understandable before developers need to inspect the specification.
 **Outcome:** New users can understand MOCA, create a package, and find the
 correct implementation guidance without needing private project context.
 
+### 11. Path to 1.0.0
+
+Operationalize the stability commitments already described in
+[docs/versioning-and-release.md](docs/versioning-and-release.md).
+
+- Conduct an explicit stability review of the core specification, schemas,
+  conformance levels, SDK contracts, CLI behavior, profiles, and trust model.
+- Publish versioned normative schemas and identify which schemas are
+  compatibility commitments.
+- Define and document the migration policy for breaking changes, deprecated
+  fields, validation changes, profile versions, and index versions.
+- Record the review outcome, unresolved compatibility risks, and required
+  migration tooling before declaring `1.0.0`.
+
+**Outcome:** MOCA reaches `1.0.0` with explicit compatibility expectations,
+versioned normative artifacts, and a documented path for existing packages and
+implementations to migrate.
+
 ## Cross-Cutting Principles
 
 - **Low entry bar:** Level 1 should solve a useful problem with minimal tooling.
 - **Opt-in complexity:** Semantic graphs, compliance profiles, indexes, skills,
   and framework integrations should be additive.
+- **Core/profile boundary:** Profile-specific linting is intentionally out of
+  scope for this repository's `moca-lint`; profile owners may ship separate
+  validation tooling.
 - **Portable core:** The package format must remain storage-, model-, and
   framework-neutral.
 - **Integrity by design:** Derived indexes must identify and bind to their source
