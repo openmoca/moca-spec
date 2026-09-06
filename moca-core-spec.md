@@ -128,7 +128,7 @@ package-name/
 │   ├── domain.jsonld
 │   └── validation.shacl.ttl
 │
-├── content/                  # [Required for Grounded Text] CommonMark knowledge nodes (.md)
+├── content/                  # [Required] CommonMark knowledge nodes (.md)
 │   ├── 01-introduction.md
 │   └── 02-advanced-patterns.md
 │
