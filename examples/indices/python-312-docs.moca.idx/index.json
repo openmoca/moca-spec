@@ -1,0 +1,27 @@
+{
+  "$schema": "https://spec.openmoca.org/schemas/core/sidecar-index.schema.json",
+  "manifest_version": "1.0.0",
+  "target_package_id": "urn:moca:pkg:python-312-docs:3.12",
+  "target_package_hash": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "index_type": "hybrid_vector_bm25",
+  "model_info": {
+    "dense_model": "BAAI/bge-m3",
+    "dimensions": 1024,
+    "sparse_model": "BAAI/bge-m3",
+    "normalization": "l2"
+  },
+  "chunking": {
+    "strategy": "semantic_markdown",
+    "max_tokens": 512,
+    "overlap_tokens": 64
+  },
+  "item_addressing": {
+    "content_path": "content_path",
+    "chunk_index": "chunk_index",
+    "chunk_count": "chunk_count"
+  },
+  "storage": {
+    "format": "jsonl",
+    "file": "payload/index.jsonl"
+  }
+}

@@ -20,7 +20,13 @@ const validateCore = ajv.compile(coreSchema);
 
 const exampleDirs = [
   ...readdirSync(join(root, 'examples'))
-    .filter((name) => statSync(join(root, 'examples', name)).isDirectory())
+    .filter((name) => {
+      const examplePath = join(root, 'examples', name);
+      return (
+        statSync(examplePath).isDirectory() &&
+        existsSync(join(examplePath, 'moca.json'))
+      );
+    })
     .map((name) => join('examples', name)),
   'profiles/education/examples/education-profile',
   'profiles/eu-ai-act/examples/eu-ai-act-profile',

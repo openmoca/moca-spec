@@ -36,18 +36,11 @@ grounded examples, quickstart, and CI validation are in place.
 Define an optional `.moca.idx` artifact for consumers that want semantic or
 hybrid search.
 
-The index should contain a versioned index manifest and associated embedding or
-search data. The manifest should define, at minimum:
-
-- Index manifest version.
-- Target package identifier.
-- Target package hash.
-- Index type, such as dense vector, sparse BM25, or hybrid.
-- Embedding model and preprocessing metadata.
-- Content or node identity for each indexed item.
-- Vector dimensions and distance metric where applicable.
-- Storage format and compatibility information.
-- Reproducibility and regeneration metadata.
+The index should contain the versioned `index.json` manifest and associated
+embedding or search payload. The adopted
+[MOCA Sidecar Index Specification](docs/sidecar-index-spec.md) defines the
+portable manifest, optional SHA-256 target binding, and required per-item
+content-path and chunk addressing while keeping payload storage open-ended.
 
 Design principles:
 
@@ -55,7 +48,7 @@ Design principles:
   index.
 - Embeddings are optional derived data and are not required in the base package.
 - Index storage must remain separable from the core package and its manifest.
-- Consumers may select an index only when its target identity and hash match.
+- Consumers SHOULD verify a declared target hash before selecting an index.
 - The format should allow local files, packaged sidecars, and external index
   providers without prescribing one vector database.
 

@@ -160,6 +160,14 @@ adapters:
 - **Virtual / Database Store**: Shredded database records or object-store
   references.
 
+#### 4.1.1 Optional Search Sidecars
+
+A package MAY be accompanied by an external `.moca.idx` sidecar containing
+derived search data. A sidecar does not alter this package layout, `moca.json`,
+or package conformance. Its optional target binding and format-neutral indexed
+item addressing are defined by the
+[MOCA Sidecar Index Specification](docs/sidecar-index-spec.md).
+
 ### 4.2 Localization Convention
 
 Content files supporting multiple locales use a filename suffix matching a
