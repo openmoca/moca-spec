@@ -1,23 +1,71 @@
 # Quickstart: Build Your First MOCA Package
 
-This walkthrough builds a Level 1 (MOCA Core) package from scratch, then
-points you at where to go for JSON-LD, ontologies, and signed skills.
+This walkthrough builds a Level 1 (MOCA Core) package from ordinary JSON and
+Markdown, then adds optional identity and concept-grounding metadata.
 
-## 1. Start from the minimal example
+## 1. Start from the bare example
 
 The smallest valid MOCA package is
-[examples/level-1-minimal](../examples/level-1-minimal): a `moca.json`
-manifest plus one grounded content node. Copy that folder as your starting
-point:
+[examples/level-1-bare](../examples/level-1-bare): a `moca.json` manifest plus
+one plain CommonMark file. Copy that folder as your starting point:
 
 ```sh
-cp -r examples/level-1-minimal my-package
+cp -r examples/level-1-bare my-package
 ```
 
 ## 2. The manifest (`moca.json`)
 
 Every MOCA package needs a root manifest with, at minimum, `id`, `version`,
 and `title` ([core §5.1](../moca-core-spec.md#51-manifest-properties)):
+
+```json
+{
+  "id": "urn:moca:example:my-package",
+  "version": "1.0.0",
+  "title": "My Package"
+}
+```
+
+Do not add `endpoints`, `settings`, `credentials`, or `apiKeys` — these are
+explicitly excluded from any MOCA manifest
+([core §5.3](../moca-core-spec.md#53-excluded-properties)) because MOCA
+packages are runtime-independent data, not configuration.
+
+## 3. Add plain CommonMark content
+
+Create at least one Markdown file under `content/`:
+
+```markdown
+# My First Node
+
+This content can be consumed with ordinary Markdown tooling.
+```
+
+No YAML frontmatter is required. When a node has no explicit `id`, a harness
+identifies it by its file path relative to `content/`, such as
+`01-my-first-node.md`.
+
+This is the informal **bare** rung of Level 1. The terms bare, identified, and
+grounded describe increasing metadata richness within Level 1; they are not
+new conformance levels.
+
+## 4. Optional: add identity and concept grounding
+
+Add frontmatter when consumers need a stable identifier or display title.
+This is the informal **identified** rung:
+
+```markdown
+---
+id: urn:node:my-first-node
+title: My First Node
+---
+# My First Node
+
+This content has an explicit identity.
+```
+
+Concept binding and other metadata are also optional. To use a CURIE such as
+`ex:MyConcept`, first add its prefix to an inline `@context` in `moca.json`:
 
 ```json
 {
@@ -30,19 +78,8 @@ and `title` ([core §5.1](../moca-core-spec.md#51-manifest-properties)):
 }
 ```
 
-When a package uses CURIEs such as `ex:MyConcept`, `@context` is required. At
-Level 1 it is an inline prefix map, so ordinary JSON tooling can resolve those
-CURIEs without JSON-LD processing.
-
-Do not add `endpoints`, `settings`, `credentials`, or `apiKeys` — these are
-explicitly excluded from any MOCA manifest
-([core §5.3](../moca-core-spec.md#53-excluded-properties)) because MOCA
-packages are runtime-independent data, not configuration.
-
-## 3. Ground content in `content/`
-
-Add a CommonMark file under `content/` with YAML frontmatter linking it to a
-concept ([core §7.1](../moca-core-spec.md#71-commonmark-knowledge-nodes-content)):
+Then enrich the content node with concept and provenance metadata
+([core §7.1](../moca-core-spec.md#71-commonmark-knowledge-nodes-content)):
 
 ```markdown
 ---
@@ -59,7 +96,12 @@ summary: "One-line summary of what this node grounds."
 The Markdown body a harness surfaces to a model or a user.
 ```
 
-## 4. Validate
+This is the informal **grounded** rung. The
+[level-1-minimal example](../examples/level-1-minimal) demonstrates this form.
+An `@context` is required only when a CURIE appears anywhere in the package;
+it is unnecessary for the bare example because that package uses no CURIEs.
+
+## 5. Validate
 
 ```sh
 npm install
@@ -77,7 +119,7 @@ To validate only the manifest against
 npx ajv-cli validate -s schemas/core/moca.schema.json -d my-package/moca.json --spec=draft2020
 ```
 
-## 5. Going further
+## 6. Going further
 
 | Want to... | Look at |
 |---|---|

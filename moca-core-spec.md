@@ -100,9 +100,12 @@ conformance level.
 
 | Level | Name | Requirements |
 |---|---|---|
-| **1** | MOCA Core | Valid `moca.json` root manifest. Grounded CommonMark knowledge nodes (`content/`) bound to concepts via YAML frontmatter and a resolvable inline `@context` prefix map. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |
+| **1** | MOCA Core | Valid `moca.json` root manifest containing `id`, `version`, and `title`, plus at least one CommonMark file under `content/`. An inline `@context` prefix map is required only when a CURIE appears anywhere in the package. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |
 | **2** | MOCA Semantic | Adds formal ontologies (`ontologies/`) using RDF, SKOS, or OWL. SHACL shape validation. `claims` are interpretable as RDF triples. `evidence` links resolve against PROV-O provenance records. |
 | **3** | MOCA Extended | Adds W3C Web Annotation selectors for precise multi-modal locators. Cryptographic digests and digital signatures (Sigstore / DSSE / in-toto) — **mandatory, not optional, for any package containing `skills/`** (see §8.2). Optional Agent Skills. |
+
+YAML frontmatter and its fields are optional, additive enrichment at Level 1.
+See §7.1 for content-node identity and metadata behavior.
 
 ### 3.1 Level Requirement Clarification
 
@@ -170,6 +173,9 @@ content/01-introduction.pt-BR.md  # Brazilian Portuguese
 
 A harness resolving content for a given locale MUST fall back to the
 unsuffixed file if no locale-specific variant exists.
+Filename-based locale matching and fallback work identically whether a node
+declares a frontmatter `id` or derives its identity from its relative path
+within `content/`.
 
 ---
 
@@ -334,8 +340,14 @@ one is declared, rather than silently treating the reference as broken.
 
 ### 7.1 CommonMark Knowledge Nodes (`content/`)
 
-Knowledge nodes are CommonMark documents with YAML frontmatter linking them
-to concepts, declaring epistemic status, and providing evidence references:
+Knowledge nodes are CommonMark documents under `content/`. At Level 1, YAML
+frontmatter is OPTIONAL. The `id`, `title`, `concepts`, `epistemicStatus`,
+`summary`, `evidence`, and `claims` fields are each OPTIONAL, additive
+enrichment. When `id` is absent, a harness MUST derive the node's identity
+from its file path relative to `content/`.
+
+The following enriched node uses frontmatter to provide an explicit identity,
+link concepts, declare epistemic status, and reference evidence:
 
 ```markdown
 ---

@@ -28,6 +28,10 @@ and compatibility policy.
 
 ### Changed
 
+- Lowered the Level 1 floor to a valid `moca.json` plus at least one CommonMark
+  file under `content/`; YAML frontmatter is now optional, missing node IDs
+  fall back to content-relative paths, and `@context` is required only when a
+  CURIE appears (core §3, §4.2, and §7.1).
 - Reorganized profile specifications, schemas, and examples into self-contained
   bundles under `profiles/` for independent extraction.
 - Narrowed repository validation to MOCA Core conformance and structural checks;

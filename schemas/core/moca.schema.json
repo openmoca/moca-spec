@@ -24,7 +24,7 @@
         { "type": "string", "format": "uri" },
         { "type": "object" }
       ],
-      "description": "JSON-LD 1.1 context definition. Required when any CURIE appears. At Level 1 it must be an inline object with CURIE prefix mappings; Level 2 and above may use a URI string or a fuller inline context object."
+      "description": "JSON-LD 1.1 context definition. Required only when a CURIE appears anywhere in the package. At Level 1 it must be an inline object with CURIE prefix mappings; Level 2 and above may use a URI string or a fuller inline context object."
     },
     "id": {
       "type": "string",
