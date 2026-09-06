@@ -28,112 +28,7 @@ low.
 **Outcome:** A developer can create and consume a useful MOCA package with
 ordinary JSON and Markdown tooling.
 
-### 2. Compliance and Standards Profiles
-
-Establish profiles that extend the core format for regulated, standards-driven,
-and domain-specific use cases without burdening Level 1 packages.
-
-- Define a consistent profile registration and versioning model.
-- Document how profiles add vocabulary, validation rules, provenance, evidence,
-  governance, and conformance requirements.
-- Prioritize compliance profiles such as EU AI Act governance and oversight.
-- Add standards alignment for relevant areas including JSON-LD, RDF, SHACL,
-  W3C Web Annotation, PROV-O, RO-Crate, and Agent Skills.
-- Make profile requirements explicit, testable, and independently distributable.
-- Define how unknown profiles degrade gracefully while preserving core package
-  usability.
-
-**Outcome:** Compliance and standards support is composable, auditable, and
-separate from the minimum MOCA package contract.
-
-### 3. Website and Documentation
-
-Create a public-facing information and learning experience that makes MOCA
-understandable before developers need to inspect the specification.
-
-- Build a website for the project, specification, profiles, SDKs, tools, and
-  examples.
-- Publish a short Level 1 quickstart and progressively deeper guides.
-- Provide reference documentation for manifests, package structure, profiles,
-  indexes, SDK APIs, and CLI commands.
-- Publish compatibility matrices, conformance guidance, security boundaries,
-  and standards mappings.
-- Include runnable examples and a clear path from first package to production
-  integration.
-- Document project governance, contribution, release, and compatibility policy.
-
-**Outcome:** New users can understand MOCA, create a package, and find the
-correct implementation guidance without needing private project context.
-
-### 4. Open Source CLI Application and Developer Tooling
-
-Develop an open-source CLI application that supports the complete package
-lifecycle while keeping individual commands composable.
-
-Planned capabilities include:
-
-- `moca-convert` to create Level 1 packages from directories, Markdown sources,
-  Obsidian vaults, and suitable OpenAPI inputs.
-- `moca-lint` to validate manifests, package structure, profiles, references,
-  integrity metadata, and supported conformance requirements.
-- `moca-pack` or equivalent archive creation and extraction workflows.
-- `moca-index` to generate optional search indexes and associated embeddings.
-- Machine-readable output for CI, JSON, SARIF, and human-readable reports.
-- Deterministic behavior where practical, clear error messages, and fail-closed
-  behavior for invalid packages.
-- Cross-platform installation, versioned command behavior, and documented exit
-  codes.
-
-**Outcome:** Developers can create, inspect, validate, package, and prepare
-MOCA assets from a documented open-source command line.
-
-### 5. Core SDKs Across Languages
-
-Define and implement a language-neutral core SDK contract so applications do not
-need to manipulate package files directly.
-
-Initial SDK targets:
-
-- JavaScript/TypeScript.
-- Python.
-- .NET/C#.
-
-The SDK contract should cover:
-
-- Manifest parsing and creation.
-- Package reading, writing, and archive handling.
-- CommonMark content traversal.
-- Profile and extension discovery.
-- Core validation and structured diagnostics.
-- Package identity and integrity handling.
-- Optional index discovery without making indexes mandatory.
-- Consistent behavior and conformance tests across languages.
-
-Additional languages should be prioritized by adopter demand and ecosystem fit.
-
-**Outcome:** Applications can integrate MOCA through stable, idiomatic libraries
-while sharing one format contract and cross-language test suite.
-
-### 6. Generic AI Harness
-
-Provide a reference generic AI harness that demonstrates how MOCA can be
-consumed without coupling the package format to a single model provider or agent
-framework.
-
-The harness should demonstrate:
-
-- Loading a Level 1 package with no index attached.
-- Discovering optional semantic data, profiles, and skills.
-- Attaching an optional MOCA Index when search is desired.
-- Combining lexical, semantic, and graph-aware retrieval where available.
-- Grounding generated responses in package content and evidence locators.
-- Enforcing package, profile, skill, and integrity policies.
-- Clear behavior when optional capabilities are absent or unsupported.
-
-**Outcome:** MOCA has a neutral reference consumer that illustrates graceful
-degradation from simple content access to richer retrieval and reasoning.
-
-### 7. MOCA Index and Optional Search
+### 2. MOCA Index and Optional Search
 
 Define an optional `.moca.idx` artifact for consumers that want semantic or
 hybrid search.
@@ -164,7 +59,75 @@ Design principles:
 **Outcome:** Search can be added when useful without raising the entry bar or
 polluting the portable core format with runtime retrieval configuration.
 
-### 8. Framework and Enterprise Integration
+### 3. Open Source CLI Application and Developer Tooling
+
+Develop an open-source CLI application that supports the complete package
+lifecycle while keeping individual commands composable.
+
+Planned capabilities include:
+
+- `moca-convert` to create Level 1 packages from directories, Markdown sources,
+  Obsidian vaults, and suitable OpenAPI inputs.
+- `moca-lint` to validate manifests, package structure, profiles, references,
+  integrity metadata, and supported conformance requirements.
+- `moca-pack` or equivalent archive creation and extraction workflows.
+- `moca-index` to generate optional search indexes and associated embeddings.
+- Machine-readable output for CI, JSON, SARIF, and human-readable reports.
+- Deterministic behavior where practical, clear error messages, and fail-closed
+  behavior for invalid packages.
+- Cross-platform installation, versioned command behavior, and documented exit
+  codes.
+
+**Outcome:** Developers can create, inspect, validate, package, and prepare
+MOCA assets from a documented open-source command line.
+
+### 4. Core SDKs Across Languages
+
+Define and implement a language-neutral core SDK contract so applications do not
+need to manipulate package files directly.
+
+Initial SDK targets:
+
+- JavaScript/TypeScript.
+- Python.
+- .NET/C#.
+
+The SDK contract should cover:
+
+- Manifest parsing and creation.
+- Package reading, writing, and archive handling.
+- CommonMark content traversal.
+- Profile and extension discovery.
+- Core validation and structured diagnostics.
+- Package identity and integrity handling.
+- Optional index discovery without making indexes mandatory.
+- Consistent behavior and conformance tests across languages.
+
+Additional languages should be prioritized by adopter demand and ecosystem fit.
+
+**Outcome:** Applications can integrate MOCA through stable, idiomatic libraries
+while sharing one format contract and cross-language test suite.
+
+### 5. Generic AI Harness
+
+Provide a reference generic AI harness that demonstrates how MOCA can be
+consumed without coupling the package format to a single model provider or agent
+framework.
+
+The harness should demonstrate:
+
+- Loading a Level 1 package with no index attached.
+- Discovering optional semantic data, profiles, and skills.
+- Attaching an optional MOCA Index when search is desired.
+- Combining lexical, semantic, and graph-aware retrieval where available.
+- Grounding generated responses in package content and evidence locators.
+- Enforcing package, profile, skill, and integrity policies.
+- Clear behavior when optional capabilities are absent or unsupported.
+
+**Outcome:** MOCA has a neutral reference consumer that illustrates graceful
+degradation from simple content access to richer retrieval and reasoning.
+
+### 6. Framework and Enterprise Integration
 
 Connect MOCA to commonly used agent frameworks and enterprise hosting patterns.
 
@@ -185,7 +148,7 @@ MOCA data, harness behavior, and host security policy.
 **Outcome:** MOCA can participate in existing AI application ecosystems without
 making any one framework part of the core specification.
 
-### 9. Full End-to-End Reference Example
+### 7. Full End-to-End Reference Example
 
 Deliver a complete, runnable example that connects all major roadmap outputs.
 The example should include:
@@ -206,6 +169,43 @@ The example should include:
 **Outcome:** Users and contributors have one authoritative demonstration of how
 MOCA moves from source material to validated package, optional search, and
 framework-integrated AI consumption.
+
+### 8. Compliance and Standards Profiles
+
+Establish profiles that extend the core format for regulated, standards-driven,
+and domain-specific use cases without burdening Level 1 packages.
+
+- Define a consistent profile registration and versioning model.
+- Document how profiles add vocabulary, validation rules, provenance, evidence,
+  governance, and conformance requirements.
+- Prioritize compliance profiles such as EU AI Act governance and oversight.
+- Add standards alignment for relevant areas including JSON-LD, RDF, SHACL,
+  W3C Web Annotation, PROV-O, RO-Crate, and Agent Skills.
+- Make profile requirements explicit, testable, and independently distributable.
+- Define how unknown profiles degrade gracefully while preserving core package
+  usability.
+
+**Outcome:** Compliance and standards support is composable, auditable, and
+separate from the minimum MOCA package contract.
+
+### 9. Website and Documentation
+
+Create a public-facing information and learning experience that makes MOCA
+understandable before developers need to inspect the specification.
+
+- Build a website for the project, specification, profiles, SDKs, tools, and
+  examples.
+- Publish a short Level 1 quickstart and progressively deeper guides.
+- Provide reference documentation for manifests, package structure, profiles,
+  indexes, SDK APIs, and CLI commands.
+- Publish compatibility matrices, conformance guidance, security boundaries,
+  and standards mappings.
+- Include runnable examples and a clear path from first package to production
+  integration.
+- Document project governance, contribution, release, and compatibility policy.
+
+**Outcome:** New users can understand MOCA, create a package, and find the
+correct implementation guidance without needing private project context.
 
 ## Cross-Cutting Principles
 
