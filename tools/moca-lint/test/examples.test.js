@@ -8,6 +8,7 @@ const repoRoot = join(dirname(dirname(dirname(fileURLToPath(import.meta.url)))),
 const examplesDir = join(repoRoot, 'examples');
 
 const CLEAN_EXAMPLES = [
+  ['level-1-bare', join(examplesDir, 'level-1-bare')],
   ['level-1-minimal', join(examplesDir, 'level-1-minimal')],
   ['level-2-semantic', join(examplesDir, 'level-2-semantic')],
   ['level-3-extended', join(examplesDir, 'level-3-extended')],

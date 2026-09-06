@@ -32,6 +32,9 @@ and compatibility policy.
   file under `content/`; YAML frontmatter is now optional, missing node IDs
   fall back to content-relative paths, and `@context` is required only when a
   CURIE appears (core §3, §4.2, and §7.1).
+- Included `examples/level-1-bare` in `moca-lint` CI validation and the
+  `tools/moca-lint` test suite, closing the follow-up gap recorded in
+  `ISSUE-DRAFT-level1.md`.
 - Reorganized profile specifications, schemas, and examples into self-contained
   bundles under `profiles/` for independent extraction.
 - Narrowed repository validation to MOCA Core conformance and structural checks;

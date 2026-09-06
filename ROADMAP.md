@@ -28,6 +28,9 @@ low.
 **Outcome:** A developer can create and consume a useful MOCA package with
 ordinary JSON and Markdown tooling.
 
+**Outcome — Status: Complete.** The Level 1 specification, schema, bare and
+grounded examples, quickstart, and CI validation are in place.
+
 ### 2. MOCA Index and Optional Search
 
 Define an optional `.moca.idx` artifact for consumers that want semantic or
