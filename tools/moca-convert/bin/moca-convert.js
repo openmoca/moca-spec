@@ -42,8 +42,8 @@ program
   .option('-v, --verbose', 'increase console verbosity (repeatable)', (_, prev) => prev + 1, 0)
   .option('-q, --quiet', 'suppress non-error console output', false)
   .option('--no-color', 'disable colored output')
-  .action((input, options) => {
-    run(input, options);
+  .action(async (input, options) => {
+    await run(input, options);
   });
 
 // Commander's own usage errors (missing required options, unknown flags,
@@ -82,7 +82,7 @@ function writeReport(options, formatted) {
   }
 }
 
-function run(input, options) {
+async function run(input, options) {
   const logger = makeLogger(options);
   try {
     const target = resolveInputTarget(input);
@@ -102,7 +102,7 @@ function run(input, options) {
       },
     });
 
-    const { findings } = writeDraft({
+    const { findings } = await writeDraft({
       draft,
       outDir: options.output,
       force: options.force,

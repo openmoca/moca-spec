@@ -11,14 +11,21 @@ Demonstrates MOCA Core Level 3 conformance
 
 ## ⚠️ About the `signature` field
 
-The `signature` object in `moca.json` is a **placeholder**, not a real
-cryptographic signature. Its `value` is the literal string
-`"PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST"`. No Sigstore/DSSE signing
-infrastructure exists for this repo yet.
+`moca.json` carries a real, verifiable `dsse`-mode signature (see
+[docs/trust-model.md](../../docs/trust-model.md)) — **but it is signed with
+this repository's own non-production example key**
+([examples/keys/README.md](../keys/README.md)), not a signer any real host
+should trust. Verify it yourself with:
+
+```sh
+node tools/moca-sign/bin/moca-sign.js verify examples/level-3-extended \
+  --trust-root examples/keys/example-signing-trust-root.json
+```
 
 Per [core §8.2](../../moca-core-spec.md#82-security--trust-boundary-rule), a
 real harness MUST refuse to load `skills/` content from a package whose
-signature does not verify — this example package would (and should) be
-rejected by any conforming signature-checking implementation. It exists
-purely to show the *shape* of a Level 3 package with `skills/`, not to be
-loaded as trusted.
+signature does not verify against a trust root *it* configured. Verifying
+successfully against this repo's example trust root does not make this
+package trustworthy for any purpose beyond demonstrating the mechanism —
+no real host should ever add `moca-spec-example-signing-key-2026` to its own
+trust root.

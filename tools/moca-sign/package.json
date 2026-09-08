@@ -1,0 +1,22 @@
+{
+  "name": "moca-sign",
+  "private": true,
+  "version": "0.1.0-beta.1",
+  "description": "Reference Sigstore/DSSE signing and verification CLI for MOCA packages containing skills/.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "moca-sign": "./bin/moca-sign.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "canonicalize": "2.1.0",
+    "commander": "^12.1.0",
+    "picocolors": "^1.1.1",
+    "sigstore": "^5.0.0"
+  }
+}

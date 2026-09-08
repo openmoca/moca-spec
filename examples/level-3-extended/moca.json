@@ -9,10 +9,16 @@
   "title": "Level 3 Extended Example",
   "description": "MOCA Core package demonstrating Level 3 (MOCA Extended) conformance: W3C Web Annotation locators, an Agent Skill, and a mandatory signature. See README.md in this folder for an important note on the signature value.",
   "license": "MIT",
-  "entryConcepts": ["ex:ServiceCommunication"],
+  "entryConcepts": [
+    "ex:ServiceCommunication"
+  ],
   "signature": {
-    "type": "sigstore",
-    "value": "PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST",
-    "keyid": "placeholder-key-id"
+    "type": "dsse",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBzWlhabGJDMHpMV1Y0ZEdWdVpHVmtRREV1TUM0d0lpd2laR2xuWlhOMElqcDdJbk5vWVRJMU5pSTZJbU16TVRGaU5URmtPR05tWXpZM01tTTNZek5pTVdZeFpHRTROekl6WlRRNVlUazFORGcwTURKbE5tRTJNakpsTjJFeE9XTTVNV1pqT0dSbU1qSXpNelFpZlgxZExDSndjbVZrYVdOaGRHVlVlWEJsSWpvaWFIUjBjSE02THk5dmNHVnViVzlqWVM1dmNtY3ZZWFIwWlhOMFlYUnBiMjV6TDNCaFkydGhaMlV0YzJsbmJtRjBkWEpsTDNZeElpd2ljSEpsWkdsallYUmxJanA3ZlgwPSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6IjFERFB0byt1bmRGMTNNVWNZbTFOdERUellJc2JJK2lPbks5c051VHAvem9qQVRJUG1UTjV5RHcxSTdFam9jMXh0bVpYSEZ2MFRFSXVrRUsvdENwVkF3PT0ifV19",
+    "keyid": "moca-spec-example-signing-key-2026"
+  },
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "c311b51d8cfc672c7c3b1f1da8723e49a9548402e6a622e7a19c91fc8df22334"
   }
 }

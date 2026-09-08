@@ -1,0 +1,14 @@
+{
+  "id": "urn:moca:test:signature-wrong-signer",
+  "version": "1.0.0",
+  "title": "Signature Wrong Signer Fixture",
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "9361b20c90da7e77ef1d9183af895f6b760a4ad050b4ddc49c6dc3757a0001c5"
+  },
+  "signature": {
+    "type": "dsse",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2ZEdWemREcHphV2R1WVhSMWNtVXRkM0p2Ym1jdGMybG5ibVZ5UURFdU1DNHdJaXdpWkdsblpYTjBJanA3SW5Ob1lUSTFOaUk2SWprek5qRmlNakJqT1RCa1lUZGxOemRsWmpGa09URTRNMkZtT0RrMVpqWmlOell3WVRSaFpEQTFNR0kwWkdSak5EbGpObVJqTXpjMU4yRXdNREF4WXpVaWZYMWRMQ0p3Y21Wa2FXTmhkR1ZVZVhCbElqb2lhSFIwY0hNNkx5OXZjR1Z1Ylc5allTNXZjbWN2WVhSMFpYTjBZWFJwYjI1ekwzQmhZMnRoWjJVdGMybG5ibUYwZFhKbEwzWXhJaXdpY0hKbFpHbGpZWFJsSWpwN2ZYMD0iLCJwYXlsb2FkVHlwZSI6ImFwcGxpY2F0aW9uL3ZuZC5pbi10b3RvK2pzb24iLCJzaWduYXR1cmVzIjpbeyJrZXlpZCI6Im1vY2EtbGludC1maXh0dXJlLXVudHJ1c3RlZC1zaWduZXIiLCJzaWciOiJETEZKUnV1M3BHL0padXRQckZxZkJDV3l1K0JMSk5NWDVvS0l6Mkw2cEJCcmZvVXJ3Mk9VcndVN3U4R0VvMXpkNlJnYmNyTzhBOEZickp6cGxhOVdEZz09In1dfQ==",
+    "keyid": "moca-lint-fixture-untrusted-signer"
+  }
+}

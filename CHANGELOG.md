@@ -163,6 +163,41 @@ and compatibility policy.
 - New example packages: `examples/composition-members/` (a composition-only
   course referencing two module packages) and `examples/composition-relates/`
   (two independent documents linked via `crossReferences`/`supersedes`).
+- Completed `ROADMAP.md` item 6 (Signature & Trust Infrastructure),
+  operationalizing core §8.2/§3.1's signature requirement, which previously
+  had no implementation path:
+  - `docs/trust-model.md` (new): the signer/verifier trust model core §8.2
+    references — a signature signs a DSSE-wrapped in-toto v1 Statement over
+    `canonicalDigest.value` (not the raw archive), two supported modes
+    (`sigstore` keyless Fulcio/Rekor and `dsse` long-lived-key), trust-root
+    and identity-constraint configuration for both, offline-by-default /
+    opt-in `--online-verify` behavior, and revocation handling per mode.
+  - `tools/moca-sign` (new workspace package): reference `sign`/`verify`
+    CLI and library (`verifyPackageSignature()`) implementing both modes —
+    hand-rolled DSSE (PAE encoding + Ed25519) for `dsse` mode, a thin
+    wrapper over the `sigstore` npm package's `attest()`/`verify()` for
+    `sigstore` mode.
+  - `tools/moca-lint`: Pass 4 now cryptographically verifies a present
+    `signature` via `moca-sign` instead of only checking it's structurally
+    present. New `--trust-root`, `--identity-constraint`, and
+    `--allow-offline-fallback` flags; `--online-verify` (previously accepted
+    but documented as not implemented) now does something. `lintPackage()`/
+    `packPackage()` are now async, since verification (`sigstore` mode) can
+    involve asynchronous work — every caller across `moca-lint`,
+    `moca-convert`, and their test suites was updated to `await` it.
+  - `moca-core-spec.md` §5.5: `canonicalDigest`'s manifest-hash input now
+    also excludes `signature`, for the same self-reference reason it already
+    excluded `canonicalDigest` itself — see MIGRATIONS.md.
+  - Conformance fixtures under `tools/moca-lint/test/fixtures/` covering
+    valid, missing, placeholder, tampered-after-signing, and
+    untrusted-signer signatures.
+  - Re-signed the three previously-placeholder-signature examples
+    (`examples/level-3-extended`,
+    `profiles/education/examples/education-profile`,
+    `profiles/eu-ai-act/examples/eu-ai-act-profile`) with a real, documented,
+    non-production `dsse`-mode example key (`examples/keys/`), updating each
+    README's disclaimer accordingly; `npm run lint:moca` now passes
+    `--trust-root` to verify them.
 
 ### Fixed
 

@@ -16,11 +16,11 @@ function tempDir(prefix = 'moca-lint-extract-test-') {
   return mkdtempSync(join(tmpdir(), prefix));
 }
 
-test('extractArchive extracts a valid .moca archive to a fresh destination directory', () => {
+test('extractArchive extracts a valid .moca archive to a fresh destination directory', async () => {
   const workDir = tempDir();
   try {
     const archivePath = join(workDir, 'pkg.moca');
-    const { success } = packPackage({ rootDir: level1MinimalDir, outPath: archivePath });
+    const { success } = await packPackage({ rootDir: level1MinimalDir, outPath: archivePath });
     assert.ok(success);
 
     const destDir = join(workDir, 'extracted');
@@ -33,11 +33,11 @@ test('extractArchive extracts a valid .moca archive to a fresh destination direc
   }
 });
 
-test('pack -> extract round trip reproduces byte-identical content (canonicalDigest matches)', () => {
+test('pack -> extract round trip reproduces byte-identical content (canonicalDigest matches)', async () => {
   const workDir = tempDir();
   try {
     const archivePath = join(workDir, 'pkg.moca');
-    packPackage({ rootDir: level1MinimalDir, outPath: archivePath });
+    await packPackage({ rootDir: level1MinimalDir, outPath: archivePath });
 
     const destDir = join(workDir, 'extracted');
     extractArchive(archivePath, destDir);

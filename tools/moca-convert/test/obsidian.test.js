@@ -144,15 +144,15 @@ test('a vault with no notes is a usage error', () => {
   }
 });
 
-test('end-to-end: converted output passes moca-lint with zero error-severity findings', () => {
+test('end-to-end: converted output passes moca-lint with zero error-severity findings', async () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
     options: { id: 'urn:moca:test:vault-basic-e2e', title: 'Vault Basic E2E' },
   });
   const outDir = mkdtempSync(join(tmpdir(), 'moca-convert-test-'));
   try {
-    writeDraft({ draft, outDir });
-    const { findings } = lintPackage({ rootDir: outDir });
+    await writeDraft({ draft, outDir });
+    const { findings } = await lintPackage({ rootDir: outDir });
     assert.deepEqual(
       findings.filter((f) => f.severity === 'error'),
       []

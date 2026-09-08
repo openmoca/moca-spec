@@ -2,15 +2,34 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { verifyPackageSignature } from 'moca-sign/lib/verify.js';
 import { resolvePackagePath } from '../paths.js';
+
+const SIGNATURE_FINDING_CODE = Object.freeze({
+  malformed: 'E404_SIGNATURE_MALFORMED',
+  invalid: 'E406_SIGNATURE_INVALID',
+  indeterminate: 'E407_SIGNATURE_VERIFICATION_INDETERMINATE',
+});
 
 /**
  * @param {object} params
  * @param {string} params.rootDir
  * @param {object} params.manifest
  * @param {import('../findings.js').FindingCollector} params.findings
+ * @param {string} [params.trustRoot] - dsse-mode trust-roots.json or sigstore-mode pinned TUF cache dir
+ * @param {{issuer: string, pattern: string}[]} [params.identityConstraints] - sigstore mode only
+ * @param {boolean} [params.onlineVerify]
+ * @param {boolean} [params.allowOfflineFallback]
  */
-export function runSecurityPass({ rootDir, manifest, findings }) {
+export async function runSecurityPass({
+  rootDir,
+  manifest,
+  findings,
+  trustRoot,
+  identityConstraints,
+  onlineVerify,
+  allowOfflineFallback,
+}) {
   const skillsDirExists = existsSync(join(rootDir, 'skills'));
   const hasSignature = manifest.signature && typeof manifest.signature === 'object';
 
@@ -23,11 +42,18 @@ export function runSecurityPass({ rootDir, manifest, findings }) {
   }
 
   if (hasSignature) {
-    findings.add(
-      'I404_SIGNATURE_NOT_VERIFIED',
-      `signature (type=${manifest.signature.type}) is structurally present; moca-lint does not verify Sigstore/DSSE signatures yet.`,
-      { file: 'moca.json' }
-    );
+    const result = await verifyPackageSignature({
+      rootDir,
+      manifest,
+      dsseTrustRootPath: trustRoot,
+      sigstoreTrustRootPath: trustRoot,
+      identityConstraints,
+      onlineVerify,
+      allowOfflineFallback,
+    });
+    if (result.outcome !== 'valid') {
+      findings.add(SIGNATURE_FINDING_CODE[result.outcome], result.reason, { file: 'moca.json' });
+    }
   }
 
   const integrity = manifest.integrity;

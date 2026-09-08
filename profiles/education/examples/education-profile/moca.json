@@ -12,7 +12,9 @@
   "title": "Education Profile Example",
   "description": "MOCA package declaring the education profile: profileData.education, the education:competencies ontology role, and a tutoring skill with metadata.competencies.",
   "license": "MIT",
-  "profile": ["https://openmoca.org/profiles/education/v1"],
+  "profile": [
+    "https://openmoca.org/profiles/education/v1"
+  ],
   "ontologies": {
     "education:competencies": {
       "iri": "https://example.org/curriculum/competencies",
@@ -21,7 +23,9 @@
       "uri": "./ontologies/competencies.jsonld"
     }
   },
-  "entryConcepts": ["ex:Microservices"],
+  "entryConcepts": [
+    "ex:Microservices"
+  ],
   "profileData": {
     "education": {
       "level": "undergraduate",
@@ -31,19 +35,29 @@
         {
           "id": "urn:lo:001",
           "statement": "Explain the tradeoffs between horizontal and vertical scaling.",
-          "competencies": ["ex-comp:SystemDesignFundamentals"],
-          "concepts": ["ex:Microservices"]
+          "competencies": [
+            "ex-comp:SystemDesignFundamentals"
+          ],
+          "concepts": [
+            "ex:Microservices"
+          ]
         }
       ],
       "assessment": {
         "type": "formative",
-        "linkedNodes": ["urn:node:microservices-intro"]
+        "linkedNodes": [
+          "urn:node:microservices-intro"
+        ]
       }
     }
   },
   "signature": {
-    "type": "sigstore",
-    "value": "PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST",
-    "keyid": "placeholder-key-id"
+    "type": "dsse",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBsWkhWallYUnBiMjR0Y0hKdlptbHNaVUF4TGpBdU1DSXNJbVJwWjJWemRDSTZleUp6YUdFeU5UWWlPaUk1T0RRek4ySXpPRFUxTnpnMU1HSTJaalk0T0RBek9UWXhOV1EzTkRkbE16a3dNR1kxT0RZNE0yVTFNRGM1TkRVMFltWmxaVGhoWWpBd05qUXdORGhoSW4xOVhTd2ljSEpsWkdsallYUmxWSGx3WlNJNkltaDBkSEJ6T2k4dmIzQmxibTF2WTJFdWIzSm5MMkYwZEdWemRHRjBhVzl1Y3k5d1lXTnJZV2RsTFhOcFoyNWhkSFZ5WlM5Mk1TSXNJbkJ5WldScFkyRjBaU0k2ZTMxOSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6InJ1YmtRcHliNWRlbnBNQ2ZybHlWeGNoUmNoVjZVN21jNGtxeGtjejEybm9CYWlLaWRyYWcxMG5vR3pFZWlSSDJLSXdlc3RsUXErWncvZTU3dUFCL0RBPT0ifV19",
+    "keyid": "moca-spec-example-signing-key-2026"
+  },
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "98437b38557850b6f688039615d747e3900f58683e5079454bfee8ab0064048a"
   }
 }

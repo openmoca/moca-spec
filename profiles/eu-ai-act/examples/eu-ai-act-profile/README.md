@@ -34,7 +34,14 @@ This package is a teaching example, not a template for production use.
 
 ## ⚠️ About the `signature` field
 
-The `signature` object in `moca.json` is a **placeholder**, not a real cryptographic signature. Per [core §8.2](../../../../moca-core-spec.md#82-security--trust-boundary-rule), a conforming harness MUST refuse to load any package content (including governance ontologies used for compliance checking) from a package whose signature does not verify. This example would (and should) be rejected by any real signature-checking implementation.
+`moca.json` carries a real, verifiable `dsse`-mode signature (see
+[docs/trust-model.md](../../../../docs/trust-model.md)) — **but it is signed
+with this repository's own non-production example key**
+([examples/keys/README.md](../../../../examples/keys/README.md)), not a
+signer any real host should trust. Verifying successfully against this
+repo's example trust root does not make this package trustworthy for any
+purpose beyond demonstrating the mechanism; no real host should add
+`moca-spec-example-signing-key-2026` to its own trust root.
 
 ## What This Demonstrates
 

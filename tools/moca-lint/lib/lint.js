@@ -12,36 +12,50 @@ import { runSecurityPass } from './passes/security.js';
  * @param {string} params.rootDir
  * @param {boolean} [params.strict]
  * @param {(entry: string) => void} [params.onLog] - receives debug trace lines for --log-file
- * @returns {{ findings: import('./findings.js').Finding[], manifest: object|null }}
+ * @param {string} [params.trustRoot] - see docs/trust-model.md §4; passed through to the Security pass
+ * @param {{issuer: string, pattern: string}[]} [params.identityConstraints] - sigstore mode only, §4.1
+ * @param {boolean} [params.onlineVerify]
+ * @param {boolean} [params.allowOfflineFallback]
+ * @returns {Promise<{ findings: import('./findings.js').Finding[], manifest: object|null }>}
  */
-export function lintPackage({ rootDir, strict = false, onLog = () => {} }) {
+export async function lintPackage({
+  rootDir,
+  strict = false,
+  onLog = () => {},
+  trustRoot,
+  identityConstraints,
+  onlineVerify,
+  allowOfflineFallback,
+}) {
   const findings = new FindingCollector({ strict });
-  const log = (label, fn) => {
+  const log = async (label, fn) => {
     const start = performance.now();
-    const result = fn();
+    const result = await fn();
     onLog(`[${label}] ${(performance.now() - start).toFixed(1)}ms`);
     return result;
   };
 
-  const manifest = log('pass1:manifest', () => runManifestPass({ rootDir, findings }));
+  const manifest = await log('pass1:manifest', () => runManifestPass({ rootDir, findings }));
 
   if (!manifest) {
     return { findings: findings.findings, manifest: null };
   }
 
-  const { referencedConcepts } = log('pass2:content', () =>
+  const { referencedConcepts } = await log('pass2:content', () =>
     runContentPass({ rootDir, manifest, findings })
   );
 
-  log('pass2:skills', () =>
+  await log('pass2:skills', () =>
     runSkillsPass({ rootDir, manifest, referencedConcepts, findings })
   );
 
-  log('pass3:semantic', () =>
+  await log('pass3:semantic', () =>
     runSemanticPass({ rootDir, manifest, referencedConcepts, findings })
   );
 
-  log('pass4:security', () => runSecurityPass({ rootDir, manifest, findings }));
+  await log('pass4:security', () =>
+    runSecurityPass({ rootDir, manifest, findings, trustRoot, identityConstraints, onlineVerify, allowOfflineFallback })
+  );
 
   return { findings: findings.findings, manifest };
 }

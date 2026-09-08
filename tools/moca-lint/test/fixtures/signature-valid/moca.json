@@ -1,0 +1,14 @@
+{
+  "id": "urn:moca:test:signature-valid",
+  "version": "1.0.0",
+  "title": "Signature Valid Fixture",
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "5c3ceed146e077cb8025a1ba290cb028f8ad19b4518d65c417cea68e9d6c1d88"
+  },
+  "signature": {
+    "type": "dsse",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2ZEdWemREcHphV2R1WVhSMWNtVXRkbUZzYVdSQU1TNHdMakFpTENKa2FXZGxjM1FpT25zaWMyaGhNalUySWpvaU5XTXpZMlZsWkRFME5tVXdOemRqWWpnd01qVmhNV0poTWprd1kySXdNamhtT0dGa01UbGlORFV4T0dRMk5XTTBNVGRqWldFMk9HVTVaRFpqTVdRNE9DSjlmVjBzSW5CeVpXUnBZMkYwWlZSNWNHVWlPaUpvZEhSd2N6b3ZMMjl3Wlc1dGIyTmhMbTl5Wnk5aGRIUmxjM1JoZEdsdmJuTXZjR0ZqYTJGblpTMXphV2R1WVhSMWNtVXZkakVpTENKd2NtVmthV05oZEdVaU9udDlmUT09IiwicGF5bG9hZFR5cGUiOiJhcHBsaWNhdGlvbi92bmQuaW4tdG90bytqc29uIiwic2lnbmF0dXJlcyI6W3sia2V5aWQiOiJtb2NhLWxpbnQtZml4dHVyZS1zaWduZXIiLCJzaWciOiJOQ01rcGF0akgvaHRqL2ZmbjI1ODhPS0ZyT0VHQzhjWUlwdElxTzBNcVM0bldudFhKci9vUzRWTVR2RmVwWFkxMEhPNUhnMXFVczJaK0xYelBVbnREUT09In1dfQ==",
+    "keyid": "moca-lint-fixture-signer"
+  }
+}

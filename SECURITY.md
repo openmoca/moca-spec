@@ -3,9 +3,10 @@
 ## Scope
 
 This repository contains a specification, JSON Schemas, JSON-LD contexts,
-static example packages, and the executable `moca-lint` CLI. It does not ship
-a runtime or server, but the CLI and its archive-handling code are in scope
-for traditional code vulnerabilities.
+static example packages, and the executable `moca-lint`/`moca-sign` CLIs. It
+does not ship a runtime or server, but the CLIs and their
+archive-handling/cryptographic code are in scope for traditional code
+vulnerabilities.
 
 That said, security issues are still in scope:
 
@@ -18,6 +19,11 @@ That said, security issues are still in scope:
   validation contract itself, not just in the schema it validates against.
   See [tools/moca-lint/README.md](tools/moca-lint/README.md#validation-contract)
   for which checks are normative.
+- A `moca-sign` verification bug that accepts a signature that shouldn't
+  verify — a bad signature, a subject digest that doesn't match
+  `canonicalDigest.value`, an untrusted signer, or an expired/removed
+  `dsse`-mode trust-root entry. See
+  [docs/trust-model.md](docs/trust-model.md) for the intended behavior.
 - Errors in example packages that model insecure or misleading patterns
   implementers might copy.
 - Issues in CI tooling (`.github/workflows/`) that could be abused (e.g.

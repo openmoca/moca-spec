@@ -13,21 +13,21 @@ function createPackage(manifest, content) {
   return rootDir;
 }
 
-test('evidence sources cannot escape permitted package directories', () => {
+test('evidence sources cannot escape permitted package directories', async () => {
   const rootDir = createPackage(
     { id: 'urn:moca:test:path-safety', version: '1.0.0', title: 'Path Safety' },
     '---\nevidence:\n  - source: ../outside.txt\n---\n# Node\n'
   );
 
   try {
-    const { findings } = lintPackage({ rootDir });
+    const { findings } = await lintPackage({ rootDir });
     assert.ok(findings.some((finding) => finding.code === 'E211_UNSAFE_RESOURCE_PATH'));
   } finally {
     rmSync(rootDir, { recursive: true, force: true });
   }
 });
 
-test('malformed integrity entries produce findings instead of throwing', () => {
+test('malformed integrity entries produce findings instead of throwing', async () => {
   const rootDir = createPackage(
     {
       id: 'urn:moca:test:malformed-integrity',
@@ -39,14 +39,14 @@ test('malformed integrity entries produce findings instead of throwing', () => {
   );
 
   try {
-    const { findings } = lintPackage({ rootDir });
+    const { findings } = await lintPackage({ rootDir });
     assert.ok(findings.some((finding) => finding.code === 'E102_SCHEMA_INVALID'));
   } finally {
     rmSync(rootDir, { recursive: true, force: true });
   }
 });
 
-test('augmentation targets cannot escape the package root', () => {
+test('augmentation targets cannot escape the package root', async () => {
   const rootDir = createPackage(
     {
       id: 'urn:moca:test:unsafe-augmentation',
@@ -62,7 +62,7 @@ test('augmentation targets cannot escape the package root', () => {
   );
 
   try {
-    const { findings } = lintPackage({ rootDir });
+    const { findings } = await lintPackage({ rootDir });
     assert.ok(findings.some((finding) => finding.code === 'E211_UNSAFE_RESOURCE_PATH'));
   } finally {
     rmSync(rootDir, { recursive: true, force: true });

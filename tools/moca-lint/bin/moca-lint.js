@@ -29,15 +29,38 @@ function addCommonOptions(cmd) {
     .option('-v, --verbose', 'increase console verbosity (repeatable)', (_, prev) => prev + 1, 0)
     .option('-q, --quiet', 'suppress non-error console output', false)
     .option('--no-color', 'disable colored output')
-    .option('--online-verify', 'allow live Sigstore/Rekor network verification (not implemented)', false);
+    .option('--trust-root <path>', 'dsse mode: trust-roots.json; sigstore mode: pinned TUF cache dir (docs/trust-model.md §4)')
+    .option('--identity-constraint <constraint...>', 'sigstore mode: repeatable "<issuer>=<identity-pattern>" (docs/trust-model.md §4.1)')
+    .option('--online-verify', 'sigstore mode: confirm live Rekor inclusion and refresh the trust root (docs/trust-model.md §5)', false)
+    .option('--allow-offline-fallback', 'sigstore mode: degrade to offline verification if --online-verify cannot reach the network', false);
+}
+
+function parseIdentityConstraints(entries = []) {
+  return entries.map((entry) => {
+    const eq = entry.indexOf('=');
+    if (eq === -1) {
+      console.error(`moca-lint: --identity-constraint must be "<issuer>=<pattern>", got "${entry}"`);
+      process.exit(2);
+    }
+    return { issuer: entry.slice(0, eq), pattern: entry.slice(eq + 1) };
+  });
+}
+
+function verificationOptions(options) {
+  return {
+    trustRoot: options.trustRoot,
+    identityConstraints: parseIdentityConstraints(options.identityConstraint),
+    onlineVerify: options.onlineVerify,
+    allowOfflineFallback: options.allowOfflineFallback,
+  };
 }
 
 addCommonOptions(
   program
     .command('lint')
     .argument('<targets...>', 'directory or .moca/.zip file(s) to lint')
-).action((targets, options) => {
-  runLint(targets, options);
+).action(async (targets, options) => {
+  await runLint(targets, options);
 });
 
 addCommonOptions(
@@ -46,8 +69,8 @@ addCommonOptions(
     .argument('<target>', 'directory to lint and package')
     .option('-o, --out <file>', 'output .moca file path')
     .option('--exclude <patterns...>', 'additional glob exclude patterns')
-).action((target, options) => {
-  runPack(target, options);
+).action(async (target, options) => {
+  await runPack(target, options);
 });
 
 addCommonOptions(
@@ -57,8 +80,8 @@ addCommonOptions(
     .option('-o, --out <dir>', 'destination directory (required)')
     .option('--force', 'allow extracting into a non-empty destination directory', false)
     .option('--lint', 'run lint against the extracted directory afterward and report findings', false)
-).action((archive, options) => {
-  runExtract(archive, options);
+).action(async (archive, options) => {
+  await runExtract(archive, options);
 });
 
 program.parseAsync(process.argv);
@@ -93,7 +116,7 @@ function formatFindings(findings, format) {
   return formatText(findings);
 }
 
-function runLint(targets, options) {
+async function runLint(targets, options) {
   const allFindings = [];
   let usageError = null;
 
@@ -102,7 +125,12 @@ function runLint(targets, options) {
     try {
       const { rootDir, cleanup } = resolveTarget(targetPath);
       try {
-        const { findings } = lintPackage({ rootDir, strict: options.strict, onLog: logger.log });
+        const { findings } = await lintPackage({
+          rootDir,
+          strict: options.strict,
+          onLog: logger.log,
+          ...verificationOptions(options),
+        });
         for (const f of findings) {
           allFindings.push({ ...f, file: prefixTarget(targetPath, f.file) });
         }
@@ -128,7 +156,7 @@ function runLint(targets, options) {
   process.exit(allFindings.some((f) => f.severity === 'error') ? 1 : 0);
 }
 
-function runPack(target, options) {
+async function runPack(target, options) {
   const outPath = options.out ?? defaultOutName(target);
   const logger = makeLogger(options);
 
@@ -145,12 +173,13 @@ function runPack(target, options) {
   }
 
   try {
-    const { success, findings } = packPackage({
+    const { success, findings } = await packPackage({
       rootDir,
       outPath,
       strict: options.strict,
       exclude: options.exclude ?? [],
       onLog: logger.log,
+      ...verificationOptions(options),
     });
 
     writeReport(options, formatFindings(findings, options.format));
@@ -169,7 +198,7 @@ function runPack(target, options) {
   }
 }
 
-function runExtract(archivePath, options) {
+async function runExtract(archivePath, options) {
   if (!options.out) {
     console.error('moca-lint: -o/--out <dir> is required for extract.');
     process.exit(2);
@@ -210,7 +239,12 @@ function runExtract(archivePath, options) {
     }
 
     if (options.lint) {
-      const { findings } = lintPackage({ rootDir: destDir, strict: options.strict, onLog: logger.log });
+      const { findings } = await lintPackage({
+        rootDir: destDir,
+        strict: options.strict,
+        onLog: logger.log,
+        ...verificationOptions(options),
+      });
       writeReport(options, formatFindings(findings, options.format));
       process.exit(findings.some((f) => f.severity === 'error') ? 1 : 0);
     }

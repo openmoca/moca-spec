@@ -12,10 +12,10 @@ const DEFAULT_EXCLUDES = ['.git', '.git/**', 'node_modules', 'node_modules/**', 
  * @param {boolean} [params.strict]
  * @param {string[]} [params.exclude]
  * @param {(entry: string) => void} [params.onLog]
- * @returns {{ success: boolean, findings: import('./findings.js').Finding[] }}
+ * @returns {Promise<{ success: boolean, findings: import('./findings.js').Finding[] }>}
  */
-export function packPackage({ rootDir, outPath, strict = false, exclude = [], onLog = () => {} }) {
-  const { findings } = lintPackage({ rootDir, strict, onLog });
+export async function packPackage({ rootDir, outPath, strict = false, exclude = [], onLog = () => {}, ...verificationOptions }) {
+  const { findings } = await lintPackage({ rootDir, strict, onLog, ...verificationOptions });
   const hasErrors = findings.some((f) => f.severity === 'error');
   if (hasErrors) {
     return { success: false, findings };

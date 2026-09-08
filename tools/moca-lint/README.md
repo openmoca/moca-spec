@@ -1,11 +1,14 @@
 # moca-lint
 
 Static analysis CLI for [MOCA](../../moca-core-spec.md) package directories and
-`.moca`/`.zip` archives. It runs entirely offline — no network calls, no
-script execution — and checks a package against `moca-core-spec.md`, the
+`.moca`/`.zip` archives. It runs offline by default (`--online-verify` is the
+one opt-in exception, for live Sigstore/Rekor checks — see
+[docs/trust-model.md](../../docs/trust-model.md) §5) and never executes
+package content, and checks a package against `moca-core-spec.md`, the
 JSON Schemas in [`schemas/`](../../schemas), and referential-integrity rules
 that the schemas alone can't express (e.g. dangling concept references,
-locale fallback, the `skills/` + `signature` rule).
+locale fallback, the `skills/` + `signature` rule and its cryptographic
+verification via [`moca-sign`](../moca-sign/README.md)).
 
 ## Install
 
@@ -97,7 +100,10 @@ moca-lint extract dist/my-package.moca -o my-package --lint
 | `-v, --verbose` | Increase console trace output (repeatable: `-vv`). |
 | `-q, --quiet` | Suppress non-error console output. |
 | `--no-color` | Disable colored text output. |
-| `--online-verify` | Reserved for live Sigstore/Rekor verification. Accepted but not implemented (see [Known limitations](#known-limitations-v1)). |
+| `--trust-root <path>` | dsse mode: a `trust-roots.json` file; sigstore mode: a pinned TUF cache directory. See [docs/trust-model.md](../../docs/trust-model.md) §4. Required to verify any `dsse`-mode signature. |
+| `--identity-constraint <issuer>=<pattern>` | Repeatable. sigstore mode only: restrict accepted signer identities (§4.1). |
+| `--online-verify` | sigstore mode only: confirm live Rekor transparency-log inclusion and refresh the trust root before verifying (§5). |
+| `--allow-offline-fallback` | sigstore mode only: if `--online-verify` can't reach the network, degrade to offline verification instead of failing closed. |
 
 ## Exit codes
 
@@ -120,7 +126,7 @@ Findings run across four passes, matching the package structure in
 | 1. Manifest | `E101`–`E106` | `moca.json` exists, conforms to `schemas/core/moca.schema.json` (+ any declared profile's `schemas/<profile>/profile.schema.json`, auto-discovered from the profile URI — see [Profile support](#profile-support)), has no forbidden keys, valid inline `@context` prefixes, no profile data misplaced at the root, and no remote `@context` in Level 1. |
 | 2. Content | `E201`–`E210` | Frontmatter YAML syntax, concept/predicate CURIEs resolve to a declared namespace, `evidence[].source` files exist and `locator` shape is valid, `epistemicStatus` is in the core or active-profile vocabulary, locale-suffixed files have a default fallback, no duplicate content-node `id`s, `claims[]` has required fields, `SKILL.md` frontmatter is well-formed. |
 | 3. Semantic | `E301`, `E303`, `E304`, `I301` | JSON-LD/Turtle syntax in `ontologies/`, within-package duplicate/conflicting concept declarations, concept (and predicate/skill-metadata) references that don't resolve to any declared `@id`. |
-| 4. Security | `E401`–`E403`, `E405`, `I404` | `skills/` requires a `signature` object, SHA-256 `integrity` map matches files on disk, RO-Crate/BagIt hash cross-check, minimal `ro-crate-metadata.json` structural validity. |
+| 4. Security | `E401`–`E407` | `skills/` requires a `signature` object; a present `signature` is cryptographically verified against `canonicalDigest` via [`moca-sign`](../moca-sign/README.md) (`E404`/`E406`/`E407` — see [docs/trust-model.md](../../docs/trust-model.md) §6); SHA-256 `integrity` map matches files on disk; RO-Crate/BagIt hash cross-check; minimal `ro-crate-metadata.json` structural validity. |
 
 Run `moca-lint lint <target> --format json` and inspect `findings[].code`, or
 read [lib/codes.js](lib/codes.js) for the full registry with one-line
@@ -131,8 +137,11 @@ summaries.
 have legitimate exceptions, e.g. a documentation fixture intentionally
 omitting a media asset, or a predicate CURIE that's a property rather than a
 declared concept) and only become errors under `--strict`. `E210` is also a
-`warning` by default for a different reason (see below). `I301` and `I404`
-are always informational and never affect the exit code.
+`warning` by default for a different reason (see below). `I301` is always
+informational and never affects the exit code. `E404`/`E406`/`E407`
+(signature malformed/invalid/indeterminate) are hard errors, matching
+core §8.2's "refuse to load" requirement — there is no lesser severity for
+a signature that doesn't verify.
 
 ## Profile support
 
@@ -160,10 +169,12 @@ that additively extend core vocabulary. moca-lint handles profiles as follows:
 - **SHACL shape validation (`E302`) is not implemented.** `ontologies/*.shacl.ttl`
   is syntax-checked (`E301`) but shape conformance isn't evaluated yet; a
   shapes ontology declared in `moca.json` produces an `I301` note instead.
-- **Signature verification (`I404`) is not implemented.** `moca-lint` only
-  checks that a `signature` object is structurally present when `skills/`
-  exists (`E401`); it does not verify Sigstore/DSSE signatures. `--online-verify`
-  is reserved for a future live-verification mode.
+- **`sigstore`-mode signature *signing* is not exercised by this repo's own
+  test suite**, since it requires a real OIDC identity token and network
+  access to Fulcio/Rekor — see
+  [tools/moca-sign/README.md](../moca-sign/README.md#known-limitations).
+  `sigstore`-mode *verification* (what `moca-lint` runs) has no such
+  limitation.
 - **`ro-crate-metadata.json` validation (`E405`) is a minimal structural
   heuristic, not full RO-Crate 1.3 conformance checking** (core §2.1) — it
   only checks for a `@context`, a `@graph` array, a metadata descriptor
@@ -196,16 +207,20 @@ released in lockstep with the repository (`0.1.0-beta.1` for both, per
 [Validation passes & finding codes](#validation-passes--finding-codes)
 above, at its documented default severity, **except** the codes listed
 under [Known limitations (v1)](#known-limitations-v1) — `E302` (SHACL shape
-conformance), `I404` (signature verification), and `E405` (full RO-Crate
-conformance) — which are explicitly provisional: their current behavior
-(not evaluated / structurally-present-only / minimal heuristic) MAY change
-in a later `0.x` beta release without that being treated as a breaking
-contract change. The multi-package `composition` gap (no cross-directory
-cycle/dangling-reference detection) is likewise provisional and tracked
-separately. Every other code is a binding compatibility commitment for the
-current beta: a package that passes (or fails) a normative check today is
-expected to keep passing (or failing) it across patch and minor releases of
-this `0.x` line, absent an entry in [MIGRATIONS.md](../../MIGRATIONS.md).
+conformance) and `E405` (full RO-Crate conformance) — which are explicitly
+provisional: their current behavior (not evaluated / minimal heuristic) MAY
+change in a later `0.x` beta release without that being treated as a
+breaking contract change. The multi-package `composition` gap (no
+cross-directory cycle/dangling-reference detection) is likewise provisional
+and tracked separately. `E404`/`E406`/`E407` (signature
+malformed/invalid/indeterminate) are normative as of this release —
+`moca-lint` performs real cryptographic verification, superseding the
+previous `I404_SIGNATURE_NOT_VERIFIED` informational code, which is
+retired; see [MIGRATIONS.md](../../MIGRATIONS.md). Every other code is a
+binding compatibility commitment for the current beta: a package that
+passes (or fails) a normative check today is expected to keep passing (or
+failing) it across patch and minor releases of this `0.x` line, absent an
+entry in [MIGRATIONS.md](../../MIGRATIONS.md).
 
 A `moca-lint` error-severity check that fails to flag a manifest or package
 it should reject is treated as a security-sensitive issue, the same as a

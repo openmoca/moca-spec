@@ -1,0 +1,9 @@
+{
+  "keys": [
+    {
+      "keyid": "moca-spec-example-signing-key-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAV7oSvpgKWeRJP+wg5aoP04bxrq2ZzOiT+NPhHsW1W4g=\n-----END PUBLIC KEY-----\n",
+      "identity": "moca-spec repo — non-production example signing key, see examples/keys/README.md"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ This repository is preparing the first public beta:
 - `moca-lint` release: `0.1.0-beta.1`
 - `moca-convert` release: `0.1.0-beta.1`
 - `moca-index` release: `0.1.0-beta.1`
+- `moca-sign` release: `0.1.0-beta.1`
 - Git tag: `v0.1.0-beta.1`
 
 This is a beta of the format and reference tooling, not a promise that the
@@ -60,12 +61,12 @@ external standard.
 
 Before creating a beta tag, maintainers should:
 
-1. Update the repository, `moca-lint`, `moca-convert`, and `moca-index`
-   versions consistently.
+1. Update the repository, `moca-lint`, `moca-convert`, `moca-index`, and
+   `moca-sign` versions consistently.
 2. Record user-visible changes and known limitations in `CHANGELOG.md`.
 3. Run `npm ci`, `npm run validate`, `npm run lint:md`, and `npm run lint:moca`.
-4. Run `npm test` from `tools/moca-lint`, `tools/moca-convert`, and
-   `tools/moca-index`.
+4. Run `npm test` from `tools/moca-lint`, `tools/moca-convert`,
+   `tools/moca-index`, and `tools/moca-sign`.
 5. Verify that every example and schema is included in the release snapshot.
 6. Review security, signature, SHACL, RO-Crate, and profile documentation for
    claims that exceed the implemented beta behavior.

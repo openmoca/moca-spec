@@ -138,15 +138,15 @@ test('a document with no operations under paths is a usage error', () => {
   );
 });
 
-test('end-to-end: converted output passes moca-lint with zero error-severity findings', () => {
+test('end-to-end: converted output passes moca-lint with zero error-severity findings', async () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'suitable.yaml'),
     options: { id: 'urn:moca:test:widget-api-e2e' },
   });
   const outDir = mkdtempSync(join(tmpdir(), 'moca-convert-test-'));
   try {
-    writeDraft({ draft, outDir });
-    const { findings } = lintPackage({ rootDir: outDir });
+    await writeDraft({ draft, outDir });
+    const { findings } = await lintPackage({ rootDir: outDir });
     assert.deepEqual(
       findings.filter((f) => f.severity === 'error'),
       []

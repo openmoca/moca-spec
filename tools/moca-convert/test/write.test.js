@@ -22,10 +22,10 @@ const INVALID_DRAFT = {
   warnings: [],
 };
 
-test('writes a valid draft into a fresh output directory', () => {
+test('writes a valid draft into a fresh output directory', async () => {
   const outDir = join(tempDir(), 'pkg');
   try {
-    const { findings } = writeDraft({ draft: VALID_DRAFT, outDir });
+    const { findings } = await writeDraft({ draft: VALID_DRAFT, outDir });
     assert.deepEqual(
       findings.filter((f) => f.severity === 'error'),
       []
@@ -37,32 +37,32 @@ test('writes a valid draft into a fresh output directory', () => {
   }
 });
 
-test('a schema-invalid draft is rejected and leaves no output on disk (fresh directory case)', () => {
+test('a schema-invalid draft is rejected and leaves no output on disk (fresh directory case)', async () => {
   const outDir = join(tempDir(), 'pkg');
   try {
-    assert.throws(() => writeDraft({ draft: INVALID_DRAFT, outDir }), ConversionFailedError);
+    await assert.rejects(writeDraft({ draft: INVALID_DRAFT, outDir }), ConversionFailedError);
     assert.equal(existsSync(outDir), false);
   } finally {
     rmSync(outDir, { recursive: true, force: true });
   }
 });
 
-test('refuses to write into a non-empty output directory without --force', () => {
+test('refuses to write into a non-empty output directory without --force', async () => {
   const outDir = tempDir();
   writeFileSync(join(outDir, 'existing.txt'), 'pre-existing content\n');
   try {
-    assert.throws(() => writeDraft({ draft: VALID_DRAFT, outDir }), UsageError);
+    await assert.rejects(writeDraft({ draft: VALID_DRAFT, outDir }), UsageError);
     assert.equal(readFileSync(join(outDir, 'existing.txt'), 'utf8'), 'pre-existing content\n');
   } finally {
     rmSync(outDir, { recursive: true, force: true });
   }
 });
 
-test('a schema-invalid draft with --force leaves the pre-existing output directory untouched', () => {
+test('a schema-invalid draft with --force leaves the pre-existing output directory untouched', async () => {
   const outDir = tempDir();
   writeFileSync(join(outDir, 'existing.txt'), 'pre-existing content\n');
   try {
-    assert.throws(() => writeDraft({ draft: INVALID_DRAFT, outDir, force: true }), ConversionFailedError);
+    await assert.rejects(writeDraft({ draft: INVALID_DRAFT, outDir, force: true }), ConversionFailedError);
     assert.equal(readFileSync(join(outDir, 'existing.txt'), 'utf8'), 'pre-existing content\n');
     assert.equal(existsSync(join(outDir, 'moca.json')), false);
   } finally {
@@ -70,11 +70,11 @@ test('a schema-invalid draft with --force leaves the pre-existing output directo
   }
 });
 
-test('a valid draft with --force replaces a pre-existing non-empty output directory', () => {
+test('a valid draft with --force replaces a pre-existing non-empty output directory', async () => {
   const outDir = tempDir();
   writeFileSync(join(outDir, 'existing.txt'), 'pre-existing content\n');
   try {
-    writeDraft({ draft: VALID_DRAFT, outDir, force: true });
+    await writeDraft({ draft: VALID_DRAFT, outDir, force: true });
     assert.equal(existsSync(join(outDir, 'existing.txt')), false);
     assert.ok(existsSync(join(outDir, 'moca.json')));
   } finally {

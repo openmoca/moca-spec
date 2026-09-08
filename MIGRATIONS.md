@@ -38,3 +38,41 @@ profile stays additive at the structural level `moca-lint` can see.
 **No action needed if:** your package doesn't declare a `profile`, or you
 were already relying on separate profile-specific tooling rather than
 `moca-lint` for `profileData` validation.
+
+## `moca-lint` now cryptographically verifies `signature`, retiring `I404`
+
+**What changed:** Pass 4's `I404_SIGNATURE_NOT_VERIFIED` informational code
+(present but not implemented) is retired. `moca-lint` now performs real
+Sigstore/DSSE verification via [`tools/moca-sign`](tools/moca-sign/README.md),
+per [docs/trust-model.md](docs/trust-model.md), and reports one of three new
+hard-error codes when a `signature` object is present but does not verify:
+`E404_SIGNATURE_MALFORMED`, `E406_SIGNATURE_INVALID`,
+`E407_SIGNATURE_VERIFICATION_INDETERMINATE`. `E401_UNSIGNED_SKILLS` (no
+`signature` object at all) is unchanged. See [CHANGELOG.md](CHANGELOG.md).
+
+A related, additive change: `canonicalDigest` (core §5.5) now excludes the
+`signature` property from its manifest hash, the same self-reference reason
+it already excluded `canonicalDigest` itself — a signature signs over
+`canonicalDigest.value`, so that value cannot depend on the signature being
+computed from it. No previously-shipped example combined both fields before
+this release, so no existing `canonicalDigest.value` changes as a result.
+
+**Who's affected:** Any package with a `signature` object — most commonly
+one containing `skills/`, since core §8.2 requires `signature` there.
+
+**What to do:**
+
+- A signed package MUST also declare `canonicalDigest` (docs/trust-model.md
+  §2); a `signature` without one now reports `E404_SIGNATURE_MALFORMED`.
+- Pass `--trust-root <path>` (and, for `sigstore` mode, optionally
+  `--identity-constraint`) to `moca-lint lint`/`pack`/`extract --lint` — a
+  `dsse`-mode signature reports `E406_SIGNATURE_INVALID` without one.
+- A package still carrying the placeholder value
+  `"PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST"` (this repo's own
+  examples used it prior to this release) now fails with
+  `E404_SIGNATURE_MALFORMED` instead of only the previously-informational
+  `I404`. Sign it for real with `moca-sign` (see
+  [tools/moca-sign/README.md](tools/moca-sign/README.md)).
+
+**No action needed if:** your package declares no `signature` object at all
+(a package without `skills/` is never required to have one).

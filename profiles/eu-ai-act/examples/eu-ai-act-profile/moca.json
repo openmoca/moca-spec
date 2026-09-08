@@ -10,7 +10,9 @@
   "title": "EU AI Act Profile Example",
   "description": "MOCA package declaring the EU AI Act profile: profileData.euAiAct with risk classification, data governance metadata, and human oversight references.",
   "license": "MIT",
-  "profile": ["https://openmoca.org/profiles/eu-ai-act/v1"],
+  "profile": [
+    "https://openmoca.org/profiles/eu-ai-act/v1"
+  ],
   "ontologies": {
     "governance": {
       "iri": "https://example.org/eu-ai-act/governance",
@@ -19,7 +21,9 @@
       "uri": "./ontologies/governance.shacl.ttl"
     }
   },
-  "entryConcepts": ["ex:AISystem"],
+  "entryConcepts": [
+    "ex:AISystem"
+  ],
   "profileData": {
     "euAiAct": {
       "riskTier": "high_risk",
@@ -38,8 +42,12 @@
     }
   },
   "signature": {
-    "type": "sigstore",
-    "value": "PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST",
-    "keyid": "placeholder-key-id"
+    "type": "dsse",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBsZFMxaGFTMWhZM1F0Y0hKdlptbHNaVUF4TGpBdU1DSXNJbVJwWjJWemRDSTZleUp6YUdFeU5UWWlPaUl4TjJRNU5UbGtPRGd5TmpFek9UY3haR0ZoWm1GalpEQTRPR0l5TkRRME5UWm1NVFEwWVRBM01tTm1PVFl5TWpkbU1ESTNZVGMxWXpVd04ySXlNV1kwSW4xOVhTd2ljSEpsWkdsallYUmxWSGx3WlNJNkltaDBkSEJ6T2k4dmIzQmxibTF2WTJFdWIzSm5MMkYwZEdWemRHRjBhVzl1Y3k5d1lXTnJZV2RsTFhOcFoyNWhkSFZ5WlM5Mk1TSXNJbkJ5WldScFkyRjBaU0k2ZTMxOSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6IjNOVE4xemdmV0g4N0xzeHRxUzg2V0ZodDV3bjB2a01Wb3dpcGFIdlRpS1FvdTdqYjV4b0pncGRia0tVcTh2d2tuVGZWcG1WUmZVb3NxMHJLL1pvYUFRPT0ifV19",
+    "keyid": "moca-spec-example-signing-key-2026"
+  },
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "17d959d882613971daafacd088b244456f144a072cf96227f027a75c507b21f4"
   }
 }

@@ -17,9 +17,9 @@ export { UsageError };
  * @param {boolean} [params.force]
  * @param {boolean} [params.strict]
  * @param {(entry: string) => void} [params.onLog]
- * @returns {{ findings: import('moca-lint/lib/findings.js').Finding[] }}
+ * @returns {Promise<{ findings: import('moca-lint/lib/findings.js').Finding[] }>}
  */
-export function writeDraft({ draft, outDir, force = false, strict = false, onLog = () => {} }) {
+export async function writeDraft({ draft, outDir, force = false, strict = false, onLog = () => {} }) {
   const outDirExists = existsSync(outDir);
   const outDirNonEmpty = outDirExists && readdirSync(outDir).length > 0;
 
@@ -33,7 +33,7 @@ export function writeDraft({ draft, outDir, force = false, strict = false, onLog
   try {
     stageDraft(draft, stageDir);
 
-    const { findings } = lintPackage({ rootDir: stageDir, strict, onLog });
+    const { findings } = await lintPackage({ rootDir: stageDir, strict, onLog });
     const errors = findings.filter((f) => f.severity === 'error');
 
     if (errors.length > 0) {

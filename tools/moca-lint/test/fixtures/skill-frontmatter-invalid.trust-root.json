@@ -1,0 +1,9 @@
+{
+  "keys": [
+    {
+      "keyid": "moca-lint-test-fixture-key",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAyHRsSijlhnive9t+iKh5pWHf/JM/VXi6XfqR0tRDZvQ=\n-----END PUBLIC KEY-----\n",
+      "identity": "moca-lint test fixture (not for production use)"
+    }
+  ]
+}

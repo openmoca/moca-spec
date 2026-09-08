@@ -216,7 +216,7 @@ The root manifest MUST be named `moca.json`.
 | `augmentation` | Object | No | Declaration of target content being augmented (sidecar usage). See §9. |
 | `integrity` | Object | No | Per-resource SHA-256 digest manifest. Authoritative over any RO-Crate or BagIt checksum manifest present in the same package — see §5.4. |
 | `canonicalDigest` | Object | No | Independently-reproducible whole-package digest. See §5.5. |
-| `signature` | Object | Required if `skills/` present | Cryptographic signature object (Sigstore / DSSE). |
+| `signature` | Object | Required if `skills/` present | Cryptographic signature object (Sigstore / DSSE), signing over `canonicalDigest.value`. A signed package MUST also declare `canonicalDigest`. See [docs/trust-model.md](docs/trust-model.md). |
 | `profileData` | Object | No | Namespaced container for profile-specific manifest extensions. See §11.3. |
 | `composition` | Object | No | Optional package-to-package structural (`members`) or associative (`relates`) references. See §10. |
 | `validFrom` | String (ISO-8601) | No | When this package's content became authoritative. See §7.5. |
@@ -276,7 +276,12 @@ when `algorithm` is `sha256`.
 `canonicalDigest` MUST be derived from each resource file's actual on-disk
 bytes at computation time. Implementations MUST NOT trust the declared values
 in the `integrity` object when computing it. The manifest, with the
-`canonicalDigest` property removed, is also part of the digest input.
+`canonicalDigest` and `signature` properties removed, is also part of the
+digest input. `signature` is excluded for the same self-reference reason as
+`canonicalDigest`: a Level 3 signature signs over `canonicalDigest.value`
+(see [docs/trust-model.md](docs/trust-model.md) §2), so the digest a
+signature signs over cannot itself vary depending on whether, or how, that
+signature has been populated yet.
 
 For a package with `composition.members`, each member MUST be resolved to a
 concrete package version and its own `canonicalDigest.value` MUST be folded
@@ -300,7 +305,7 @@ The `sha256` algorithm is:
   Build `resources`, a map of package-relative POSIX path to lowercase
   hexadecimal digest.
 2. **Manifest digest.** Take the parsed `moca.json` object, delete the
-  `canonicalDigest` key, canonicalize the result per [RFC 8785 (JSON
+  `canonicalDigest` and `signature` keys, canonicalize the result per [RFC 8785 (JSON
   Canonicalization Scheme)](https://www.rfc-editor.org/rfc/rfc8785), and
   SHA-256 the resulting UTF-8 bytes to obtain `manifestDigest` (lowercase
   hexadecimal).
@@ -619,6 +624,13 @@ MOCA Knowledge Assets are strictly inert data.
   (see §3.1). A harness MUST refuse to load `skills/` content from an
   unsigned or signature-invalid package, even if it is willing to load the
   rest of the package's content.
+
+This section states the normative rule only. What `signature` contains,
+which keys/certificates/identities a host trusts, and how offline versus
+online verification and revocation are handled are defined in
+[docs/trust-model.md](docs/trust-model.md), operationalized by
+[`tools/moca-sign`](tools/moca-sign/README.md) (signing) and
+[`tools/moca-lint`](tools/moca-lint/README.md) (verification during lint).
 
 ---
 

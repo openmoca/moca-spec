@@ -188,6 +188,7 @@ and embedder options.
 | Trace a claim's provenance against PROV-O | [examples/level-2-semantic](../examples/level-2-semantic), [core §7.4](../moca-core-spec.md#74-explicit-claims-graph-claims) |
 | Compose a package from other packages, or relate two independent packages | [examples/composition-members](../examples/composition-members), [examples/composition-relates](../examples/composition-relates), [core §10](../moca-core-spec.md#10-package-composition--relationships) |
 | Add an optional semantic/hybrid search sidecar | [tools/moca-index](../tools/moca-index/README.md), [examples/indices/level-1-minimal.moca.idx](../examples/indices/level-1-minimal.moca.idx), [docs/sidecar-index-spec.md](../docs/sidecar-index-spec.md) |
+| Sign a `skills/`-bearing package and verify it in CI | [tools/moca-sign](../tools/moca-sign/README.md), [docs/trust-model.md](../docs/trust-model.md), [examples/level-3-extended](../examples/level-3-extended) |
 
 For the full normative rules, see
 [moca-core-spec.md](../moca-core-spec.md).

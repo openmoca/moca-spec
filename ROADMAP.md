@@ -212,15 +212,37 @@ Establish the signing and verification path required for packages containing
 
 This work operationalizes [core §8.2](moca-core-spec.md#82-security--trust-boundary-rule)
 and [core §3.1](moca-core-spec.md#31-level-requirement-clarification), which
-make signatures mandatory for any package containing `skills/`. The current
-skill-bearing examples (`examples/level-3-extended`,
-`profiles/education/examples/education-profile`, and
-`profiles/eu-ai-act/examples/eu-ai-act-profile`) ship only placeholder
-signatures, as explained in their README disclaimers. This is currently a
-specification requirement without an implementation path.
+make signatures mandatory for any package containing `skills/`.
 
 **Outcome:** Hosts can make a defensible trust decision before loading or
 executing skill content.
+
+**Outcome — Status: Complete.** [docs/trust-model.md](docs/trust-model.md)
+defines the signer/verifier trust model core §8.2 references: a signature
+signs a DSSE-wrapped in-toto Statement over `canonicalDigest.value`, two
+supported modes (`sigstore` keyless Fulcio/Rekor, `dsse` long-lived-key),
+trust-root and identity-constraint configuration for both, offline-by-default
+verification with opt-in `--online-verify`, and revocation handling per
+mode. [`tools/moca-sign`](tools/moca-sign/README.md) implements reference
+`sign`/`verify` tooling for both modes. `moca-lint`'s Security pass now
+cryptographically verifies a present `signature` (`E404`/`E406`/`E407` —
+[tools/moca-lint/README.md](tools/moca-lint/README.md#validation-passes--finding-codes)),
+retiring the previous structural-presence-only `I404` code (see
+[MIGRATIONS.md](MIGRATIONS.md)). Conformance fixtures covering valid,
+missing, placeholder, tampered, and untrusted-signer signatures live under
+[tools/moca-lint/test/fixtures/](tools/moca-lint/test/fixtures/). The three
+previously-placeholder-signature examples (`examples/level-3-extended`,
+`profiles/education/examples/education-profile`,
+`profiles/eu-ai-act/examples/eu-ai-act-profile`) are now signed for real
+with a documented, non-production example key
+([examples/keys/README.md](examples/keys/README.md)) — their README
+disclaimers explain this is a demonstration key, not a signer any real host
+should trust. As documented in
+[tools/moca-sign/README.md](tools/moca-sign/README.md#known-limitations),
+`sigstore`-mode *signing* (keyless, via a real OIDC identity token) is not
+exercised by this repo's own automated test suite, since doing so would
+require live network access and real CI credentials; `sigstore`-mode
+*verification* — what `moca-lint` actually runs — has no such limitation.
 
 ### 7. Core SDKs Across Languages
 

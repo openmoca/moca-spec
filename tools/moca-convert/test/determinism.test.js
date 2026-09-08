@@ -13,12 +13,12 @@ import { walkFiles } from '../lib/walk.js';
 
 const fixturesDir = dirname(fileURLToPath(import.meta.url)) + '/fixtures';
 
-function assertDeterministic(convertFn, inputPath, options) {
+async function assertDeterministic(convertFn, inputPath, options) {
   const outDirA = mkdtempSync(join(tmpdir(), 'moca-convert-test-a-'));
   const outDirB = mkdtempSync(join(tmpdir(), 'moca-convert-test-b-'));
   try {
-    writeDraft({ draft: convertFn({ inputPath, options }), outDir: outDirA });
-    writeDraft({ draft: convertFn({ inputPath, options }), outDir: outDirB });
+    await writeDraft({ draft: convertFn({ inputPath, options }), outDir: outDirA });
+    await writeDraft({ draft: convertFn({ inputPath, options }), outDir: outDirB });
 
     const filesA = walkFiles(outDirA);
     const filesB = walkFiles(outDirB);
@@ -37,29 +37,29 @@ function assertDeterministic(convertFn, inputPath, options) {
   }
 }
 
-test('directory adapter: repeated runs against the same input produce byte-identical output', () => {
-  assertDeterministic(convertDirectory, join(fixturesDir, 'directory', 'basic-nested'), {
+test('directory adapter: repeated runs against the same input produce byte-identical output', async () => {
+  await assertDeterministic(convertDirectory, join(fixturesDir, 'directory', 'basic-nested'), {
     id: 'urn:moca:test:determinism-directory',
     title: 'Determinism Directory',
   });
 });
 
-test('markdown adapter: repeated runs against the same input produce byte-identical output', () => {
-  assertDeterministic(convertMarkdown, join(fixturesDir, 'markdown', 'loose-files', '*.md'), {
+test('markdown adapter: repeated runs against the same input produce byte-identical output', async () => {
+  await assertDeterministic(convertMarkdown, join(fixturesDir, 'markdown', 'loose-files', '*.md'), {
     id: 'urn:moca:test:determinism-markdown',
     title: 'Determinism Markdown',
   });
 });
 
-test('obsidian adapter: repeated runs against the same input produce byte-identical output', () => {
-  assertDeterministic(convertObsidian, join(fixturesDir, 'obsidian', 'vault-basic'), {
+test('obsidian adapter: repeated runs against the same input produce byte-identical output', async () => {
+  await assertDeterministic(convertObsidian, join(fixturesDir, 'obsidian', 'vault-basic'), {
     id: 'urn:moca:test:determinism-obsidian',
     title: 'Determinism Obsidian',
   });
 });
 
-test('openapi adapter: repeated runs against the same input produce byte-identical output', () => {
-  assertDeterministic(convertOpenapi, join(fixturesDir, 'openapi', 'suitable.yaml'), {
+test('openapi adapter: repeated runs against the same input produce byte-identical output', async () => {
+  await assertDeterministic(convertOpenapi, join(fixturesDir, 'openapi', 'suitable.yaml'), {
     id: 'urn:moca:test:determinism-openapi',
   });
 });

@@ -23,7 +23,6 @@ export const WARN_BY_DEFAULT = new Set([
 // Codes that are always informational and never affect the exit code.
 export const INFO_CODES = new Set([
   'I301_SHACL_NOT_EVALUATED',
-  'I404_SIGNATURE_NOT_VERIFIED',
 ]);
 
 export const CODES = Object.freeze({
@@ -50,8 +49,10 @@ export const CODES = Object.freeze({
   E401_UNSIGNED_SKILLS: { pass: 4, summary: 'skills/ is present but moca.json has no signature object.' },
   E402_INTEGRITY_MISMATCH: { pass: 4, summary: 'SHA-256 hash of a file on disk does not match moca.json integrity.' },
   E403_ROCRATE_BAGIT_DISCREPANCY: { pass: 4, summary: 'ro-crate-metadata.json or BagIt manifest hash conflicts with moca.json integrity.' },
+  E404_SIGNATURE_MALFORMED: { pass: 4, summary: 'signature is present but is not a parseable envelope for its declared type, or canonicalDigest is missing (docs/trust-model.md §2/§6).' },
   E405_ROCRATE_METADATA_INVALID: { pass: 4, summary: 'ro-crate-metadata.json is present but is not minimally valid RO-Crate 1.3 (core §2.1).' },
-  I404_SIGNATURE_NOT_VERIFIED: { pass: 4, summary: 'signature object is present but cryptographic verification is not implemented yet.' },
+  E406_SIGNATURE_INVALID: { pass: 4, summary: 'signature envelope parses but cryptographic verification failed (bad signature, digest/subject mismatch, or untrusted signer).' },
+  E407_SIGNATURE_VERIFICATION_INDETERMINATE: { pass: 4, summary: '--online-verify could not complete and --allow-offline-fallback was not passed (docs/trust-model.md §5).' },
 });
 
 export function defaultSeverity(code) {

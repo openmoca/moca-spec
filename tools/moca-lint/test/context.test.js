@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { lintPackage } from '../lib/lint.js';
 
-test('a CURIE-bearing Level 1 package requires an inline @context prefix map', () => {
+test('a CURIE-bearing Level 1 package requires an inline @context prefix map', async () => {
   const rootDir = mkdtempSync(join(tmpdir(), 'moca-lint-test-'));
   mkdirSync(join(rootDir, 'content'));
   writeFileSync(
@@ -21,7 +21,7 @@ test('a CURIE-bearing Level 1 package requires an inline @context prefix map', (
   writeFileSync(join(rootDir, 'content', '01-node.md'), '# Node\n');
 
   try {
-    const { findings } = lintPackage({ rootDir });
+    const { findings } = await lintPackage({ rootDir });
     assert.ok(findings.some((finding) => finding.code === 'E106_LEVEL1_REMOTE_CONTEXT'));
   } finally {
     rmSync(rootDir, { recursive: true, force: true });

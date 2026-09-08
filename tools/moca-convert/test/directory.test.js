@@ -75,15 +75,15 @@ test('a directory with no Markdown files is a usage error', () => {
   );
 });
 
-test('end-to-end: converted output passes moca-lint with zero error-severity findings', () => {
+test('end-to-end: converted output passes moca-lint with zero error-severity findings', async () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'basic-nested'),
     options: { id: 'urn:moca:test:basic-nested', title: 'Basic Nested' },
   });
   const outDir = mkdtempSync(join(tmpdir(), 'moca-convert-test-'));
   try {
-    writeDraft({ draft, outDir });
-    const { findings } = lintPackage({ rootDir: outDir });
+    await writeDraft({ draft, outDir });
+    const { findings } = await lintPackage({ rootDir: outDir });
     const errors = findings.filter((f) => f.severity === 'error');
     assert.deepEqual(errors, []);
   } finally {
