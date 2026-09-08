@@ -7,6 +7,10 @@ import { resolveAdapterName } from '../lib/detect.js';
 import { getAdapter } from '../lib/adapters/index.js';
 import { writeDraft, ConversionFailedError } from '../lib/write.js';
 
+const ADAPTER_ONLY_FLAGS = {
+  exclude: 'obsidian',
+};
+
 const program = new Command();
 program
   .name('moca-convert')
@@ -17,6 +21,7 @@ program
   .option('--title <string>', 'manifest title for the converted package')
   .option('--version <semver>', 'manifest version for the converted package', '1.0.0')
   .option('--from <format>', 'source format: directory|markdown|obsidian|openapi (auto-detected if omitted)')
+  .option('--exclude <glob...>', 'obsidian only: note paths to exclude from conversion (still indexed for wikilink resolution)')
   .option('--force', 'allow writing into a non-empty output directory', false)
   .option('--strict', 'escalate warning-level output-validation findings to errors', false)
   .option('--format <fmt>', 'summary output format: text|json', 'text')
@@ -70,6 +75,7 @@ function run(input, options) {
   try {
     const target = resolveInputTarget(input);
     const adapterName = resolveAdapterName(target, options.from);
+    assertAdapterSpecificFlags(adapterName, options);
     const adapter = getAdapter(adapterName);
 
     const draft = adapter.convert({
@@ -78,6 +84,7 @@ function run(input, options) {
         id: options.id,
         title: options.title,
         version: options.version,
+        exclude: options.exclude,
       },
     });
 
@@ -112,6 +119,14 @@ function run(input, options) {
     throw err;
   } finally {
     logger.flush();
+  }
+}
+
+function assertAdapterSpecificFlags(adapterName, options) {
+  for (const [flag, owner] of Object.entries(ADAPTER_ONLY_FLAGS)) {
+    if (options[flag] !== undefined && adapterName !== owner) {
+      throw new UsageError(`--${flag} is only valid with the ${owner} adapter (resolved adapter: ${adapterName}).`);
+    }
   }
 }
 

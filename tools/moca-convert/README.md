@@ -6,8 +6,8 @@ It never fabricates ontologies, claims, profiles, embeddings, or a
 signature — output is Level 1 only; semantic enrichment stays a deliberate,
 manual, later step.
 
-**Status: work in progress.** `directory` and `markdown` are implemented.
-`obsidian` and `openapi` are planned (see
+**Status: work in progress.** `directory`, `markdown`, and `obsidian` are
+implemented. `openapi` is planned (see
 [issue-drafts/ISSUE-DRAFT-moca-convert.md](../../issue-drafts/ISSUE-DRAFT-moca-convert.md)).
 
 ## Install
@@ -48,6 +48,7 @@ exits `1`.
 | `--title <string>` | Manifest `title` (required for `directory`/`markdown`/`openapi`). |
 | `--version <semver>` | Manifest `version`. Default `1.0.0`. |
 | `--from <format>` | `directory\|markdown\|obsidian\|openapi`. Auto-detected if omitted. |
+| `--exclude <glob...>` | `obsidian` only: note paths to exclude from conversion (still indexed for wikilink resolution). |
 | `--force` | Allow writing into a non-empty output directory. |
 | `--strict` | Escalate warning-level output-validation findings to errors. |
 | `--format <fmt>` | `text` (default) or `json` summary output. |
@@ -64,7 +65,8 @@ exits `1`.
 - `1` — conversion completed internally but the emitted package failed its
   own validation gate; no output was left on disk.
 - `2` — usage error: bad/missing input path, ambiguous format detection,
-  missing required `--id`/`--title`, or a non-empty output directory
+  missing required `--id`/`--title`, an adapter-specific flag (e.g.
+  `--exclude`) used with the wrong adapter, or a non-empty output directory
   without `--force`.
 
 ## Adapters
@@ -87,6 +89,24 @@ directory structure worth preserving. Each file becomes
 filename — not from the source path. Frontmatter is preserved the same way
 as the `directory` adapter. Files whose derived titles collide get `-2`,
 `-3`, ... suffixes, assigned deterministically in sorted-input order.
+
+### `obsidian`
+
+An Obsidian vault directory (detected by its top-level `.obsidian/`
+folder). Each note becomes a content node at its same relative path under
+`content/`, and `[[wikilink]]`/`[[target|alias]]`/`[[target#heading]]`
+syntax is rewritten to relative Markdown links — resolved by note filename
+first, then by any frontmatter `aliases` entry, matching Obsidian's own
+resolution order. A destination containing a space (common with
+human-titled filenames) is wrapped in angle brackets so it stays valid
+CommonMark. A wikilink that can't be resolved, or that resolves to a note
+excluded via `--exclude`, is left as literal `[[...]]` text with a non-fatal
+warning (`W_UNRESOLVED_WIKILINK` / `W_EXCLUDED_WIKILINK`) rather than
+failing the conversion; `![[embed]]` transclusion syntax has no CommonMark
+equivalent and is always left literal with a `W_UNSUPPORTED_EMBED` warning.
+Wikilink syntax inside fenced code blocks is never touched. All frontmatter
+keys are preserved verbatim. `--title` defaults to the vault directory's
+basename when omitted.
 
 ## Development
 

@@ -1,7 +1,7 @@
 // Auto-detection of --from when the caller doesn't pass it explicitly.
 // Ambiguous input is always a refusal (UsageError, mapped to exit code 2 by
 // the CLI) -- this module never guesses.
-import { readFileSync, existsSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { UsageError } from './target.js';
 import { walkFiles } from './walk.js';
@@ -40,7 +40,7 @@ export function resolveAdapterName(target, explicitFrom) {
 }
 
 function detectDirectory(inputPath) {
-  if (existsSync(join(inputPath, '.obsidian')) && statSync(join(inputPath, '.obsidian')).isDirectory()) {
+  if (getAdapter('obsidian').detect(inputPath)) {
     return 'obsidian';
   }
 

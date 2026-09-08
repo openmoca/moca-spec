@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { convert as convertDirectory } from '../lib/adapters/directory.js';
 import { convert as convertMarkdown } from '../lib/adapters/markdown.js';
+import { convert as convertObsidian } from '../lib/adapters/obsidian.js';
 import { writeDraft } from '../lib/write.js';
 import { walkFiles } from '../lib/walk.js';
 
@@ -46,5 +47,12 @@ test('markdown adapter: repeated runs against the same input produce byte-identi
   assertDeterministic(convertMarkdown, join(fixturesDir, 'markdown', 'loose-files', '*.md'), {
     id: 'urn:moca:test:determinism-markdown',
     title: 'Determinism Markdown',
+  });
+});
+
+test('obsidian adapter: repeated runs against the same input produce byte-identical output', () => {
+  assertDeterministic(convertObsidian, join(fixturesDir, 'obsidian', 'vault-basic'), {
+    id: 'urn:moca:test:determinism-obsidian',
+    title: 'Determinism Obsidian',
   });
 });
