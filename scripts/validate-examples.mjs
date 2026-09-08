@@ -3,6 +3,7 @@
 // from core §3.1/§8.2 that the schema itself can't express (see CONTRIBUTING.md).
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { findAllExamplePackages } from './lib/find-packages.mjs';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
@@ -18,24 +19,7 @@ JSON.parse(readFileSync(join(root, 'schemas/v1/core/context.jsonld'), 'utf8'));
 
 const validateCore = ajv.compile(coreSchema);
 
-const exampleDirs = [
-  ...readdirSync(join(root, 'examples'))
-    .filter((name) => {
-      const examplePath = join(root, 'examples', name);
-      return (
-        statSync(examplePath).isDirectory() &&
-        existsSync(join(examplePath, 'moca.json'))
-      );
-    })
-    .map((name) => join('examples', name)),
-  'profiles/education/examples/education-profile',
-  'profiles/eu-ai-act/examples/eu-ai-act-profile',
-  'examples/composition-members/course',
-  'examples/composition-members/module-1',
-  'examples/composition-members/module-2',
-  'examples/composition-relates/document-current',
-  'examples/composition-relates/document-prior',
-];
+const exampleDirs = findAllExamplePackages(root);
 
 let failed = false;
 

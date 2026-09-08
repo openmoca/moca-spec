@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
+  "id": "urn:moca:example:data-retention-policy-v1",
+  "version": "1.0.0",
+  "title": "Data Retention Policy (v1, superseded)",
+  "description": "The data retention policy in force from 2024-01-01 until 2026-06-30. Retained for audit; superseded by v2.",
+  "language": "en",
+  "license": "Apache-2.0",
+  "publisher": "Example Corp Legal",
+  "validFrom": "2024-01-01T00:00:00Z",
+  "lastReviewed": "2025-11-20T00:00:00Z"
+}

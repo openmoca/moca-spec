@@ -25,6 +25,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { computeCanonicalDigest } from './validate-canonical-digest.mjs';
 import { signPackage } from '../tools/moca-sign/lib/sign.js';
+import { findPackages } from './lib/find-packages.mjs';
 
 const root = process.cwd();
 const checkOnly = process.argv.includes('--check');
@@ -43,20 +44,6 @@ let stale = 0;
 
 function note(message) {
   console.log(`  ${message}`);
-}
-
-function findPackages(dir, found = []) {
-  if (!existsSync(dir)) return found;
-  if (existsSync(join(dir, 'moca.json'))) {
-    found.push(dir);
-    return found;
-  }
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.isDirectory() && entry.name !== 'node_modules') {
-      findPackages(join(dir, entry.name), found);
-    }
-  }
-  return found;
 }
 
 function readManifest(packageRoot) {

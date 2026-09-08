@@ -13,8 +13,9 @@
 //
 //   node scripts/lint-examples.mjs             # lint, compare to baseline
 //   node scripts/lint-examples.mjs --update    # rewrite the baseline
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { findPackages } from './lib/find-packages.mjs';
 import { lintPackage } from 'moca-lint/lib/lint.js';
 import { formatSarif } from 'moca-lint/lib/format.js';
 
@@ -24,18 +25,6 @@ const sarifIndex = process.argv.indexOf('--sarif');
 const sarifPath = sarifIndex === -1 ? null : process.argv[sarifIndex + 1];
 const BASELINE = join(root, 'scripts/example-lint-baseline.json');
 const TRUST_ROOT = join(root, 'fixtures/signing-keys/example-signing-trust-root.json');
-
-function findPackages(dir, found = []) {
-  if (!existsSync(dir)) return found;
-  if (existsSync(join(dir, 'moca.json'))) {
-    found.push(dir);
-    return found;
-  }
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.isDirectory() && entry.name !== 'node_modules') findPackages(join(dir, entry.name), found);
-  }
-  return found;
-}
 
 const packageRoots = ['examples', 'profiles']
   .flatMap((searchRoot) => findPackages(join(root, searchRoot)))

@@ -59,6 +59,13 @@ and compatibility policy.
 - Replaced `lint:moca`'s hardcoded list of 13 example paths with discovery
   (`scripts/lint-examples.mjs`). The hardcoded list would have silently stopped
   covering any example added after it was written.
+- Restructured the documentation around the reader rather than the
+  specification. `docs/` gained an index, a "why", use cases, an end-to-end
+  walkthrough, and five guides; `docs/quickstart.md` was trimmed from 194 to
+  121 lines and its deeper material moved into `docs/guides/authoring.md`.
+- Rewrote the README opening to lead with the problem MOCA solves rather than
+  a definition of it, and added a concrete "quick look" at a manifest and a
+  grounded content node.
 
 ### Added
 
@@ -88,6 +95,39 @@ and compatibility policy.
   findings the example corpus emits by design (a deliberately dangling evidence
   locator; `ex:` CURIEs with no in-package ontology). CI now fails on a *new*
   warning instead of leaving eight known ones as permanent noise.
+- Documentation answering the two questions the repository could not previously
+  answer:
+  - [docs/why-moca.md](docs/why-moca.md) — the problem, the explicit non-goals,
+    and why not to just use a folder of Markdown, a vector database, or a
+    fine-tune.
+  - [docs/guides/consuming.md](docs/guides/consuming.md) — the harness side, in
+    implementation order: resolving a root, rejecting excluded properties,
+    deriving the level, node identity and locale fallback, integrity,
+    composition with cycle guards, the `skills/` trust decision, and graceful
+    degradation. Every guide before this one was authoring-side.
+- [docs/use-cases.md](docs/use-cases.md), including how MOCA relates to
+  RO-Crate, DITA, SCORM/cmi5, MCP resources, PROV-O, and vector databases, and
+  a section on where MOCA is a *poor* fit.
+- [docs/walkthrough.md](docs/walkthrough.md) — a verified end-to-end run
+  (convert → lint → sign → index → pack → extract → grounded answer), pulling
+  roadmap item 10 forward in reduced form. Includes the fail-closed behaviour
+  where signing a package makes subsequent lints require `--trust-root`.
+- [docs/guides/choosing-a-level.md](docs/guides/choosing-a-level.md),
+  [authoring.md](docs/guides/authoring.md),
+  [signing-and-trust.md](docs/guides/signing-and-trust.md),
+  [search-and-indexes.md](docs/guides/search-and-indexes.md), and a
+  [docs index](docs/README.md) whose reference section points at authoritative
+  sources rather than restating them.
+- Use-case-shaped example packages under
+  [examples/use-cases/](examples/use-cases): `support-kb` (epistemic status as
+  a retrieval signal — `verified` vs `sourced` vs `disputed`) and
+  `policy-corpus` (a versioned policy as two packages linked by `supersedes`,
+  so the superseded text stays auditable). Examples were previously named only
+  by conformance level, which is a specification author's taxonomy rather than
+  a reader's.
+- `scripts/lib/find-packages.mjs`: one recursive package-discovery helper,
+  now shared by `validate-examples.mjs`, `lint-examples.mjs` and
+  `refresh-derived.mjs`.
 
 ### Fixed
 
@@ -102,6 +142,11 @@ and compatibility policy.
 - `tools/moca-index`'s tests hardcoded `examples/level-1-minimal`'s canonical
   digest, so they broke whenever that example changed. They now read the
   digest from the package at test time.
+- `scripts/validate-examples.mjs` discovered packages with a single-level
+  `readdir` over `examples/` plus a hardcoded tail list of nested paths, so it
+  silently skipped any package nested more than one level deep — it missed all
+  three new `examples/use-cases/` packages when they were added. It now uses
+  recursive discovery, and covers 16 packages instead of 13.
 
 ## [0.1.0-beta.1] - 2026-09-03
 

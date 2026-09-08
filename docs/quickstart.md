@@ -1,22 +1,22 @@
-# Quickstart: Build Your First MOCA Package
+# Quickstart
 
-This walkthrough builds a Level 1 (MOCA Core) package from ordinary JSON and
-Markdown, then adds optional identity and concept-grounding metadata.
+Build a valid MOCA package in five minutes, using ordinary JSON and Markdown.
 
-## 1. Start from the bare example
+New to MOCA? [Why MOCA?](why-moca.md) explains what problem it solves first.
 
-The smallest valid MOCA package is
-[examples/level-1-bare](../examples/level-1-bare): a `moca.json` manifest plus
-one plain CommonMark file. Copy that folder as your starting point:
+## 1. Copy the smallest valid package
 
 ```sh
 cp -r examples/level-1-bare my-package
 ```
 
-## 2. The manifest (`moca.json`)
+[level-1-bare](../examples/level-1-bare) is a `moca.json` plus one plain
+CommonMark file. That is the entire Level 1 floor.
 
-Every MOCA package needs a root manifest with, at minimum, `id`, `version`,
-and `title` ([core §5.1](../spec/moca-core-spec.md#51-manifest-properties)):
+## 2. The manifest
+
+Every package needs a root `moca.json` with at minimum `id`, `version`, and
+`title` ([core §5.1](../spec/moca-core-spec.md#51-manifest-properties)):
 
 ```json
 {
@@ -26,14 +26,14 @@ and `title` ([core §5.1](../spec/moca-core-spec.md#51-manifest-properties)):
 }
 ```
 
-Do not add `endpoints`, `settings`, `credentials`, or `apiKeys` — these are
-explicitly excluded from any MOCA manifest
-([core §5.3](../spec/moca-core-spec.md#53-excluded-properties)) because MOCA
-packages are runtime-independent data, not configuration.
+Do **not** add `endpoints`, `settings`, `credentials`, or `apiKeys`. These are
+forbidden in any MOCA manifest
+([core §5.3](../spec/moca-core-spec.md#53-excluded-properties)) — a package is
+portable data, never runtime configuration.
 
-## 3. Add plain CommonMark content
+## 3. Add content
 
-Create at least one Markdown file under `content/`:
+At least one Markdown file under `content/`:
 
 ```markdown
 # My First Node
@@ -41,154 +41,81 @@ Create at least one Markdown file under `content/`:
 This content can be consumed with ordinary Markdown tooling.
 ```
 
-No YAML frontmatter is required. When a node has no explicit `id`, a harness
-identifies it by its file path relative to `content/`, such as
-`01-my-first-node.md`.
+No frontmatter required. Without an explicit `id`, a consumer identifies the
+node by its path relative to `content/` — here, `01-my-first-node.md`.
 
-This is the informal **bare** rung of Level 1. The terms bare, identified, and
-grounded describe increasing metadata richness within Level 1; they are not
-new conformance levels.
+You now have a conformant Level 1 package.
 
-## 4. Optional: add identity and concept grounding
-
-Add frontmatter when consumers need a stable identifier or display title.
-This is the informal **identified** rung:
-
-```markdown
----
-id: urn:node:my-first-node
-title: My First Node
----
-# My First Node
-
-This content has an explicit identity.
-```
-
-Concept binding and other metadata are also optional. To use a CURIE such as
-`ex:MyConcept`, first add its prefix to an inline `@context` in `moca.json`:
-
-```json
-{
-  "@context": {
-    "ex": "https://example.org/vocab#"
-  },
-  "id": "urn:moca:example:my-package",
-  "version": "1.0.0",
-  "title": "My Package"
-}
-```
-
-Then enrich the content node with concept and provenance metadata
-([core §7.1](../spec/moca-core-spec.md#71-commonmark-knowledge-nodes-content)):
-
-```markdown
----
-id: urn:node:my-first-node
-title: My First Node
-concepts:
-  - id: ex:MyConcept
-    role: primary
-epistemicStatus: sourced
-summary: "One-line summary of what this node grounds."
----
-# My First Node
-
-The Markdown body a harness surfaces to a model or a user.
-```
-
-This is the informal **grounded** rung. The
-[level-1-minimal example](../examples/level-1-minimal) demonstrates this form.
-An `@context` is required only when a CURIE appears anywhere in the package;
-it is unnecessary for the bare example because that package uses no CURIEs.
-
-## 5. Validate
+## 4. Validate
 
 ```sh
 npm install
 npx moca-lint lint my-package
 ```
 
-This validates the package directory using the same manifest, content, and
-referential-integrity checks used in CI. Conformance level is derived from the
-package contents; it is not added to `moca.json`.
+Conformance level is *derived* from what the package contains — it is never
+declared in `moca.json`.
 
-To validate only the manifest against
-[schemas/v1/core/moca.schema.json](../schemas/v1/core/moca.schema.json), run:
+To validate only the manifest against the schema:
 
 ```sh
-npx ajv-cli validate -s schemas/v1/core/moca.schema.json -d my-package/moca.json --spec=draft2020
+npx ajv-cli validate -s schemas/v1/core/moca.schema.json \
+  -d my-package/moca.json --spec=draft2020
 ```
 
-Once a package validates, `moca-lint pack` archives it (fail-closed — it
-refuses to write if any error-severity finding is present), and
-`moca-lint extract` reverses that:
+## 5. Package it
 
 ```sh
 npx moca-lint pack my-package -o my-package.moca
 npx moca-lint extract my-package.moca -o my-package-copy
 ```
 
-See [tools/moca-lint/README.md](../tools/moca-lint/README.md#pack) for
-options (`--exclude` on pack, `--force`/`--lint` on extract).
+`pack` is fail-closed — it refuses to write if any error-severity finding is
+present.
 
-## 6. Converting existing content
+## Already have content?
 
-Already have content in another shape? [`tools/moca-convert`](../tools/moca-convert/README.md)
-creates a Level 1 package directly from a directory of Markdown, a single
-Markdown file or glob, an Obsidian vault, or a suitable OpenAPI 3.x document
-— it never fabricates ontologies, claims, or profiles, so a converted
-package is still just the bare/identified rung above; add semantic
-grounding by hand afterward if you want it. It lints its own output before
-reporting success, so a successful run is already a validated package.
+[`moca-convert`](../tools/moca-convert/README.md) builds a Level 1 package
+from what you have, and lints its own output before reporting success:
 
 ```sh
-# A folder of Markdown files, preserving its structure
+# A folder of Markdown, structure preserved
 npx moca-convert ./docs -o my-package --id urn:moca:example:my-docs --title "My Docs"
 
-# A single file or glob, flattened by title
-npx moca-convert "./notes/*.md" -o my-package --id urn:moca:example:my-notes --title "My Notes"
-
-# An Obsidian vault, with [[wikilinks]] rewritten to relative Markdown links
+# An Obsidian vault, [[wikilinks]] rewritten to relative links
 npx moca-convert ./my-vault -o my-package --id urn:moca:example:my-vault
 
-# A suitable OpenAPI 3.x document, one content node per operation
+# An OpenAPI 3.x document, one content node per operation
 npx moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
 ```
 
-See [tools/moca-convert/README.md](../tools/moca-convert/README.md) for the
-full adapter reference and options.
+## Next steps
 
-## 7. Generating a sidecar index
-
-A package remains complete and usable without one, but
-[`tools/moca-index`](../tools/moca-index/README.md) can build an optional
-[`.moca.idx`](../spec/moca-sidecar-index-spec.md) sidecar for semantic or hybrid search:
-
-```sh
-npx moca-index build my-package -o my-package.moca.idx --zip
-```
-
-It binds to the target via its `canonicalDigest` when present, chunks
-`content/` (one chunk per file in this first version), and self-validates
-before writing — nothing invalid is left on disk. See
-[tools/moca-index/README.md](../tools/moca-index/README.md) for binding
-and embedder options.
-
-## 8. Going further
-
-| Want to... | Look at |
+| If you want to… | Go to |
 |---|---|
-| Add JSON-LD, ontologies, SHACL validation, and RDF-interpretable claims (Level 2) | [examples/level-2-semantic](../examples/level-2-semantic) |
-| Add Web Annotation evidence locators and a signed Agent Skill (Level 3) | [examples/level-3-extended](../examples/level-3-extended) |
-| Build a tutoring/courseware package | [examples/education-profile](../profiles/education/examples/education-profile), [moca-education-profile.md](../profiles/education/moca-education-profile.md) |
-| Ground an AI harness against existing content without modifying it | [examples/augmentation-generic](../examples/augmentation-generic), [examples/augmentation-scorm2004](../examples/augmentation-scorm2004) |
-| Apply a regulatory/compliance standard to a package | [examples/eu-ai-act-profile](../profiles/eu-ai-act/examples/eu-ai-act-profile), [moca-eu-ai-act-profile.md](../profiles/eu-ai-act/moca-eu-ai-act-profile.md) |
-| Define a reproducible whole-package identity, including composed members | [examples/composition-members](../examples/composition-members), [core §5.5](../spec/moca-core-spec.md#55-canonical-package-digest) |
-| Record freshness and lineage (`validFrom`, `lastReviewed`, `supersedes`) | [examples/level-1-minimal/moca.json](../examples/level-1-minimal/moca.json), [core §7.5](../spec/moca-core-spec.md#75-content-node-lifecycle-fields) |
-| Trace a claim's provenance against PROV-O | [examples/level-2-semantic](../examples/level-2-semantic), [core §7.4](../spec/moca-core-spec.md#74-explicit-claims-graph-claims) |
-| Compose a package from other packages, or relate two independent packages | [examples/composition-members](../examples/composition-members), [examples/composition-relates](../examples/composition-relates), [core §10](../spec/moca-core-spec.md#10-package-composition--relationships) |
-| Add an optional semantic/hybrid search sidecar | [tools/moca-index](../tools/moca-index/README.md), [examples/sidecars/level-1-minimal.moca.idx](../examples/sidecars/level-1-minimal.moca.idx), [spec/moca-sidecar-index-spec.md](../spec/moca-sidecar-index-spec.md) |
-| Sign a `skills/`-bearing package and verify it in CI | [tools/moca-sign](../tools/moca-sign/README.md), [spec/moca-trust-model.md](../spec/moca-trust-model.md), [examples/level-3-extended](../examples/level-3-extended) |
+| See the whole pipeline, convert → sign → index → answer | [End-to-end walkthrough](walkthrough.md) |
+| Add identity, concepts, evidence, freshness, composition | [Authoring guide](guides/authoring.md) |
+| Build something that *reads* packages | [Consuming a package](guides/consuming.md) |
+| Work out which conformance level you need | [Choosing a level](guides/choosing-a-level.md) |
+| Sign a package, or ship `skills/` | [Signing and trust](guides/signing-and-trust.md) |
+| Add semantic or hybrid search | [Search and indexes](guides/search-and-indexes.md) |
+| See MOCA shaped like real corpora | [Use-case examples](../examples/use-cases) |
+
+### Example packages
+
+| Example | Shows |
+|---|---|
+| [level-1-bare](../examples/level-1-bare) | The minimum valid package |
+| [level-1-minimal](../examples/level-1-minimal) | Frontmatter, concepts, lifecycle fields |
+| [level-2-semantic](../examples/level-2-semantic) | Ontologies, SHACL, RDF-interpretable claims |
+| [level-3-extended](../examples/level-3-extended) | Web Annotation locators, a signed skill |
+| [composition-members](../examples/composition-members) | A package composed of other packages |
+| [composition-relates](../examples/composition-relates) | Loose cross-package relationships |
+| [augmentation-generic](../examples/augmentation-generic) | Grounding content you can't modify |
+| [use-cases/support-kb](../examples/use-cases/support-kb) | Epistemic status as a retrieval signal |
+| [use-cases/policy-corpus](../examples/use-cases/policy-corpus) | Versioned policy with supersession |
+| [education-profile](../profiles/education/examples/education-profile) | A domain profile applied |
+| [eu-ai-act-profile](../profiles/eu-ai-act/examples/eu-ai-act-profile) | A compliance profile applied |
 
 For the full normative rules, see
-[moca-core-spec.md](../spec/moca-core-spec.md).
+[the core specification](../spec/moca-core-spec.md).
