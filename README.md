@@ -1,6 +1,6 @@
 # MOCA — Modular Ontology & Content Assembly
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status: Beta](https://img.shields.io/badge/status-beta-orange.svg)](#status)
 
 MOCA defines a portable, storage-independent, and runtime-neutral format for
@@ -103,4 +103,7 @@ new profiles, and [GOVERNANCE.md](GOVERNANCE.md) for how decisions get made.
 
 ## License
 
-[MIT](LICENSE)
+[Apache License 2.0](LICENSE) — specification prose and reference tooling
+alike. The patent grant in §3 is deliberate: MOCA is a format intended for
+independent implementation, and implementers should not have to weigh patent
+risk before adopting it. See [NOTICE](NOTICE).

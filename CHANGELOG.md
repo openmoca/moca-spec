@@ -7,6 +7,59 @@ This project is in **Beta `0.1.0-beta.1`** status. The format is not stable yet;
 see [Versioning and Release](docs/versioning-and-release.md) for the release
 and compatibility policy.
 
+## [Unreleased]
+
+### Changed
+
+- **Relicensed the project from MIT to Apache License 2.0**, covering both the
+  specification prose and the reference tooling. The Apache §3 patent grant is
+  the reason: MOCA is a format intended for independent implementation, and
+  implementers should not have to weigh patent risk before adopting it. Added
+  `NOTICE`. Example packages' `license` fields and every tool `package.json`
+  now declare `Apache-2.0`.
+- Removed the `issue-drafts/` directory. Eight of its ten documents described
+  work that had already merged, and keeping proposal drafts in-tree
+  contradicted `GOVERNANCE.md`'s "decisions happen in the open" — spec-change
+  proposals are developed in GitHub issues, per `CONTRIBUTING.md`. The drafts
+  remain in git history.
+- Rewrote `ROADMAP.md` (442 → 174 lines). It had accumulated per-item
+  completion notes longer than the items themselves, duplicating detail this
+  changelog already carries. It is now a Delivered table plus Now/Next/Later,
+  and states where each future component will live.
+- Rewrote `GOVERNANCE.md`'s "Repository Layout" section, which described a
+  structure that no longer existed: it claimed this repository contains "No
+  executable harness code" (it contains four CLIs) and listed `sdk-dotnet` and
+  `sdk-python` while omitting TypeScript, the language the entire existing
+  toolchain is written in. It now documents the single-repository model through
+  `1.0.0` and the graduation triggers for splitting components out.
+- Reordered this changelog so `[Unreleased]` precedes released versions, per
+  Keep a Changelog. It was previously inverted.
+
+### Added
+
+- `scripts/validate-links.mjs` and `npm run validate:links`: verifies every
+  relative Markdown link in a tracked `.md` file resolves on disk, and that
+  `#fragment` anchors match a real heading in the target. Added ahead of the
+  planned specification-document reorganisation, which rewrites cross-references
+  at a scale that cannot be hand-audited. Wired into CI.
+- A root `npm test` running every validator and all four tool test suites. The
+  release checklist previously required running four separate suites by hand.
+- A `moca-sign` CI job. The signing and verification tool — the most
+  security-sensitive component in the repository — had no CI coverage at all;
+  the other three tools each had a 3-OS matrix job.
+- `.editorconfig`, and an expanded `.gitignore` (previously a single line).
+
+### Fixed
+
+- Three broken relative links in the composition example packages, found by the
+  new link checker: `examples/composition-members/module-{1,2}/content/` and
+  `examples/composition-relates/document-prior/content/` linked to `../course`
+  and `../document-current`, which resolve inside the module directory rather
+  than beside it. Correcting the content changed those packages' bytes, so
+  `canonicalDigest` was recomputed for both modules and then for the composing
+  course package, which folds its members' digests transitively (core §5.5).
+- Untracked `.DS_Store`, which had been committed to the repository.
+
 ## [0.1.0-beta.1] - 2026-09-03
 
 ### Beta contents
@@ -24,7 +77,10 @@ and compatibility policy.
 - Documentation now distinguishes beta behavior from deferred SHACL,
   cryptographic signature, and full external-standard validation.
 
-## [Unreleased]
+## [0.1.0-beta.1 development history]
+
+The entries below predate the `0.1.0-beta.1` tag and record how that release was
+assembled.
 
 ### Changed
 

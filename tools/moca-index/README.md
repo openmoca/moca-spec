@@ -64,8 +64,7 @@ isn't supported yet.
 `--embedder <name>` selects an embedding provider; only `"none"`
 (lexical-only, the default) is implemented. Passing any other value is a
 usage error. This flag exists now so a real embedding backend can be added
-later without a CLI redesign — see
-[issue-drafts/ISSUE-DRAFT-moca-index.md](../../issue-drafts/ISSUE-DRAFT-moca-index.md).
+later without a CLI redesign.
 
 ## Options
 

@@ -1,0 +1,13 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or general discussion
+    url: https://github.com/openmoca/moca-spec/discussions
+    about: >-
+      Ask how to model something in MOCA, discuss an idea before it becomes a
+      spec change proposal, or share what you are building.
+  - name: Report a security vulnerability
+    url: https://github.com/openmoca/moca-spec/security/advisories/new
+    about: >-
+      Report privately, not as a public issue. This includes schema or
+      moca-lint false negatives and moca-sign verification bugs — see
+      SECURITY.md for what is in scope.

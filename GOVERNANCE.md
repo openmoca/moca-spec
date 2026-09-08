@@ -63,15 +63,41 @@ a short pointer to the new repo in place of the local directory.
 
 ## Repository Layout (`openmoca` org)
 
-The project is split across multiple repositories by concern:
+Through `1.0.0`, MOCA is developed as a **single repository**,
+`openmoca/moca-spec`. It contains:
+
+| Area | Contents |
+|---|---|
+| Specification | `moca-core-spec.md` and the normative satellite specifications (sidecar index, trust model) |
+| Schemas | JSON Schemas and JSON-LD contexts under `schemas/` |
+| Profiles | Self-contained profile bundles under `profiles/` (see Profile Graduation above) |
+| Examples | Static fixture packages under `examples/` |
+| Tools | The reference CLIs under `tools/` — `moca-lint`, `moca-convert`, `moca-index`, `moca-sign` |
+| Conformance | The shared, language-neutral test corpus SDKs validate against |
+| SDKs | TypeScript, Python, and .NET libraries (not yet built) |
+
+This is deliberate rather than incidental. The SDKs are expected to *change the
+specification* — [docs/versioning-and-release.md](docs/versioning-and-release.md)
+states that findings from the first SDK implementations should become
+specification changes before `1.0.0`. Splitting the repository early would turn
+each such finding into a multi-repository coordination problem for a
+solo-maintained project, and would make a cross-language conformance suite —
+the mechanism that actually keeps three SDKs consistent — a cross-repository
+dependency.
+
+Components graduate to their own repositories on the same triggers described
+under [Profile Graduation](#profile-graduation): an independent maintainer
+group, a genuinely independent release cadence, or size that makes the core hard
+to navigate.
+
+Two categories live outside this repository from the start, because they carry
+third-party dependency surfaces and release cadences the specification should
+not inherit:
 
 | Repo | Purpose |
 |---|---|
-| `openmoca/moca-spec` (this repo) | The specification itself, JSON Schemas, JSON-LD contexts, and static example/fixture packages. No executable harness code. |
-| `openmoca/sdk-dotnet` | .NET harness SDK for consuming MOCA packages, plus its own runnable code samples. |
-| `openmoca/sdk-python` | Python harness SDK for consuming MOCA packages, plus its own runnable code samples. |
+| `openmoca/moca-integrations-*` | Framework adapters — LangChain, LlamaIndex, MCP server, Microsoft Agent Framework |
+| `openmoca/moca-example-end-to-end` | The full end-to-end demonstration application |
 
-`sdk-dotnet` and `sdk-python` are not yet built. Static MOCA package fixtures
-used for conformance testing live in `moca-spec/examples/` and are not
-duplicated into the SDK repos — SDKs depend on this repo's schemas and
-examples rather than vendoring copies.
+Neither exists yet. Conformance fixtures are never vendored into a dependent
+repository; they are consumed from this one.

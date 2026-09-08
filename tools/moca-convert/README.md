@@ -7,9 +7,7 @@ signature — output is Level 1 only; semantic enrichment stays a deliberate,
 manual, later step.
 
 All four planned adapters — `directory`, `markdown`, `obsidian`, and
-`openapi` — are implemented (see
-[issue-drafts/ISSUE-DRAFT-moca-convert.md](../../issue-drafts/ISSUE-DRAFT-moca-convert.md)
-for the original design).
+`openapi` — are implemented.
 
 ## Install
 

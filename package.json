@@ -3,15 +3,20 @@
   "private": true,
   "version": "0.1.0-beta.1",
   "description": "MOCA specification, JSON Schemas, and example packages.",
+  "license": "Apache-2.0",
   "type": "module",
   "workspaces": [
     "tools/*"
   ],
   "scripts": {
+    "test": "npm run validate:all && npm run test:tools",
+    "test:tools": "node --test \"tools/*/test/*.test.js\"",
+    "validate:all": "npm run validate && npm run validate:jsonld && npm run validate:canonical-digest && npm run validate:sidecar-index && npm run validate:links && npm run lint:md && npm run lint:moca",
     "validate": "node scripts/validate-examples.mjs",
     "validate:sidecar-index": "node scripts/validate-sidecar-index.mjs",
     "validate:jsonld": "node scripts/validate-jsonld-context.mjs",
     "validate:canonical-digest": "node scripts/validate-canonical-digest.mjs",
+    "validate:links": "node scripts/validate-links.mjs",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"!**/node_modules/**\"",
     "lint:moca": "moca-lint lint examples/level-1-bare examples/level-1-minimal examples/level-2-semantic examples/level-3-extended profiles/education/examples/education-profile examples/augmentation-generic examples/augmentation-scorm2004 profiles/eu-ai-act/examples/eu-ai-act-profile examples/composition-members/course examples/composition-members/module-1 examples/composition-members/module-2 examples/composition-relates/document-current examples/composition-relates/document-prior --trust-root examples/keys/example-signing-trust-root.json"
   },

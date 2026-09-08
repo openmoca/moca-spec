@@ -5,7 +5,7 @@
   "description": "Composition-only course package demonstrating composition.members (core §10).",
   "canonicalDigest": {
     "algorithm": "sha256",
-    "value": "3194f9dafd242763706ff19aa8889e9622ef9c19feaac55366b7b258d0860294"
+    "value": "1bd607827a194343950ce2c78dff5585b4fb18e1acd1278a22641f96a6bc4545"
   },
   "composition": {
     "members": [

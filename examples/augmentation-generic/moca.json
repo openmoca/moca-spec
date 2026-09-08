@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "title": "Generic Archive Semantic Augmentation",
   "description": "Demonstrates the core augmentation pattern (core \u00a79) as a first-class, profile-independent MOCA usage: grounding an AI harness against an arbitrary external archive without modifying it.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "augmentation": {
     "target": "./raw/external-content.zip",
     "targetType": "generic-archive",

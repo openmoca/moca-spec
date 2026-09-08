@@ -9,6 +9,10 @@
   // content/*.md nodes intentionally pair a YAML frontmatter "title" with a
   // body H1, per core spec §7.1's own example — don't flag that as two titles.
   "MD025": { "front_matter_title": "" },
+  // CHANGELOG.md repeats "### Added"/"### Changed"/"### Fixed" under each
+  // release heading, as Keep a Changelog prescribes. Only flag duplicate
+  // headings that share the same parent.
+  "MD024": { "siblings_only": true },
   // moca-core-spec.md / profile specifications are out of scope for edits
   // (see CONTRIBUTING.md); relax formatting-only rules they don't follow.
   "MD022": false,

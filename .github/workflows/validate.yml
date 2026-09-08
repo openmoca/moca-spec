@@ -20,6 +20,7 @@ jobs:
       - run: npm run validate:jsonld
       - run: npm run validate:canonical-digest
       - run: npm run validate:sidecar-index
+      - run: npm run validate:links
 
   lint-markdown:
     name: Lint Markdown
@@ -91,4 +92,20 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node --test 'tools/moca-index/test/*.test.js'
+
+  moca-sign:
+    name: moca-sign (tests)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node --test 'tools/moca-sign/test/*.test.js'
 

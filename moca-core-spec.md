@@ -1,8 +1,9 @@
 # MOCA — Modular Ontology & Content Assembly
 ## Core Package Specification
 
-License: MIT Specification Version
-Status: Beta `0.1.0-beta.1` — pre-`1.0.0`, experimental
+Specification version: `0.1.0-beta.1`
+Status: Beta — pre-`1.0.0`, experimental
+License: [Apache License 2.0](LICENSE)
 
 ---
 

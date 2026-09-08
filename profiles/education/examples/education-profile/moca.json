@@ -11,7 +11,7 @@
   "version": "1.0.0",
   "title": "Education Profile Example",
   "description": "MOCA package declaring the education profile: profileData.education, the education:competencies ontology role, and a tutoring skill with metadata.competencies.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "profile": [
     "https://openmoca.org/profiles/education/v1"
   ],
@@ -53,11 +53,11 @@
   },
   "signature": {
     "type": "dsse",
-    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBsWkhWallYUnBiMjR0Y0hKdlptbHNaVUF4TGpBdU1DSXNJbVJwWjJWemRDSTZleUp6YUdFeU5UWWlPaUk1T0RRek4ySXpPRFUxTnpnMU1HSTJaalk0T0RBek9UWXhOV1EzTkRkbE16a3dNR1kxT0RZNE0yVTFNRGM1TkRVMFltWmxaVGhoWWpBd05qUXdORGhoSW4xOVhTd2ljSEpsWkdsallYUmxWSGx3WlNJNkltaDBkSEJ6T2k4dmIzQmxibTF2WTJFdWIzSm5MMkYwZEdWemRHRjBhVzl1Y3k5d1lXTnJZV2RsTFhOcFoyNWhkSFZ5WlM5Mk1TSXNJbkJ5WldScFkyRjBaU0k2ZTMxOSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6InJ1YmtRcHliNWRlbnBNQ2ZybHlWeGNoUmNoVjZVN21jNGtxeGtjejEybm9CYWlLaWRyYWcxMG5vR3pFZWlSSDJLSXdlc3RsUXErWncvZTU3dUFCL0RBPT0ifV19",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBsWkhWallYUnBiMjR0Y0hKdlptbHNaVUF4TGpBdU1DSXNJbVJwWjJWemRDSTZleUp6YUdFeU5UWWlPaUpoWTJGaFltWTVNRFV5WTJObU9EVmxNR1poTlRSaU9UUmlZakppWVRVd01qRXdOMlkxTlRObU5UQmxNakk0TW1JMFptTXlNak5pWVRKbE1EQXpNemd4SW4xOVhTd2ljSEpsWkdsallYUmxWSGx3WlNJNkltaDBkSEJ6T2k4dmIzQmxibTF2WTJFdWIzSm5MMkYwZEdWemRHRjBhVzl1Y3k5d1lXTnJZV2RsTFhOcFoyNWhkSFZ5WlM5Mk1TSXNJbkJ5WldScFkyRjBaU0k2ZTMxOSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6Iit3S2lzMC9TM3dlYnFuTStaNXArcjBGcyt6NXBnUDJCZjdkMnBkUmorOTRyV1BDekJINUZGRjNYd1hhbUZsZXVROXdwdkRFU0FvUE9WZ2MvSmtCcUNBPT0ifV19",
     "keyid": "moca-spec-example-signing-key-2026"
   },
   "canonicalDigest": {
     "algorithm": "sha256",
-    "value": "98437b38557850b6f688039615d747e3900f58683e5079454bfee8ab0064048a"
+    "value": "acaabf9052ccf85e0fa54b94bb2ba502107f553f50e2282b4fc223ba2e003381"
   }
 }

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "title": "CS101 SCORM Semantic Augmentation",
   "description": "Demonstrates the education profile's expected augmentation.targetType values (education \u00a75) for sidecar-augmenting an existing SCORM 2004 course.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "profile": ["https://openmoca.org/profiles/education/v1"],
   "augmentation": {
     "target": "./raw/cs101-course.zip",

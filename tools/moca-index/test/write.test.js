@@ -13,7 +13,7 @@ const level1MinimalDir = join(repoRoot, 'examples', 'level-1-minimal');
 
 const VALID_MANIFEST = buildIndexManifest({
   targetId: 'urn:moca:example:level-1-minimal',
-  targetHash: 'sha256:c424a0f83d146271c200d73b2576f0153abf4c1de7f380ba3528f70ae2260388',
+  targetHash: 'sha256:2c9d1a433be0d3a491038195e5a624507b1e1fb45b412eb51644d221711db9ef',
 });
 const VALID_ITEMS = [{ content_path: '01-introduction.md', chunk_index: 0, chunk_count: 1, text: 'hello' }];
 

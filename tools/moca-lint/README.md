@@ -192,14 +192,13 @@ that additively extend core vocabulary. moca-lint handles profiles as follows:
   which includes A) or a dangling reference to a package `id` that doesn't
   resolve anywhere. This requires a multi-package/workspace lint mode that
   does not exist yet; it's tracked for the MCP-adapter reference
-  implementation phase (see `ROADMAP.md` and
-  `issue-drafts/ISSUE-DRAFT-composition.md`), not left indefinitely
+  implementation phase (see `ROADMAP.md`), not left indefinitely
   deferred.
 
 ## Validation Contract
 
 `moca-lint` is treated as an independently versioned validation contract,
-per [ROADMAP.md item 5](../../ROADMAP.md#5-open-source-cli-application-and-developer-tooling),
+per [ROADMAP.md](../../ROADMAP.md#delivered),
 released in lockstep with the repository (`0.1.0-beta.1` for both, per
 [docs/versioning-and-release.md](../../docs/versioning-and-release.md)).
 
