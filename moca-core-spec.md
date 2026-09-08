@@ -100,8 +100,8 @@ conformance level.
 
 | Level | Name | Requirements |
 |---|---|---|
-| **1** | MOCA Core | Valid `moca.json` root manifest containing `id`, `version`, and `title`, plus at least one CommonMark file under `content/`. An inline `@context` prefix map is required only when a CURIE appears anywhere in the package. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |
-| **2** | MOCA Semantic | Adds formal ontologies (`ontologies/`) using RDF, SKOS, or OWL. SHACL shape validation. `claims` are interpretable as RDF triples. `evidence` links resolve against PROV-O provenance records. |
+| **1** | MOCA Core | Valid `moca.json` root manifest containing `id`, `version`, and `title`, and either at least one CommonMark file under `content/` or a `composition` block referencing at least one other package (see §12). An inline `@context` prefix map is required only when a CURIE appears anywhere in the package. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |
+| **2** | MOCA Semantic | Adds formal ontologies (`ontologies/`) using RDF, SKOS, or OWL. SHACL shape validation. `claims` are interpretable as RDF triples, and a `claims[].provenance` object resolves against concrete PROV-O predicates (see §7.4). `evidence` links resolve against PROV-O provenance records. |
 | **3** | MOCA Extended | Adds W3C Web Annotation selectors for precise multi-modal locators. Cryptographic digests and digital signatures (Sigstore / DSSE / in-toto) — **mandatory, not optional, for any package containing `skills/`** (see §8.2). Optional Agent Skills. |
 
 YAML frontmatter and its fields are optional, additive enrichment at Level 1.
@@ -217,6 +217,10 @@ The root manifest MUST be named `moca.json`.
 | `integrity` | Object | No | Per-resource SHA-256 digest manifest. Authoritative over any RO-Crate or BagIt checksum manifest present in the same package — see §5.4. |
 | `signature` | Object | Required if `skills/` present | Cryptographic signature object (Sigstore / DSSE). |
 | `profileData` | Object | No | Namespaced container for profile-specific manifest extensions. See §10.3. |
+| `composition` | Object | No | Optional package-to-package structural (`members`) or associative (`relates`) references. See §12. |
+| `validFrom` | String (ISO-8601) | No | When this package's content became authoritative. See §7.5. |
+| `lastReviewed` | String (ISO-8601) | No | When a human or defined process last confirmed the content's continued accuracy. See §7.5. |
+| `supersedes` | String (URN/URI) / Array of Strings | No | Package `id`(s) this package replaces. See §7.5. |
 | `x-*` | Any | No | Vendor extension keys. MUST be namespaced as `x-<vendor>-<key>` to avoid collision between vendors. |
 
 ### 5.2 Localized String Values
@@ -451,6 +455,68 @@ claims:
         page: 12
 ```
 
+A `claims[]` entry MAY also include a `provenance` object, resolving the
+standards-alignment table's PROV-O reference (§2) to a concrete mapping:
+
+```yaml
+claims:
+  - id: urn:claim:001
+    subject: ex:OrderService
+    predicate: ex:dependsOn
+    object: ex:OrderDatabase
+    epistemicStatus: sourced
+    provenance:
+      wasDerivedFrom: "./sources/architecture-spec.pdf"
+      wasGeneratedBy: urn:activity:manual-extraction-2026-01
+      generatedAtTime: "2026-01-15T00:00:00Z"
+      wasAttributedTo: "urn:person:jsmith"
+```
+
+| Field | PROV-O term | Description |
+|---|---|---|
+| `wasDerivedFrom` | `prov:wasDerivedFrom` | Source entity the claim was derived from. SHOULD align with (not duplicate the meaning of) the same entry's `evidence[].source` locator, naming the same source as an RDF entity reference rather than a file-relative path. |
+| `wasGeneratedBy` | `prov:wasGeneratedBy` | The activity (extraction, review, inference) that produced the claim. An open URN/URI, not a closed vocabulary. |
+| `generatedAtTime` | `prov:generatedAtTime` | ISO-8601 timestamp of the generating activity, distinct from a node's `validFrom`/`lastReviewed` (§7.5), which describe the *content's* validity window rather than the *claim's* generation event. |
+| `wasAttributedTo` | `prov:wasAttributedTo` | Agent (person, tool, or model identifier) responsible for the claim. Does not need to resolve to a real-world identity. |
+
+`provenance` is optional; a `claims[]` entry MAY omit it. At Level 2, a
+claim with a `provenance` object is interpretable as an RDF graph fragment:
+the claim becomes a `prov:Entity` related to a `prov:Activity`
+(`wasGeneratedBy`) and a `prov:Agent` (`wasAttributedTo`) via the standard
+PROV-O predicates. At Level 1, `provenance` (like the rest of `claims[]`) is
+structured data only.
+
+### 7.5 Content Node Lifecycle Fields
+
+A content node's YAML frontmatter MAY include `validFrom`, `lastReviewed`,
+and `supersedes`, scoped to that node rather than to the whole package (the
+same three fields are also available at the manifest level — §5.1):
+
+```markdown
+---
+id: urn:node:service-boundaries
+title: Service Boundaries and Isolation
+validFrom: 2025-11-01T00:00:00Z
+lastReviewed: 2026-07-15T00:00:00Z
+---
+```
+
+`validFrom` records when the node's content became authoritative,
+`lastReviewed` records when it was last confirmed accurate, and `supersedes`
+names the package or node `id`(s) it replaces. A harness MUST treat these
+fields as informational metadata only — Core does not mandate that a
+harness exclude, downrank, or otherwise change how it treats content based
+on their presence or age. This mirrors the existing `epistemicStatus`
+conflict-resolution stance (§7.2): MOCA surfaces the signal, harnesses
+decide what to do with it.
+
+Manifest-level `supersedes` and a `composition.relates[]` entry with
+`relationship: "supersedes"` (§12) are not redundant: manifest-level
+`supersedes` is a lightweight, single-value lineage pointer, while
+`composition.relates` is appropriate when the two packages otherwise have no
+relation and the supersession is the only link. A package MAY use one, both,
+or neither.
+
 ---
 
 ## 8. Executable Capabilities (`skills/`) & Security Boundary
@@ -657,3 +723,92 @@ profile following the pattern in this section.
 Vendor-specific manifest keys use the `x-<vendor>-<key>` pattern (e.g.
 `x-acme-tenant-id`) to avoid collision between vendors reusing a bare `x-foo`
 key for different purposes. Consumers MUST ignore unrecognized `x-*` keys.
+
+---
+
+## 12. Package Composition & Relationships
+
+A package MAY reference other MOCA packages via an optional `composition`
+manifest property (§5.1), using either or both of two independent
+sub-mechanisms.
+
+### 12.1 `composition.members` — containment ("part-of")
+
+Ordered, versioned references to packages that make up this package's
+aggregate structure. Direction is parent → children only; a member package
+never declares which aggregates include it, keeping members reusable across
+multiple aggregates without circular coupling.
+
+```json
+{
+  "id": "urn:moca:course:intro-to-bayesian-stats",
+  "version": "1.0.0",
+  "title": "Introduction to Bayesian Statistics",
+  "composition": {
+    "members": [
+      { "id": "urn:moca:module:probability-basics",  "version": "^1.0.0", "order": 1 },
+      { "id": "urn:moca:module:bayes-theorem",        "version": "^1.0.0", "order": 2 },
+      { "id": "urn:moca:module:priors-and-posteriors","version": "^1.0.0", "order": 3 }
+    ]
+  }
+}
+```
+
+### 12.2 `composition.relates` — loose reference ("relates-to")
+
+Typed, non-hierarchical associations between independent packages.
+`relationship` is an open string, not a closed enum — consistent with the
+`riskTier` and `epistemicStatus` extension patterns elsewhere in this spec —
+so consumers and profiles can extend the vocabulary as needed. Core suggests
+but does not mandate initial values: `partOf`, `crossReferences`,
+`supersedes`, `amends`, `conflictsWith`.
+
+```json
+{
+  "id": "urn:moca:legal:nda-template",
+  "version": "2.0.0",
+  "title": "NDA Template",
+  "composition": {
+    "relates": [
+      { "id": "urn:moca:legal:master-services-agreement", "relationship": "crossReferences" },
+      { "id": "urn:moca:legal:prior-nda-v1",               "relationship": "supersedes" }
+    ]
+  }
+}
+```
+
+`conflictsWith` is a legitimate, informative relationship value, not an
+error state to be resolved by the schema. As with `epistemicStatus` conflicts
+(§7.2), MOCA surfaces the tension; arbitrating it is a harness
+responsibility.
+
+### 12.3 A package MAY be composition-only
+
+A package MAY declare `composition` with no content of its own beyond the
+required manifest fields — the intended shape for a pure "joining" package
+(e.g. the course above, if it contributes no content beyond structure).
+This satisfies the Level 1 floor (§3), which requires either at least one
+CommonMark file under `content/` or a `composition` block referencing at
+least one other package.
+
+### 12.4 What Core does not specify
+
+- **Resolution mechanism.** How a harness locates the package behind a
+  referenced `id` (local file, registry lookup, database record) is
+  explicitly out of scope, mirroring `augmentation.target`'s existing
+  treatment (§9). This preserves runtime neutrality (§1) and the
+  physical/virtual storage independence already established for a single
+  package.
+- **Version constraint syntax semantics.** `version` in `members` accepts a
+  string; Core recommends (not mandates) semver-range syntax familiar from
+  existing package ecosystems, but does not require a specific resolver
+  behavior.
+- **Domain-specific relationship semantics.** Whether `partOf` implies
+  sequencing, whether `conflictsWith` needs jurisdiction/date scoping — these
+  are profile or harness concerns, layered on top of the generic Core
+  primitive via `profileData.<profile-name>` or a profile-defined ontology
+  role, not additions to the `composition` shape itself.
+
+`composition` does not fit `augmentation`'s (§9) 1:1, MOCA-to-non-MOCA,
+evidential ("augments") shape: composition is 1:many, MOCA-to-MOCA, and
+structural/associative. The two mechanisms are not interchangeable.

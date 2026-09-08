@@ -1,0 +1,12 @@
+{
+  "id": "urn:moca:course:intro-to-bayesian-stats",
+  "version": "1.0.0",
+  "title": "Introduction to Bayesian Statistics",
+  "description": "Composition-only course package demonstrating composition.members (core §12).",
+  "composition": {
+    "members": [
+      { "id": "urn:moca:module:probability-basics", "version": "^1.0.0", "order": 1 },
+      { "id": "urn:moca:module:bayes-theorem", "version": "^1.0.0", "order": 2 }
+    ]
+  }
+}

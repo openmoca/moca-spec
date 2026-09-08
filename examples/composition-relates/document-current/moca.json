@@ -1,0 +1,11 @@
+{
+  "id": "urn:moca:doc:api-usage-policy-v2",
+  "version": "2.0.0",
+  "title": "API Usage Policy",
+  "composition": {
+    "relates": [
+      { "id": "urn:moca:doc:rate-limit-reference", "relationship": "crossReferences" },
+      { "id": "urn:moca:doc:api-usage-policy-v1", "relationship": "supersedes" }
+    ]
+  }
+}

@@ -16,6 +16,11 @@ const CLEAN_EXAMPLES = [
   ['augmentation-generic', join(examplesDir, 'augmentation-generic')],
   ['augmentation-scorm2004', join(examplesDir, 'augmentation-scorm2004')],
   ['eu-ai-act-profile', join(repoRoot, 'profiles/eu-ai-act/examples/eu-ai-act-profile')],
+  ['composition-members/course', join(examplesDir, 'composition-members/course')],
+  ['composition-members/module-1', join(examplesDir, 'composition-members/module-1')],
+  ['composition-members/module-2', join(examplesDir, 'composition-members/module-2')],
+  ['composition-relates/document-current', join(examplesDir, 'composition-relates/document-current')],
+  ['composition-relates/document-prior', join(examplesDir, 'composition-relates/document-prior')],
 ];
 
 for (const [name, rootDir] of CLEAN_EXAMPLES) {

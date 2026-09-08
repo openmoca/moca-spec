@@ -54,6 +54,45 @@ and compatibility policy.
 
 ### Added
 
+- Implemented `ROADMAP.md` item 2 (Core Hardening): optional manifest/
+  content-node lifecycle fields (`validFrom`, `lastReviewed`, `supersedes`,
+  core §7.5), a concrete PROV-O mapping for `claims[].provenance` (core
+  §7.4), and a `composition` mechanism (`members`/`relates`, core §12)
+  letting one package reference others as containment or loose reference,
+  including a Level 1 floor amendment allowing composition-only packages
+  (core §3).
+- `schemas/core/moca.schema.json`: added `composition`, `validFrom`,
+  `lastReviewed`, and `supersedes` manifest properties, and
+  `compositionMember`/`compositionRelation` `$defs`.
+- `schemas/core/context.jsonld`: activated the previously-unused `prov:`
+  prefix for `claims[].provenance`, and added JSON-LD terms for
+  `composition`/`members`/`relates`/`order`/`validFrom`/`lastReviewed`/
+  `supersedes`. `composition.relates[].relationship` uses a
+  property-scoped `@context` to expand to a distinct `moca:
+  compositionRelationship` predicate, separate from
+  `augmentation.relationship`'s existing `moca:augmentationRelationship`
+  (unchanged) — both containers reuse the same JSON key name without
+  colliding at the RDF level.
+- `scripts/validate-jsonld-context.mjs` (new `npm run validate:jsonld`,
+  wired into CI): expands `context.jsonld` through a real JSON-LD
+  processor (`jsonld.js`) and asserts the `augmentation`/`composition.relates`
+  predicates stay distinct and `claims[].provenance` resolves to the
+  correct `prov:` IRIs — this is a real expansion check, not just a
+  JSON-parse sanity check.
+- New example packages: `examples/composition-members/` (a composition-only
+  course referencing two module packages) and `examples/composition-relates/`
+  (two independent documents linked via `crossReferences`/`supersedes`).
+
+### Fixed
+
+- `schemas/core/context.jsonld`: fixed a pre-existing bug where `claims[]`'s
+  `subject` and `predicate` terms were aliased directly to the `@id`
+  keyword, colliding with the sibling `id` field and any other `@id`-aliased
+  term on the same node (JSON-LD `colliding keywords` error). They now
+  expand to dedicated `moca:claimSubject`/`moca:claimPredicate`/
+  `moca:claimObject` predicates with `@type: @id`, discovered by the new
+  `validate:jsonld` expansion check.
+
 - `profiles/eu-ai-act/moca-eu-ai-act-profile.md` — MOCA EU AI Act compliance profile (beta), demonstrating how regulatory and compliance standards are modeled as ordinary MOCA profiles.
 - `profiles/eu-ai-act/profile.schema.json` — JSON Schema for `profileData.euAiAct` with open-string classification fields.
 - Example EU AI Act package under `profiles/eu-ai-act/examples/eu-ai-act-profile/` with profileData, governance ontology (SHACL), and human oversight content node.

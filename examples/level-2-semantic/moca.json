@@ -3,7 +3,16 @@
   "@context": {
     "moca": "https://openmoca.org/vocab/core#",
     "skos": "http://www.w3.org/2004/02/skos/core#",
-    "ex": "https://example.org/vocab#"
+    "prov": "http://www.w3.org/ns/prov#",
+    "ex": "https://example.org/vocab#",
+    "provenance": "moca:provenance",
+    "wasDerivedFrom": { "@id": "prov:wasDerivedFrom", "@type": "@id" },
+    "wasGeneratedBy": { "@id": "prov:wasGeneratedBy", "@type": "@id" },
+    "generatedAtTime": {
+      "@id": "prov:generatedAtTime",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "wasAttributedTo": { "@id": "prov:wasAttributedTo", "@type": "@id" }
   },
   "id": "urn:moca:example:level-2-semantic",
   "version": "1.0.0",

@@ -42,14 +42,51 @@
     "locator": "moca:locator",
 
     "claims": { "@id": "moca:claims", "@container": "@set" },
-    "subject": "@id",
-    "predicate": { "@id": "@id" },
-    "object": "@id",
+    "subject": { "@id": "moca:claimSubject", "@type": "@id" },
+    "predicate": { "@id": "moca:claimPredicate", "@type": "@id" },
+    "object": { "@id": "moca:claimObject", "@type": "@id" },
+    "provenance": "moca:provenance",
+    "wasDerivedFrom": { "@id": "prov:wasDerivedFrom", "@type": "@id" },
+    "wasGeneratedBy": { "@id": "prov:wasGeneratedBy", "@type": "@id" },
+    "generatedAtTime": {
+      "@id": "prov:generatedAtTime",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "wasAttributedTo": { "@id": "prov:wasAttributedTo", "@type": "@id" },
 
-    "augmentation": "moca:augmentation",
+    "augmentation": {
+      "@id": "moca:augmentation",
+      "@context": {
+        "relationship": "moca:augmentationRelationship"
+      }
+    },
     "target": "moca:augmentationTarget",
     "targetType": "moca:augmentationTargetType",
-    "relationship": "moca:augmentationRelationship",
+
+    "composition": {
+      "@id": "moca:composition",
+      "@context": {
+        "members": { "@id": "moca:compositionMembers", "@container": "@set" },
+        "relates": {
+          "@id": "moca:compositionRelates",
+          "@container": "@set",
+          "@context": {
+            "relationship": "moca:compositionRelationship"
+          }
+        },
+        "order": "moca:compositionOrder"
+      }
+    },
+
+    "validFrom": {
+      "@id": "dcterms:valid",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "lastReviewed": {
+      "@id": "moca:lastReviewed",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "supersedes": { "@id": "dcterms:isReplacedBy", "@type": "@id" },
 
     "integrity": "moca:integrity",
     "signature": "moca:signature",

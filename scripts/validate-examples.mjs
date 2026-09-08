@@ -30,6 +30,11 @@ const exampleDirs = [
     .map((name) => join('examples', name)),
   'profiles/education/examples/education-profile',
   'profiles/eu-ai-act/examples/eu-ai-act-profile',
+  'examples/composition-members/course',
+  'examples/composition-members/module-1',
+  'examples/composition-members/module-2',
+  'examples/composition-relates/document-current',
+  'examples/composition-relates/document-prior',
 ];
 
 let failed = false;

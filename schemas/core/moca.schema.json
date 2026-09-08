@@ -91,8 +91,24 @@
     "signature": { "$ref": "#/$defs/signature" },
     "profileData": {
       "type": "object",
-      "description": "Namespaced container for profile-specific manifest extensions. See core \u00a710.3."
-    }
+      "description": "Namespaced container for profile-specific manifest extensions. See core \u00a710.3."    },
+    "composition": { "$ref": "#/$defs/composition" },
+    "validFrom": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this package's content became authoritative. See core §7.5."
+    },
+    "lastReviewed": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When a human or defined process last confirmed the content's continued accuracy. See core §7.5."
+    },
+    "supersedes": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ],
+      "description": "Package id(s) this package replaces. See core §7.5."    }
   },
   "patternProperties": {
     "^x-[a-zA-Z0-9]+-": { "description": "Vendor extension keys, namespaced as x-<vendor>-<key>." }
@@ -139,6 +155,38 @@
           "type": "string",
           "description": "Open string naming the target content format (e.g. generic-archive, scorm-2004)."
         },
+        "relationship": { "type": "string" }
+      }
+    },
+    "composition": {
+      "type": "object",
+      "description": "Package-to-package structural (members) or associative (relates) references. See core §12.",
+      "properties": {
+        "members": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/compositionMember" }
+        },
+        "relates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/compositionRelation" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "compositionMember": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "version": { "type": "string" },
+        "order": { "type": "integer" }
+      }
+    },
+    "compositionRelation": {
+      "type": "object",
+      "required": ["id", "relationship"],
+      "properties": {
+        "id": { "type": "string" },
         "relationship": { "type": "string" }
       }
     },

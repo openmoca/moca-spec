@@ -144,6 +144,15 @@ that additively extend core vocabulary. moca-lint handles profiles as follows:
 - `.moca`/`.zip` extraction rejects archives over 20,000 entries or 512MB
   uncompressed, and entries containing `..`, as a defense-in-depth measure
   against zip bombs and path traversal.
+- **`composition` (core §12) is only validated within a single target
+  directory.** `moca-lint` lints one package at a time, so it cannot detect
+  a cycle across `composition.members`/`relates` (package A includes B
+  which includes A) or a dangling reference to a package `id` that doesn't
+  resolve anywhere. This requires a multi-package/workspace lint mode that
+  does not exist yet; it's tracked for the MCP-adapter reference
+  implementation phase (see `ROADMAP.md` and
+  `issue-drafts/ISSUE-DRAFT-composition.md`), not left indefinitely
+  deferred.
 
 ## Development
 
