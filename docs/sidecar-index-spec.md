@@ -49,6 +49,10 @@ bound to [examples/level-1-minimal](../examples/level-1-minimal) via its
 `scripts/validate-sidecar-index.mjs`. Its `payload/index.jsonl` demonstrates
 the multi-chunk case from §5, where two items share one `content_path`.
 
+[`tools/moca-index`](../tools/moca-index/README.md) generates a conformant
+sidecar from a target package directly, rather than requiring one to be
+hand-authored.
+
 ## 4. Target Binding
 
 `target_package_id` MUST identify the target package's `moca.json` `id`.

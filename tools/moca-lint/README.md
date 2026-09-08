@@ -59,6 +59,33 @@ moca-lint pack ./my-package -o out.moca --exclude "*.draft.md" "notes/**"
 omitted. `--exclude` adds extra glob patterns on top of the built-in
 `.git/`, `node_modules/`, and `.DS_Store` excludes.
 
+### Extract
+
+```sh
+moca-lint extract <archive> -o <dest-dir> [options]
+```
+
+Extracts a `.moca`/`.zip` archive to a directory of your choosing, using the
+same hardened extraction path (entry-count/uncompressed-size caps, `..`
+entry-name rejection) `lint`/`pack` already use internally when reading an
+archive target — use this instead of a generic unzip tool for that reason.
+Refuses to extract into a destination that already exists and is non-empty
+unless `--force` is passed.
+
+```sh
+moca-lint extract dist/my-package.moca -o my-package
+moca-lint extract dist/my-package.moca -o my-package --force   # overwrite
+```
+
+Unlike `pack`, extraction is **not** fail-closed on content validity by
+default — inspecting a package that fails `lint` is itself a legitimate
+reason to extract it. Pass `--lint` to run `lint` against the extracted
+directory afterward and report findings:
+
+```sh
+moca-lint extract dist/my-package.moca -o my-package --lint
+```
+
 ## Options
 
 | Option | Description |
@@ -74,9 +101,13 @@ omitted. `--exclude` adds extra glob patterns on top of the built-in
 
 ## Exit codes
 
-- `0` — no error-severity findings.
-- `1` — one or more error-severity findings (or warnings escalated by `--strict`).
-- `2` — CLI usage error (bad target path, unreadable archive, etc.).
+- `0` — no error-severity findings (for `lint`/`pack`/`extract --lint`), or a
+  plain `extract` completed successfully (it doesn't lint by default, so `0`
+  there means "extracted," not "found no issues").
+- `1` — one or more error-severity findings (or warnings escalated by
+  `--strict`) for `lint`/`pack`/`extract --lint`.
+- `2` — CLI usage error (bad target/archive path, missing `-o/--out`, a
+  non-empty `extract` destination without `--force`, etc.).
 
 ## Validation passes & finding codes
 
@@ -154,6 +185,39 @@ that additively extend core vocabulary. moca-lint handles profiles as follows:
   `issue-drafts/ISSUE-DRAFT-composition.md`), not left indefinitely
   deferred.
 
+## Validation Contract
+
+`moca-lint` is treated as an independently versioned validation contract,
+per [ROADMAP.md item 5](../../ROADMAP.md#5-open-source-cli-application-and-developer-tooling),
+released in lockstep with the repository (`0.1.0-beta.1` for both, per
+[docs/versioning-and-release.md](../../docs/versioning-and-release.md)).
+
+**Normative for this release:** every finding code in
+[Validation passes & finding codes](#validation-passes--finding-codes)
+above, at its documented default severity, **except** the codes listed
+under [Known limitations (v1)](#known-limitations-v1) — `E302` (SHACL shape
+conformance), `I404` (signature verification), and `E405` (full RO-Crate
+conformance) — which are explicitly provisional: their current behavior
+(not evaluated / structurally-present-only / minimal heuristic) MAY change
+in a later `0.x` beta release without that being treated as a breaking
+contract change. The multi-package `composition` gap (no cross-directory
+cycle/dangling-reference detection) is likewise provisional and tracked
+separately. Every other code is a binding compatibility commitment for the
+current beta: a package that passes (or fails) a normative check today is
+expected to keep passing (or failing) it across patch and minor releases of
+this `0.x` line, absent an entry in [MIGRATIONS.md](../../MIGRATIONS.md).
+
+A `moca-lint` error-severity check that fails to flag a manifest or package
+it should reject is treated as a security-sensitive issue, the same as a
+gap in `schemas/` — see [SECURITY.md](../../SECURITY.md).
+
+Any change that flips an existing check's pass/fail outcome for a
+previously-valid or previously-invalid package is recorded in both
+[CHANGELOG.md](../../CHANGELOG.md) (what changed) and
+[MIGRATIONS.md](../../MIGRATIONS.md) (what an affected package author
+should do about it) — see, for example, the `profileData` validation
+removal already recorded there.
+
 ## Development
 
 ```sh
@@ -165,3 +229,12 @@ Tests assert zero error-severity findings against every package under
 [`examples/`](../../examples) (with `--strict` fixtures covering the known,
 documented gaps in `level-3-extended` and `education-profile`), plus a few
 deliberately-broken fixtures under [test/fixtures/](test/fixtures).
+
+The fixtures under [test/fixtures/](test/fixtures) double as this
+contract's compatibility corpus: each is a minimal package demonstrating
+one specific finding (e.g. `excluded-properties` → `E103`,
+`duplicate-node-id` → `E207`). They're intended to stay stable and
+diffable release over release, so an independent implementation of this
+same validation contract (an alternative or IDE-integrated linter) can use
+them as a conformance suite, not just as this repository's own internal
+test data.

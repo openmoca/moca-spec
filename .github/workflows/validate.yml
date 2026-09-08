@@ -35,7 +35,11 @@ jobs:
 
   moca-lint:
     name: moca-lint (tests + example packages)
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
       security-events: write
@@ -48,16 +52,21 @@ jobs:
       - run: npm ci
       - run: node --test 'tools/moca-lint/test/*.test.js'
       - run: npm run lint:moca -- --format sarif --report moca-lint.sarif
+        if: matrix.os == 'ubuntu-latest'
       - run: npm run lint:moca
         if: always()
       - uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        if: matrix.os == 'ubuntu-latest' && always()
         with:
           sarif_file: moca-lint.sarif
 
   moca-convert:
     name: moca-convert (tests)
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -66,4 +75,20 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node --test 'tools/moca-convert/test/*.test.js'
+
+  moca-index:
+    name: moca-index (tests)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node --test 'tools/moca-index/test/*.test.js'
 

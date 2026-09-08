@@ -13,6 +13,11 @@ That said, security issues are still in scope:
   pass validation (e.g. a schema that fails to reject the excluded
   properties in
   [core §5.3](moca-core-spec.md#53-excluded-properties)).
+- A `moca-lint` error-severity check (`E1xx`–`E4xx`) that fails to flag a
+  manifest or package it should reject — a false negative in the
+  validation contract itself, not just in the schema it validates against.
+  See [tools/moca-lint/README.md](tools/moca-lint/README.md#validation-contract)
+  for which checks are normative.
 - Errors in example packages that model insecure or misleading patterns
   implementers might copy.
 - Issues in CI tooling (`.github/workflows/`) that could be abused (e.g.

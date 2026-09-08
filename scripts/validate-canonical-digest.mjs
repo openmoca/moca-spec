@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import canonicalize from 'canonicalize';
 import { walkFiles } from '../tools/moca-lint/lib/walk.js';
 
@@ -180,16 +181,25 @@ function validateExamples(rootDir) {
   return failed;
 }
 
-const root = process.cwd();
-const printIndex = process.argv.indexOf('--print');
-if (printIndex !== -1) {
-  const packageRoot = resolve(process.argv[printIndex + 1] ?? '');
-  console.log(computeCanonicalDigest(packageRoot, {
-    resolveMember: siblingMemberResolver(packageRoot),
-  }));
-} else if (validateExamples(root)) {
-  console.error('\nCanonical digest validation failed.');
-  process.exit(1);
-} else {
-  console.log('\nCanonical digest validation succeeded.');
+// Only run the CLI behavior when this file is executed directly (e.g.
+// `node scripts/validate-canonical-digest.mjs`) -- not when
+// computeCanonicalDigest() is imported as a library function elsewhere
+// (tools/moca-lint's and tools/moca-index's own tests and tooling do this),
+// which must not have the side effect of scanning examples/profiles,
+// printing to the console, or calling process.exit().
+const isMain = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isMain) {
+  const root = process.cwd();
+  const printIndex = process.argv.indexOf('--print');
+  if (printIndex !== -1) {
+    const packageRoot = resolve(process.argv[printIndex + 1] ?? '');
+    console.log(computeCanonicalDigest(packageRoot, {
+      resolveMember: siblingMemberResolver(packageRoot),
+    }));
+  } else if (validateExamples(root)) {
+    console.error('\nCanonical digest validation failed.');
+    process.exit(1);
+  } else {
+    console.log('\nCanonical digest validation succeeded.');
+  }
 }

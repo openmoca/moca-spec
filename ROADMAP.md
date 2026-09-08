@@ -166,6 +166,35 @@ CLI ecosystem.
 **Outcome:** Developers can create, inspect, validate, package, and prepare
 MOCA assets from a documented open-source command line.
 
+**Outcome — Status: Complete.** Three CLI tools now cover the package
+lifecycle, each an independent `tools/*` workspace package with its own
+tests and README: `moca-lint` (`lint`/`pack`/`extract`, the last added to
+close the archive-extraction half of the `moca-pack` bullet — see
+[tools/moca-lint/README.md](tools/moca-lint/README.md)), `moca-convert`
+(`directory`/`markdown`/`obsidian`/`openapi` adapters, see
+[tools/moca-convert/README.md](tools/moca-convert/README.md)), and
+`moca-index` (`build`, a fail-closed sidecar generator against the item-4
+`.moca.idx` format, see
+[tools/moca-index/README.md](tools/moca-index/README.md)). All three
+support `--format json`/`text` output (`moca-lint` also `sarif`), are
+deterministic and fail-closed on invalid output, document their exit codes,
+and version independently (`package.json`, currently `0.1.0-beta.1` for all
+three per
+[docs/versioning-and-release.md](docs/versioning-and-release.md)). Cross-platform coverage is a GitHub Actions OS matrix
+(`ubuntu-latest`/`windows-latest`/`macos-latest`) running each tool's test
+suite in [.github/workflows/validate.yml](.github/workflows/validate.yml);
+actual `npm publish` for global installability is a separate, deliberate
+release action tracked in
+[docs/versioning-and-release.md](docs/versioning-and-release.md), not
+executed as part of this item. The `moca-lint` Validation Contract
+subsection is formalized in
+[tools/moca-lint/README.md](tools/moca-lint/README.md#validation-contract)
+(normative-vs-provisional finding codes, the `test/fixtures/` compatibility
+corpus), [SECURITY.md](SECURITY.md) (a `moca-lint` false negative is
+security-sensitive, not just a schema gap), and the new
+[MIGRATIONS.md](MIGRATIONS.md) (behavior-change notes distinct from
+`CHANGELOG.md`, starting with the `profileData` validation removal).
+
 ### 6. Signature & Trust Infrastructure
 
 Establish the signing and verification path required for packages containing

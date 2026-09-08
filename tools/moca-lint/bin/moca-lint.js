@@ -1,7 +1,18 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { writeFileSync, appendFileSync } from 'node:fs';
-import { resolveTarget, UsageError } from '../lib/target.js';
+import {
+  writeFileSync,
+  appendFileSync,
+  existsSync,
+  readdirSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  renameSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { resolveTarget, extractArchive, UsageError } from '../lib/target.js';
 import { lintPackage } from '../lib/lint.js';
 import { packPackage } from '../lib/pack.js';
 import { formatText, formatJson, formatSarif } from '../lib/format.js';
@@ -37,6 +48,17 @@ addCommonOptions(
     .option('--exclude <patterns...>', 'additional glob exclude patterns')
 ).action((target, options) => {
   runPack(target, options);
+});
+
+addCommonOptions(
+  program
+    .command('extract')
+    .argument('<archive>', '.moca/.zip archive to extract')
+    .option('-o, --out <dir>', 'destination directory (required)')
+    .option('--force', 'allow extracting into a non-empty destination directory', false)
+    .option('--lint', 'run lint against the extracted directory afterward and report findings', false)
+).action((archive, options) => {
+  runExtract(archive, options);
 });
 
 program.parseAsync(process.argv);
@@ -143,6 +165,64 @@ function runPack(target, options) {
     process.exit(0);
   } finally {
     cleanup();
+    logger.flush();
+  }
+}
+
+function runExtract(archivePath, options) {
+  if (!options.out) {
+    console.error('moca-lint: -o/--out <dir> is required for extract.');
+    process.exit(2);
+  }
+
+  const logger = makeLogger(options);
+  const destDir = options.out;
+  const destExists = existsSync(destDir);
+  const destNonEmpty = destExists && readdirSync(destDir).length > 0;
+
+  if (destNonEmpty && !options.force) {
+    console.error(`moca-lint: destination "${destDir}" already exists and is not empty; pass --force to overwrite.`);
+    process.exit(2);
+  }
+
+  const useScratch = destNonEmpty;
+  const stageDir = useScratch ? mkdtempSync(join(tmpdir(), 'moca-lint-extract-')) : destDir;
+
+  try {
+    try {
+      if (!existsSync(stageDir)) mkdirSync(stageDir, { recursive: true });
+      extractArchive(archivePath, stageDir);
+
+      if (useScratch) {
+        rmSync(destDir, { recursive: true, force: true });
+        renameSync(stageDir, destDir);
+      }
+    } catch (err) {
+      // Never leave a partial extraction behind: in scratch mode that's a
+      // temp dir (the pre-existing destDir is untouched); in direct mode
+      // stageDir === destDir, so a freshly-created destination is cleaned up.
+      if (existsSync(stageDir)) rmSync(stageDir, { recursive: true, force: true });
+      throw err;
+    }
+
+    if (!options.quiet) {
+      console.log(`Extracted to ${destDir}`);
+    }
+
+    if (options.lint) {
+      const { findings } = lintPackage({ rootDir: destDir, strict: options.strict, onLog: logger.log });
+      writeReport(options, formatFindings(findings, options.format));
+      process.exit(findings.some((f) => f.severity === 'error') ? 1 : 0);
+    }
+
+    process.exit(0);
+  } catch (err) {
+    if (err instanceof UsageError) {
+      console.error(`moca-lint: ${err.message}`);
+      process.exit(2);
+    }
+    throw err;
+  } finally {
     logger.flush();
   }
 }

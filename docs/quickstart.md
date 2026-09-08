@@ -119,6 +119,18 @@ To validate only the manifest against
 npx ajv-cli validate -s schemas/core/moca.schema.json -d my-package/moca.json --spec=draft2020
 ```
 
+Once a package validates, `moca-lint pack` archives it (fail-closed — it
+refuses to write if any error-severity finding is present), and
+`moca-lint extract` reverses that:
+
+```sh
+npx moca-lint pack my-package -o my-package.moca
+npx moca-lint extract my-package.moca -o my-package-copy
+```
+
+See [tools/moca-lint/README.md](../tools/moca-lint/README.md#pack) for
+options (`--exclude` on pack, `--force`/`--lint` on extract).
+
 ## 6. Converting existing content
 
 Already have content in another shape? [`tools/moca-convert`](../tools/moca-convert/README.md)
@@ -146,7 +158,23 @@ npx moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
 See [tools/moca-convert/README.md](../tools/moca-convert/README.md) for the
 full adapter reference and options.
 
-## 7. Going further
+## 7. Generating a sidecar index
+
+A package remains complete and usable without one, but
+[`tools/moca-index`](../tools/moca-index/README.md) can build an optional
+[`.moca.idx`](sidecar-index-spec.md) sidecar for semantic or hybrid search:
+
+```sh
+npx moca-index build my-package -o my-package.moca.idx --zip
+```
+
+It binds to the target via its `canonicalDigest` when present, chunks
+`content/` (one chunk per file in this first version), and self-validates
+before writing — nothing invalid is left on disk. See
+[tools/moca-index/README.md](../tools/moca-index/README.md) for binding
+and embedder options.
+
+## 8. Going further
 
 | Want to... | Look at |
 |---|---|
@@ -159,7 +187,7 @@ full adapter reference and options.
 | Record freshness and lineage (`validFrom`, `lastReviewed`, `supersedes`) | [examples/level-1-minimal/moca.json](../examples/level-1-minimal/moca.json), [core §7.5](../moca-core-spec.md#75-content-node-lifecycle-fields) |
 | Trace a claim's provenance against PROV-O | [examples/level-2-semantic](../examples/level-2-semantic), [core §7.4](../moca-core-spec.md#74-explicit-claims-graph-claims) |
 | Compose a package from other packages, or relate two independent packages | [examples/composition-members](../examples/composition-members), [examples/composition-relates](../examples/composition-relates), [core §10](../moca-core-spec.md#10-package-composition--relationships) |
-| Add an optional semantic/hybrid search sidecar | [examples/indices/level-1-minimal.moca.idx](../examples/indices/level-1-minimal.moca.idx), [docs/sidecar-index-spec.md](../docs/sidecar-index-spec.md) |
+| Add an optional semantic/hybrid search sidecar | [tools/moca-index](../tools/moca-index/README.md), [examples/indices/level-1-minimal.moca.idx](../examples/indices/level-1-minimal.moca.idx), [docs/sidecar-index-spec.md](../docs/sidecar-index-spec.md) |
 
 For the full normative rules, see
 [moca-core-spec.md](../moca-core-spec.md).

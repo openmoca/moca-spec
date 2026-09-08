@@ -1,14 +1,14 @@
 {
-  "name": "moca-lint",
+  "name": "moca-index",
   "private": true,
   "version": "0.1.0-beta.1",
-  "description": "Static analysis CLI for MOCA package directories and .moca archives.",
+  "description": "CLI that builds .moca.idx sidecar indexes for MOCA packages.",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "bin": {
-    "moca-lint": "./bin/moca-lint.js"
+    "moca-index": "./bin/moca-index.js"
   },
   "scripts": {
     "test": "node --test test/*.test.js"
@@ -19,7 +19,6 @@
     "ajv-formats": "^3.0.1",
     "commander": "^12.1.0",
     "gray-matter": "^4.0.3",
-    "n3": "^1.24.1",
-    "picocolors": "^1.1.1"
+    "moca-lint": "^0.1.0-beta.1"
   }
 }

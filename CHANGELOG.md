@@ -39,7 +39,8 @@ and compatibility policy.
   bundles under `profiles/` for independent extraction.
 - Narrowed repository validation to MOCA Core conformance and structural checks;
   `moca-lint` no longer validates profile-owned `profileData` against profile
-  schemas.
+  schemas. See [MIGRATIONS.md](MIGRATIONS.md) for what this means for an
+  affected package or profile author.
 - Revised `ROADMAP.md` to add signature and trust infrastructure, operationalize
   the `1.0.0` stability review, and reflect the completed EU AI Act profile.
 - Reordered `moca-core-spec.md` so Package Composition & Relationships
@@ -61,6 +62,51 @@ and compatibility policy.
 
 ### Added
 
+- Completed `ROADMAP.md` item 5 (Open Source CLI Application and Developer
+  Tooling), closing out its remaining bullets on top of the `moca-convert`
+  entry below:
+  - Added the `moca-index` CLI (`tools/moca-index`) to build a `.moca.idx`
+    sidecar for a target package: `moca-index build <package-dir> -o
+    <output>` binds to the target's `canonicalDigest` when present (refusing
+    without `--allow-unbound` otherwise, and refusing a composed target
+    entirely), chunks `content/` one file per chunk (`chunking.strategy:
+    "node_level"`), and self-validates (schema conformance, the
+    `chunk_index`/`chunk_count` addressing invariant, and a recomputed
+    `target_package_hash` match) before writing — fail-closed, same as
+    `moca-convert`. `--zip` writes a single archive instead of a directory.
+    Documented in `tools/moca-index/README.md` and `docs/quickstart.md` §7,
+    covered by a new CI job, and exercised by 31 tests.
+  - Added `moca-lint extract <archive> -o <dest-dir>` (`tools/moca-lint`),
+    closing the archive-extraction half of the `moca-pack` roadmap bullet
+    (`pack`/creation already existed). Reuses the same hardened
+    zip-bomb/entry-count/path-traversal guards `lint`/`pack` already apply
+    internally, refuses a non-empty destination without `--force`, and
+    supports an opt-in `--lint` pass afterward. `validateArchiveEntries()`'s
+    limits are now injectable (defaulting to the real production values) so
+    the entry-count/size rejection paths are unit-testable without
+    constructing multi-hundred-MB fixtures.
+  - Formalized the `moca-lint` Validation Contract (`ROADMAP.md` item 5
+    subsection): a new "Validation Contract" section in
+    `tools/moca-lint/README.md` states which finding codes are normative
+    for this release versus explicitly provisional; `SECURITY.md`'s scope
+    now names a `moca-lint` false negative as security-sensitive, not just
+    a schema gap; and a new `MIGRATIONS.md` records behavior changes for an
+    affected package author, distinct from `CHANGELOG.md` prose, starting
+    with the `profileData` validation removal.
+  - Converted the `moca-lint`/`moca-convert`/`moca-index` CI jobs in
+    `.github/workflows/validate.yml` to a `ubuntu-latest`/`windows-latest`/
+    `macos-latest` matrix, and added `"engines": {"node": ">=22"}` to each
+    tool's `package.json` — the credible basis for the roadmap's
+    "cross-platform installation" bullet, as opposed to an unverified claim.
+  - Fixed a real bug this work surfaced: `scripts/validate-canonical-digest.mjs`
+    ran its CLI-only logic (scanning `examples/`/`profiles/`, printing to the
+    console, calling `process.exit()`) as a side effect of merely being
+    *imported* for its `computeCanonicalDigest()` export, since the script
+    had no entry-point guard. Both `moca-lint extract`'s round-trip test and
+    the new `moca-index` import it directly; added an
+    `import.meta.url`-based guard so the exported function is safe to import
+    as a library while `node scripts/validate-canonical-digest.mjs` and its
+    `--print` mode keep working unchanged.
 - Added the `moca-convert` CLI (`tools/moca-convert`, `ROADMAP.md` item 5)
   to create Level 1 packages from existing source material: a `directory`
   of Markdown files, a single Markdown file or glob (`markdown`), an

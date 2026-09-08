@@ -4,6 +4,9 @@
   "version": "0.1.0-beta.1",
   "description": "CLI that creates Level 1 MOCA packages from directories, Markdown sources, Obsidian vaults, and suitable OpenAPI inputs.",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "bin": {
     "moca-convert": "./bin/moca-convert.js"
   },

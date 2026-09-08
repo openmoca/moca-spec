@@ -6,6 +6,8 @@ This repository is preparing the first public beta:
 
 - Repository and specification release: `0.1.0-beta.1`
 - `moca-lint` release: `0.1.0-beta.1`
+- `moca-convert` release: `0.1.0-beta.1`
+- `moca-index` release: `0.1.0-beta.1`
 - Git tag: `v0.1.0-beta.1`
 
 This is a beta of the format and reference tooling, not a promise that the
@@ -37,8 +39,8 @@ The project follows Semantic Versioning for released repository snapshots:
 - The minor component may introduce additive fields, checks, profiles, or
   capabilities during the `0.x` period.
 - A change that removes or changes the meaning of an existing requirement must
-  be called out in the changelog and migration notes, even when semver permits
-  it under `0.x`.
+  be called out in the changelog and [migration notes](../MIGRATIONS.md), even
+  when semver permits it under `0.x`.
 - `1.0.0` will require an explicit stability review, versioned normative
   schemas, compatibility expectations, and a documented migration policy.
 
@@ -58,10 +60,12 @@ external standard.
 
 Before creating a beta tag, maintainers should:
 
-1. Update the repository and `moca-lint` versions consistently.
+1. Update the repository, `moca-lint`, `moca-convert`, and `moca-index`
+   versions consistently.
 2. Record user-visible changes and known limitations in `CHANGELOG.md`.
 3. Run `npm ci`, `npm run validate`, `npm run lint:md`, and `npm run lint:moca`.
-4. Run `npm test` from `tools/moca-lint`.
+4. Run `npm test` from `tools/moca-lint`, `tools/moca-convert`, and
+   `tools/moca-index`.
 5. Verify that every example and schema is included in the release snapshot.
 6. Review security, signature, SHACL, RO-Crate, and profile documentation for
    claims that exceed the implemented beta behavior.
