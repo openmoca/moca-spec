@@ -19,7 +19,7 @@ AI governance requirements. It provides a structured way to document:
 - Pointers to content nodes representing compliance controls
 
 It is purely additive over MOCA Core. A package declaring this profile MUST
-still be fully valid and usable to a MOCA-Core-only consumer, per Core §10.2
+still be fully valid and usable to a MOCA-Core-only consumer, per Core §11.2
 — an EU-AI-Act-unaware harness can ground against it with degraded (but
 functional) fidelity, simply ignoring the compliance layer.
 
@@ -71,7 +71,7 @@ this role only if your package includes machine-checkable compliance rules.
 ## 3. Regulatory Manifest Data (`profileData.euAiAct`)
 
 All EU AI Act-specific manifest data lives under `profileData.euAiAct`, per
-Core §10.3:
+Core §11.3:
 
 ```json
 {
@@ -97,7 +97,7 @@ Core §10.3:
 
 | Field | Type | Description |
 |---|---|---|
-| `riskTier` | String | Regulatory risk classification. Examples: `"prohibited"`, `"high_risk"`, `"limited"`, `"minimal"`. Open vocabulary — no enforced enum. Authors and tools MAY use domain-specific variants (e.g. `"high_risk_with_exceptions"`). Consistent with §10.5 guidance, this field is extensible as regulation evolves. |
+| `riskTier` | String | Regulatory risk classification. Examples: `"prohibited"`, `"high_risk"`, `"limited"`, `"minimal"`. Open vocabulary — no enforced enum. Authors and tools MAY use domain-specific variants (e.g. `"high_risk_with_exceptions"`). Consistent with §11.5 guidance, this field is extensible as regulation evolves. |
 | `regulationVersion` | String | Version, edition, or regulation ID being applied (e.g. `"2024/1689"`). Allows classifications to remain traceable as the EU AI Act is amended. |
 | `intendedPurpose` | String | Natural-language description of the system's intended purpose and use case, per EU AI Act Article 3. |
 | `annexIiiCategory` | String (optional) | Annex III high-risk category (e.g. `"Employment decision-making"`, `"Biometric identification"`), if the package falls under high-risk classification. Open string; no enforced enum. |
@@ -133,7 +133,7 @@ An EU AI Act profile package:
    ground compliance procedures; these references MUST be valid URNs
    pointing to existing nodes in `content/`.
 6. MUST NOT rely on EU AI Act profile semantics for content a Core-only
-   harness needs to correctly ground against the package — per Core §10.2,
+   harness needs to correctly ground against the package — per Core §11.2,
    the profile is enrichment, not a requirement for basic function.
 7. SHOULD include a `README.md` or package description noting which
    version of the EU AI Act regulation the classification applies to, and
@@ -144,6 +144,6 @@ An EU AI Act profile package:
 
 ## See Also
 
-- [MOCA Core Specification §10.5](../../moca-core-spec.md#105-compliance--standards-profiles) — overview of compliance profiles
+- [MOCA Core Specification §11.5](../../moca-core-spec.md#115-compliance--standards-profiles) — overview of compliance profiles
 - [Example EU AI Act package](examples/eu-ai-act-profile/) — runnable fixture demonstrating this profile
 - [JSON Schema for profileData.euAiAct](profile.schema.json)

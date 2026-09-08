@@ -3,7 +3,7 @@
 ## Affected section(s)
 
 - `moca-core-spec.md` §3 Conformance Levels (Level 1 floor clarification),
-  §5.1 Manifest Properties, and a new §12 Package Composition &
+  §5.1 Manifest Properties, and a new §10 Package Composition &
   Relationships.
 - `schemas/core/moca.schema.json`, adding an optional `composition` property
   and its `$defs`.
@@ -198,7 +198,7 @@ design.
 If accepted, implementation touches only:
 
 - `moca-core-spec.md` (§3 Level 1 floor amendment, §5.1 new `composition`
-  property row, new §12).
+  property row, new §10).
 - `schemas/core/moca.schema.json` (`composition` property and
   `compositionMember`/`compositionRelation` `$defs`).
 - Two new example packages: one demonstrating `members` (a minimal

@@ -160,7 +160,7 @@
     },
     "composition": {
       "type": "object",
-      "description": "Package-to-package structural (members) or associative (relates) references. See core §12.",
+      "description": "Package-to-package structural (members) or associative (relates) references. See core §10.",
       "properties": {
         "members": {
           "type": "array",

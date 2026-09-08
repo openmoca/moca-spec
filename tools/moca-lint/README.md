@@ -105,7 +105,7 @@ are always informational and never affect the exit code.
 
 ## Profile support
 
-[core §10](../../moca-core-spec.md#10-profiles) lets a package declare zero
+[core §11](../../moca-core-spec.md#11-profiles) lets a package declare zero
 or more **profiles** (e.g. `"profile": ["https://openmoca.org/profiles/education/v1"]`)
 that additively extend core vocabulary. moca-lint handles profiles as follows:
 
@@ -118,7 +118,7 @@ that additively extend core vocabulary. moca-lint handles profiles as follows:
   Profile owners MAY ship or link to separate validation tooling for their
   profile-specific requirements.
 - **Profile epistemic-status vocabularies are opaque:** Per
-  [core §10.2](../../moca-core-spec.md#102-graceful-degradation), moca-lint
+  [core §11.2](../../moca-core-spec.md#112-graceful-degradation), moca-lint
   can't prove a status value is invalid under a declared profile, so an
   unknown `epistemicStatus` in a profiled package is reported as `E210`
   (**warning**, not `E204`
@@ -144,7 +144,7 @@ that additively extend core vocabulary. moca-lint handles profiles as follows:
 - `.moca`/`.zip` extraction rejects archives over 20,000 entries or 512MB
   uncompressed, and entries containing `..`, as a defense-in-depth measure
   against zip bombs and path traversal.
-- **`composition` (core §12) is only validated within a single target
+- **`composition` (core §10) is only validated within a single target
   directory.** `moca-lint` lints one package at a time, so it cannot detect
   a cycle across `composition.members`/`relates` (package A includes B
   which includes A) or a dangling reference to a package `id` that doesn't

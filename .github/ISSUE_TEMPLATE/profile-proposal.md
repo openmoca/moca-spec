@@ -22,12 +22,12 @@ labels: profile-proposal
 - **New `profileData.<profile-name>` fields**:
 - **Expected `augmentation.targetType` values** (if any):
 
-## Conformance to core §10.4
+## Conformance to core §11.4
 
 <!-- Confirm this profile is purely additive: it does not redefine any core
      field/vocabulary term, does not introduce top-level manifest properties
      outside profileData, and does not change any core-required/optional
-     field. See moca-core-spec.md §10.4. -->
+     field. See moca-core-spec.md §11.4. -->
 
 ## Example manifest snippet
 

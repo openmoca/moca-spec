@@ -1,6 +1,6 @@
 # Composition Members Example
 
-Demonstrates `composition.members` (core §12.1): a course package that
+Demonstrates `composition.members` (core §10.1): a course package that
 contains no content of its own beyond structure, referencing two ordinary
 module packages.
 
@@ -12,7 +12,7 @@ module packages.
 - [module-1/](module-1) and [module-2/](module-2) — ordinary, independent
   Level 1 packages with real content. Each is fully valid and useful on
   its own; neither declares any relationship back to the course
-  (composition is parent → children only, per core §12.1).
+  (composition is parent → children only, per core §10.1).
 
 Core does not specify how a harness resolves `composition.members[].id` to
 an actual package (local file, registry, database record) — here it is

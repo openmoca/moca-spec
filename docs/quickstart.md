@@ -130,7 +130,7 @@ npx ajv-cli validate -s schemas/core/moca.schema.json -d my-package/moca.json --
 | Apply a regulatory/compliance standard to a package | [examples/eu-ai-act-profile](../profiles/eu-ai-act/examples/eu-ai-act-profile), [moca-eu-ai-act-profile.md](../profiles/eu-ai-act/moca-eu-ai-act-profile.md) |
 | Record freshness and lineage (`validFrom`, `lastReviewed`, `supersedes`) | [examples/level-1-minimal/moca.json](../examples/level-1-minimal/moca.json), [core §7.5](../moca-core-spec.md#75-content-node-lifecycle-fields) |
 | Trace a claim's provenance against PROV-O | [examples/level-2-semantic](../examples/level-2-semantic), [core §7.4](../moca-core-spec.md#74-explicit-claims-graph-claims) |
-| Compose a package from other packages, or relate two independent packages | [examples/composition-members](../examples/composition-members), [examples/composition-relates](../examples/composition-relates), [core §12](../moca-core-spec.md#12-package-composition--relationships) |
+| Compose a package from other packages, or relate two independent packages | [examples/composition-members](../examples/composition-members), [examples/composition-relates](../examples/composition-relates), [core §10](../moca-core-spec.md#10-package-composition--relationships) |
 
 For the full normative rules, see
 [moca-core-spec.md](../moca-core-spec.md).

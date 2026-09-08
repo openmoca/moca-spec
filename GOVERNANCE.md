@@ -22,8 +22,8 @@ Different kinds of changes get different scrutiny:
   level. Require an issue discussing rationale before a PR is merged.
 - **Profile additions** (new `moca-<name>-profile.md` files, or additions to
   the education profile): lighter weight, since profiles are additive-only
-  by construction ([core §10.2](moca-core-spec.md#102-graceful-degradation),
-  [§10.4](moca-core-spec.md#104-profile-restrictions)) and cannot break
+  by construction ([core §11.2](moca-core-spec.md#112-graceful-degradation),
+  [§11.4](moca-core-spec.md#114-profile-restrictions)) and cannot break
   existing core-only consumers. Still require an issue first.
 - **Examples, schemas, docs, tooling**: normal PR review, no separate
   proposal step required unless the change implies a spec interpretation

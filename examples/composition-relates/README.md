@@ -1,6 +1,6 @@
 # Composition Relates Example
 
-Demonstrates `composition.relates` (core §12.2): typed, non-hierarchical
+Demonstrates `composition.relates` (core §10.2): typed, non-hierarchical
 associations between independent packages, as opposed to
 [../composition-members](../composition-members)'s containment shape.
 

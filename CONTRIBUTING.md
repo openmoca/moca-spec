@@ -39,13 +39,13 @@ When editing spec text:
 ## Proposing a New Profile
 
 Profiles are additive extensions to MOCA Core (see
-[moca-core-spec.md §10](moca-core-spec.md#10-profiles)). To propose one:
+[moca-core-spec.md §11](moca-core-spec.md#11-profiles)). To propose one:
 
 1. Open an issue using the **Profile Proposal** template naming the domain,
    the ontology roles / epistemic-status values / `profileData` fields it
    would add, and why it can't be expressed with existing profiles.
 2. A profile MUST comply with the restrictions in
-   [core §10.4](moca-core-spec.md#104-profile-restrictions) — additive only,
+   [core §11.4](moca-core-spec.md#114-profile-restrictions) — additive only,
    namespaced fields, no redefinition of core semantics.
 3. Once agreed, the profile is authored at
    `profiles/<profile-name>/moca-<profile-name>-profile.md`, alongside its
@@ -56,9 +56,9 @@ Profile-specific linting is the profile owner's responsibility and is not part
 of this repository's `moca-lint`.
 
 **Compliance and regulatory-standard profiles** follow the same process. See
-[core §10.5](moca-core-spec.md#105-compliance--standards-profiles) for how regulatory
+[core §11.5](moca-core-spec.md#115-compliance--standards-profiles) for how regulatory
 standards (EU AI Act, NIST AI RMF, etc.) are modeled using the ordinary profile mechanism.
-When proposing a compliance profile, the reference table in §10.5 should be updated
+When proposing a compliance profile, the reference table in §11.5 should be updated
 to avoid namespace collisions with other contributors working on compliance profiles.
 
 ## Schemas and Examples

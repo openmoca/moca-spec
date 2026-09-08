@@ -13,7 +13,7 @@ learning content: self-contained courses or modules, semantic sidecars over
 SCORM/cmi5/xAPI packages, and grounding for video-lecture playlists.
 
 It is purely additive over MOCA Core. A package declaring this profile MUST
-still be fully valid and usable to a MOCA-Core-only consumer, per Core §10.2
+still be fully valid and usable to a MOCA-Core-only consumer, per Core §11.2
 — an education-unaware harness can ground against it with degraded (but
 functional) fidelity, simply ignoring the pedagogical layer.
 
@@ -82,7 +82,7 @@ implementers SHOULD ensure such harnesses have a sane fallback interpretation
 ## 4. Learning-Specific Manifest Data (`profileData.education`)
 
 All education-specific manifest data lives under `profileData.education`,
-per Core §10.3:
+per Core §11.3:
 
 ```json
 {
@@ -195,5 +195,5 @@ An education-profile package:
    manifest `profile` array.
 3. MAY use any or all of §2–§6 above.
 4. MUST NOT rely on education-profile semantics for content a Core-only
-   harness needs to correctly ground against the package — per Core §10.2,
+   harness needs to correctly ground against the package — per Core §11.2,
    the profile is enrichment, not a requirement for basic function.

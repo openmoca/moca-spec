@@ -126,7 +126,7 @@ export function runContentPass({ rootDir, manifest, findings }) {
 }
 
 // A package can declare a profile moca-lint has no vocabulary extension list for
-// (core §10.2 graceful degradation) — in that case we can't prove the value is
+// (core §11.2 graceful degradation) — in that case we can't prove the value is
 // invalid, so downgrade to a warning instead of asserting a hard error.
 function reportInvalidEpistemicStatus(value, field, file, hasUnrecognizedProfile, findings) {
   const code = hasUnrecognizedProfile ? 'E210_UNVERIFIABLE_EPISTEMIC_STATUS' : 'E204_INVALID_EPISTEMIC_STATUS';

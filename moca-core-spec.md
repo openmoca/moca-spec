@@ -16,7 +16,7 @@ MOCA Core is domain-agnostic. It makes no assumptions about what the content
 is *for* — a customer-support knowledge base, a legal research corpus, an
 internal engineering wiki, and an educational course are all equally valid
 uses of a MOCA package. Domain-specific vocabulary and behavior belong in
-**profiles** layered on top of core (see §10), not in core itself.
+**profiles** layered on top of core (see §11), not in core itself.
 
 ### 1.1 The 3-Layer System Architecture
 
@@ -100,7 +100,7 @@ conformance level.
 
 | Level | Name | Requirements |
 |---|---|---|
-| **1** | MOCA Core | Valid `moca.json` root manifest containing `id`, `version`, and `title`, and either at least one CommonMark file under `content/` or a `composition` block referencing at least one other package (see §12). An inline `@context` prefix map is required only when a CURIE appears anywhere in the package. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |
+| **1** | MOCA Core | Valid `moca.json` root manifest containing `id`, `version`, and `title`, and either at least one CommonMark file under `content/` or a `composition` block referencing at least one other package (see §10). An inline `@context` prefix map is required only when a CURIE appears anywhere in the package. Any `claims` or `evidence` present are treated as structured data only — no RDF interpretation required. Parseable with standard JSON + Markdown tooling only. |
 | **2** | MOCA Semantic | Adds formal ontologies (`ontologies/`) using RDF, SKOS, or OWL. SHACL shape validation. `claims` are interpretable as RDF triples, and a `claims[].provenance` object resolves against concrete PROV-O predicates (see §7.4). `evidence` links resolve against PROV-O provenance records. |
 | **3** | MOCA Extended | Adds W3C Web Annotation selectors for precise multi-modal locators. Cryptographic digests and digital signatures (Sigstore / DSSE / in-toto) — **mandatory, not optional, for any package containing `skills/`** (see §8.2). Optional Agent Skills. |
 
@@ -143,7 +143,7 @@ package-name/
 │   └── example-skill/
 │       └── SKILL.md
 │
-├── profiles/                 # [Optional] Profile-specific data — see §10
+├── profiles/                 # [Optional] Profile-specific data — see §11
 │   └── <profile-name>/
 │
 └── ro-crate-metadata.json    # [Optional] RO-Crate metadata envelope
@@ -199,7 +199,7 @@ The root manifest MUST be named `moca.json`.
 | `@context` | Object / String | Required if any CURIE appears anywhere in the package | JSON-LD 1.1 context. At Level 1 it MUST be an inline prefix map; at Level 2 and above it MAY be a URI or a fuller inline context object. |
 | `id` | String (URN/URI) | Yes | Canonical unique identifier for the package. |
 | `version` | String | Yes | Semantic version string of the *content* (independent of any spec version). |
-| `profile` | Array of Strings (URI) | No | Zero or more profile URIs this package declares conformance to. See §10. |
+| `profile` | Array of Strings (URI) | No | Zero or more profile URIs this package declares conformance to. See §11. |
 | `title` | String / Object | Yes | Human-readable title or BCP-47 localized string map. |
 | `description` | String / Object | No | Summary description or BCP-47 localized string map. |
 | `language` | String | No | Primary BCP-47 language code (e.g. `"en-US"`). |
@@ -211,13 +211,13 @@ The root manifest MUST be named `moca.json`.
 | `publisher` | String / Object | No | Publishing entity. |
 | `created` | String (ISO-8601) | No | Package creation UTC timestamp. |
 | `modified` | String (ISO-8601) | No | Last modification UTC timestamp. |
-| `ontologies` | Object | No | Map of ontology roles to file paths or structured ontology objects. Core roles: `domain`, `governance`, `shapes`, `extension`. Profiles MAY define additional roles (namespaced, see §10.3). |
+| `ontologies` | Object | No | Map of ontology roles to file paths or structured ontology objects. Core roles: `domain`, `governance`, `shapes`, `extension`. Profiles MAY define additional roles (namespaced, see §11.3). |
 | `entryConcepts` | Array of Strings | No | Root concept URNs/CURIEs acting as semantic entry points. |
 | `augmentation` | Object | No | Declaration of target content being augmented (sidecar usage). See §9. |
 | `integrity` | Object | No | Per-resource SHA-256 digest manifest. Authoritative over any RO-Crate or BagIt checksum manifest present in the same package — see §5.4. |
 | `signature` | Object | Required if `skills/` present | Cryptographic signature object (Sigstore / DSSE). |
-| `profileData` | Object | No | Namespaced container for profile-specific manifest extensions. See §10.3. |
-| `composition` | Object | No | Optional package-to-package structural (`members`) or associative (`relates`) references. See §12. |
+| `profileData` | Object | No | Namespaced container for profile-specific manifest extensions. See §11.3. |
+| `composition` | Object | No | Optional package-to-package structural (`members`) or associative (`relates`) references. See §10. |
 | `validFrom` | String (ISO-8601) | No | When this package's content became authoritative. See §7.5. |
 | `lastReviewed` | String (ISO-8601) | No | When a human or defined process last confirmed the content's continued accuracy. See §7.5. |
 | `supersedes` | String (URN/URI) / Array of Strings | No | Package `id`(s) this package replaces. See §7.5. |
@@ -269,7 +269,7 @@ on mismatch rather than silently picking one.
 A consumer encountering unknown top-level manifest fields MUST ignore them
 rather than reject the package, provided all required fields for the
 consumer's supported conformance level are present and valid. This applies
-equally to unrecognized `profile` URIs (§10.2).
+equally to unrecognized `profile` URIs (§11.2).
 
 ---
 
@@ -511,7 +511,7 @@ conflict-resolution stance (§7.2): MOCA surfaces the signal, harnesses
 decide what to do with it.
 
 Manifest-level `supersedes` and a `composition.relates[]` entry with
-`relationship: "supersedes"` (§12) are not redundant: manifest-level
+`relationship: "supersedes"` (§10) are not redundant: manifest-level
 `supersedes` is a lightweight, single-value lineage pointer, while
 `composition.relates` is appropriate when the two packages otherwise have no
 relation and the supersession is the only link. A package MAY use one, both,
@@ -584,7 +584,7 @@ source material.
 the target content is in (`"scorm-2004"`, `"confluence-export"`,
 `"video-playlist"`, `"generic-archive"`, etc.). Core does not maintain a
 canonical list; profiles MAY define expected `targetType` values for their
-domain (see §10).
+domain (see §11).
 
 `augmentation.target` supports exactly one target per package. A package
 sidecar-augmenting multiple external targets should be split into multiple
@@ -597,13 +597,102 @@ needing to natively support MOCA's data model.
 
 ---
 
-## 10. Profiles
+## 10. Package Composition & Relationships
+
+A package MAY reference other MOCA packages via an optional `composition`
+manifest property (§5.1), using either or both of two independent
+sub-mechanisms.
+
+### 10.1 `composition.members` — containment ("part-of")
+
+Ordered, versioned references to packages that make up this package's
+aggregate structure. Direction is parent → children only; a member package
+never declares which aggregates include it, keeping members reusable across
+multiple aggregates without circular coupling.
+
+```json
+{
+  "id": "urn:moca:course:intro-to-bayesian-stats",
+  "version": "1.0.0",
+  "title": "Introduction to Bayesian Statistics",
+  "composition": {
+    "members": [
+      { "id": "urn:moca:module:probability-basics",  "version": "^1.0.0", "order": 1 },
+      { "id": "urn:moca:module:bayes-theorem",        "version": "^1.0.0", "order": 2 },
+      { "id": "urn:moca:module:priors-and-posteriors","version": "^1.0.0", "order": 3 }
+    ]
+  }
+}
+```
+
+### 10.2 `composition.relates` — loose reference ("relates-to")
+
+Typed, non-hierarchical associations between independent packages.
+`relationship` is an open string, not a closed enum — consistent with the
+`riskTier` and `epistemicStatus` extension patterns elsewhere in this spec —
+so consumers and profiles can extend the vocabulary as needed. Core suggests
+but does not mandate initial values: `partOf`, `crossReferences`,
+`supersedes`, `amends`, `conflictsWith`.
+
+```json
+{
+  "id": "urn:moca:legal:nda-template",
+  "version": "2.0.0",
+  "title": "NDA Template",
+  "composition": {
+    "relates": [
+      { "id": "urn:moca:legal:master-services-agreement", "relationship": "crossReferences" },
+      { "id": "urn:moca:legal:prior-nda-v1",               "relationship": "supersedes" }
+    ]
+  }
+}
+```
+
+`conflictsWith` is a legitimate, informative relationship value, not an
+error state to be resolved by the schema. As with `epistemicStatus` conflicts
+(§7.2), MOCA surfaces the tension; arbitrating it is a harness
+responsibility.
+
+### 10.3 A package MAY be composition-only
+
+A package MAY declare `composition` with no content of its own beyond the
+required manifest fields — the intended shape for a pure "joining" package
+(e.g. the course above, if it contributes no content beyond structure).
+This satisfies the Level 1 floor (§3), which requires either at least one
+CommonMark file under `content/` or a `composition` block referencing at
+least one other package.
+
+### 10.4 What Core does not specify
+
+- **Resolution mechanism.** How a harness locates the package behind a
+  referenced `id` (local file, registry lookup, database record) is
+  explicitly out of scope, mirroring `augmentation.target`'s existing
+  treatment (§9). This preserves runtime neutrality (§1) and the
+  physical/virtual storage independence already established for a single
+  package.
+- **Version constraint syntax semantics.** `version` in `members` accepts a
+  string; Core recommends (not mandates) semver-range syntax familiar from
+  existing package ecosystems, but does not require a specific resolver
+  behavior.
+- **Domain-specific relationship semantics.** Whether `partOf` implies
+  sequencing, whether `conflictsWith` needs jurisdiction/date scoping — these
+  are profile or harness concerns, layered on top of the generic Core
+  primitive via `profileData.<profile-name>` or a profile-defined ontology
+  role, not additions to the `composition` shape itself.
+
+`composition` does not fit `augmentation`'s (§9) 1:1, MOCA-to-non-MOCA,
+evidential ("augments") shape: composition is 1:many, MOCA-to-MOCA, and
+structural/associative. The two mechanisms are not interchangeable.
+
+---
+
+## 11. Profiles
 
 A **profile** is a named, versioned extension to MOCA Core that adds
 domain-specific vocabulary, ontology roles, epistemic-status values, or
 manifest fields — without modifying or restricting core semantics.
 
-### 10.1 Profile Declaration
+### 11.1 Profile Declaration
 
 A package declares conformance to zero or more profiles via the manifest's
 `profile` array:
@@ -615,9 +704,9 @@ A package declares conformance to zero or more profiles via the manifest's
 ```
 
 A package MAY declare multiple profiles. For an example of compliance standards
-modeled as profiles, see §10.5.
+modeled as profiles, see §11.5.
 
-### 10.2 Graceful Degradation
+### 11.2 Graceful Degradation
 
 A harness that does not recognize a declared profile URI MUST still process
 the package as valid MOCA Core, ignoring profile-specific semantics it
@@ -626,7 +715,7 @@ under MOCA Core alone, with the profile strictly additive. Profiles MUST NOT
 require behavior that would make a package invalid or unusable to a
 core-only consumer.
 
-### 10.3 Where Profile Data Lives
+### 11.3 Where Profile Data Lives
 
 Profile-specific manifest fields MUST be nested under `profileData`, keyed
 by profile name, never added as top-level manifest properties:
@@ -647,7 +736,7 @@ to know which top-level keys are "safe" to ignore.
 Profile-defined ontology roles (§6.2) and epistemic-status values (§7.2)
 follow the same namespacing discipline.
 
-### 10.4 Profile Restrictions
+### 11.4 Profile Restrictions
 
 A profile MAY:
 - Add new ontology roles (namespaced)
@@ -664,11 +753,11 @@ A profile MUST NOT:
   core-required (a profile can only add its *own* additional requirements,
   scoped to packages declaring that profile)
 
-### 10.5 Compliance & Standards Profiles
+### 11.5 Compliance & Standards Profiles
 
 Regulatory and compliance standards (e.g. AI risk-management frameworks, governance
 regulations, sectoral standards) are **not a special mechanism**. They are modeled
-as ordinary profiles under the system described in §10.1–§10.4, with no additional
+as ordinary profiles under the system described in §11.1–§11.4, with no additional
 top-level manifest properties, no compliance-specific profile classes, and no
 profile-of-profile inheritance.
 
@@ -718,97 +807,8 @@ profile following the pattern in this section.
 
 ---
 
-## 11. Vendor Extensions (`x-*`)
+## 12. Vendor Extensions (`x-*`)
 
 Vendor-specific manifest keys use the `x-<vendor>-<key>` pattern (e.g.
 `x-acme-tenant-id`) to avoid collision between vendors reusing a bare `x-foo`
 key for different purposes. Consumers MUST ignore unrecognized `x-*` keys.
-
----
-
-## 12. Package Composition & Relationships
-
-A package MAY reference other MOCA packages via an optional `composition`
-manifest property (§5.1), using either or both of two independent
-sub-mechanisms.
-
-### 12.1 `composition.members` — containment ("part-of")
-
-Ordered, versioned references to packages that make up this package's
-aggregate structure. Direction is parent → children only; a member package
-never declares which aggregates include it, keeping members reusable across
-multiple aggregates without circular coupling.
-
-```json
-{
-  "id": "urn:moca:course:intro-to-bayesian-stats",
-  "version": "1.0.0",
-  "title": "Introduction to Bayesian Statistics",
-  "composition": {
-    "members": [
-      { "id": "urn:moca:module:probability-basics",  "version": "^1.0.0", "order": 1 },
-      { "id": "urn:moca:module:bayes-theorem",        "version": "^1.0.0", "order": 2 },
-      { "id": "urn:moca:module:priors-and-posteriors","version": "^1.0.0", "order": 3 }
-    ]
-  }
-}
-```
-
-### 12.2 `composition.relates` — loose reference ("relates-to")
-
-Typed, non-hierarchical associations between independent packages.
-`relationship` is an open string, not a closed enum — consistent with the
-`riskTier` and `epistemicStatus` extension patterns elsewhere in this spec —
-so consumers and profiles can extend the vocabulary as needed. Core suggests
-but does not mandate initial values: `partOf`, `crossReferences`,
-`supersedes`, `amends`, `conflictsWith`.
-
-```json
-{
-  "id": "urn:moca:legal:nda-template",
-  "version": "2.0.0",
-  "title": "NDA Template",
-  "composition": {
-    "relates": [
-      { "id": "urn:moca:legal:master-services-agreement", "relationship": "crossReferences" },
-      { "id": "urn:moca:legal:prior-nda-v1",               "relationship": "supersedes" }
-    ]
-  }
-}
-```
-
-`conflictsWith` is a legitimate, informative relationship value, not an
-error state to be resolved by the schema. As with `epistemicStatus` conflicts
-(§7.2), MOCA surfaces the tension; arbitrating it is a harness
-responsibility.
-
-### 12.3 A package MAY be composition-only
-
-A package MAY declare `composition` with no content of its own beyond the
-required manifest fields — the intended shape for a pure "joining" package
-(e.g. the course above, if it contributes no content beyond structure).
-This satisfies the Level 1 floor (§3), which requires either at least one
-CommonMark file under `content/` or a `composition` block referencing at
-least one other package.
-
-### 12.4 What Core does not specify
-
-- **Resolution mechanism.** How a harness locates the package behind a
-  referenced `id` (local file, registry lookup, database record) is
-  explicitly out of scope, mirroring `augmentation.target`'s existing
-  treatment (§9). This preserves runtime neutrality (§1) and the
-  physical/virtual storage independence already established for a single
-  package.
-- **Version constraint syntax semantics.** `version` in `members` accepts a
-  string; Core recommends (not mandates) semver-range syntax familiar from
-  existing package ecosystems, but does not require a specific resolver
-  behavior.
-- **Domain-specific relationship semantics.** Whether `partOf` implies
-  sequencing, whether `conflictsWith` needs jurisdiction/date scoping — these
-  are profile or harness concerns, layered on top of the generic Core
-  primitive via `profileData.<profile-name>` or a profile-defined ontology
-  role, not additions to the `composition` shape itself.
-
-`composition` does not fit `augmentation`'s (§9) 1:1, MOCA-to-non-MOCA,
-evidential ("augments") shape: composition is 1:many, MOCA-to-MOCA, and
-structural/associative. The two mechanisms are not interchangeable.

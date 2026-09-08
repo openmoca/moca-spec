@@ -38,7 +38,7 @@ The `signature` object in `moca.json` is a **placeholder**, not a real cryptogra
 
 ## What This Demonstrates
 
-- How regulatory/compliance standards map to MOCA's ordinary profile system (see [core §10.5](../../../../moca-core-spec.md#105-compliance--standards-profiles))
+- How regulatory/compliance standards map to MOCA's ordinary profile system (see [core §11.5](../../../../moca-core-spec.md#115-compliance--standards-profiles))
 - The no-special-mechanism principle: a compliance profile uses the same `profileData` namespace, `governance` ontology role, and content reference patterns as any other profile
 - The open-string approach to classification fields: `riskTier`, `annexIiiCategory`, and `humanOversight.level` are open vocabulary, not enums, to allow for regulatory evolution
 - How to reference structured compliance procedures (human oversight, escalation) via content node URNs

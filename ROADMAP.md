@@ -276,7 +276,7 @@ extend the profile ecosystem without burdening Level 1 packages.
 - Document how profiles add vocabulary, validation rules, provenance, evidence,
   governance, and conformance requirements.
 - Add candidate profiles for NIST AI RMF, ISO/IEC 42001, ISO/IEC 23894, and
-  OECD AI Principles, as listed in [core §10.5](moca-core-spec.md#105-compliance--standards-profiles).
+  OECD AI Principles, as listed in [core §11.5](moca-core-spec.md#115-compliance--standards-profiles).
 - Add standards alignment for relevant areas including JSON-LD, RDF, SHACL,
   W3C Web Annotation, PROV-O, RO-Crate, and Agent Skills.
 - Make profile requirements explicit, testable, and independently distributable.

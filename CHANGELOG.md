@@ -42,6 +42,13 @@ and compatibility policy.
   schemas.
 - Revised `ROADMAP.md` to add signature and trust infrastructure, operationalize
   the `1.0.0` stability review, and reflect the completed EU AI Act profile.
+- Reordered `moca-core-spec.md` so Package Composition & Relationships
+  immediately follows Sidecar Augmentation, grouping the two package-relationship
+  mechanisms together: Composition is now §10, Profiles moved to §11
+  (subsections §11.1-§11.5), and Vendor Extensions moved to §12. Updated every
+  cross-reference to the renumbered sections across the repo (spec, profiles,
+  CONTRIBUTING.md, GOVERNANCE.md, issue templates, ROADMAP.md, moca-lint, and
+  examples).
 - Moved spec-change working drafts into `issue-drafts/` and added
   `issue-drafts/ISSUE-DRAFT-lifecycle.md`, `issue-drafts/ISSUE-DRAFT-provenance.md`,
   and `issue-drafts/ISSUE-DRAFT-canonical-hashing.md`, matching the existing
@@ -57,7 +64,7 @@ and compatibility policy.
 - Implemented `ROADMAP.md` item 2 (Core Hardening): optional manifest/
   content-node lifecycle fields (`validFrom`, `lastReviewed`, `supersedes`,
   core §7.5), a concrete PROV-O mapping for `claims[].provenance` (core
-  §7.4), and a `composition` mechanism (`members`/`relates`, core §12)
+  §7.4), and a `composition` mechanism (`members`/`relates`, core §10)
   letting one package reference others as containment or loose reference,
   including a Level 1 floor amendment allowing composition-only packages
   (core §3).
@@ -96,5 +103,5 @@ and compatibility policy.
 - `profiles/eu-ai-act/moca-eu-ai-act-profile.md` — MOCA EU AI Act compliance profile (beta), demonstrating how regulatory and compliance standards are modeled as ordinary MOCA profiles.
 - `profiles/eu-ai-act/profile.schema.json` — JSON Schema for `profileData.euAiAct` with open-string classification fields.
 - Example EU AI Act package under `profiles/eu-ai-act/examples/eu-ai-act-profile/` with profileData, governance ontology (SHACL), and human oversight content node.
-- New subsection [core §10.5](moca-core-spec.md#105-compliance--standards-profiles) documenting compliance and standards profiles, their relationship to the ordinary profile mechanism, and a reference table of candidate profiles (EU AI Act, NIST AI RMF, ISO/IEC 42001, etc.).
+- New subsection [core §11.5](moca-core-spec.md#115-compliance--standards-profiles) documenting compliance and standards profiles, their relationship to the ordinary profile mechanism, and a reference table of candidate profiles (EU AI Act, NIST AI RMF, ISO/IEC 42001, etc.).
 - Cross-reference updates: README.md Specification list, CONTRIBUTING.md compliance profile guidance, docs/quickstart.md "Going further" table.
