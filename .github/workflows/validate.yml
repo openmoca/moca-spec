@@ -19,6 +19,7 @@ jobs:
       - run: npm run validate
       - run: npm run validate:jsonld
       - run: npm run validate:canonical-digest
+      - run: npm run validate:sidecar-index
 
   lint-markdown:
     name: Lint Markdown

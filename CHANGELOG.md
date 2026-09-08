@@ -61,6 +61,14 @@ and compatibility policy.
 
 ### Added
 
+- Completed `ROADMAP.md` item 4 (MOCA Index and Optional Search): wired
+  `validate:sidecar-index` into CI, replaced the synthetic
+  `python-312-docs.moca.idx` reference fixture with a real sidecar bound to
+  `examples/level-1-minimal` via its `canonicalDigest.value`, and extended
+  `scripts/validate-sidecar-index.mjs` to check payload existence, the
+  `chunk_index`/`chunk_count` addressing invariant, `content_path` package
+  boundaries (reusing `tools/moca-lint/lib/paths.js`'s `resolvePackagePath`),
+  and `target_package_hash` against the target's actual computed digest.
 - Added the optional `canonicalDigest` whole-package identity mechanism,
   standalone `validate:canonical-digest` verification script, and generated
   digest annotations for `examples/level-1-minimal` and the three

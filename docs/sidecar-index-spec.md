@@ -43,9 +43,11 @@ string tag, and `storage.file` is the relative path to its payload.
 metadata only; they do not configure a host model or execution environment.
 
 The reference manifest is
-[examples/indices/python-312-docs.moca.idx/index.json](../examples/indices/python-312-docs.moca.idx/index.json).
-Its target digest is synthetic and exists only to demonstrate schema shape; it
-MUST be replaced with the digest of an actual target archive before deployment.
+[examples/indices/level-1-minimal.moca.idx/index.json](../examples/indices/level-1-minimal.moca.idx/index.json),
+bound to [examples/level-1-minimal](../examples/level-1-minimal) via its
+`canonicalDigest.value` (core §5.5) and verified against that target by
+`scripts/validate-sidecar-index.mjs`. Its `payload/index.jsonl` demonstrates
+the multi-chunk case from §5, where two items share one `content_path`.
 
 ## 4. Target Binding
 

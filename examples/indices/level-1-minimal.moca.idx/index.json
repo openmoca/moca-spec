@@ -1,0 +1,19 @@
+{
+  "$schema": "https://spec.openmoca.org/schemas/core/sidecar-index.schema.json",
+  "manifest_version": "1.0.0",
+  "target_package_id": "urn:moca:example:level-1-minimal",
+  "target_package_hash": "sha256:c424a0f83d146271c200d73b2576f0153abf4c1de7f380ba3528f70ae2260388",
+  "index_type": "content_addressing_only",
+  "chunking": {
+    "strategy": "paragraph"
+  },
+  "item_addressing": {
+    "content_path": "content_path",
+    "chunk_index": "chunk_index",
+    "chunk_count": "chunk_count"
+  },
+  "storage": {
+    "format": "jsonl",
+    "file": "payload/index.jsonl"
+  }
+}

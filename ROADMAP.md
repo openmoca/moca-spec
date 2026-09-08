@@ -118,6 +118,16 @@ Design principles:
 **Outcome:** Search can be added when useful without raising the entry bar or
 polluting the portable core format with runtime retrieval configuration.
 
+**Outcome — Status: Complete.** The `.moca.idx` sidecar manifest is specified
+in [docs/sidecar-index-spec.md](docs/sidecar-index-spec.md), implemented in
+`schemas/core/sidecar-index.schema.json`, validated by
+`scripts/validate-sidecar-index.mjs` in CI — including payload existence, the
+`content_path`/`chunk_index`/`chunk_count` addressing invariant, and
+`target_package_hash` verification against the target's `canonicalDigest` —
+and demonstrated by a real sidecar bound to
+[examples/level-1-minimal](examples/level-1-minimal) in
+[examples/indices/level-1-minimal.moca.idx](examples/indices/level-1-minimal.moca.idx).
+
 ### 5. Open Source CLI Application and Developer Tooling
 
 Develop an open-source CLI application that supports the complete package

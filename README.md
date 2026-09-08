@@ -69,6 +69,7 @@ details.
 ## Specification
 
 - [MOCA Core Package Specification](moca-core-spec.md)
+- [MOCA Sidecar Index Specification](docs/sidecar-index-spec.md)
 - [MOCA Education Profile](profiles/education/moca-education-profile.md)
 - [MOCA EU AI Act Profile](profiles/eu-ai-act/moca-eu-ai-act-profile.md)
 
