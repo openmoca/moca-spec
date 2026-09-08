@@ -2,15 +2,15 @@
 
 ## 1. Scope
 
-[Core §8.2](../moca-core-spec.md#82-security--trust-boundary-rule) and
-[core §3.1](../moca-core-spec.md#31-level-requirement-clarification) require
+[Core §8.2](moca-core-spec.md#82-security--trust-boundary-rule) and
+[core §3.1](moca-core-spec.md#31-level-requirement-clarification) require
 any package containing `skills/` to carry a valid `signature` object in
 `moca.json`, regardless of the package's declared conformance level, and
 require a harness to refuse to load `skills/` content when that signature is
 missing or does not verify. Core deliberately leaves the operational
 detail — what a `signature` object contains, which keys or identities are
 trusted, and how verification is performed offline versus online — to this
-document, the same way [docs/sidecar-index-spec.md](sidecar-index-spec.md)
+document, the same way [spec/moca-sidecar-index-spec.md](moca-sidecar-index-spec.md)
 carries the `.moca.idx` operational detail that core §4.1.1 only references.
 
 This document does not change any normative rule in core §8.2/§3.1/§5.1. It
@@ -21,7 +21,7 @@ by [`tools/moca-sign`](../tools/moca-sign/README.md) and consumed by
 ## 2. What a signature signs over
 
 A `signature` binds to the package's `canonicalDigest.value`
-([core §5.5](../moca-core-spec.md#55-canonical-package-digest)), not to a raw
+([core §5.5](moca-core-spec.md#55-canonical-package-digest)), not to a raw
 archive. Archive bytes are sensitive to Zip entry order, compression, and
 timestamps that have nothing to do with content identity — the same reason
 `canonicalDigest` itself is computed from resource bytes on disk rather than
@@ -56,6 +56,34 @@ this attestation only asserts "this exact package content was signed," not
 any additional claim about it. A future predicate type MAY add build
 provenance or review metadata; this document defines only the minimal case
 core §8.2 requires.
+
+### 2.1 Any manifest edit is a re-signing event
+
+`canonicalDigest` covers the manifest itself, not only the files under
+`content/` and friends (core §5.5 — the manifest is included with
+`canonicalDigest` and `signature` removed). A signature binds to that digest.
+Together these mean:
+
+> Editing **any** manifest field other than `canonicalDigest` and `signature`
+> invalidates the digest, and therefore invalidates the signature.
+
+This includes fields with no bearing on the package's meaning — `license`,
+`description`, a `keywords` entry. Authors should expect a metadata-only edit
+to require the same re-signing step as a content change; a verifier cannot
+distinguish the two, and MUST NOT attempt to.
+
+The effect compounds under composition. A composed package folds its members'
+*declared* digests (core §5.5), so a change to one member invalidates the
+digest of every package composing it, transitively. Re-derivation therefore
+has to proceed in dependency order — members before composers — or an
+intermediate package will be signed over a digest that is already stale.
+
+Tooling should make this a single operation rather than a manual sequence.
+This repository's own corpus is refreshed with `npm run refresh:derived`
+(implemented by `scripts/refresh-derived.mjs`), which topologically orders the
+packages, recomputes digests, re-signs signed packages, and re-binds dependent
+sidecar `target_package_hash` values; `npm run validate:derived` is the
+read-only check that fails when any of it has drifted.
 
 ## 3. Two signature modes on one schema
 
@@ -101,7 +129,7 @@ use, and its trust value is exactly as strong as the host's key custody.
 
 Core does not mandate either mode's trust-root contents; that is Application
 / Host-layer security policy, consistent with the layered architecture in
-[core §1.1](../moca-core-spec.md#11-the-3-layer-system-architecture) —
+[core §1.1](moca-core-spec.md#11-the-3-layer-system-architecture) —
 the package format and its signature stay portable, but *whom to trust* is
 always a host decision.
 

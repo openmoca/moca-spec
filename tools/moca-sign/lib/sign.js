@@ -6,7 +6,7 @@ import { signSigstore } from './sigstore-mode.js';
 
 /**
  * Signs a package in place: computes (or recomputes) `canonicalDigest`,
- * signs an in-toto statement over it (docs/trust-model.md §2), and writes
+ * signs an in-toto statement over it (spec/moca-trust-model.md §2), and writes
  * both `canonicalDigest` and `signature` into moca.json.
  *
  * Does not support composed packages (`composition.members`) — same

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
   "@context": {
     "ex": "https://example.org/vocab#"
   },
@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "canonicalDigest": {
     "algorithm": "sha256",
-    "value": "2c9d1a433be0d3a491038195e5a624507b1e1fb45b412eb51644d221711db9ef"
+    "value": "c2e4995f2c49e4cf36f644736c6cb7a2e38d3915d05110b50ee8902ba9003834"
   },
   "validFrom": "2025-11-01T00:00:00Z",
   "lastReviewed": "2026-07-15T00:00:00Z",

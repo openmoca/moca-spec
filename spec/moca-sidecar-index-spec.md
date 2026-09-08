@@ -24,7 +24,7 @@ example.moca.idx/
 ```
 
 `index.json` is the required, canonical sidecar manifest and MUST conform to
-[`sidecar-index.schema.json`](../schemas/core/sidecar-index.schema.json).
+[`sidecar-index.schema.json`](../schemas/v1/core/sidecar-index.schema.json).
 `storage.file` identifies the storage-native payload relative to the sidecar
 root. A sidecar MUST NOT use `moca-index.json` as an alternate manifest name.
 
@@ -43,7 +43,7 @@ string tag, and `storage.file` is the relative path to its payload.
 metadata only; they do not configure a host model or execution environment.
 
 The reference manifest is
-[examples/indices/level-1-minimal.moca.idx/index.json](../examples/indices/level-1-minimal.moca.idx/index.json),
+[examples/sidecars/level-1-minimal.moca.idx/index.json](../examples/sidecars/level-1-minimal.moca.idx/index.json),
 bound to [examples/level-1-minimal](../examples/level-1-minimal) via its
 `canonicalDigest.value` (core §5.5) and verified against that target by
 `scripts/validate-sidecar-index.mjs`. Its `payload/index.jsonl` demonstrates

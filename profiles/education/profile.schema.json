@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openmoca.org/schemas/education/profile.schema.json",
+  "$id": "https://openmoca.org/schemas/v1/education/profile.schema.json",
   "title": "MOCA Education Profile Data",
   "description": "JSON Schema for the profileData.education object, per MOCA Education Profile \u00a74.",
   "type": "object",

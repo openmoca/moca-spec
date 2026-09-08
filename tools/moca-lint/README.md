@@ -1,10 +1,10 @@
 # moca-lint
 
-Static analysis CLI for [MOCA](../../moca-core-spec.md) package directories and
+Static analysis CLI for [MOCA](../../spec/moca-core-spec.md) package directories and
 `.moca`/`.zip` archives. It runs offline by default (`--online-verify` is the
 one opt-in exception, for live Sigstore/Rekor checks — see
-[docs/trust-model.md](../../docs/trust-model.md) §5) and never executes
-package content, and checks a package against `moca-core-spec.md`, the
+[spec/moca-trust-model.md](../../spec/moca-trust-model.md) §5) and never executes
+package content, and checks a package against `spec/moca-core-spec.md`, the
 JSON Schemas in [`schemas/`](../../schemas), and referential-integrity rules
 that the schemas alone can't express (e.g. dangling concept references,
 locale fallback, the `skills/` + `signature` rule and its cryptographic
@@ -100,7 +100,7 @@ moca-lint extract dist/my-package.moca -o my-package --lint
 | `-v, --verbose` | Increase console trace output (repeatable: `-vv`). |
 | `-q, --quiet` | Suppress non-error console output. |
 | `--no-color` | Disable colored text output. |
-| `--trust-root <path>` | dsse mode: a `trust-roots.json` file; sigstore mode: a pinned TUF cache directory. See [docs/trust-model.md](../../docs/trust-model.md) §4. Required to verify any `dsse`-mode signature. |
+| `--trust-root <path>` | dsse mode: a `trust-roots.json` file; sigstore mode: a pinned TUF cache directory. See [spec/moca-trust-model.md](../../spec/moca-trust-model.md) §4. Required to verify any `dsse`-mode signature. |
 | `--identity-constraint <issuer>=<pattern>` | Repeatable. sigstore mode only: restrict accepted signer identities (§4.1). |
 | `--online-verify` | sigstore mode only: confirm live Rekor transparency-log inclusion and refresh the trust root before verifying (§5). |
 | `--allow-offline-fallback` | sigstore mode only: if `--online-verify` can't reach the network, degrade to offline verification instead of failing closed. |
@@ -118,15 +118,15 @@ moca-lint extract dist/my-package.moca -o my-package --lint
 ## Validation passes & finding codes
 
 Findings run across four passes, matching the package structure in
-[core §4](../../moca-core-spec.md#4-logical-package-structure) /
-[§5](../../moca-core-spec.md#5-package-manifest-mocajson-specification):
+[core §4](../../spec/moca-core-spec.md#4-logical-package-structure) /
+[§5](../../spec/moca-core-spec.md#5-package-manifest-mocajson-specification):
 
 | Pass | Codes | What it checks |
 |---|---|---|
-| 1. Manifest | `E101`–`E106` | `moca.json` exists, conforms to `schemas/core/moca.schema.json` (+ any declared profile's `schemas/<profile>/profile.schema.json`, auto-discovered from the profile URI — see [Profile support](#profile-support)), has no forbidden keys, valid inline `@context` prefixes, no profile data misplaced at the root, and no remote `@context` in Level 1. |
+| 1. Manifest | `E101`–`E106` | `moca.json` exists, conforms to `schemas/v1/core/moca.schema.json` (+ any declared profile's `schemas/<profile>/profile.schema.json`, auto-discovered from the profile URI — see [Profile support](#profile-support)), has no forbidden keys, valid inline `@context` prefixes, no profile data misplaced at the root, and no remote `@context` in Level 1. |
 | 2. Content | `E201`–`E210` | Frontmatter YAML syntax, concept/predicate CURIEs resolve to a declared namespace, `evidence[].source` files exist and `locator` shape is valid, `epistemicStatus` is in the core or active-profile vocabulary, locale-suffixed files have a default fallback, no duplicate content-node `id`s, `claims[]` has required fields, `SKILL.md` frontmatter is well-formed. |
 | 3. Semantic | `E301`, `E303`, `E304`, `I301` | JSON-LD/Turtle syntax in `ontologies/`, within-package duplicate/conflicting concept declarations, concept (and predicate/skill-metadata) references that don't resolve to any declared `@id`. |
-| 4. Security | `E401`–`E407` | `skills/` requires a `signature` object; a present `signature` is cryptographically verified against `canonicalDigest` via [`moca-sign`](../moca-sign/README.md) (`E404`/`E406`/`E407` — see [docs/trust-model.md](../../docs/trust-model.md) §6); SHA-256 `integrity` map matches files on disk; RO-Crate/BagIt hash cross-check; minimal `ro-crate-metadata.json` structural validity. |
+| 4. Security | `E401`–`E407` | `skills/` requires a `signature` object; a present `signature` is cryptographically verified against `canonicalDigest` via [`moca-sign`](../moca-sign/README.md) (`E404`/`E406`/`E407` — see [spec/moca-trust-model.md](../../spec/moca-trust-model.md) §6); SHA-256 `integrity` map matches files on disk; RO-Crate/BagIt hash cross-check; minimal `ro-crate-metadata.json` structural validity. |
 
 Run `moca-lint lint <target> --format json` and inspect `findings[].code`, or
 read [lib/codes.js](lib/codes.js) for the full registry with one-line
@@ -145,7 +145,7 @@ a signature that doesn't verify.
 
 ## Profile support
 
-[core §11](../../moca-core-spec.md#11-profiles) lets a package declare zero
+[core §11](../../spec/moca-core-spec.md#11-profiles) lets a package declare zero
 or more **profiles** (e.g. `"profile": ["https://openmoca.org/profiles/education/v1"]`)
 that additively extend core vocabulary. moca-lint handles profiles as follows:
 
@@ -158,7 +158,7 @@ that additively extend core vocabulary. moca-lint handles profiles as follows:
   Profile owners MAY ship or link to separate validation tooling for their
   profile-specific requirements.
 - **Profile epistemic-status vocabularies are opaque:** Per
-  [core §11.2](../../moca-core-spec.md#112-graceful-degradation), moca-lint
+  [core §11.2](../../spec/moca-core-spec.md#112-graceful-degradation), moca-lint
   can't prove a status value is invalid under a declared profile, so an
   unknown `epistemicStatus` in a profiled package is reported as `E210`
   (**warning**, not `E204`

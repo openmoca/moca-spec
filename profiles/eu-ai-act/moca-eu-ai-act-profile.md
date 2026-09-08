@@ -144,6 +144,6 @@ An EU AI Act profile package:
 
 ## See Also
 
-- [MOCA Core Specification §11.5](../../moca-core-spec.md#115-compliance--standards-profiles) — overview of compliance profiles
-- [Example EU AI Act package](examples/eu-ai-act-profile/) — runnable fixture demonstrating this profile
+- [MOCA Core Specification §11.5](../../spec/moca-core-spec.md#115-compliance--standards-profiles) — overview of compliance profiles
+- [Example EU AI Act package](examples/eu-ai-act-profile) — runnable fixture demonstrating this profile
 - [JSON Schema for profileData.euAiAct](profile.schema.json)

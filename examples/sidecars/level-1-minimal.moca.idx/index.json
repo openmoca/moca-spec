@@ -1,8 +1,8 @@
 {
-  "$schema": "https://spec.openmoca.org/schemas/core/sidecar-index.schema.json",
+  "$schema": "https://openmoca.org/schemas/v1/core/sidecar-index.schema.json",
   "manifest_version": "1.0.0",
   "target_package_id": "urn:moca:example:level-1-minimal",
-  "target_package_hash": "sha256:2c9d1a433be0d3a491038195e5a624507b1e1fb45b412eb51644d221711db9ef",
+  "target_package_hash": "sha256:c2e4995f2c49e4cf36f644736c6cb7a2e38d3915d05110b50ee8902ba9003834",
   "index_type": "content_addressing_only",
   "chunking": {
     "strategy": "paragraph"

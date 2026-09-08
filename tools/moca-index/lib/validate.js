@@ -7,7 +7,7 @@ import { resolvePackagePath } from 'moca-lint/lib/paths.js';
 import { computeCanonicalDigest } from '../../../scripts/validate-canonical-digest.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
-const schemaPath = join(repoRoot, 'schemas', 'core', 'sidecar-index.schema.json');
+const schemaPath = join(repoRoot, 'schemas', 'v1', 'core', 'sidecar-index.schema.json');
 const schema = JSON.parse(readFileSync(schemaPath, 'utf8'));
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
@@ -21,7 +21,7 @@ const validateSchema = ajv.compile(schema);
  * target_package_hash still matches the target's actual computed
  * canonicalDigest. This is deliberately independent of
  * scripts/validate-sidecar-index.mjs (which is written for scanning
- * examples/indices/*, not for validating one freshly-built sidecar) --
+ * examples/sidecars/*, not for validating one freshly-built sidecar) --
  * the digest computation itself is reused via computeCanonicalDigest, not
  * reimplemented.
  *

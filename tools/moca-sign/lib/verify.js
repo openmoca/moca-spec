@@ -9,13 +9,13 @@ const PLACEHOLDER_VALUE = 'PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST';
 
 /**
  * Verifies a package's moca.json `signature` object against its recomputed
- * canonicalDigest (core §5.5). See docs/trust-model.md §6 for the outcome
+ * canonicalDigest (core §5.5). See spec/moca-trust-model.md §6 for the outcome
  * contract this returns.
  *
  * @param {object} params
  * @param {string} params.rootDir
  * @param {object} [params.manifest] - parsed moca.json; read from rootDir if omitted
- * @param {string} [params.dsseTrustRootPath] - path to a dsse-mode trust-roots.json (docs/trust-model.md §4.2)
+ * @param {string} [params.dsseTrustRootPath] - path to a dsse-mode trust-roots.json (spec/moca-trust-model.md §4.2)
  * @param {{issuer: string, pattern: string}[]} [params.identityConstraints] - sigstore-mode only (§4.1)
  * @param {boolean} [params.onlineVerify]
  * @param {boolean} [params.allowOfflineFallback]
@@ -46,7 +46,7 @@ export async function verifyPackageSignature({
   if (!resolvedManifest.canonicalDigest?.value) {
     return {
       outcome: 'malformed',
-      reason: 'a signed package MUST also declare canonicalDigest (docs/trust-model.md §2) — none present',
+      reason: 'a signed package MUST also declare canonicalDigest (spec/moca-trust-model.md §2) — none present',
     };
   }
   if (typeof signature.value !== 'string') {

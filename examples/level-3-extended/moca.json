@@ -1,5 +1,5 @@
 {
-  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
   "@context": {
     "moca": "https://openmoca.org/vocab/core#",
     "ex": "https://example.org/vocab#"
@@ -14,11 +14,11 @@
   ],
   "signature": {
     "type": "dsse",
-    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBzWlhabGJDMHpMV1Y0ZEdWdVpHVmtRREV1TUM0d0lpd2laR2xuWlhOMElqcDdJbk5vWVRJMU5pSTZJams1WkRnNFpXVTNNbU5tWldFd1lUZGpPRFprWldaak5XUTJZakF4WWpGa00yRXdNMll4TkRSbE5XUTNPRE14T1RSbU5HSm1aRE15TXpZMk0yRmpNalVpZlgxZExDSndjbVZrYVdOaGRHVlVlWEJsSWpvaWFIUjBjSE02THk5dmNHVnViVzlqWVM1dmNtY3ZZWFIwWlhOMFlYUnBiMjV6TDNCaFkydGhaMlV0YzJsbmJtRjBkWEpsTDNZeElpd2ljSEpsWkdsallYUmxJanA3ZlgwPSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6Im1HQXhkQ1hFdDEvcG4rZ3pjQ2NhNFVqQXRaUGZyT002eGI3QldsdGhCbjdEdlk4L2NNcXBXVzlxV0pFSW9vSjR1S2h3VVFpVjQrdTJhU2hjWlBvYkNRPT0ifV19",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBzWlhabGJDMHpMV1Y0ZEdWdVpHVmtRREV1TUM0d0lpd2laR2xuWlhOMElqcDdJbk5vWVRJMU5pSTZJbVF4WWpCbE5UaGxPREk0TlRCa01qUmpaRGN4WWpZellqTTRZekpqTWpSbU1tWTJOR1V6WlRobU1qaGpZV0V3WkRZd04yRmlOVFJtWWpSaU1XTXlOak1pZlgxZExDSndjbVZrYVdOaGRHVlVlWEJsSWpvaWFIUjBjSE02THk5dmNHVnViVzlqWVM1dmNtY3ZZWFIwWlhOMFlYUnBiMjV6TDNCaFkydGhaMlV0YzJsbmJtRjBkWEpsTDNZeElpd2ljSEpsWkdsallYUmxJanA3ZlgwPSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6IlVxaFJERExYSjlNOEhlZVY4eVdKYW83WTh4RWlpSkh5NG8vYThQT2RTWFZDWHdDWFg4N3NjbGNhQUxwdU8zcHRFWjFYQ25RODFCMHA4VEk3ZmZhR0FBPT0ifV19",
     "keyid": "moca-spec-example-signing-key-2026"
   },
   "canonicalDigest": {
     "algorithm": "sha256",
-    "value": "99d88ee72cfea0a7c86defc5d6b01b1d3a03f144e5d783194f4bfd323663ac25"
+    "value": "d1b0e58e82850d24cd71b63b38c2c24f2f64e3e8f28caa0d607ab54fb4b1c263"
   }
 }

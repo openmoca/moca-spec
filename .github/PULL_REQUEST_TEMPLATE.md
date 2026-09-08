@@ -8,10 +8,10 @@
 
 ## Checklist
 
-- [ ] If this changes `moca-core-spec.md` or a profile specification under `profiles/`,
+- [ ] If this changes `spec/moca-core-spec.md` or a profile specification under `profiles/`,
       the corresponding `schemas/` were updated to match.
 - [ ] If this changes `schemas/`, all packages under `examples/` still
-      validate (`npx ajv-cli validate -s schemas/core/moca.schema.json -d
+      validate (`npx ajv-cli validate -s schemas/v1/core/moca.schema.json -d
       "examples/*/moca.json"`).
 - [ ] If this adds/changes an example package containing `skills/`, it
       includes a structurally valid `signature` object (cryptographic

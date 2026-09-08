@@ -35,9 +35,9 @@ This package is a teaching example, not a template for production use.
 ## ⚠️ About the `signature` field
 
 `moca.json` carries a real, verifiable `dsse`-mode signature (see
-[docs/trust-model.md](../../../../docs/trust-model.md)) — **but it is signed
+[spec/moca-trust-model.md](../../../../spec/moca-trust-model.md)) — **but it is signed
 with this repository's own non-production example key**
-([examples/keys/README.md](../../../../examples/keys/README.md)), not a
+([fixtures/signing-keys/README.md](../../../../fixtures/signing-keys/README.md)), not a
 signer any real host should trust. Verifying successfully against this
 repo's example trust root does not make this package trustworthy for any
 purpose beyond demonstrating the mechanism; no real host should add
@@ -45,7 +45,7 @@ purpose beyond demonstrating the mechanism; no real host should add
 
 ## What This Demonstrates
 
-- How regulatory/compliance standards map to MOCA's ordinary profile system (see [core §11.5](../../../../moca-core-spec.md#115-compliance--standards-profiles))
+- How regulatory/compliance standards map to MOCA's ordinary profile system (see [core §11.5](../../../../spec/moca-core-spec.md#115-compliance--standards-profiles))
 - The no-special-mechanism principle: a compliance profile uses the same `profileData` namespace, `governance` ontology role, and content reference patterns as any other profile
 - The open-string approach to classification fields: `riskTier`, `annexIiiCategory`, and `humanOversight.level` are open vocabulary, not enums, to allow for regulatory evolution
 - How to reference structured compliance procedures (human oversight, escalation) via content node URNs

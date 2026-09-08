@@ -70,7 +70,7 @@ export function computeCanonicalDigest(rootDir, { resolveMember } = {}) {
   delete manifestForDigest.canonicalDigest;
   // `signature` is excluded for the same self-reference reason as
   // `canonicalDigest`: a Level 3 signature signs over canonicalDigest.value
-  // (docs/trust-model.md §2), so canonicalDigest cannot itself depend on the
+  // (spec/moca-trust-model.md §2), so canonicalDigest cannot itself depend on the
   // signature that will be computed from it.
   delete manifestForDigest.signature;
 

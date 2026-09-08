@@ -7,8 +7,8 @@ labels: bug
 
 ## Location
 
-<!-- File and line/section, e.g. schemas/core/moca.schema.json,
-     examples/level-2-semantic/moca.json, moca-core-spec.md §7.4 -->
+<!-- File and line/section, e.g. schemas/v1/core/moca.schema.json,
+     examples/level-2-semantic/moca.json, spec/moca-core-spec.md §7.4 -->
 
 ## Problem
 

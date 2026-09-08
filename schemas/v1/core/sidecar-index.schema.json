@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://spec.openmoca.org/schemas/core/sidecar-index.schema.json",
+  "$id": "https://openmoca.org/schemas/v1/core/sidecar-index.schema.json",
   "title": "MOCA Sidecar Index Manifest Schema",
   "description": "JSON Schema for index.json in a MOCA .moca.idx sidecar archive.",
   "type": "object",

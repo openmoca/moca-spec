@@ -9,7 +9,7 @@ const packageDir = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const repoRoot = join(packageDir, '..', '..');
 
 const coreSchema = JSON.parse(
-  readFileSync(join(repoRoot, 'schemas/core/moca.schema.json'), 'utf8')
+  readFileSync(join(repoRoot, 'schemas/v1/core/moca.schema.json'), 'utf8')
 );
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });

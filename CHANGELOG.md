@@ -34,6 +34,31 @@ and compatibility policy.
   `1.0.0` and the graduation triggers for splitting components out.
 - Reordered this changelog so `[Unreleased]` precedes released versions, per
   Keep a Changelog. It was previously inverted.
+- **Moved the three normative specifications into `spec/`** — `moca-core-spec.md`,
+  `moca-sidecar-index-spec.md` and `moca-trust-model.md`. Previously the core
+  spec sat at the repository root while two equally normative documents sat in
+  `docs/` beside non-normative guides, with nothing signalling which was which.
+  `docs/` now means exactly "non-normative guides". 90 relative links were
+  rebased and verified by `npm run validate:links`. See
+  [MIGRATIONS.md](MIGRATIONS.md).
+- **Versioned the schema directory and unified schema `$id` hosts.**
+  `schemas/core/` became `schemas/v1/core/`, and every `$id` gained a `/v1/`
+  segment. The sidecar index schema had been published under a different host
+  (`spec.openmoca.org`) from the other three (`openmoca.org`); all four now use
+  `openmoca.org`. Done now because
+  [docs/versioning-and-release.md](docs/versioning-and-release.md) commits to
+  versioned normative schemas at `1.0.0`, and retrofitting the segment later
+  would break every published `$schema` reference. The `vocab/core#` namespace
+  is deliberately unchanged — altering it would change JSON-LD expansion.
+- **Moved non-package material out of `examples/`.** `examples/keys/` became
+  `fixtures/signing-keys/` (a directory of test key material is not an example
+  package, and its presence under `examples/` invited walkers to treat it as
+  one), with the private key renamed to `INSECURE-example-signing-key.pem` so
+  the filename itself carries the warning. `examples/indices/` became
+  `examples/sidecars/`.
+- Replaced `lint:moca`'s hardcoded list of 13 example paths with discovery
+  (`scripts/lint-examples.mjs`). The hardcoded list would have silently stopped
+  covering any example added after it was written.
 
 ### Added
 
@@ -48,6 +73,21 @@ and compatibility policy.
   security-sensitive component in the repository — had no CI coverage at all;
   the other three tools each had a 3-OS matrix job.
 - `.editorconfig`, and an expanded `.gitignore` (previously a single line).
+- `scripts/refresh-derived.mjs`, `npm run refresh:derived` and
+  `npm run validate:derived`. Three artifacts in a package are *derived* and go
+  stale on any input change — `canonicalDigest` (which covers the manifest, so
+  even a `license` edit invalidates it), `signature` (which signs over that
+  digest), and a sidecar's `target_package_hash` — and they cascade, because a
+  composed package folds its members' declared digests. Repairing them by hand
+  in the right order is error-prone; this script topologically orders packages,
+  recomputes digests, re-signs, and re-binds sidecars in one command.
+  `--check` is the read-only CI form. The behaviour it automates is now
+  documented normatively in
+  [spec/moca-trust-model.md §2.1](spec/moca-trust-model.md#21-any-manifest-edit-is-a-re-signing-event).
+- `scripts/example-lint-baseline.json`: a recorded baseline of the non-error
+  findings the example corpus emits by design (a deliberately dangling evidence
+  locator; `ex:` CURIEs with no in-package ontology). CI now fails on a *new*
+  warning instead of leaving eight known ones as permanent noise.
 
 ### Fixed
 
@@ -59,6 +99,9 @@ and compatibility policy.
   `canonicalDigest` was recomputed for both modules and then for the composing
   course package, which folds its members' digests transitively (core §5.5).
 - Untracked `.DS_Store`, which had been committed to the repository.
+- `tools/moca-index`'s tests hardcoded `examples/level-1-minimal`'s canonical
+  digest, so they broke whenever that example changed. They now read the
+  digest from the package at test time.
 
 ## [0.1.0-beta.1] - 2026-09-03
 
@@ -198,10 +241,10 @@ assembled.
   letting one package reference others as containment or loose reference,
   including a Level 1 floor amendment allowing composition-only packages
   (core §3).
-- `schemas/core/moca.schema.json`: added `composition`, `validFrom`,
+- `schemas/v1/core/moca.schema.json`: added `composition`, `validFrom`,
   `lastReviewed`, and `supersedes` manifest properties, and
   `compositionMember`/`compositionRelation` `$defs`.
-- `schemas/core/context.jsonld`: activated the previously-unused `prov:`
+- `schemas/v1/core/context.jsonld`: activated the previously-unused `prov:`
   prefix for `claims[].provenance`, and added JSON-LD terms for
   `composition`/`members`/`relates`/`order`/`validFrom`/`lastReviewed`/
   `supersedes`. `composition.relates[].relationship` uses a
@@ -251,13 +294,13 @@ assembled.
     (`examples/level-3-extended`,
     `profiles/education/examples/education-profile`,
     `profiles/eu-ai-act/examples/eu-ai-act-profile`) with a real, documented,
-    non-production `dsse`-mode example key (`examples/keys/`), updating each
+    non-production `dsse`-mode example key (`fixtures/signing-keys/`), updating each
     README's disclaimer accordingly; `npm run lint:moca` now passes
     `--trust-root` to verify them.
 
 ### Fixed
 
-- `schemas/core/context.jsonld`: fixed a pre-existing bug where `claims[]`'s
+- `schemas/v1/core/context.jsonld`: fixed a pre-existing bug where `claims[]`'s
   `subject` and `predicate` terms were aliased directly to the `@id`
   keyword, colliding with the sibling `id` field and any other `@id`-aliased
   term on the same node (JSON-LD `colliding keywords` error). They now
@@ -268,5 +311,5 @@ assembled.
 - `profiles/eu-ai-act/moca-eu-ai-act-profile.md` — MOCA EU AI Act compliance profile (beta), demonstrating how regulatory and compliance standards are modeled as ordinary MOCA profiles.
 - `profiles/eu-ai-act/profile.schema.json` — JSON Schema for `profileData.euAiAct` with open-string classification fields.
 - Example EU AI Act package under `profiles/eu-ai-act/examples/eu-ai-act-profile/` with profileData, governance ontology (SHACL), and human oversight content node.
-- New subsection [core §11.5](moca-core-spec.md#115-compliance--standards-profiles) documenting compliance and standards profiles, their relationship to the ordinary profile mechanism, and a reference table of candidate profiles (EU AI Act, NIST AI RMF, ISO/IEC 42001, etc.).
+- New subsection [core §11.5](spec/moca-core-spec.md#115-compliance--standards-profiles) documenting compliance and standards profiles, their relationship to the ordinary profile mechanism, and a reference table of candidate profiles (EU AI Act, NIST AI RMF, ISO/IEC 42001, etc.).
 - Cross-reference updates: README.md Specification list, CONTRIBUTING.md compliance profile guidance, docs/quickstart.md "Going further" table.

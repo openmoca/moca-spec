@@ -1,7 +1,7 @@
 # ⚠️ Non-production example signing key
 
 `example-signing-key.pem`/`example-signing-key.pub.pem` is a `dsse`-mode
-Ed25519 keypair (see [docs/trust-model.md](../../docs/trust-model.md) §3.2)
+Ed25519 keypair (see [spec/moca-trust-model.md](../../spec/moca-trust-model.md) §3.2)
 used **only** to sign this repository's own skill-bearing example packages
 (`examples/level-3-extended`,
 `profiles/education/examples/education-profile`,
@@ -21,6 +21,6 @@ To re-sign an example after editing its content:
 
 ```sh
 node tools/moca-sign/bin/moca-sign.js sign <example-dir> \
-  --mode dsse --key examples/keys/example-signing-key.pem \
+  --mode dsse --key fixtures/signing-keys/INSECURE-example-signing-key.pem \
   --keyid moca-spec-example-signing-key-2026
 ```

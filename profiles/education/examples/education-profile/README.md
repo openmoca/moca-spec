@@ -7,16 +7,16 @@ Level 3-conformant package.
 ## ⚠️ About the `signature` field
 
 This package contains `skills/`, so a valid `signature` is mandatory
-(core [§3.1](../../../../moca-core-spec.md#31-level-requirement-clarification)/[§8.2](../../../../moca-core-spec.md#82-security--trust-boundary-rule)).
+(core [§3.1](../../../../spec/moca-core-spec.md#31-level-requirement-clarification)/[§8.2](../../../../spec/moca-core-spec.md#82-security--trust-boundary-rule)).
 `moca.json` carries a real, verifiable `dsse`-mode signature (see
-[docs/trust-model.md](../../../../docs/trust-model.md)) — **but it is signed
+[spec/moca-trust-model.md](../../../../spec/moca-trust-model.md)) — **but it is signed
 with this repository's own non-production example key**
-([examples/keys/README.md](../../../../examples/keys/README.md)), not a
+([fixtures/signing-keys/README.md](../../../../fixtures/signing-keys/README.md)), not a
 signer any real host should trust:
 
 ```sh
 node tools/moca-sign/bin/moca-sign.js verify profiles/education/examples/education-profile \
-  --trust-root examples/keys/example-signing-trust-root.json
+  --trust-root fixtures/signing-keys/example-signing-trust-root.json
 ```
 
 Verifying successfully against this repo's example trust root does not make

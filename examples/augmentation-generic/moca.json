@@ -1,5 +1,5 @@
 {
-  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
   "id": "urn:moca:aug:kb-augmentation-generic",
   "version": "1.0.0",
   "title": "Generic Archive Semantic Augmentation",

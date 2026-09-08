@@ -12,16 +12,16 @@ in [CHANGELOG.md](CHANGELOG.md); this document does not duplicate it.
 
 | # | Item | Where it lives |
 |---|---|---|
-| 1 | **Core format and Level 1 adoption** — a valid `moca.json` plus CommonMark under `content/` is a useful package; everything else is additive. | [core §3](moca-core-spec.md#3-conformance-levels), [examples/level-1-bare](examples/level-1-bare) |
-| 2 | **Core hardening** — lifecycle fields, a concrete PROV-O mapping for `claims[]`, and `composition` (`members`/`relates`). | [core §7.5](moca-core-spec.md#75-content-node-lifecycle-fields), [§7.4](moca-core-spec.md#74-explicit-claims-graph-claims), [§10](moca-core-spec.md#10-package-composition--relationships) |
-| 3 | **Canonical package hashing** — a reproducible whole-package digest that folds composed members transitively. | [core §5.5](moca-core-spec.md#55-canonical-package-digest), `scripts/validate-canonical-digest.mjs` |
-| 4 | **Sidecar index format** — the optional `.moca.idx` artifact for semantic or hybrid search. | [docs/sidecar-index-spec.md](docs/sidecar-index-spec.md), [schemas/core/sidecar-index.schema.json](schemas/core/sidecar-index.schema.json) |
-| 5 | **CLI tooling** — `moca-lint` (lint/pack/extract), `moca-convert` (4 adapters), `moca-index` (build), each independently versioned with its own tests. | [tools/](tools/) |
-| 6 | **Signature and trust infrastructure** — DSSE/Sigstore signing and verification, integrated into `moca-lint`'s security pass. | [docs/trust-model.md](docs/trust-model.md), [tools/moca-sign](tools/moca-sign/README.md) |
+| 1 | **Core format and Level 1 adoption** — a valid `moca.json` plus CommonMark under `content/` is a useful package; everything else is additive. | [core §3](spec/moca-core-spec.md#3-conformance-levels), [examples/level-1-bare](examples/level-1-bare) |
+| 2 | **Core hardening** — lifecycle fields, a concrete PROV-O mapping for `claims[]`, and `composition` (`members`/`relates`). | [core §7.5](spec/moca-core-spec.md#75-content-node-lifecycle-fields), [§7.4](spec/moca-core-spec.md#74-explicit-claims-graph-claims), [§10](spec/moca-core-spec.md#10-package-composition--relationships) |
+| 3 | **Canonical package hashing** — a reproducible whole-package digest that folds composed members transitively. | [core §5.5](spec/moca-core-spec.md#55-canonical-package-digest), `scripts/validate-canonical-digest.mjs` |
+| 4 | **Sidecar index format** — the optional `.moca.idx` artifact for semantic or hybrid search. | [spec/moca-sidecar-index-spec.md](spec/moca-sidecar-index-spec.md), [schemas/v1/core/sidecar-index.schema.json](schemas/v1/core/sidecar-index.schema.json) |
+| 5 | **CLI tooling** — `moca-lint` (lint/pack/extract), `moca-convert` (4 adapters), `moca-index` (build), each independently versioned with its own tests. | [tools/](tools) |
+| 6 | **Signature and trust infrastructure** — DSSE/Sigstore signing and verification, integrated into `moca-lint`'s security pass. | [spec/moca-trust-model.md](spec/moca-trust-model.md), [tools/moca-sign](tools/moca-sign/README.md) |
 
 Partially delivered: **compliance and standards profiles** (item 11 below) — the
 EU AI Act profile has shipped with its specification, schema, example package,
-and SHACL governance shapes under [profiles/eu-ai-act/](profiles/eu-ai-act/).
+and SHACL governance shapes under [profiles/eu-ai-act/](profiles/eu-ai-act).
 
 ## Now
 
@@ -104,7 +104,7 @@ evidence" walkthrough — is pulled forward into the documentation work under
 
 - A consistent profile registration and versioning model.
 - Candidate profiles for NIST AI RMF, ISO/IEC 42001, ISO/IEC 23894, and OECD AI
-  Principles, per [core §11.5](moca-core-spec.md#115-compliance--standards-profiles).
+  Principles, per [core §11.5](spec/moca-core-spec.md#115-compliance--standards-profiles).
 - Redesign the education profile's `Course`/`Module` shape around
   `composition.members`, replacing the flat `prerequisites` URN-array approach
   in [moca-education-profile.md §4](profiles/education/moca-education-profile.md).

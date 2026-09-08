@@ -9,8 +9,8 @@ const examplesDir = join(repoRoot, 'examples');
 
 // Verifies dsse-mode signatures on the skill-bearing examples below, signed
 // with the repository's documented, non-production example key — see
-// examples/keys/README.md and docs/trust-model.md.
-const EXAMPLE_TRUST_ROOT = join(repoRoot, 'examples/keys/example-signing-trust-root.json');
+// fixtures/signing-keys/README.md and spec/moca-trust-model.md.
+const EXAMPLE_TRUST_ROOT = join(repoRoot, 'fixtures/signing-keys/example-signing-trust-root.json');
 
 const CLEAN_EXAMPLES = [
   ['level-1-bare', join(examplesDir, 'level-1-bare')],

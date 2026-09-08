@@ -3,7 +3,7 @@
 
 Specification version: `0.1.0-beta.1`
 Status: Beta — pre-`1.0.0`, experimental
-License: [Apache License 2.0](LICENSE)
+License: [Apache License 2.0](../LICENSE)
 
 ---
 
@@ -167,7 +167,7 @@ A package MAY be accompanied by an external `.moca.idx` sidecar containing
 derived search data. A sidecar does not alter this package layout, `moca.json`,
 or package conformance. Its optional target binding and format-neutral indexed
 item addressing are defined by the
-[MOCA Sidecar Index Specification](docs/sidecar-index-spec.md).
+[MOCA Sidecar Index Specification](moca-sidecar-index-spec.md).
 
 ### 4.2 Localization Convention
 
@@ -217,7 +217,7 @@ The root manifest MUST be named `moca.json`.
 | `augmentation` | Object | No | Declaration of target content being augmented (sidecar usage). See §9. |
 | `integrity` | Object | No | Per-resource SHA-256 digest manifest. Authoritative over any RO-Crate or BagIt checksum manifest present in the same package — see §5.4. |
 | `canonicalDigest` | Object | No | Independently-reproducible whole-package digest. See §5.5. |
-| `signature` | Object | Required if `skills/` present | Cryptographic signature object (Sigstore / DSSE), signing over `canonicalDigest.value`. A signed package MUST also declare `canonicalDigest`. See [docs/trust-model.md](docs/trust-model.md). |
+| `signature` | Object | Required if `skills/` present | Cryptographic signature object (Sigstore / DSSE), signing over `canonicalDigest.value`. A signed package MUST also declare `canonicalDigest`. See [spec/moca-trust-model.md](moca-trust-model.md). |
 | `profileData` | Object | No | Namespaced container for profile-specific manifest extensions. See §11.3. |
 | `composition` | Object | No | Optional package-to-package structural (`members`) or associative (`relates`) references. See §10. |
 | `validFrom` | String (ISO-8601) | No | When this package's content became authoritative. See §7.5. |
@@ -280,7 +280,7 @@ in the `integrity` object when computing it. The manifest, with the
 `canonicalDigest` and `signature` properties removed, is also part of the
 digest input. `signature` is excluded for the same self-reference reason as
 `canonicalDigest`: a Level 3 signature signs over `canonicalDigest.value`
-(see [docs/trust-model.md](docs/trust-model.md) §2), so the digest a
+(see [spec/moca-trust-model.md](moca-trust-model.md) §2), so the digest a
 signature signs over cannot itself vary depending on whether, or how, that
 signature has been populated yet.
 
@@ -357,7 +357,7 @@ with prefix and term mappings.
 
 ```json
 {
-  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
   "@context": {
     "moca": "https://openmoca.org/vocab/core#",
     "skos": "http://www.w3.org/2004/02/skos/core#",
@@ -629,9 +629,9 @@ MOCA Knowledge Assets are strictly inert data.
 This section states the normative rule only. What `signature` contains,
 which keys/certificates/identities a host trusts, and how offline versus
 online verification and revocation are handled are defined in
-[docs/trust-model.md](docs/trust-model.md), operationalized by
-[`tools/moca-sign`](tools/moca-sign/README.md) (signing) and
-[`tools/moca-lint`](tools/moca-lint/README.md) (verification during lint).
+[spec/moca-trust-model.md](moca-trust-model.md), operationalized by
+[`tools/moca-sign`](../tools/moca-sign/README.md) (signing) and
+[`tools/moca-lint`](../tools/moca-lint/README.md) (verification during lint).
 
 ---
 
@@ -866,12 +866,12 @@ classified against.
 
 The following table tracks profiles following this pattern to help contributors
 coordinate and avoid namespace collisions. Profiles listed as "not yet authored"
-are candidates for future contribution; see [CONTRIBUTING.md](CONTRIBUTING.md)
+are candidates for future contribution; see [CONTRIBUTING.md](../CONTRIBUTING.md)
 for the proposal process.
 
 | Standard | Scope | Status |
 |---|---|---|
-| EU AI Act (Regulation 2024/1689) | Legal — risk-tiered obligations, Annex III high-risk categories, Article 14 human oversight | Example profile in this repo ([moca-eu-ai-act-profile.md](profiles/eu-ai-act/moca-eu-ai-act-profile.md)) |
+| EU AI Act (Regulation 2024/1689) | Legal — risk-tiered obligations, Annex III high-risk categories, Article 14 human oversight | Example profile in this repo ([moca-eu-ai-act-profile.md](../profiles/eu-ai-act/moca-eu-ai-act-profile.md)) |
 | NIST AI RMF 1.0 | Voluntary framework — Govern, Map, Measure, Manage functions | Not yet authored |
 | ISO/IEC 42001:2023 | AI management system standard | Not yet authored |
 | ISO/IEC 23894:2023 | AI risk management guidance | Not yet authored |

@@ -1,5 +1,5 @@
 // Conformance fixtures for Pass 4 signature verification — see
-// docs/trust-model.md §6 for the outcome contract and ROADMAP.md item 6.
+// spec/moca-trust-model.md §6 for the outcome contract and ROADMAP.md item 6.
 // Each fixture is a minimal skill-bearing package demonstrating one
 // specific outcome, mirroring the compatibility-corpus pattern the other
 // fixtures under test/fixtures/ already establish.

@@ -1,4 +1,4 @@
-// Proves schemas/core/context.jsonld's scoped @context terms actually expand
+// Proves schemas/v1/core/context.jsonld's scoped @context terms actually expand
 // to distinct predicates via a real JSON-LD processor (jsonld.js), not just
 // JSON.parse. See core §10.
 import { readFileSync } from 'node:fs';
@@ -7,7 +7,7 @@ import jsonld from 'jsonld';
 
 const root = process.cwd();
 const context = JSON.parse(
-  readFileSync(join(root, 'schemas/core/context.jsonld'), 'utf8')
+  readFileSync(join(root, 'schemas/v1/core/context.jsonld'), 'utf8')
 );
 
 let failed = false;

@@ -13,7 +13,7 @@ That said, security issues are still in scope:
 - Errors in `schemas/` that would let an invalid or malicious `moca.json`
   pass validation (e.g. a schema that fails to reject the excluded
   properties in
-  [core §5.3](moca-core-spec.md#53-excluded-properties)).
+  [core §5.3](spec/moca-core-spec.md#53-excluded-properties)).
 - A `moca-lint` error-severity check (`E1xx`–`E4xx`) that fails to flag a
   manifest or package it should reject — a false negative in the
   validation contract itself, not just in the schema it validates against.
@@ -23,7 +23,7 @@ That said, security issues are still in scope:
   verify — a bad signature, a subject digest that doesn't match
   `canonicalDigest.value`, an untrusted signer, or an expired/removed
   `dsse`-mode trust-root entry. See
-  [docs/trust-model.md](docs/trust-model.md) for the intended behavior.
+  [spec/moca-trust-model.md](spec/moca-trust-model.md) for the intended behavior.
 - Errors in example packages that model insecure or misleading patterns
   implementers might copy.
 - Issues in CI tooling (`.github/workflows/`) that could be abused (e.g.
@@ -34,7 +34,7 @@ That said, security issues are still in scope:
 MOCA Core packages are intended to be **inert data**. The one area with
 direct security implications for anyone building a harness against this spec
 is the `skills/` + `signature` model in
-[core §8.2](moca-core-spec.md#82-security--trust-boundary-rule):
+[core §8.2](spec/moca-core-spec.md#82-security--trust-boundary-rule):
 
 - Loading a MOCA package MUST NOT automatically execute code.
 - Any package containing `skills/` MUST include a valid `signature` object,

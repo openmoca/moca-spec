@@ -7,7 +7,7 @@ labels: spec-change
 
 ## Affected section(s)
 
-<!-- e.g. moca-core-spec.md §5.1 Manifest Properties -->
+<!-- e.g. spec/moca-core-spec.md §5.1 Manifest Properties -->
 
 ## Problem
 

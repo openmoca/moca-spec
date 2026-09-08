@@ -1,5 +1,5 @@
 // Builds/parses the in-toto v1 Statement signed for a package — see
-// docs/trust-model.md §2. The statement's only content-relevant field is the
+// spec/moca-trust-model.md §2. The statement's only content-relevant field is the
 // subject digest, which MUST equal the package's canonicalDigest.value
 // (core §5.5); predicate is intentionally empty (§2).
 export const STATEMENT_TYPE = 'https://in-toto.io/Statement/v1';

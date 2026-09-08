@@ -10,10 +10,15 @@ import { buildIndexManifest } from '../lib/manifest.js';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const level1MinimalDir = join(repoRoot, 'examples', 'level-1-minimal');
+// Read the target's declared digest rather than hardcoding it: it changes
+// whenever the example package's bytes or manifest metadata change.
+const level1MinimalHash = `sha256:${JSON.parse(
+  readFileSync(join(level1MinimalDir, 'moca.json'), 'utf8')
+).canonicalDigest.value}`;
 
 const VALID_MANIFEST = buildIndexManifest({
   targetId: 'urn:moca:example:level-1-minimal',
-  targetHash: 'sha256:2c9d1a433be0d3a491038195e5a624507b1e1fb45b412eb51644d221711db9ef',
+  targetHash: level1MinimalHash,
 });
 const VALID_ITEMS = [{ content_path: '01-introduction.md', chunk_index: 0, chunk_count: 1, text: 'hello' }];
 

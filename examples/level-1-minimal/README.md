@@ -2,7 +2,7 @@
 
 This package demonstrates the informal **grounded** rung of Level 1. It has
 the same Level 1 conformance number as
-[the bare example](../level-1-bare/), but enriches its CommonMark node with:
+[the bare example](../level-1-bare), but enriches its CommonMark node with:
 
 - An explicit node `id` and `title`.
 - Concept binding through `concepts`.

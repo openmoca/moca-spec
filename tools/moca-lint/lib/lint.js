@@ -12,7 +12,7 @@ import { runSecurityPass } from './passes/security.js';
  * @param {string} params.rootDir
  * @param {boolean} [params.strict]
  * @param {(entry: string) => void} [params.onLog] - receives debug trace lines for --log-file
- * @param {string} [params.trustRoot] - see docs/trust-model.md §4; passed through to the Security pass
+ * @param {string} [params.trustRoot] - see spec/moca-trust-model.md §4; passed through to the Security pass
  * @param {{issuer: string, pattern: string}[]} [params.identityConstraints] - sigstore mode only, §4.1
  * @param {boolean} [params.onlineVerify]
  * @param {boolean} [params.allowOfflineFallback]

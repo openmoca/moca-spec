@@ -2,7 +2,7 @@ import { UsageError } from './target.js';
 
 /**
  * Resolves the sidecar's target_package_hash from the target's own
- * declared canonicalDigest -- per docs/sidecar-index-spec.md §4, the
+ * declared canonicalDigest -- per spec/moca-sidecar-index-spec.md §4, the
  * preferred binding form. moca-index trusts the declared value; it does
  * not recompute it here (that would make the target's own canonicalDigest
  * moca-index's concern, not the target package's). lib/validate.js

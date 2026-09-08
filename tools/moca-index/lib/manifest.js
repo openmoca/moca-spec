@@ -1,6 +1,6 @@
 /**
  * Builds the index.json manifest object per
- * schemas/core/sidecar-index.schema.json. `item_addressing` is always this
+ * schemas/v1/core/sidecar-index.schema.json. `item_addressing` is always this
  * exact fixed object -- the schema declares each of its three properties as
  * a `const`, so it isn't actually configurable.
  *

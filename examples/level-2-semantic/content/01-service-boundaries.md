@@ -27,6 +27,6 @@ perimeter of a service. At Level 2, the `claims` block above is
 interpretable as an RDF triple (`ex:OrderService ex:dependsOn
 ex:OrderDatabase`) because this package declares a JSON-LD `@context` and a
 domain ontology resolving the `ex:` prefix (see
-[core §7.4](../../../moca-core-spec.md#74-explicit-claims-graph-claims)).
+[core §7.4](../../../spec/moca-core-spec.md#74-explicit-claims-graph-claims)).
 The `provenance` object resolves against the concrete PROV-O mapping in the
 same section.

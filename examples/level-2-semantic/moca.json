@@ -1,5 +1,5 @@
 {
-  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
   "@context": {
     "moca": "https://openmoca.org/vocab/core#",
     "skos": "http://www.w3.org/2004/02/skos/core#",

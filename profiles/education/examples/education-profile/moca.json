@@ -1,5 +1,5 @@
 {
-  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
   "@context": {
     "moca": "https://openmoca.org/vocab/core#",
     "education": "https://openmoca.org/vocab/education#",
@@ -53,11 +53,11 @@
   },
   "signature": {
     "type": "dsse",
-    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBsWkhWallYUnBiMjR0Y0hKdlptbHNaVUF4TGpBdU1DSXNJbVJwWjJWemRDSTZleUp6YUdFeU5UWWlPaUpoWTJGaFltWTVNRFV5WTJObU9EVmxNR1poTlRSaU9UUmlZakppWVRVd01qRXdOMlkxTlRObU5UQmxNakk0TW1JMFptTXlNak5pWVRKbE1EQXpNemd4SW4xOVhTd2ljSEpsWkdsallYUmxWSGx3WlNJNkltaDBkSEJ6T2k4dmIzQmxibTF2WTJFdWIzSm5MMkYwZEdWemRHRjBhVzl1Y3k5d1lXTnJZV2RsTFhOcFoyNWhkSFZ5WlM5Mk1TSXNJbkJ5WldScFkyRjBaU0k2ZTMxOSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6Iit3S2lzMC9TM3dlYnFuTStaNXArcjBGcyt6NXBnUDJCZjdkMnBkUmorOTRyV1BDekJINUZGRjNYd1hhbUZsZXVROXdwdkRFU0FvUE9WZ2MvSmtCcUNBPT0ifV19",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBsWkhWallYUnBiMjR0Y0hKdlptbHNaVUF4TGpBdU1DSXNJbVJwWjJWemRDSTZleUp6YUdFeU5UWWlPaUl6T0dNME1UUmpZVFZrTmpFNVptVmpaalJpTldNNFpXRTRObVl6TkdJM1pqUTFaVFJsWm1FNVpqRTFOR0U1TkRBek9URTJZakF6T0RCaE56Y3hPVFEzSW4xOVhTd2ljSEpsWkdsallYUmxWSGx3WlNJNkltaDBkSEJ6T2k4dmIzQmxibTF2WTJFdWIzSm5MMkYwZEdWemRHRjBhVzl1Y3k5d1lXTnJZV2RsTFhOcFoyNWhkSFZ5WlM5Mk1TSXNJbkJ5WldScFkyRjBaU0k2ZTMxOSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6IjI4VVhSSmJVbVZXeXZqM3YzTE5ZZktzQ0h1WDA0TkdLNC9LZmI5MGlPaitBejFnNWFrU2IzQUNDTjRjVUhYbHlsdTJOcFZUWjRkTk5BNi9QRHdkd0NnPT0ifV19",
     "keyid": "moca-spec-example-signing-key-2026"
   },
   "canonicalDigest": {
     "algorithm": "sha256",
-    "value": "acaabf9052ccf85e0fa54b94bb2ba502107f553f50e2282b4fc223ba2e003381"
+    "value": "38c414ca5d619fecf4b5c8ea86f34b7f45e4efa9f154a9403916b0380a771947"
   }
 }

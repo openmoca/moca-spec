@@ -100,7 +100,7 @@ test('placeholder signature is reported as malformed', async () => {
   });
 });
 
-test('signature without canonicalDigest is malformed (docs/trust-model.md §2)', async () => {
+test('signature without canonicalDigest is malformed (spec/moca-trust-model.md §2)', async () => {
   await withPackageAndWorkDir(async ({ packageDir }) => {
     const manifestPath = join(packageDir, 'moca.json');
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));

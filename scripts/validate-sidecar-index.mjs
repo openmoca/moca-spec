@@ -9,7 +9,7 @@ const root = process.cwd();
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
 
-const schemaPath = join(root, 'schemas/core/sidecar-index.schema.json');
+const schemaPath = join(root, 'schemas/v1/core/sidecar-index.schema.json');
 const schema = JSON.parse(readFileSync(schemaPath, 'utf8'));
 const validate = ajv.compile(schema);
 
@@ -32,7 +32,7 @@ function reportSchemaErrors(label) {
 }
 
 function findSidecarDirs() {
-  const indicesDir = join(root, 'examples/indices');
+  const indicesDir = join(root, 'examples/sidecars');
   if (!existsSync(indicesDir)) return [];
   return readdirSync(indicesDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && entry.name.endsWith('.moca.idx'))
@@ -161,7 +161,7 @@ function validateTargetBinding(manifest, label) {
 
 const sidecarDirs = findSidecarDirs();
 if (sidecarDirs.length === 0) {
-  fail('no sidecar fixtures found under examples/indices/*.moca.idx');
+  fail('no sidecar fixtures found under examples/sidecars/*.moca.idx');
 }
 
 for (const sidecarDir of sidecarDirs) {

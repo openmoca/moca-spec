@@ -16,7 +16,7 @@ cp -r examples/level-1-bare my-package
 ## 2. The manifest (`moca.json`)
 
 Every MOCA package needs a root manifest with, at minimum, `id`, `version`,
-and `title` ([core §5.1](../moca-core-spec.md#51-manifest-properties)):
+and `title` ([core §5.1](../spec/moca-core-spec.md#51-manifest-properties)):
 
 ```json
 {
@@ -28,7 +28,7 @@ and `title` ([core §5.1](../moca-core-spec.md#51-manifest-properties)):
 
 Do not add `endpoints`, `settings`, `credentials`, or `apiKeys` — these are
 explicitly excluded from any MOCA manifest
-([core §5.3](../moca-core-spec.md#53-excluded-properties)) because MOCA
+([core §5.3](../spec/moca-core-spec.md#53-excluded-properties)) because MOCA
 packages are runtime-independent data, not configuration.
 
 ## 3. Add plain CommonMark content
@@ -79,7 +79,7 @@ Concept binding and other metadata are also optional. To use a CURIE such as
 ```
 
 Then enrich the content node with concept and provenance metadata
-([core §7.1](../moca-core-spec.md#71-commonmark-knowledge-nodes-content)):
+([core §7.1](../spec/moca-core-spec.md#71-commonmark-knowledge-nodes-content)):
 
 ```markdown
 ---
@@ -113,10 +113,10 @@ referential-integrity checks used in CI. Conformance level is derived from the
 package contents; it is not added to `moca.json`.
 
 To validate only the manifest against
-[schemas/core/moca.schema.json](../schemas/core/moca.schema.json), run:
+[schemas/v1/core/moca.schema.json](../schemas/v1/core/moca.schema.json), run:
 
 ```sh
-npx ajv-cli validate -s schemas/core/moca.schema.json -d my-package/moca.json --spec=draft2020
+npx ajv-cli validate -s schemas/v1/core/moca.schema.json -d my-package/moca.json --spec=draft2020
 ```
 
 Once a package validates, `moca-lint pack` archives it (fail-closed — it
@@ -162,7 +162,7 @@ full adapter reference and options.
 
 A package remains complete and usable without one, but
 [`tools/moca-index`](../tools/moca-index/README.md) can build an optional
-[`.moca.idx`](sidecar-index-spec.md) sidecar for semantic or hybrid search:
+[`.moca.idx`](../spec/moca-sidecar-index-spec.md) sidecar for semantic or hybrid search:
 
 ```sh
 npx moca-index build my-package -o my-package.moca.idx --zip
@@ -183,12 +183,12 @@ and embedder options.
 | Build a tutoring/courseware package | [examples/education-profile](../profiles/education/examples/education-profile), [moca-education-profile.md](../profiles/education/moca-education-profile.md) |
 | Ground an AI harness against existing content without modifying it | [examples/augmentation-generic](../examples/augmentation-generic), [examples/augmentation-scorm2004](../examples/augmentation-scorm2004) |
 | Apply a regulatory/compliance standard to a package | [examples/eu-ai-act-profile](../profiles/eu-ai-act/examples/eu-ai-act-profile), [moca-eu-ai-act-profile.md](../profiles/eu-ai-act/moca-eu-ai-act-profile.md) |
-| Define a reproducible whole-package identity, including composed members | [examples/composition-members](../examples/composition-members), [core §5.5](../moca-core-spec.md#55-canonical-package-digest) |
-| Record freshness and lineage (`validFrom`, `lastReviewed`, `supersedes`) | [examples/level-1-minimal/moca.json](../examples/level-1-minimal/moca.json), [core §7.5](../moca-core-spec.md#75-content-node-lifecycle-fields) |
-| Trace a claim's provenance against PROV-O | [examples/level-2-semantic](../examples/level-2-semantic), [core §7.4](../moca-core-spec.md#74-explicit-claims-graph-claims) |
-| Compose a package from other packages, or relate two independent packages | [examples/composition-members](../examples/composition-members), [examples/composition-relates](../examples/composition-relates), [core §10](../moca-core-spec.md#10-package-composition--relationships) |
-| Add an optional semantic/hybrid search sidecar | [tools/moca-index](../tools/moca-index/README.md), [examples/indices/level-1-minimal.moca.idx](../examples/indices/level-1-minimal.moca.idx), [docs/sidecar-index-spec.md](../docs/sidecar-index-spec.md) |
-| Sign a `skills/`-bearing package and verify it in CI | [tools/moca-sign](../tools/moca-sign/README.md), [docs/trust-model.md](../docs/trust-model.md), [examples/level-3-extended](../examples/level-3-extended) |
+| Define a reproducible whole-package identity, including composed members | [examples/composition-members](../examples/composition-members), [core §5.5](../spec/moca-core-spec.md#55-canonical-package-digest) |
+| Record freshness and lineage (`validFrom`, `lastReviewed`, `supersedes`) | [examples/level-1-minimal/moca.json](../examples/level-1-minimal/moca.json), [core §7.5](../spec/moca-core-spec.md#75-content-node-lifecycle-fields) |
+| Trace a claim's provenance against PROV-O | [examples/level-2-semantic](../examples/level-2-semantic), [core §7.4](../spec/moca-core-spec.md#74-explicit-claims-graph-claims) |
+| Compose a package from other packages, or relate two independent packages | [examples/composition-members](../examples/composition-members), [examples/composition-relates](../examples/composition-relates), [core §10](../spec/moca-core-spec.md#10-package-composition--relationships) |
+| Add an optional semantic/hybrid search sidecar | [tools/moca-index](../tools/moca-index/README.md), [examples/sidecars/level-1-minimal.moca.idx](../examples/sidecars/level-1-minimal.moca.idx), [spec/moca-sidecar-index-spec.md](../spec/moca-sidecar-index-spec.md) |
+| Sign a `skills/`-bearing package and verify it in CI | [tools/moca-sign](../tools/moca-sign/README.md), [spec/moca-trust-model.md](../spec/moca-trust-model.md), [examples/level-3-extended](../examples/level-3-extended) |
 
 For the full normative rules, see
-[moca-core-spec.md](../moca-core-spec.md).
+[moca-core-spec.md](../spec/moca-core-spec.md).

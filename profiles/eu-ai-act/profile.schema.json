@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openmoca.org/schemas/eu-ai-act/profile.schema.json",
+  "$id": "https://openmoca.org/schemas/v1/eu-ai-act/profile.schema.json",
   "title": "MOCA EU AI Act Profile Data",
   "description": "JSON Schema for the profileData.euAiAct object, per MOCA EU AI Act Profile §3.",
   "type": "object",

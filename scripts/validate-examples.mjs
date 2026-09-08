@@ -11,10 +11,10 @@ const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
 
 const coreSchema = JSON.parse(
-  readFileSync(join(root, 'schemas/core/moca.schema.json'), 'utf8')
+  readFileSync(join(root, 'schemas/v1/core/moca.schema.json'), 'utf8')
 );
 // Sanity-check the JSON-LD context is at least well-formed JSON.
-JSON.parse(readFileSync(join(root, 'schemas/core/context.jsonld'), 'utf8'));
+JSON.parse(readFileSync(join(root, 'schemas/v1/core/context.jsonld'), 'utf8'));
 
 const validateCore = ajv.compile(coreSchema);
 
@@ -51,7 +51,7 @@ for (const dir of exampleDirs) {
 
   if (!validateCore(manifest)) {
     failed = true;
-    console.error(`[FAIL] ${dir}/moca.json does not conform to schemas/core/moca.schema.json:`);
+    console.error(`[FAIL] ${dir}/moca.json does not conform to schemas/v1/core/moca.schema.json:`);
     for (const err of validateCore.errors) {
       console.error(`  ${err.instancePath || '/'} ${err.message}`);
     }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openmoca.org/schemas/core/moca.schema.json",
+  "$id": "https://openmoca.org/schemas/v1/core/moca.schema.json",
   "title": "MOCA Core Manifest",
   "description": "JSON Schema for the moca.json root manifest, per MOCA Core Package Specification \u00a75.1.",
   "type": "object",

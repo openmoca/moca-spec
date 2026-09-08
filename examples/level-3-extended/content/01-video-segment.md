@@ -16,6 +16,6 @@ evidence:
 
 This node's evidence locator uses the W3C Web Annotation `FragmentSelector`
 model to target seconds 75–210 of `media/recording.mp4`, per
-[core §7.3](../../../moca-core-spec.md#73-multi-modal-evidence--web-annotation-locators).
+[core §7.3](../../../spec/moca-core-spec.md#73-multi-modal-evidence--web-annotation-locators).
 No `media/recording.mp4` file is included in this fixture — the locator
 demonstrates the pattern, not a playable asset.

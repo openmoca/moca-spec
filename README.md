@@ -52,7 +52,7 @@ MOCA enforces a strict separation of concerns across three layers:
 MOCA packages are inert data consumed by an AI Harness layer (retrieval,
 reasoning, tool execution) that in turn sits underneath an Application/Host
 layer (security policy, identity, tenancy). See
-[moca-core-spec.md §1](moca-core-spec.md#1-scope-philosophy--architecture-model)
+[moca-core-spec.md §1](spec/moca-core-spec.md#1-scope-philosophy--architecture-model)
 for the full model.
 
 ## Conformance Levels
@@ -63,13 +63,19 @@ for the full model.
 | **2** | MOCA Semantic | Adds JSON-LD `@context`, formal ontologies (`ontologies/`), SHACL shape validation. `claims` interpretable as RDF triples. |
 | **3** | MOCA Extended | Adds W3C Web Annotation locators. Cryptographic signatures — **mandatory for any package containing `skills/`**. Optional Agent Skills. |
 
-See [moca-core-spec.md §3](moca-core-spec.md#3-conformance-levels) for full
+See [moca-core-spec.md §3](spec/moca-core-spec.md#3-conformance-levels) for full
 details.
 
 ## Specification
 
-- [MOCA Core Package Specification](moca-core-spec.md)
-- [MOCA Sidecar Index Specification](docs/sidecar-index-spec.md)
+The normative documents all live under [spec/](spec):
+
+- [MOCA Core Package Specification](spec/moca-core-spec.md)
+- [MOCA Sidecar Index Specification](spec/moca-sidecar-index-spec.md)
+- [MOCA Trust Model](spec/moca-trust-model.md)
+
+Profile specifications live with their schema and examples:
+
 - [MOCA Education Profile](profiles/education/moca-education-profile.md)
 - [MOCA EU AI Act Profile](profiles/eu-ai-act/moca-eu-ai-act-profile.md)
 
@@ -77,17 +83,24 @@ details.
 
 ```text
 moca-spec/
-├── moca-core-spec.md          # Core specification
-├── schemas/                    # JSON Schema + JSON-LD context definitions
-│   └── core/
-├── profiles/                   # Self-contained, independently extractable profile bundles
-│   ├── education/              # Spec, schema, and examples
-│   └── eu-ai-act/              # Spec, schema, and examples
-├── examples/                   # Runnable core fixture packages at each conformance level
-└── docs/                       # Guides (quickstart, etc.)
+├── spec/                   # Normative specifications
+│   ├── moca-core-spec.md
+│   ├── moca-sidecar-index-spec.md
+│   └── moca-trust-model.md
+├── schemas/                # JSON Schema + JSON-LD context definitions
+├── profiles/               # Self-contained, independently extractable profile bundles
+│   ├── education/          # Spec, schema, and examples
+│   └── eu-ai-act/
+├── examples/               # Runnable fixture packages
+│   └── sidecars/           # Example .moca.idx sidecars
+├── fixtures/               # Test material that is not an example package
+│   └── signing-keys/       # Non-production example signing key
+├── tools/                  # Reference CLIs (moca-lint, -convert, -index, -sign)
+├── scripts/                # Repository validation and maintenance scripts
+└── docs/                   # Non-normative guides (quickstart, etc.)
 ```
 
-Each directory under [profiles/](profiles/) contains a profile specification,
+Each directory under [profiles/](profiles) contains a profile specification,
 its schema, and its examples so it can be extracted independently.
 
 ## Quickstart

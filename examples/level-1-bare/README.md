@@ -14,5 +14,5 @@ model, vector database, hosted service, credentials, or agent framework.
 
 "Bare" is documentation shorthand, not a separate conformance level. Authors
 can add optional identity and concept-grounding metadata while remaining at
-Level 1. See [the grounded example](../level-1-minimal/) for the richer end of
+Level 1. See [the grounded example](../level-1-minimal) for the richer end of
 that same conformance level.

@@ -1,5 +1,5 @@
 // "sigstore" signature mode: keyless Fulcio/Rekor signing and verification,
-// delegated to the `sigstore` npm package. See docs/trust-model.md §3.1/§4.1.
+// delegated to the `sigstore` npm package. See spec/moca-trust-model.md §3.1/§4.1.
 //
 // Signing (attest()) requires a real OIDC identity token — ambient CI
 // credentials (GitHub Actions) or an interactively-obtained token — and is

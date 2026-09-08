@@ -29,9 +29,9 @@ function addCommonOptions(cmd) {
     .option('-v, --verbose', 'increase console verbosity (repeatable)', (_, prev) => prev + 1, 0)
     .option('-q, --quiet', 'suppress non-error console output', false)
     .option('--no-color', 'disable colored output')
-    .option('--trust-root <path>', 'dsse mode: trust-roots.json; sigstore mode: pinned TUF cache dir (docs/trust-model.md §4)')
-    .option('--identity-constraint <constraint...>', 'sigstore mode: repeatable "<issuer>=<identity-pattern>" (docs/trust-model.md §4.1)')
-    .option('--online-verify', 'sigstore mode: confirm live Rekor inclusion and refresh the trust root (docs/trust-model.md §5)', false)
+    .option('--trust-root <path>', 'dsse mode: trust-roots.json; sigstore mode: pinned TUF cache dir (spec/moca-trust-model.md §4)')
+    .option('--identity-constraint <constraint...>', 'sigstore mode: repeatable "<issuer>=<identity-pattern>" (spec/moca-trust-model.md §4.1)')
+    .option('--online-verify', 'sigstore mode: confirm live Rekor inclusion and refresh the trust root (spec/moca-trust-model.md §5)', false)
     .option('--allow-offline-fallback', 'sigstore mode: degrade to offline verification if --online-verify cannot reach the network', false);
 }
 

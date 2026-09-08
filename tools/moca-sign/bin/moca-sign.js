@@ -54,7 +54,7 @@ program
 program
   .command('verify')
   .argument('<target>', 'package directory to verify')
-  .option('--trust-root <path>', 'dsse mode: trust-roots.json (docs/trust-model.md §4.2); sigstore mode: pinned TUF cache dir (§4.1)')
+  .option('--trust-root <path>', 'dsse mode: trust-roots.json (spec/moca-trust-model.md §4.2); sigstore mode: pinned TUF cache dir (§4.1)')
   .option('--identity-constraint <constraint...>', 'sigstore mode: repeatable "<issuer>=<identity-pattern>" (§4.1)')
   .option('--online-verify', 'sigstore mode: confirm live Rekor inclusion and refresh the trust root (§5)', false)
   .option('--allow-offline-fallback', 'sigstore mode: degrade to offline verification if --online-verify cannot reach the network', false)

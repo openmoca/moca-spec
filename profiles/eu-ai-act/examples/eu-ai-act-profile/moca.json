@@ -1,5 +1,5 @@
 {
-  "$schema": "https://openmoca.org/schemas/core/moca.schema.json",
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
   "@context": {
     "moca": "https://openmoca.org/vocab/core#",
     "euAiAct": "https://openmoca.org/vocab/eu-ai-act#",
@@ -43,11 +43,11 @@
   },
   "signature": {
     "type": "dsse",
-    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBsZFMxaGFTMWhZM1F0Y0hKdlptbHNaVUF4TGpBdU1DSXNJbVJwWjJWemRDSTZleUp6YUdFeU5UWWlPaUl6TnpneE16bGtZelEyWkRBMlpqRmtaVEZtWXpJMU1EZGpOMkUzTXpVd1lqY3hNMk5oT1RjeU16Y3lNVEV3WXpjNFpHSmxZMkUzTmpkaE5UZ3dZMlZtSW4xOVhTd2ljSEpsWkdsallYUmxWSGx3WlNJNkltaDBkSEJ6T2k4dmIzQmxibTF2WTJFdWIzSm5MMkYwZEdWemRHRjBhVzl1Y3k5d1lXTnJZV2RsTFhOcFoyNWhkSFZ5WlM5Mk1TSXNJbkJ5WldScFkyRjBaU0k2ZTMxOSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6IjcvMjh2YUt5UXhjMTgvTGtSdGdoc2FDV0N6aDE2Q0pEclAzdVBMemJMNnlzbHZTSFlGeithaDh1YXFxZTlZSFprckgrMWJBYktWdnQrQlZHeGhYUkJnPT0ifV19",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBsZFMxaGFTMWhZM1F0Y0hKdlptbHNaVUF4TGpBdU1DSXNJbVJwWjJWemRDSTZleUp6YUdFeU5UWWlPaUprTVdSaVlqZzFZVFl5TTJZd09UUTJPR0V6WldNd05XUmtOekkzTmpSallXVXhOMkptWVRFeE5EQm1OakppTkRRd01qVTVOMkkzWW1FM1pXRmlaV00ySW4xOVhTd2ljSEpsWkdsallYUmxWSGx3WlNJNkltaDBkSEJ6T2k4dmIzQmxibTF2WTJFdWIzSm5MMkYwZEdWemRHRjBhVzl1Y3k5d1lXTnJZV2RsTFhOcFoyNWhkSFZ5WlM5Mk1TSXNJbkJ5WldScFkyRjBaU0k2ZTMxOSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6Ikt5ajhNM1A4bU1ORi9DazBYL1RJaHI4TjNhWnZveHJBTDRILy8zcmVQa0RBdFIrTEcyZlNWNFJObXI4SW1NeHV3ckZRTnhseWNhSEdDcmhieE1vUEJ3PT0ifV19",
     "keyid": "moca-spec-example-signing-key-2026"
   },
   "canonicalDigest": {
     "algorithm": "sha256",
-    "value": "378139dc46d06f1de1fc2507c7a7350b713ca972372110c78dbeca767a580cef"
+    "value": "d1dbb85a623f09468a3ec05dd72764cae17bfa1140f62b4402597b7ba7eabec6"
   }
 }

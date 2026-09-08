@@ -1,6 +1,6 @@
 # moca-convert
 
-CLI that creates a Level 1 [MOCA](../../moca-core-spec.md) package (a
+CLI that creates a Level 1 [MOCA](../../spec/moca-core-spec.md) package (a
 `moca.json` plus CommonMark under `content/`) from existing source material.
 It never fabricates ontologies, claims, profiles, embeddings, or a
 signature — output is Level 1 only; semantic enrichment stays a deliberate,

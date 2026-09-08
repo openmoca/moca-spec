@@ -1,9 +1,9 @@
 # moca-sign
 
 Reference signing and verification CLI for the `signature` object
-[core §5.1](../../moca-core-spec.md#51-manifest-properties)/[§8.2](../../moca-core-spec.md#82-security--trust-boundary-rule)
+[core §5.1](../../spec/moca-core-spec.md#51-manifest-properties)/[§8.2](../../spec/moca-core-spec.md#82-security--trust-boundary-rule)
 requires on any package containing `skills/`. See
-[docs/trust-model.md](../../docs/trust-model.md) for the full design: what a
+[spec/moca-trust-model.md](../../spec/moca-trust-model.md) for the full design: what a
 signature signs over, the two supported modes, trust roots, identity
 constraints, and offline/online verification behavior. This README covers
 CLI usage only.
@@ -29,7 +29,7 @@ npm install
   why it isn't exercised by this package's own test suite.
 
 Both modes sign an in-toto statement over the package's `canonicalDigest`,
-**not** the raw archive — see [docs/trust-model.md §2](../../docs/trust-model.md#2-what-a-signature-signs-over).
+**not** the raw archive — see [spec/moca-trust-model.md §2](../../spec/moca-trust-model.md#2-what-a-signature-signs-over).
 
 ## Usage
 
@@ -75,7 +75,7 @@ moca-sign verify <package-dir> --online-verify
 
 `verify` exits `0` for a valid signature, `1` otherwise, and prints one of
 four outcomes (`valid`/`malformed`/`invalid`/`indeterminate` — see
-[docs/trust-model.md §6](../../docs/trust-model.md#6-verification-outcomes)).
+[spec/moca-trust-model.md §6](../../spec/moca-trust-model.md#6-verification-outcomes)).
 `--format json` emits the structured result instead.
 
 `trust-roots.json` (dsse mode) shape:

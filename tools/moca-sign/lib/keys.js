@@ -15,7 +15,7 @@ export function generateKeyPair() {
 
 /**
  * Loads a dsse-mode trust-root file: `{ "keys": [{ keyid, publicKey, identity?, expires? }] }`.
- * See docs/trust-model.md §4.2.
+ * See spec/moca-trust-model.md §4.2.
  *
  * @param {string} path
  * @returns {{ resolvePublicKey: (keyid: string, now?: Date) => string|undefined, entries: object[] }}

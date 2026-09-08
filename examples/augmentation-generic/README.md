@@ -1,7 +1,7 @@
 # Generic Archive Augmentation Example
 
 This package demonstrates the sidecar augmentation pattern from
-[core §9](../../moca-core-spec.md#9-sidecar-augmentation-pattern-augmentation)
+[core §9](../../spec/moca-core-spec.md#9-sidecar-augmentation-pattern-augmentation)
 on its own — no profile declared, no education-specific concepts. Core
 frames augmentation as domain-agnostic: a document repository, video
 archive, wiki export, or support-ticket corpus are all equally valid

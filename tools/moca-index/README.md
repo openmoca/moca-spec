@@ -1,6 +1,6 @@
 # moca-index
 
-CLI that builds a [`.moca.idx` sidecar index](../../docs/sidecar-index-spec.md)
+CLI that builds a [`.moca.idx` sidecar index](../../spec/moca-sidecar-index-spec.md)
 for a MOCA package: the `index.json` manifest plus a `payload/` search
 payload. A `.moca` package remains complete and usable without one — this
 tool exists so a producer doesn't have to hand-write the manifest, chunk
@@ -42,7 +42,7 @@ that check fails.
 
 ## Binding
 
-Per [docs/sidecar-index-spec.md](../../docs/sidecar-index-spec.md) §4, the
+Per [spec/moca-sidecar-index-spec.md](../../spec/moca-sidecar-index-spec.md) §4, the
 sidecar is bound to its target via `target_package_hash`, preferring the
 target's own `canonicalDigest.value` (core §5.5). `moca-index` reads this
 directly from the target's `moca.json` — it does not compute or verify the

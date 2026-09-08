@@ -1,0 +1,18 @@
+{
+  "examples/level-2-semantic": [
+    "E304_UNDEFINED_CONCEPT",
+    "I301_SHACL_NOT_EVALUATED"
+  ],
+  "examples/level-3-extended": [
+    "E203_DANGLING_EVIDENCE_SOURCE"
+  ],
+  "profiles/education/examples/education-profile": [
+    "E210_UNVERIFIABLE_EPISTEMIC_STATUS",
+    "E304_UNDEFINED_CONCEPT",
+    "E304_UNDEFINED_CONCEPT",
+    "E304_UNDEFINED_CONCEPT"
+  ],
+  "profiles/eu-ai-act/examples/eu-ai-act-profile": [
+    "E210_UNVERIFIABLE_EPISTEMIC_STATUS"
+  ]
+}

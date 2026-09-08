@@ -17,13 +17,13 @@ project grows.
 
 Different kinds of changes get different scrutiny:
 
-- **Core spec changes** (edits to `moca-core-spec.md`, `schemas/core/`):
+- **Core spec changes** (edits to `spec/moca-core-spec.md`, `schemas/v1/core/`):
   highest scrutiny, since they affect every profile and every conformance
   level. Require an issue discussing rationale before a PR is merged.
 - **Profile additions** (new `moca-<name>-profile.md` files, or additions to
   the education profile): lighter weight, since profiles are additive-only
-  by construction ([core §11.2](moca-core-spec.md#112-graceful-degradation),
-  [§11.4](moca-core-spec.md#114-profile-restrictions)) and cannot break
+  by construction ([core §11.2](spec/moca-core-spec.md#112-graceful-degradation),
+  [§11.4](spec/moca-core-spec.md#114-profile-restrictions)) and cannot break
   existing core-only consumers. Still require an issue first.
 - **Examples, schemas, docs, tooling**: normal PR review, no separate
   proposal step required unless the change implies a spec interpretation
@@ -68,7 +68,7 @@ Through `1.0.0`, MOCA is developed as a **single repository**,
 
 | Area | Contents |
 |---|---|
-| Specification | `moca-core-spec.md` and the normative satellite specifications (sidecar index, trust model) |
+| Specification | `spec/moca-core-spec.md` and the normative satellite specifications (sidecar index, trust model) |
 | Schemas | JSON Schemas and JSON-LD contexts under `schemas/` |
 | Profiles | Self-contained profile bundles under `profiles/` (see Profile Graduation above) |
 | Examples | Static fixture packages under `examples/` |
