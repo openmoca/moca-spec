@@ -13,6 +13,7 @@
   "dependencies": {
     "commander": "^12.1.0",
     "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
     "moca-lint": "^0.1.0-beta.1",
     "picocolors": "^1.1.1"
   }

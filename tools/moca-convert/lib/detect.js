@@ -1,11 +1,11 @@
 // Auto-detection of --from when the caller doesn't pass it explicitly.
 // Ambiguous input is always a refusal (UsageError, mapped to exit code 2 by
 // the CLI) -- this module never guesses.
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { UsageError } from './target.js';
 import { walkFiles } from './walk.js';
 import { ADAPTER_NAMES, getAdapter } from './adapters/index.js';
+import { parseOpenApiDocument } from './adapters/openapi/parse.js';
 
 const OPENAPI_JSON_YAML_EXT = new Set(['.json', '.yaml', '.yml']);
 
@@ -51,7 +51,7 @@ function detectDirectory(inputPath) {
   const allFiles = walkFiles(inputPath);
   const markdownFiles = allFiles.filter((f) => f.endsWith('.md'));
   const topLevelOpenApiCandidates = allFiles.filter(
-    (f) => !f.includes('/') && OPENAPI_JSON_YAML_EXT.has(extname(f)) && looksLikeOpenApi(readSafely(join(inputPath, f)))
+    (f) => !f.includes('/') && OPENAPI_JSON_YAML_EXT.has(extname(f)) && parsesAsOpenApi(join(inputPath, f))
   );
 
   if (markdownFiles.length > 0 && topLevelOpenApiCandidates.length > 0) {
@@ -80,18 +80,20 @@ function detectFile(inputPath) {
 
   const ext = extname(inputPath);
   if (OPENAPI_JSON_YAML_EXT.has(ext)) {
-    const content = readSafely(inputPath);
-    if (looksLikeSwagger(content)) {
+    try {
+      parseOpenApiDocument(inputPath);
+      return 'openapi';
+    } catch (err) {
+      // A Swagger 2.0 document parses far enough to identify itself as such;
+      // surface that specific, actionable message rather than the generic
+      // "not recognizable" refusal below.
+      if (err instanceof UsageError && /Swagger/.test(err.message)) {
+        throw err;
+      }
       throw new UsageError(
-        `"${inputPath}" is an OpenAPI 2.0 (Swagger) document; only OpenAPI 3.x is supported.`
+        `"${inputPath}" is JSON/YAML but not a recognizable OpenAPI document. Pass --from explicitly.`
       );
     }
-    if (looksLikeOpenApi(content)) {
-      return 'openapi';
-    }
-    throw new UsageError(
-      `"${inputPath}" is JSON/YAML but not a recognizable OpenAPI document. Pass --from explicitly.`
-    );
   }
 
   throw new UsageError(
@@ -99,30 +101,16 @@ function detectFile(inputPath) {
   );
 }
 
-/**
- * Cheap textual sniff for a top-level `openapi: 3.x` key, used only for
- * detection. The openapi adapter itself parses the document properly
- * (JSON.parse / js-yaml) rather than relying on this heuristic.
- * @param {string} content
- */
-export function looksLikeOpenApi(content) {
-  return /^openapi\s*:\s*["']?3\.\d+\.\d+/m.test(content) || /"openapi"\s*:\s*"3\.\d+\.\d+"/.test(content);
-}
-
-/** @param {string} content */
-export function looksLikeSwagger(content) {
-  return /^swagger\s*:\s*["']?2\.\d+/m.test(content) || /"swagger"\s*:\s*"2\.\d+"/.test(content);
+function parsesAsOpenApi(absPath) {
+  try {
+    parseOpenApiDocument(absPath);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function extname(p) {
   const idx = p.lastIndexOf('.');
   return idx === -1 ? '' : p.slice(idx).toLowerCase();
-}
-
-function readSafely(absPath) {
-  try {
-    return readFileSync(absPath, 'utf8');
-  } catch {
-    return '';
-  }
 }

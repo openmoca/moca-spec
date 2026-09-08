@@ -6,9 +6,10 @@ It never fabricates ontologies, claims, profiles, embeddings, or a
 signature — output is Level 1 only; semantic enrichment stays a deliberate,
 manual, later step.
 
-**Status: work in progress.** `directory`, `markdown`, and `obsidian` are
-implemented. `openapi` is planned (see
-[issue-drafts/ISSUE-DRAFT-moca-convert.md](../../issue-drafts/ISSUE-DRAFT-moca-convert.md)).
+All four planned adapters — `directory`, `markdown`, `obsidian`, and
+`openapi` — are implemented (see
+[issue-drafts/ISSUE-DRAFT-moca-convert.md](../../issue-drafts/ISSUE-DRAFT-moca-convert.md)
+for the original design).
 
 ## Install
 
@@ -45,10 +46,12 @@ exits `1`.
 |---|---|
 | `-o, --output <dir>` | Output package directory (required). |
 | `--id <urn>` | Manifest `id` (required). |
-| `--title <string>` | Manifest `title` (required for `directory`/`markdown`/`openapi`). |
+| `--title <string>` | Manifest `title`. Required for `directory`/`markdown`; defaults to the vault directory's basename for `obsidian`, and to the document's `info.title` for `openapi`. |
 | `--version <semver>` | Manifest `version`. Default `1.0.0`. |
 | `--from <format>` | `directory\|markdown\|obsidian\|openapi`. Auto-detected if omitted. |
 | `--exclude <glob...>` | `obsidian` only: note paths to exclude from conversion (still indexed for wikilink resolution). |
+| `--min-description-ratio <0-1>` | `openapi` only: minimum fraction of operations that must have a summary/description to be considered suitable. Default `0.5`. |
+| `--chunker <mode>` | `openapi` only: `operation` (default, one content node per operation) or `tag` (one node per tag, grouping untagged operations under `Untagged`). |
 | `--force` | Allow writing into a non-empty output directory. |
 | `--strict` | Escalate warning-level output-validation findings to errors. |
 | `--format <fmt>` | `text` (default) or `json` summary output. |
@@ -66,8 +69,9 @@ exits `1`.
   own validation gate; no output was left on disk.
 - `2` — usage error: bad/missing input path, ambiguous format detection,
   missing required `--id`/`--title`, an adapter-specific flag (e.g.
-  `--exclude`) used with the wrong adapter, or a non-empty output directory
-  without `--force`.
+  `--exclude`, `--chunker`) used with the wrong adapter, an OpenAPI document
+  that isn't suitable for conversion or isn't OpenAPI 3.x, or a non-empty
+  output directory without `--force`.
 
 ## Adapters
 
@@ -107,6 +111,26 @@ equivalent and is always left literal with a `W_UNSUPPORTED_EMBED` warning.
 Wikilink syntax inside fenced code blocks is never touched. All frontmatter
 keys are preserved verbatim. `--title` defaults to the vault directory's
 basename when omitted.
+
+### `openapi`
+
+A "suitable" OpenAPI 3.x document (JSON or YAML) — only OpenAPI 3.x is
+supported; a Swagger/OpenAPI 2.0 document (`swagger: "2.0"`) is explicitly
+rejected, not silently accepted. "Suitable" means at least
+`--min-description-ratio` (default 50%) of its operations have a non-empty
+`summary` or `description`; a bare machine-generated schema dump is refused
+(exit `2`, nothing written) rather than converted into a low-value package.
+
+By default, each operation becomes one content node
+(`content/<method>-<slugified-path>.md`), with `operationId` becoming the
+frontmatter `id` when present and safe, and the title taken from `summary`,
+falling back to `"<METHOD> <path>"`. With `--chunker tag`, operations are
+grouped into one content node per tag instead (`content/<slugified-tag>.md`),
+with untagged operations collected under an `Untagged` node. Request/response
+JSON schemas are rendered as fenced code blocks with local (`#/...`) `$ref`
+pointers resolved to their actual shape; an external or unresolvable `$ref`
+is left as literal `{"$ref": "..."}` text rather than failing the
+conversion. `--title` defaults to the document's `info.title` when omitted.
 
 ## Development
 

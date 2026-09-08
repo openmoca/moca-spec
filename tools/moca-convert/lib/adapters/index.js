@@ -21,6 +21,7 @@ import { UsageError } from '../target.js';
 import * as directory from './directory.js';
 import * as markdown from './markdown.js';
 import * as obsidian from './obsidian.js';
+import * as openapi from './openapi.js';
 
 export const ADAPTER_NAMES = ['directory', 'markdown', 'obsidian', 'openapi'];
 
@@ -28,6 +29,7 @@ const IMPLEMENTED = {
   directory,
   markdown,
   obsidian,
+  openapi,
 };
 
 /**

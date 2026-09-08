@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { convert as convertDirectory } from '../lib/adapters/directory.js';
 import { convert as convertMarkdown } from '../lib/adapters/markdown.js';
 import { convert as convertObsidian } from '../lib/adapters/obsidian.js';
+import { convert as convertOpenapi } from '../lib/adapters/openapi.js';
 import { writeDraft } from '../lib/write.js';
 import { walkFiles } from '../lib/walk.js';
 
@@ -54,5 +55,11 @@ test('obsidian adapter: repeated runs against the same input produce byte-identi
   assertDeterministic(convertObsidian, join(fixturesDir, 'obsidian', 'vault-basic'), {
     id: 'urn:moca:test:determinism-obsidian',
     title: 'Determinism Obsidian',
+  });
+});
+
+test('openapi adapter: repeated runs against the same input produce byte-identical output', () => {
+  assertDeterministic(convertOpenapi, join(fixturesDir, 'openapi', 'suitable.yaml'), {
+    id: 'urn:moca:test:determinism-openapi',
   });
 });

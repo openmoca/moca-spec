@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
+import { Command, InvalidArgumentError } from 'commander';
 import { writeFileSync, appendFileSync } from 'node:fs';
 import { formatText, formatJson } from 'moca-lint/lib/format.js';
 import { resolveInputTarget, UsageError } from '../lib/target.js';
@@ -9,7 +9,17 @@ import { writeDraft, ConversionFailedError } from '../lib/write.js';
 
 const ADAPTER_ONLY_FLAGS = {
   exclude: 'obsidian',
+  minDescriptionRatio: 'openapi',
+  chunker: 'openapi',
 };
+
+function parseRatio(value) {
+  const num = Number(value);
+  if (Number.isNaN(num) || num < 0 || num > 1) {
+    throw new InvalidArgumentError('must be a number between 0 and 1.');
+  }
+  return num;
+}
 
 const program = new Command();
 program
@@ -22,6 +32,8 @@ program
   .option('--version <semver>', 'manifest version for the converted package', '1.0.0')
   .option('--from <format>', 'source format: directory|markdown|obsidian|openapi (auto-detected if omitted)')
   .option('--exclude <glob...>', 'obsidian only: note paths to exclude from conversion (still indexed for wikilink resolution)')
+  .option('--min-description-ratio <ratio>', 'openapi only: minimum fraction of operations needing a summary/description, 0-1 (default 0.5)', parseRatio)
+  .option('--chunker <mode>', 'openapi only: operation|tag content-node grouping (default operation)')
   .option('--force', 'allow writing into a non-empty output directory', false)
   .option('--strict', 'escalate warning-level output-validation findings to errors', false)
   .option('--format <fmt>', 'summary output format: text|json', 'text')
@@ -85,6 +97,8 @@ function run(input, options) {
         title: options.title,
         version: options.version,
         exclude: options.exclude,
+        minDescriptionRatio: options.minDescriptionRatio,
+        chunker: options.chunker,
       },
     });
 

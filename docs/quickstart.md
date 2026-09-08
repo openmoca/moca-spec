@@ -119,7 +119,34 @@ To validate only the manifest against
 npx ajv-cli validate -s schemas/core/moca.schema.json -d my-package/moca.json --spec=draft2020
 ```
 
-## 6. Going further
+## 6. Converting existing content
+
+Already have content in another shape? [`tools/moca-convert`](../tools/moca-convert/README.md)
+creates a Level 1 package directly from a directory of Markdown, a single
+Markdown file or glob, an Obsidian vault, or a suitable OpenAPI 3.x document
+— it never fabricates ontologies, claims, or profiles, so a converted
+package is still just the bare/identified rung above; add semantic
+grounding by hand afterward if you want it. It lints its own output before
+reporting success, so a successful run is already a validated package.
+
+```sh
+# A folder of Markdown files, preserving its structure
+npx moca-convert ./docs -o my-package --id urn:moca:example:my-docs --title "My Docs"
+
+# A single file or glob, flattened by title
+npx moca-convert "./notes/*.md" -o my-package --id urn:moca:example:my-notes --title "My Notes"
+
+# An Obsidian vault, with [[wikilinks]] rewritten to relative Markdown links
+npx moca-convert ./my-vault -o my-package --id urn:moca:example:my-vault
+
+# A suitable OpenAPI 3.x document, one content node per operation
+npx moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
+```
+
+See [tools/moca-convert/README.md](../tools/moca-convert/README.md) for the
+full adapter reference and options.
+
+## 7. Going further
 
 | Want to... | Look at |
 |---|---|

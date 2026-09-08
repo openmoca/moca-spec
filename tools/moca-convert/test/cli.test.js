@@ -73,6 +73,34 @@ test('CLI: markdown adapter succeeds end-to-end and exits 0', () => {
   }
 });
 
+test('CLI: openapi adapter succeeds end-to-end and exits 0', () => {
+  const outDir = tempOutDir();
+  try {
+    const result = runCli([
+      join(fixturesDir, 'openapi', 'suitable.yaml'),
+      '-o', outDir,
+      '--id', 'urn:moca:test:cli-openapi',
+    ]);
+    assert.equal(result.status, 0, result.stderr);
+  } finally {
+    cleanup(outDir);
+  }
+});
+
+test('CLI: an unsuitable openapi document exits 2', () => {
+  const outDir = tempOutDir();
+  try {
+    const result = runCli([
+      join(fixturesDir, 'openapi', 'unsuitable-sparse-descriptions.yaml'),
+      '-o', outDir,
+      '--id', 'urn:moca:test:cli-openapi-unsuitable',
+    ]);
+    assert.equal(result.status, 2);
+  } finally {
+    cleanup(outDir);
+  }
+});
+
 test('CLI: missing --id exits 2', () => {
   const outDir = tempOutDir();
   try {

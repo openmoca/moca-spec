@@ -61,6 +61,22 @@ and compatibility policy.
 
 ### Added
 
+- Added the `moca-convert` CLI (`tools/moca-convert`, `ROADMAP.md` item 5)
+  to create Level 1 packages from existing source material: a `directory`
+  of Markdown files, a single Markdown file or glob (`markdown`), an
+  Obsidian vault with `[[wikilink]]` rewriting (`obsidian`), and a suitable
+  OpenAPI 3.x document rendered one content node per operation or per tag
+  (`openapi`). Every adapter emits Level 1 output only — no ontologies,
+  claims, profiles, embeddings, or signatures are fabricated — and lints
+  its own output via `moca-lint`'s `lintPackage()` before reporting
+  success, refusing to leave invalid or partial output on disk. Documented
+  in `tools/moca-convert/README.md` and `docs/quickstart.md` §6, covered by
+  a new CI job, and exercised by 75 tests including CLI-level subprocess
+  smoke tests.
+- Fixed `lint:md`'s `!node_modules` exclude pattern, which only matched a
+  top-level `node_modules` directory and missed nested workspace installs
+  (e.g. `tools/moca-convert/node_modules` after pinning a direct `js-yaml`
+  dependency); changed to `!**/node_modules/**`.
 - Completed `ROADMAP.md` item 4 (MOCA Index and Optional Search): wired
   `validate:sidecar-index` into CI, replaced the synthetic
   `python-312-docs.moca.idx` reference fixture with a real sidecar bound to
