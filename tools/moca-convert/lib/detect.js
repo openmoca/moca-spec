@@ -5,10 +5,9 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { UsageError } from './target.js';
 import { walkFiles } from './walk.js';
-import { ADAPTER_NAMES } from './adapters/index.js';
+import { ADAPTER_NAMES, getAdapter } from './adapters/index.js';
 
 const OPENAPI_JSON_YAML_EXT = new Set(['.json', '.yaml', '.yml']);
-const MARKDOWN_EXT = new Set(['.md', '.markdown']);
 
 /**
  * @param {import('./target.js').UsageError | { inputPath: string, isGlob: boolean, isDirectory: boolean, isFile: boolean }} target
@@ -45,6 +44,10 @@ function detectDirectory(inputPath) {
     return 'obsidian';
   }
 
+  // "Has at least one Markdown file anywhere" is the same test the
+  // directory adapter's own detect() runs; it's inlined here (rather than
+  // calling it separately) because the file list and count are also needed
+  // below for the ambiguity/refusal messages.
   const allFiles = walkFiles(inputPath);
   const markdownFiles = allFiles.filter((f) => f.endsWith('.md'));
   const topLevelOpenApiCandidates = allFiles.filter(
@@ -71,12 +74,11 @@ function detectDirectory(inputPath) {
 }
 
 function detectFile(inputPath) {
-  const ext = extname(inputPath);
-
-  if (MARKDOWN_EXT.has(ext)) {
+  if (getAdapter('markdown').detect(inputPath)) {
     return 'markdown';
   }
 
+  const ext = extname(inputPath);
   if (OPENAPI_JSON_YAML_EXT.has(ext)) {
     const content = readSafely(inputPath);
     if (looksLikeSwagger(content)) {

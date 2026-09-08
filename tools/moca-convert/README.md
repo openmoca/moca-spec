@@ -6,8 +6,8 @@ It never fabricates ontologies, claims, profiles, embeddings, or a
 signature — output is Level 1 only; semantic enrichment stays a deliberate,
 manual, later step.
 
-**Status: work in progress.** Only the `directory` adapter is implemented so
-far. `markdown`, `obsidian`, and `openapi` are planned (see
+**Status: work in progress.** `directory` and `markdown` are implemented.
+`obsidian` and `openapi` are planned (see
 [issue-drafts/ISSUE-DRAFT-moca-convert.md](../../issue-drafts/ISSUE-DRAFT-moca-convert.md)).
 
 ## Install
@@ -77,6 +77,16 @@ frontmatter — including any `id` — is preserved; a file with no frontmatter
 produces a file with no frontmatter block in the output. When a file has no
 `id`, none is synthesized: core §7.1's fallback (identity derived from the
 file's path relative to `content/`) applies.
+
+### `markdown`
+
+A single Markdown file, or a glob of files (e.g. `"docs/*.md"`) with no
+directory structure worth preserving. Each file becomes
+`content/<slug>.md`, where the slug is derived from a title — frontmatter
+`title`, falling back to the first `# H1` heading, falling back to the
+filename — not from the source path. Frontmatter is preserved the same way
+as the `directory` adapter. Files whose derived titles collide get `-2`,
+`-3`, ... suffixes, assigned deterministically in sorted-input order.
 
 ## Development
 

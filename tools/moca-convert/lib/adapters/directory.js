@@ -1,9 +1,9 @@
 // `directory` adapter: a folder of Markdown files (optionally nested) becomes
 // one content node per file, at the corresponding path under content/.
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import matter from 'gray-matter';
 import { walkFiles } from '../walk.js';
+import { readContentFile } from '../frontmatter.js';
 import { UsageError } from '../target.js';
 
 export const name = 'directory';
@@ -49,9 +49,6 @@ export function convert({ inputPath, options }) {
 }
 
 function buildContentNode(inputPath, relPath) {
-  const raw = readFileSync(join(inputPath, relPath), 'utf8').replace(/\r\n/g, '\n');
-  const parsed = matter(raw);
-  const hasFrontmatter = Object.keys(parsed.data ?? {}).length > 0;
-  const body = hasFrontmatter ? matter.stringify(parsed.content, parsed.data) : parsed.content;
+  const { body } = readContentFile(join(inputPath, relPath));
   return { path: `content/${relPath}`, body };
 }

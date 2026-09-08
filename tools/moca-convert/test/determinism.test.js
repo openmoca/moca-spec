@@ -5,20 +5,18 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { convert as convertDirectory } from '../lib/adapters/directory.js';
+import { convert as convertMarkdown } from '../lib/adapters/markdown.js';
 import { writeDraft } from '../lib/write.js';
 import { walkFiles } from '../lib/walk.js';
 
-const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'directory');
+const fixturesDir = dirname(fileURLToPath(import.meta.url)) + '/fixtures';
 
-test('directory adapter: repeated runs against the same input produce byte-identical output', () => {
-  const inputPath = join(fixturesDir, 'basic-nested');
-  const options = { id: 'urn:moca:test:determinism', title: 'Determinism' };
-
+function assertDeterministic(convertFn, inputPath, options) {
   const outDirA = mkdtempSync(join(tmpdir(), 'moca-convert-test-a-'));
   const outDirB = mkdtempSync(join(tmpdir(), 'moca-convert-test-b-'));
   try {
-    writeDraft({ draft: convertDirectory({ inputPath, options }), outDir: outDirA });
-    writeDraft({ draft: convertDirectory({ inputPath, options }), outDir: outDirB });
+    writeDraft({ draft: convertFn({ inputPath, options }), outDir: outDirA });
+    writeDraft({ draft: convertFn({ inputPath, options }), outDir: outDirB });
 
     const filesA = walkFiles(outDirA);
     const filesB = walkFiles(outDirB);
@@ -35,4 +33,18 @@ test('directory adapter: repeated runs against the same input produce byte-ident
     rmSync(outDirA, { recursive: true, force: true });
     rmSync(outDirB, { recursive: true, force: true });
   }
+}
+
+test('directory adapter: repeated runs against the same input produce byte-identical output', () => {
+  assertDeterministic(convertDirectory, join(fixturesDir, 'directory', 'basic-nested'), {
+    id: 'urn:moca:test:determinism-directory',
+    title: 'Determinism Directory',
+  });
+});
+
+test('markdown adapter: repeated runs against the same input produce byte-identical output', () => {
+  assertDeterministic(convertMarkdown, join(fixturesDir, 'markdown', 'loose-files', '*.md'), {
+    id: 'urn:moca:test:determinism-markdown',
+    title: 'Determinism Markdown',
+  });
 });

@@ -19,11 +19,13 @@
 // @property {ConversionWarning[]} warnings
 import { UsageError } from '../target.js';
 import * as directory from './directory.js';
+import * as markdown from './markdown.js';
 
 export const ADAPTER_NAMES = ['directory', 'markdown', 'obsidian', 'openapi'];
 
 const IMPLEMENTED = {
   directory,
+  markdown,
 };
 
 /**
