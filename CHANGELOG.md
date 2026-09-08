@@ -34,7 +34,7 @@ and compatibility policy.
   CURIE appears (core §3, §4.2, and §7.1).
 - Included `examples/level-1-bare` in `moca-lint` CI validation and the
   `tools/moca-lint` test suite, closing the follow-up gap recorded in
-  `ISSUE-DRAFT-level1.md`.
+  `issue-drafts/ISSUE-DRAFT-level1.md`.
 - Reorganized profile specifications, schemas, and examples into self-contained
   bundles under `profiles/` for independent extraction.
 - Narrowed repository validation to MOCA Core conformance and structural checks;
@@ -42,6 +42,15 @@ and compatibility policy.
   schemas.
 - Revised `ROADMAP.md` to add signature and trust infrastructure, operationalize
   the `1.0.0` stability review, and reflect the completed EU AI Act profile.
+- Moved spec-change working drafts into `issue-drafts/` and added
+  `issue-drafts/ISSUE-DRAFT-lifecycle.md`, `issue-drafts/ISSUE-DRAFT-provenance.md`,
+  and `issue-drafts/ISSUE-DRAFT-canonical-hashing.md`, matching the existing
+  `ISSUE-DRAFT-composition.md`/`ISSUE-DRAFT-level1.md` format.
+- Resequenced `ROADMAP.md` to insert Core Hardening (lifecycle, provenance,
+  composition) and Canonical Package Hashing immediately after Level 1
+  adoption, since composition must be settled before hashing can account for
+  composed-package identity, and before the education profile's `Course`/
+  `Module` shape can be redesigned around `composition.members`.
 
 ### Added
 

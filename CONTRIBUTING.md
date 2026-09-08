@@ -8,7 +8,9 @@ at this stage.
 
 1. Open an issue using the **Spec Change Proposal** template describing the
    problem, the affected section(s) of
-   [moca-core-spec.md](moca-core-spec.md), and the proposed change.
+   [moca-core-spec.md](moca-core-spec.md), and the proposed change. Working
+   drafts of these proposals are kept in [issue-drafts/](issue-drafts/) before
+   or alongside the GitHub issue.
 2. Once there's rough consensus in the issue, open a PR editing the spec
    directly. Keep the diff focused on the change under discussion.
 3. A maintainer reviews for consistency with the rest of the spec (see
