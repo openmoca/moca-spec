@@ -60,6 +60,13 @@ composition-only packages).
 lineage, claim provenance, and cross-package structure using one shared,
 domain-agnostic vocabulary instead of ad hoc `profileData` conventions.
 
+**Outcome — Status: Complete.** All three issue-drafts are merged: lifecycle
+fields, the PROV-O claims mapping, and `composition` (`members`/`relates`)
+are specified in core §7.5/§7.4/§10, implemented in the manifest schema and
+JSON-LD context, demonstrated across five new example packages, and covered
+by CI (including a `validate:jsonld` expansion check proving the JSON-LD
+context resolves correctly, not just parses as valid JSON).
+
 ### 3. Canonical Package Hashing
 
 Define a canonical whole-package digest scheme, gated on item 2's
