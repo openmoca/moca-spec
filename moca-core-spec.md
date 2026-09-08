@@ -215,6 +215,7 @@ The root manifest MUST be named `moca.json`.
 | `entryConcepts` | Array of Strings | No | Root concept URNs/CURIEs acting as semantic entry points. |
 | `augmentation` | Object | No | Declaration of target content being augmented (sidecar usage). See §9. |
 | `integrity` | Object | No | Per-resource SHA-256 digest manifest. Authoritative over any RO-Crate or BagIt checksum manifest present in the same package — see §5.4. |
+| `canonicalDigest` | Object | No | Independently-reproducible whole-package digest. See §5.5. |
 | `signature` | Object | Required if `skills/` present | Cryptographic signature object (Sigstore / DSSE). |
 | `profileData` | Object | No | Namespaced container for profile-specific manifest extensions. See §11.3. |
 | `composition` | Object | No | Optional package-to-package structural (`members`) or associative (`relates`) references. See §10. |
@@ -264,7 +265,68 @@ BagIt `manifest-sha256.txt`. When more than one is present and they disagree,
 `moca.json`'s `integrity` object is authoritative. Host adapters SHOULD warn
 on mismatch rather than silently picking one.
 
-### 5.5 Spec Evolution
+### 5.5 Canonical Package Digest
+
+The optional `canonicalDigest` manifest property MUST be an object containing
+`algorithm` and `value` string properties. The `algorithm` value `sha256` is
+defined by this section; other algorithm identifiers MAY be reserved for
+future revisions. The `value` MUST be a lowercase hexadecimal SHA-256 digest
+when `algorithm` is `sha256`.
+
+`canonicalDigest` MUST be derived from each resource file's actual on-disk
+bytes at computation time. Implementations MUST NOT trust the declared values
+in the `integrity` object when computing it. The manifest, with the
+`canonicalDigest` property removed, is also part of the digest input.
+
+For a package with `composition.members`, each member MUST be resolved to a
+concrete package version and its own `canonicalDigest.value` MUST be folded
+into the digest. The `members` map key MUST use that resolved concrete version,
+in the form `"<id>@<resolved concrete version>"`, rather than the declared
+version range. The `composition.members[].order` property MUST NOT be included
+in the `members` map: membership, not sequencing, contributes to the digest.
+`composition.relates` MUST be excluded. Because §10.4 does not mandate a
+member-resolution mechanism, reproducibility of a composed package's
+`canonicalDigest` is conditional on implementations resolving the same
+members to the same concrete versions; implementations using different
+registries, lockfiles, or resolution strategies MAY compute different digests
+for the same manifest.
+
+The `sha256` algorithm is:
+
+1. **Resource digests.** Walk every file under the package root except
+  `moca.json` itself and the standard pack excludes (`.git/`,
+  `node_modules/`, `.DS_Store` — the same set `moca-lint pack` uses). For
+  each file, compute its SHA-256 digest directly from its bytes on disk.
+  Build `resources`, a map of package-relative POSIX path to lowercase
+  hexadecimal digest.
+2. **Manifest digest.** Take the parsed `moca.json` object, delete the
+  `canonicalDigest` key, canonicalize the result per [RFC 8785 (JSON
+  Canonicalization Scheme)](https://www.rfc-editor.org/rfc/rfc8785), and
+  SHA-256 the resulting UTF-8 bytes to obtain `manifestDigest` (lowercase
+  hexadecimal).
+3. **Member digests (composed packages only).** If `composition.members` is
+  present, resolve each member and read its own `canonicalDigest.value`.
+  Build `members`, a map of `"<id>@<resolved concrete version>"` to the
+  member's digest value. A member that cannot be resolved, or that has no
+  `canonicalDigest` of its own, MUST cause digest computation to fail closed
+  rather than silently omitting that member. `composition.relates` is
+  intentionally excluded because related packages remain independent by
+  design (§10.2).
+4. **Assemble and hash.** Build the top-level object:
+
+  ```json
+  {
+    "manifest": "<manifestDigest>",
+    "resources": { "<relPath>": "<digest>", "...": "..." },
+    "members": { "<id>@<resolved concrete version>": "<digest>", "...": "..." }
+  }
+  ```
+
+  Omit the `members` key entirely for a non-composed package. Canonicalize
+  this object per RFC 8785 and SHA-256 the resulting UTF-8 bytes. The
+  resulting lowercase hexadecimal string is `canonicalDigest.value`.
+
+### 5.6 Spec Evolution
 
 A consumer encountering unknown top-level manifest fields MUST ignore them
 rather than reject the package, provided all required fields for the
@@ -710,7 +772,7 @@ modeled as profiles, see §11.5.
 
 A harness that does not recognize a declared profile URI MUST still process
 the package as valid MOCA Core, ignoring profile-specific semantics it
-doesn't understand (per §5.5). A package MUST remain fully valid and useful
+ doesn't understand (per §5.6). A package MUST remain fully valid and useful
 under MOCA Core alone, with the profile strictly additive. Profiles MUST NOT
 require behavior that would make a package invalid or unusable to a
 core-only consumer.

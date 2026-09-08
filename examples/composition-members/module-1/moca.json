@@ -1,5 +1,9 @@
 {
   "id": "urn:moca:module:probability-basics",
   "version": "1.0.0",
-  "title": "Probability Basics"
+  "title": "Probability Basics",
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "9309a6ea062efe5a802925d8be3f25ba5ca309eb688dd842e4cee85a493d6026"
+  }
 }

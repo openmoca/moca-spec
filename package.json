@@ -11,12 +11,14 @@
     "validate": "node scripts/validate-examples.mjs",
     "validate:sidecar-index": "node scripts/validate-sidecar-index.mjs",
     "validate:jsonld": "node scripts/validate-jsonld-context.mjs",
+    "validate:canonical-digest": "node scripts/validate-canonical-digest.mjs",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"!node_modules\"",
     "lint:moca": "moca-lint lint examples/level-1-bare examples/level-1-minimal examples/level-2-semantic examples/level-3-extended profiles/education/examples/education-profile examples/augmentation-generic examples/augmentation-scorm2004 profiles/eu-ai-act/examples/eu-ai-act-profile examples/composition-members/course examples/composition-members/module-1 examples/composition-members/module-2 examples/composition-relates/document-current examples/composition-relates/document-prior"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
+    "canonicalize": "2.1.0",
     "jsonld": "^9.0.0",
     "markdownlint-cli2": "^0.23.2"
   }

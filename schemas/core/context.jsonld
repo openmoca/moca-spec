@@ -89,6 +89,13 @@
     "supersedes": { "@id": "dcterms:isReplacedBy", "@type": "@id" },
 
     "integrity": "moca:integrity",
+    "canonicalDigest": {
+      "@id": "moca:canonicalDigest",
+      "@context": {
+        "algorithm": "moca:canonicalDigestAlgorithm",
+        "value": "moca:canonicalDigestValue"
+      }
+    },
     "signature": "moca:signature",
 
     "profileData": "moca:profileData"

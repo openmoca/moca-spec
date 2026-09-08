@@ -76,17 +76,23 @@ transitively, and designing the digest scheme before that shape settles
 risks retrofitting it later. See
 [issue-drafts/ISSUE-DRAFT-canonical-hashing.md](issue-drafts/ISSUE-DRAFT-canonical-hashing.md).
 
-- Define a `canonicalDigest` derived from the existing per-resource
-  `integrity` map (core §5.4), not a re-hash of file contents.
+- Define a `canonicalDigest` recomputed from resource file bytes on disk,
+  independently of declared `integrity` entries, using RFC 8785 canonicalization
+  for the manifest and assembled digest inputs.
 - Define how a composed package's digest folds in its `composition.members`
-  digests transitively.
+  digests transitively, using resolved concrete member versions and excluding
+  `composition.relates` and member ordering. Reproducibility depends on
+  implementations performing identical member resolution; different registries
+  or resolution strategies MAY produce different digests for the same manifest.
 - Update the [MOCA Sidecar Index Specification](docs/sidecar-index-spec.md)'s
   optional target binding to allow binding against the new canonical digest
   in addition to per-file hashes.
 
-**Outcome:** A package's content identity is verifiable and stable across
-both simple and composed packages, giving the sidecar index and any future
-signature scheme something concrete to bind against.
+**Outcome — Status: Complete.** `canonicalDigest` is specified in core §5.5,
+implemented in the core schema and JSON-LD context, validated by
+`scripts/validate-canonical-digest.mjs` in CI, demonstrated by the annotated
+Level 1 and composition-members examples, and supported by sidecar target
+binding in [docs/sidecar-index-spec.md](docs/sidecar-index-spec.md) §4.
 
 ### 4. MOCA Index and Optional Search
 

@@ -52,6 +52,10 @@ MUST be replaced with the digest of an actual target archive before deployment.
 `target_package_id` MUST identify the target package's `moca.json` `id`.
 `target_package_hash`, when present, MUST be the SHA-256 digest of the exact
 target `.moca` archive bytes, formatted as `sha256:<64 hexadecimal digits>`.
+A producer MAY instead set it to the package's `canonicalDigest.value`, with
+the same `sha256:` prefix. This canonical-digest form SHOULD be preferred
+going forward because it survives repackaging (re-zipping), unlike a digest of
+the archive bytes.
 
 A producer SHOULD include `target_package_hash`. A consumer SHOULD calculate
 the target archive digest and compare it before using a sidecar that declares

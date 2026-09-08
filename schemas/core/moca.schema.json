@@ -88,6 +88,7 @@
       "additionalProperties": { "type": "string" },
       "description": "Per-resource SHA-256 digest manifest."
     },
+    "canonicalDigest": { "$ref": "#/$defs/canonicalDigest" },
     "signature": { "$ref": "#/$defs/signature" },
     "profileData": {
       "type": "object",
@@ -206,6 +207,23 @@
         "keyid": { "type": "string" },
         "certificate": { "type": "string" }
       }
+    },
+    "canonicalDigest": {
+      "type": "object",
+      "description": "Independently-reproducible whole-package SHA-256 digest. See core §5.5.",
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "description": "Digest algorithm identifier. Only \"sha256\" is defined by core §5.5."
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Lowercase hex-encoded digest."
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

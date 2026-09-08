@@ -61,6 +61,10 @@ and compatibility policy.
 
 ### Added
 
+- Added the optional `canonicalDigest` whole-package identity mechanism,
+  standalone `validate:canonical-digest` verification script, and generated
+  digest annotations for `examples/level-1-minimal` and the three
+  `examples/composition-members` packages.
 - Implemented `ROADMAP.md` item 2 (Core Hardening): optional manifest/
   content-node lifecycle fields (`validFrom`, `lastReviewed`, `supersedes`,
   core §7.5), a concrete PROV-O mapping for `claims[].provenance` (core

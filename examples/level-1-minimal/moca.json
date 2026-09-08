@@ -8,6 +8,10 @@
   "title": "Level 1 Minimal Example",
   "description": "Minimal MOCA Core package demonstrating Level 1 (MOCA Core) conformance: a valid moca.json and one grounded CommonMark knowledge node.",
   "license": "MIT",
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "c424a0f83d146271c200d73b2576f0153abf4c1de7f380ba3528f70ae2260388"
+  },
   "validFrom": "2025-11-01T00:00:00Z",
   "lastReviewed": "2026-07-15T00:00:00Z",
   "entryConcepts": ["ex:Introduction"]

@@ -18,3 +18,7 @@ Core does not specify how a harness resolves `composition.members[].id` to
 an actual package (local file, registry, database record) — here it is
 simply a sibling directory, which is one valid resolution strategy among
 several, not a normative requirement.
+
+The module and course manifests also demonstrate `canonicalDigest`: the
+course folds in both member digests, so changing either module's digest changes
+the course digest as well.
