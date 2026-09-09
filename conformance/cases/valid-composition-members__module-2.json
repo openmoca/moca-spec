@@ -1,0 +1,22 @@
+{
+  "name": "valid-composition-members/module-2",
+  "fixture": "fixtures/valid-composition-members/module-2",
+  "description": "A second member of the same composed course.",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

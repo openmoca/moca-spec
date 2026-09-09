@@ -1,0 +1,9 @@
+{
+  "keys": [
+    {
+      "keyid": "moca-lint-fixture-signer",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA59bMpeVHyvcKt9jRFJN09LGiS4PaAl/R3McfVuviMvM=\n-----END PUBLIC KEY-----\n",
+      "identity": "moca-lint conformance fixture (not for production use)"
+    }
+  ]
+}

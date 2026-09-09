@@ -1,0 +1,27 @@
+{
+  "name": "signature-placeholder",
+  "fixture": "fixtures/signature-placeholder",
+  "description": "A literal placeholder signature value is malformed, never treated as valid (contract \u00a77.3).",
+  "trustRoot": "conformance/fixtures/signature.trust-root.json",
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest",
+    "signatures"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E404_SIGNATURE_MALFORMED"
+    ],
+    "bySeverity": {
+      "error": [
+        "E404_SIGNATURE_MALFORMED"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

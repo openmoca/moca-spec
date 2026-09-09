@@ -46,7 +46,8 @@ authoritative source for each.
 
 | | |
 |---|---|
-| [Versioning and release](versioning-and-release.md) | Semver policy, release checklist, what beta means |
+| [Versioning and release](versioning-and-release.md) | Semver policy, what beta means, compatibility |
+| [Releasing](releasing.md) | Maintainer runbook: npm setup, publish order, dist-tags, provenance |
 | [Migrations](../MIGRATIONS.md) | Behaviour changes that affect existing packages |
 | [Roadmap](../ROADMAP.md) | What is delivered and what is next |
 | [Contributing](../CONTRIBUTING.md) | Proposing spec changes and new profiles |

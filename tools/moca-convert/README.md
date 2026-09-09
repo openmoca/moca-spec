@@ -40,6 +40,9 @@ exits `1`.
 
 ## Options
 
+`--cli-version` prints moca-convert's own version. The CLI's `--version`
+flag is reserved for setting the **generated package's** `version` field.
+
 | Option | Description |
 |---|---|
 | `-o, --output <dir>` | Output package directory (required). |

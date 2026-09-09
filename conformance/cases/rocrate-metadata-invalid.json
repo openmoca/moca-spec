@@ -1,0 +1,25 @@
+{
+  "name": "rocrate-metadata-invalid",
+  "fixture": "fixtures/rocrate-metadata-invalid",
+  "description": "An invalid RO-Crate envelope does not invalidate the MOCA package; moca.json's integrity remains authoritative (contract \u00a77.1).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [
+      "E405_ROCRATE_METADATA_INVALID"
+    ],
+    "bySeverity": {
+      "error": [],
+      "warning": [
+        "E405_ROCRATE_METADATA_INVALID"
+      ],
+      "info": []
+    }
+  }
+}

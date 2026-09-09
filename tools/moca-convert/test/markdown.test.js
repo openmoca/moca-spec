@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { convert } from '../lib/adapters/markdown.js';
 import { UsageError } from '../lib/target.js';
 import { writeDraft } from '../lib/write.js';
-import { lintPackage } from 'moca-lint/lib/lint.js';
+import { lintPackage } from '@openmoca/moca-lint/lib/lint.js';
 
 const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'markdown');
 

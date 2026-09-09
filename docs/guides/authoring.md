@@ -183,13 +183,13 @@ Examples: [augmentation-generic](../../examples/augmentation-generic),
 
 ```sh
 # A folder of Markdown, structure preserved
-npx moca-convert ./docs -o my-package --id urn:moca:example:my-docs --title "My Docs"
+npx @openmoca/moca-convert ./docs -o my-package --id urn:moca:example:my-docs --title "My Docs"
 
 # An Obsidian vault, [[wikilinks]] rewritten to relative links
-npx moca-convert ./my-vault -o my-package --id urn:moca:example:my-vault
+npx @openmoca/moca-convert ./my-vault -o my-package --id urn:moca:example:my-vault
 
 # An OpenAPI 3.x document, one content node per operation
-npx moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
+npx @openmoca/moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
 ```
 
 Converters never fabricate ontologies, claims, profiles, or signatures —
@@ -202,16 +202,16 @@ Full reference: [tools/moca-convert](../../tools/moca-convert/README.md).
 ## Validating as you go
 
 ```sh
-npx moca-lint lint my-package            # human-readable
-npx moca-lint lint my-package --format json
-npx moca-lint lint my-package --strict   # warnings become errors
+npx @openmoca/moca-lint lint my-package            # human-readable
+npx @openmoca/moca-lint lint my-package --format json
+npx @openmoca/moca-lint lint my-package --strict   # warnings become errors
 ```
 
 Once it validates, `pack` produces an archive and refuses to write if any
 error-severity finding is present:
 
 ```sh
-npx moca-lint pack my-package -o my-package.moca
+npx @openmoca/moca-lint pack my-package -o my-package.moca
 ```
 
 ## Next

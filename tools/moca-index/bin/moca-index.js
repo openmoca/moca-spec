@@ -1,13 +1,21 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { readFileSync } from 'node:fs';
 import { buildSidecar } from '../lib/build.js';
 import { writeSidecar, BuildFailedError } from '../lib/write.js';
 import { UsageError } from '../lib/target.js';
 
+// npm always includes package.json in a published tarball, regardless of the
+// "files" field, so reading the version from it works once installed.
+const { version } = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+);
+
 const program = new Command();
 program
   .name('moca-index')
-  .description('Build a .moca.idx sidecar index for a MOCA package.');
+  .description('Build a .moca.idx sidecar index for a MOCA package.')
+  .version(version);
 
 // Commander's own usage errors (missing required options, unknown flags,
 // --help) default to exit code 1; override so they participate in the same

@@ -1,0 +1,23 @@
+{
+  "name": "valid-composition-members/course",
+  "fixture": "fixtures/valid-composition-members/course",
+  "description": "A composition-only package: valid with no content/ directory at all (contract \u00a78).",
+  "trustRoot": null,
+  "capabilities": [
+    "composition",
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

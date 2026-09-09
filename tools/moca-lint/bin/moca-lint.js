@@ -1,15 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import {
-  writeFileSync,
-  appendFileSync,
-  existsSync,
-  readdirSync,
-  mkdirSync,
-  mkdtempSync,
-  rmSync,
-  renameSync,
-} from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { resolveTarget, extractArchive, UsageError } from '../lib/target.js';
@@ -17,8 +8,14 @@ import { lintPackage } from '../lib/lint.js';
 import { packPackage } from '../lib/pack.js';
 import { formatText, formatJson, formatSarif } from '../lib/format.js';
 
+// npm always includes package.json in a published tarball, regardless of the
+// "files" field, so reading the version from it works once installed.
+const { version } = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+);
+
 const program = new Command();
-program.name('moca-lint').description('Static analysis CLI for MOCA packages.');
+program.name('moca-lint').description('Static analysis CLI for MOCA packages.').version(version);
 
 function addCommonOptions(cmd) {
   return cmd

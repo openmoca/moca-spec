@@ -1,0 +1,36 @@
+{
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
+  "@context": {
+    "moca": "https://openmoca.org/vocab/core#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "ex": "https://example.org/vocab#",
+    "provenance": "moca:provenance",
+    "wasDerivedFrom": { "@id": "prov:wasDerivedFrom", "@type": "@id" },
+    "wasGeneratedBy": { "@id": "prov:wasGeneratedBy", "@type": "@id" },
+    "generatedAtTime": {
+      "@id": "prov:generatedAtTime",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "wasAttributedTo": { "@id": "prov:wasAttributedTo", "@type": "@id" }
+  },
+  "id": "urn:moca:example:level-2-semantic",
+  "version": "1.0.0",
+  "title": "Level 2 Semantic Example",
+  "description": "MOCA Core package demonstrating Level 2 (MOCA Semantic) conformance: JSON-LD @context, formal ontologies, SHACL validation, and an explicit claims graph.",
+  "license": "Apache-2.0",
+  "ontologies": {
+    "domain": {
+      "iri": "https://example.org/architecture",
+      "role": "domain",
+      "format": "jsonld",
+      "uri": "./ontologies/domain.jsonld"
+    },
+    "shapes": {
+      "role": "shapes",
+      "format": "shacl",
+      "uri": "./ontologies/validation.shacl.ttl"
+    }
+  },
+  "entryConcepts": ["ex:ServiceBoundary"]
+}

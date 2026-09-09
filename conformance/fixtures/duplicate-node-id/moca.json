@@ -1,0 +1,6 @@
+{
+  "id": "urn:moca:test:duplicate-node-id",
+  "version": "1.0.0",
+  "title": "Duplicate Node Id Fixture",
+  "@context": { "ex": "https://example.org/vocab#" }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "valid-level-2-semantic",
+  "fixture": "fixtures/valid-level-2-semantic",
+  "description": "Level 2: ontologies and RDF-interpretable claims. Emits warnings by design, which must not make it invalid.",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest",
+    "semantic"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [
+      "E304_UNDEFINED_CONCEPT",
+      "I301_SHACL_NOT_EVALUATED"
+    ],
+    "bySeverity": {
+      "error": [],
+      "warning": [
+        "E304_UNDEFINED_CONCEPT"
+      ],
+      "info": [
+        "I301_SHACL_NOT_EVALUATED"
+      ]
+    }
+  }
+}

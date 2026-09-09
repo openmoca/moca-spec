@@ -36,7 +36,7 @@ EOF
 ## 1. Convert to a package
 
 ```sh
-npx moca-convert /tmp/wt/src -o /tmp/wt/pkg \
+npx @openmoca/moca-convert /tmp/wt/src -o /tmp/wt/pkg \
   --id urn:moca:example:walkthrough --title "Walkthrough"
 ```
 
@@ -61,7 +61,7 @@ output before reporting success, so this already validates.
 ## 2. Lint it
 
 ```sh
-npx moca-lint lint /tmp/wt/pkg
+npx @openmoca/moca-lint lint /tmp/wt/pkg
 ```
 
 ```text
@@ -75,10 +75,21 @@ proves authorship. Required if you ship `skills/`; useful regardless.
 
 ```sh
 # Generate a keypair — OUTSIDE the package directory
-npx moca-sign generate-key -o /tmp/wt/wt-key
+npx @openmoca/moca-sign generate-key -o /tmp/wt/wt-key --keyid walkthrough-key
 
-npx moca-sign sign /tmp/wt/pkg \
+npx @openmoca/moca-sign sign /tmp/wt/pkg \
   --mode dsse --key /tmp/wt/wt-key.pem --keyid walkthrough-key
+```
+
+`generate-key` writes three files and tells you what to do with them:
+
+```text
+Wrote /tmp/wt/wt-key.pem (private, keep secret)
+      /tmp/wt/wt-key.pub.pem
+      /tmp/wt/wt-key.trust-root.json (keyid "walkthrough-key")
+
+Sign with:   moca-sign sign <package> --mode dsse --key /tmp/wt/wt-key.pem --keyid walkthrough-key
+Then verify: moca-lint lint <package> --trust-root /tmp/wt/wt-key.trust-root.json
 ```
 
 ```text
@@ -91,12 +102,12 @@ Signed.
 > file under the package root, so a private key saved next to `moca.json`
 > becomes signed package content and ships with it.
 
-### The gotcha
+### Verifying needs a trust root
 
-Lint the package again now and it **fails**:
+Lint the package again with no trust root and it **fails**:
 
 ```sh
-npx moca-lint lint /tmp/wt/pkg
+npx @openmoca/moca-lint lint /tmp/wt/pkg
 ```
 
 ```text
@@ -107,32 +118,24 @@ ERROR E406_SIGNATURE_INVALID  dsse-mode signature but no trust root supplied (--
 
 This is correct, deliberate, fail-closed behaviour: a `dsse` signature that
 cannot be checked against a trust root is **not** treated as absent, and is
-never silently passed. Tell the linter which signers you accept:
+never silently passed. Supply the trust root `generate-key` emitted:
 
 ```sh
-cat > /tmp/wt/trust-roots.json <<EOF
-{
-  "keys": [
-    {
-      "keyid": "walkthrough-key",
-      "publicKey": $(node -e "console.log(JSON.stringify(require('fs').readFileSync('/tmp/wt/wt-key.pub.pem','utf8')))"),
-      "identity": "walkthrough example key"
-    }
-  ]
-}
-EOF
-
-npx moca-lint lint /tmp/wt/pkg --trust-root /tmp/wt/trust-roots.json
+npx @openmoca/moca-lint lint /tmp/wt/pkg --trust-root /tmp/wt/wt-key.trust-root.json
 ```
 
 ```text
 No findings.
 ```
 
+In production the trust root is host configuration listing the signers *you*
+accept — not a file that ships with the package. The generated one exists so
+you can verify your own work immediately.
+
 ## 4. Build a search sidecar
 
 ```sh
-npx moca-index build /tmp/wt/pkg -o /tmp/wt/pkg.moca.idx
+npx @openmoca/moca-index build /tmp/wt/pkg -o /tmp/wt/pkg.moca.idx
 ```
 
 ```text
@@ -156,8 +159,8 @@ the target's `content/`. That is what lets a retrieval hit become a citation.
 ## 5. Pack for distribution
 
 ```sh
-npx moca-lint pack /tmp/wt/pkg -o /tmp/wt/walkthrough.moca \
-  --trust-root /tmp/wt/trust-roots.json
+npx @openmoca/moca-lint pack /tmp/wt/pkg -o /tmp/wt/walkthrough.moca \
+  --trust-root /tmp/wt/wt-key.trust-root.json
 ```
 
 ```text
@@ -171,8 +174,8 @@ present. You cannot accidentally ship an invalid package.
 ## 6. Read it back
 
 ```sh
-npx moca-lint extract /tmp/wt/walkthrough.moca -o /tmp/wt/roundtrip
-npx moca-lint lint /tmp/wt/roundtrip --trust-root /tmp/wt/trust-roots.json
+npx @openmoca/moca-lint extract /tmp/wt/walkthrough.moca -o /tmp/wt/roundtrip
+npx @openmoca/moca-lint lint /tmp/wt/roundtrip --trust-root /tmp/wt/wt-key.trust-root.json
 ```
 
 The extracted copy has the same `canonicalDigest` as the original, because the
@@ -214,7 +217,7 @@ The claim that a sidecar is disposable, tested:
 
 ```sh
 rm -rf /tmp/wt/pkg.moca.idx
-npx moca-lint lint /tmp/wt/pkg --trust-root /tmp/wt/trust-roots.json
+npx @openmoca/moca-lint lint /tmp/wt/pkg --trust-root /tmp/wt/wt-key.trust-root.json
 ```
 
 ```text

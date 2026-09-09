@@ -1,0 +1,22 @@
+{
+  "name": "valid-composition-relates-document-current",
+  "fixture": "fixtures/valid-composition-relates-document-current",
+  "description": "composition.relates expresses association without containment or ordering (contract \u00a78).",
+  "trustRoot": null,
+  "capabilities": [
+    "composition",
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

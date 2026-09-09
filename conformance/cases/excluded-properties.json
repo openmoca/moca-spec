@@ -1,0 +1,25 @@
+{
+  "name": "excluded-properties",
+  "fixture": "fixtures/excluded-properties",
+  "description": "A manifest carrying endpoints/settings/credentials/apiKeys is rejected. This is the runtime-independence guarantee and is not configurable (contract \u00a74.1).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E103_EXCLUDED_PROPERTIES"
+    ],
+    "bySeverity": {
+      "error": [
+        "E103_EXCLUDED_PROPERTIES"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

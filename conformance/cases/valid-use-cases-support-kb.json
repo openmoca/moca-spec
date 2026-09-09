@@ -1,0 +1,21 @@
+{
+  "name": "valid-use-cases-support-kb",
+  "fixture": "fixtures/valid-use-cases-support-kb",
+  "description": "A realistic corpus carrying three different epistemicStatus values as retrieval signals.",
+  "trustRoot": "fixtures/signing-keys/example-signing-trust-root.json",
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

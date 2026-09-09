@@ -1,0 +1,21 @@
+{
+  "name": "valid-augmentation-generic",
+  "fixture": "fixtures/valid-augmentation-generic",
+  "description": "A sidecar-augmentation package that grounds external content it does not contain.",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

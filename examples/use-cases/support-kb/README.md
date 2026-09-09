@@ -25,5 +25,5 @@ What it demonstrates:
 Nothing here requires more than JSON and Markdown tooling to read.
 
 ```sh
-npx moca-lint lint examples/use-cases/support-kb
+npx @openmoca/moca-lint lint examples/use-cases/support-kb
 ```

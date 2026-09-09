@@ -1,0 +1,25 @@
+{
+  "name": "signature-missing",
+  "fixture": "fixtures/signature-missing",
+  "description": "A package containing skills/ with no signature object at all is an error (contract \u00a712).",
+  "trustRoot": "conformance/fixtures/signature.trust-root.json",
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E401_UNSIGNED_SKILLS"
+    ],
+    "bySeverity": {
+      "error": [
+        "E401_UNSIGNED_SKILLS"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

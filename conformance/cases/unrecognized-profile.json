@@ -1,0 +1,26 @@
+{
+  "name": "unrecognized-profile",
+  "fixture": "fixtures/unrecognized-profile",
+  "description": "An unrecognised profile URI must not make the package invalid \u2014 it degrades to MOCA Core (contract \u00a79, \u00a711).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest",
+    "profiles"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [
+      "E210_UNVERIFIABLE_EPISTEMIC_STATUS"
+    ],
+    "bySeverity": {
+      "error": [],
+      "warning": [
+        "E210_UNVERIFIABLE_EPISTEMIC_STATUS"
+      ],
+      "info": []
+    }
+  }
+}

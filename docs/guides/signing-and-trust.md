@@ -63,13 +63,21 @@ in CI.
 
 ```sh
 # 1. Generate a keypair (once)
-npx moca-sign generate-key -o my-key
-# writes my-key.pem (private — keep secret) and my-key.pub.pem
+npx @openmoca/moca-sign generate-key -o my-key --keyid my-key-2026
+# writes my-key.pem (private — keep secret), my-key.pub.pem,
+# and my-key.trust-root.json
 
 # 2. Sign
-npx moca-sign sign ./my-package \
+npx @openmoca/moca-sign sign ./my-package \
   --mode dsse --key my-key.pem --keyid my-key-2026
+
+# 3. Verify your own work
+npx @openmoca/moca-lint lint ./my-package --trust-root my-key.trust-root.json
 ```
+
+`generate-key` emits a matching trust root because a `dsse` signature that
+cannot be checked is reported as `E406`, never silently accepted — so without
+one, a package you just signed is unlintable until you hand-write the file.
 
 `sign` recomputes `canonicalDigest` from current on-disk content and writes
 both `canonicalDigest` and `signature` into `moca.json` in place.
@@ -82,7 +90,7 @@ both `canonicalDigest` and `signature` into `moca.json` in place.
 ## Signing with `sigstore`
 
 ```sh
-npx moca-sign sign ./my-package --mode sigstore
+npx @openmoca/moca-sign sign ./my-package --mode sigstore
 ```
 
 Requires a real OIDC identity token — ambient CI credentials (GitHub Actions,
@@ -95,10 +103,10 @@ Verification is part of linting, so it happens wherever you already lint:
 
 ```sh
 # dsse: supply the trust root that lists acceptable signers
-npx moca-lint lint ./my-package --trust-root ./trust-roots.json
+npx @openmoca/moca-lint lint ./my-package --trust-root ./trust-roots.json
 
 # sigstore: constrain which identities you accept
-npx moca-lint lint ./my-package \
+npx @openmoca/moca-lint lint ./my-package \
   --identity-constraint "https://token.actions.githubusercontent.com=https://github.com/myorg/*"
 ```
 
@@ -122,20 +130,26 @@ counts as verified.
 
 ## Setting up a `dsse` trust root
 
+`generate-key` writes a single-key trust root for you. A real one lists every
+signer you accept:
+
 ```json
 {
   "keys": [
     {
       "keyid": "my-key-2026",
       "publicKey": "-----BEGIN PUBLIC KEY-----\n…\n-----END PUBLIC KEY-----",
-      "identity": "Release signing key, rotated 2026-01"
+      "identity": "Release signing key, rotated 2026-01",
+      "expires": "2027-01-01T00:00:00Z"
     }
   ]
 }
 ```
 
-Trust roots are host configuration, not package content. Distribute them
-through whatever channel you already use for configuration.
+Trust roots are **host configuration, not package content**. They express who
+*you* trust, so they never ship inside a package — and a package that arrives
+with its own trust root has told you nothing. Distribute them through whatever
+channel you already use for configuration.
 
 ## What signing does *not* give you
 

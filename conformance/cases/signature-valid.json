@@ -1,0 +1,23 @@
+{
+  "name": "signature-valid",
+  "fixture": "fixtures/signature-valid",
+  "description": "A correctly signed skills-bearing package verifies against its trust root with no error-severity findings.",
+  "trustRoot": "conformance/fixtures/signature.trust-root.json",
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest",
+    "signatures"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

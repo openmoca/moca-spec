@@ -1,0 +1,8 @@
+{
+  "id": "urn:moca:test:integrity-mismatch",
+  "version": "1.0.0",
+  "title": "Integrity Mismatch Fixture",
+  "integrity": {
+    "content/01-node.md": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

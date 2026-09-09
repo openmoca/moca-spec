@@ -5,11 +5,13 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-const packageDir = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const repoRoot = join(packageDir, '..', '..');
-
+// The schema is vendored into this package rather than read from the
+// repository. A published tarball contains only bin/, lib/ and README.md, so
+// reading ../../schemas/ resolved correctly in the workspace and threw ENOENT
+// for anyone who installed the package. scripts/check-vendored-schema.mjs
+// asserts this copy matches schemas/v1/core/moca.schema.json.
 const coreSchema = JSON.parse(
-  readFileSync(join(repoRoot, 'schemas/v1/core/moca.schema.json'), 'utf8')
+  readFileSync(join(dirname(dirname(fileURLToPath(import.meta.url))), 'moca.schema.json'), 'utf8')
 );
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });

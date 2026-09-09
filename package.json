@@ -11,7 +11,7 @@
   "scripts": {
     "test": "npm run validate:all && npm run test:tools",
     "test:tools": "node --test \"tools/*/test/*.test.js\"",
-    "validate:all": "npm run validate && npm run validate:jsonld && npm run validate:canonical-digest && npm run validate:derived && npm run validate:sidecar-index && npm run validate:links && npm run lint:md && npm run lint:moca",
+    "validate:all": "npm run validate && npm run validate:jsonld && npm run validate:canonical-digest && npm run validate:derived && npm run validate:sidecar-index && npm run validate:links && npm run conformance:check && npm run validate:vendored-schemas && npm run validate:tool-deps && npm run lint:md && npm run lint:moca",
     "validate": "node scripts/validate-examples.mjs",
     "validate:sidecar-index": "node scripts/validate-sidecar-index.mjs",
     "validate:jsonld": "node scripts/validate-jsonld-context.mjs",
@@ -22,7 +22,11 @@
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"!**/node_modules/**\"",
     "lint:moca": "node scripts/lint-examples.mjs",
     "lint:moca:sarif": "node scripts/lint-examples.mjs --sarif moca-lint.sarif",
-    "lint:moca:update-baseline": "node scripts/lint-examples.mjs --update"
+    "lint:moca:update-baseline": "node scripts/lint-examples.mjs --update",
+    "conformance:generate": "node scripts/generate-conformance-cases.mjs",
+    "conformance:check": "node scripts/generate-conformance-cases.mjs --check",
+    "validate:vendored-schemas": "node scripts/check-vendored-schema.mjs",
+    "validate:tool-deps": "node scripts/check-tool-deps.mjs"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

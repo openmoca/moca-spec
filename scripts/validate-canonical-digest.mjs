@@ -1,34 +1,19 @@
-import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import canonicalize from 'canonicalize';
-import { walkFiles } from '../tools/moca-lint/lib/walk.js';
+import { computeCanonicalDigest } from '@openmoca/moca-sign/lib/canonical-digest.js';
+
+// Re-exported: several repository scripts imported this from here historically,
+// and the implementation now lives in the package that most fundamentally needs
+// it (a signature signs over canonicalDigest.value).
+export { computeCanonicalDigest };
+import { findPackages } from './lib/find-packages.mjs';
 
 const HEX_DIGEST = /^[a-f0-9]{64}$/;
 const PACKAGE_MANIFEST = 'moca.json';
 
-function sha256(value) {
-  return createHash('sha256').update(value).digest('hex');
-}
 
-function canonicalSha256(value) {
-  const serialized = canonicalize(value);
-  if (serialized === undefined) {
-    throw new Error('value cannot be canonicalized');
-  }
-  return sha256(Buffer.from(serialized, 'utf8'));
-}
 
-function isExcluded(relPath) {
-  return relPath === PACKAGE_MANIFEST
-    || relPath === '.DS_Store'
-    || relPath.endsWith('/.DS_Store')
-    || relPath === '.git'
-    || relPath.startsWith('.git/')
-    || relPath === 'node_modules'
-    || relPath.startsWith('node_modules/');
-}
 
 function readManifest(rootDir) {
   const manifestPath = join(rootDir, PACKAGE_MANIFEST);
@@ -54,57 +39,6 @@ function validateDeclaredDigest(manifest, rootDir) {
   if (!HEX_DIGEST.test(digest.value)) {
     throw new Error(`${rootDir}: canonicalDigest.value must be 64 lowercase hexadecimal characters`);
   }
-}
-
-/**
- * Compute the canonical package digest from on-disk resource bytes.
- *
- * @param {string} rootDir
- * @param {{ resolveMember?: (member: { id: string, version?: string }) => { version: string, canonicalDigest: { value: string } } }} options
- * @returns {string}
- */
-export function computeCanonicalDigest(rootDir, { resolveMember } = {}) {
-  const packageRoot = resolve(rootDir);
-  const manifest = readManifest(packageRoot);
-  const manifestForDigest = { ...manifest };
-  delete manifestForDigest.canonicalDigest;
-  // `signature` is excluded for the same self-reference reason as
-  // `canonicalDigest`: a Level 3 signature signs over canonicalDigest.value
-  // (spec/moca-trust-model.md §2), so canonicalDigest cannot itself depend on the
-  // signature that will be computed from it.
-  delete manifestForDigest.signature;
-
-  const resources = {};
-  for (const relPath of walkFiles(packageRoot)) {
-    if (isExcluded(relPath)) continue;
-    resources[relPath] = sha256(readFileSync(join(packageRoot, relPath)));
-  }
-  // Composition-only packages, such as the course fixture, legitimately have no resources.
-
-  const assembled = {
-    manifest: canonicalSha256(manifestForDigest),
-    resources,
-  };
-
-  const members = manifest.composition?.members;
-  if (members?.length) {
-    if (typeof resolveMember !== 'function') {
-      throw new Error(`${packageRoot}: composition.members requires a member resolver`);
-    }
-    assembled.members = {};
-    for (const member of members) {
-      const resolvedMember = resolveMember({ id: member.id, version: member.version });
-      if (!resolvedMember?.version || !resolvedMember.canonicalDigest?.value) {
-        throw new Error(`${packageRoot}: member ${member.id}@${member.version ?? '*'} has no resolved canonicalDigest`);
-      }
-      if (!HEX_DIGEST.test(resolvedMember.canonicalDigest.value)) {
-        throw new Error(`${packageRoot}: member ${member.id}@${resolvedMember.version} has an invalid canonicalDigest.value`);
-      }
-      assembled.members[`${member.id}@${resolvedMember.version}`] = resolvedMember.canonicalDigest.value;
-    }
-  }
-
-  return canonicalSha256(assembled);
 }
 
 function versionMatches(range, version) {
@@ -134,10 +68,7 @@ function siblingMemberResolver(packageRoot) {
 }
 
 function findPackageRoots(rootDir) {
-  return walkFiles(rootDir)
-    .filter((relPath) => relPath.endsWith(`/${PACKAGE_MANIFEST}`) || relPath === PACKAGE_MANIFEST)
-    .map((relPath) => dirname(join(rootDir, relPath)))
-    .map((packageRoot) => resolve(packageRoot));
+  return findPackages(rootDir).map((packageRoot) => resolve(packageRoot));
 }
 
 function reportFailure(message) {

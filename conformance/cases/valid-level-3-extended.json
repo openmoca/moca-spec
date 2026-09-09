@@ -1,0 +1,27 @@
+{
+  "name": "valid-level-3-extended",
+  "fixture": "fixtures/valid-level-3-extended",
+  "description": "Level 3: Web Annotation locators and a real signature over a skills-bearing package.",
+  "trustRoot": "fixtures/signing-keys/example-signing-trust-root.json",
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest",
+    "signatures"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [
+      "E203_DANGLING_EVIDENCE_SOURCE"
+    ],
+    "bySeverity": {
+      "error": [],
+      "warning": [
+        "E203_DANGLING_EVIDENCE_SOURCE"
+      ],
+      "info": []
+    }
+  }
+}

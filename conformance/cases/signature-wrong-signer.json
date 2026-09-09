@@ -1,0 +1,27 @@
+{
+  "name": "signature-wrong-signer",
+  "fixture": "fixtures/signature-wrong-signer",
+  "description": "A signer whose keyid is absent from the supplied trust root fails verification (contract \u00a77.3).",
+  "trustRoot": "conformance/fixtures/signature.trust-root.json",
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest",
+    "signatures"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E406_SIGNATURE_INVALID"
+    ],
+    "bySeverity": {
+      "error": [
+        "E406_SIGNATURE_INVALID"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

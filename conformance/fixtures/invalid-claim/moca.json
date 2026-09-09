@@ -1,0 +1,6 @@
+{
+  "id": "urn:moca:test:invalid-claim",
+  "version": "1.0.0",
+  "title": "Invalid Claim Fixture",
+  "@context": { "ex": "https://example.org/vocab#" }
+}

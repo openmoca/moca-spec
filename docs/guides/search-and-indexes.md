@@ -26,7 +26,7 @@ the reasoning is worth understanding because it shapes how you use it:
 ## Building one
 
 ```sh
-npx moca-index build ./my-package -o my-package.moca.idx --zip
+npx @openmoca/moca-index build ./my-package -o my-package.moca.idx --zip
 ```
 
 `-o` writes a directory by default, or a single archive with `--zip`. The

@@ -21,7 +21,7 @@ npm install
 This links the `moca-lint` binary via the workspace. You can then run it as:
 
 ```sh
-npx moca-lint --help
+npx @openmoca/moca-lint --help
 # or, once installed:
 npm run lint:moca
 ```

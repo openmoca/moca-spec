@@ -26,6 +26,6 @@ What it demonstrates:
   loads both packages has a per-node signal and not just a manifest-level one.
 
 ```sh
-npx moca-lint lint examples/use-cases/policy-corpus/policy-v1
-npx moca-lint lint examples/use-cases/policy-corpus/policy-v2
+npx @openmoca/moca-lint lint examples/use-cases/policy-corpus/policy-v1
+npx @openmoca/moca-lint lint examples/use-cases/policy-corpus/policy-v2
 ```

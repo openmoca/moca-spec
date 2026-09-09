@@ -90,6 +90,12 @@ non-production example key, and re-binds dependent sidecars. `npm test` runs
 the read-only equivalent (`npm run validate:derived`) and fails if anything is
 stale, so CI will tell you if you forget.
 
+## Releasing
+
+Maintainers: see [docs/releasing.md](docs/releasing.md) for the release runbook,
+and [docs/versioning-and-release.md](docs/versioning-and-release.md) for the
+versioning policy behind it.
+
 ## Bug Reports
 
 Use the **Bug Report** issue template for problems with the schemas, example

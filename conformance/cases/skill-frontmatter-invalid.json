@@ -1,0 +1,29 @@
+{
+  "name": "skill-frontmatter-invalid",
+  "fixture": "fixtures/skill-frontmatter-invalid",
+  "description": "Invalid SKILL.md frontmatter is diagnosed without executing or evaluating any skill content (contract \u00a72.1).",
+  "trustRoot": "conformance/fixtures/skill-frontmatter-invalid.trust-root.json",
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest",
+    "signatures"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E206_SKILL_FRONTMATTER_INVALID",
+      "E206_SKILL_FRONTMATTER_INVALID"
+    ],
+    "bySeverity": {
+      "error": [
+        "E206_SKILL_FRONTMATTER_INVALID",
+        "E206_SKILL_FRONTMATTER_INVALID"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

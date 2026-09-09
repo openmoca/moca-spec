@@ -1,0 +1,9 @@
+{
+  "id": "urn:moca:module:bayes-theorem",
+  "version": "1.0.0",
+  "title": "Bayes' Theorem",
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "f9879def189ba687d8e1440d3fd77f4bc85f8a45d72e1fe1b903a12362f6a08a"
+  }
+}

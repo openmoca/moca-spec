@@ -1,0 +1,24 @@
+{
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
+  "@context": {
+    "moca": "https://openmoca.org/vocab/core#",
+    "ex": "https://example.org/vocab#"
+  },
+  "id": "urn:moca:example:level-3-extended",
+  "version": "1.0.0",
+  "title": "Level 3 Extended Example",
+  "description": "MOCA Core package demonstrating Level 3 (MOCA Extended) conformance: W3C Web Annotation locators, an Agent Skill, and a mandatory signature. See README.md in this folder for an important note on the signature value.",
+  "license": "Apache-2.0",
+  "entryConcepts": [
+    "ex:ServiceCommunication"
+  ],
+  "signature": {
+    "type": "dsse",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2WlhoaGJYQnNaVHBzWlhabGJDMHpMV1Y0ZEdWdVpHVmtRREV1TUM0d0lpd2laR2xuWlhOMElqcDdJbk5vWVRJMU5pSTZJbVF4WWpCbE5UaGxPREk0TlRCa01qUmpaRGN4WWpZellqTTRZekpqTWpSbU1tWTJOR1V6WlRobU1qaGpZV0V3WkRZd04yRmlOVFJtWWpSaU1XTXlOak1pZlgxZExDSndjbVZrYVdOaGRHVlVlWEJsSWpvaWFIUjBjSE02THk5dmNHVnViVzlqWVM1dmNtY3ZZWFIwWlhOMFlYUnBiMjV6TDNCaFkydGhaMlV0YzJsbmJtRjBkWEpsTDNZeElpd2ljSEpsWkdsallYUmxJanA3ZlgwPSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1zcGVjLWV4YW1wbGUtc2lnbmluZy1rZXktMjAyNiIsInNpZyI6IlVxaFJERExYSjlNOEhlZVY4eVdKYW83WTh4RWlpSkh5NG8vYThQT2RTWFZDWHdDWFg4N3NjbGNhQUxwdU8zcHRFWjFYQ25RODFCMHA4VEk3ZmZhR0FBPT0ifV19",
+    "keyid": "moca-spec-example-signing-key-2026"
+  },
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "d1b0e58e82850d24cd71b63b38c2c24f2f64e3e8f28caa0d607ab54fb4b1c263"
+  }
+}

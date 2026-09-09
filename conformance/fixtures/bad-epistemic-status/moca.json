@@ -1,0 +1,6 @@
+{
+  "id": "urn:moca:test:bad-epistemic-status",
+  "version": "1.0.0",
+  "title": "Bad Epistemic Status Fixture",
+  "@context": { "ex": "https://example.org/vocab#" }
+}

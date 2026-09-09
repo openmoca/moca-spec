@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
+  "@context": {
+    "kb": "https://example.com/support/vocab#"
+  },
+  "id": "urn:moca:example:acme-support-kb",
+  "version": "4.2.0",
+  "title": "Acme Support Knowledge Base",
+  "description": "Customer-facing support answers, grounded in the commercial policy documents they derive from.",
+  "language": "en",
+  "license": "Apache-2.0",
+  "keywords": ["support", "customer-service", "refunds", "shipping"],
+  "publisher": "Acme Corp Customer Operations",
+  "validFrom": "2026-07-01T00:00:00Z",
+  "lastReviewed": "2026-08-14T00:00:00Z"
+}

@@ -1,23 +1,40 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { basename } from 'node:path';
 import pc from 'picocolors';
 import { signPackage } from '../lib/sign.js';
 import { verifyPackageSignature } from '../lib/verify.js';
-import { generateKeyPair } from '../lib/keys.js';
+import { generateKeyPair, buildTrustRoot } from '../lib/keys.js';
+
+// npm always includes package.json in a published tarball, regardless of the
+// "files" field, so reading the version from it works once installed.
+const { version } = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+);
 
 const program = new Command();
-program.name('moca-sign').description('Reference Sigstore/DSSE signing and verification for MOCA packages.');
+program.name('moca-sign').description('Reference Sigstore/DSSE signing and verification for MOCA packages.').version(version);
 
 program
   .command('generate-key')
   .description('generate an Ed25519 keypair for dsse-mode signing')
-  .requiredOption('-o, --out <prefix>', 'writes <prefix>.pem (private) and <prefix>.pub.pem (public)')
+  .requiredOption('-o, --out <prefix>', 'writes <prefix>.pem (private), <prefix>.pub.pem, and <prefix>.trust-root.json')
+  .option('--keyid <id>', 'key identifier recorded in the emitted trust root (default: the output prefix basename)')
   .action((options) => {
+    const keyid = options.keyid ?? basename(options.out);
     const { privateKeyPem, publicKeyPem } = generateKeyPair();
     writeFileSync(`${options.out}.pem`, privateKeyPem, { mode: 0o600 });
     writeFileSync(`${options.out}.pub.pem`, publicKeyPem);
-    console.log(`Wrote ${options.out}.pem (private, keep secret) and ${options.out}.pub.pem`);
+    writeFileSync(
+      `${options.out}.trust-root.json`,
+      `${JSON.stringify(buildTrustRoot({ keyid, publicKeyPem }), null, 2)}\n`
+    );
+    console.log(`Wrote ${options.out}.pem (private, keep secret)`);
+    console.log(`      ${options.out}.pub.pem`);
+    console.log(`      ${options.out}.trust-root.json (keyid "${keyid}")`);
+    console.log(`\nSign with:   moca-sign sign <package> --mode dsse --key ${options.out}.pem --keyid ${keyid}`);
+    console.log(`Then verify: moca-lint lint <package> --trust-root ${options.out}.trust-root.json`);
   });
 
 program

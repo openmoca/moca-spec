@@ -1,0 +1,26 @@
+{
+  "name": "integrity-mismatch",
+  "fixture": "fixtures/integrity-mismatch",
+  "description": "A declared integrity digest that does not match file bytes on disk is an error (contract \u00a77.1).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E402_INTEGRITY_MISMATCH"
+    ],
+    "bySeverity": {
+      "error": [
+        "E402_INTEGRITY_MISMATCH"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

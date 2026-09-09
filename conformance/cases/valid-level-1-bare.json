@@ -1,0 +1,21 @@
+{
+  "name": "valid-level-1-bare",
+  "fixture": "fixtures/valid-level-1-bare",
+  "description": "The Level 1 floor: a manifest and one CommonMark file, no frontmatter anywhere. Node identity comes from the path (contract \u00a75.1).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

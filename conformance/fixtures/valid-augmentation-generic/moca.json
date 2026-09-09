@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
+  "id": "urn:moca:aug:kb-augmentation-generic",
+  "version": "1.0.0",
+  "title": "Generic Archive Semantic Augmentation",
+  "description": "Demonstrates the core augmentation pattern (core \u00a79) as a first-class, profile-independent MOCA usage: grounding an AI harness against an arbitrary external archive without modifying it.",
+  "license": "Apache-2.0",
+  "augmentation": {
+    "target": "./raw/external-content.zip",
+    "targetType": "generic-archive",
+    "relationship": "augments"
+  }
+}

@@ -66,6 +66,20 @@ and compatibility policy.
 - Rewrote the README opening to lead with the problem MOCA solves rather than
   a definition of it, and added a concrete "quick look" at a manifest and a
   grounded content node.
+- **Renamed the four CLIs to the `@openmoca/` scope and made them actually
+  publishable** — `@openmoca/moca-lint`, `-convert`, `-index`, `-sign`. They
+  were `private: true` with unscoped names, so the `npx moca-lint` invocations
+  throughout the documentation could never have worked. Each now declares
+  `files`, `exports`, `repository`, `homepage`, `bugs`, and
+  `publishConfig.access`, and has a `lib/index.js` public entry point.
+- Moved the `canonicalDigest` implementation from
+  `scripts/validate-canonical-digest.mjs` into
+  `@openmoca/moca-sign/lib/canonical-digest.js`. A signature signs over
+  `canonicalDigest.value`, so that package is where the value most
+  fundamentally belongs; the script now imports it rather than owning it. The
+  implementation is byte-identical — every existing digest still verifies. It
+  deliberately does not reuse `moca-lint`'s file walker, because `moca-lint`
+  depends on `moca-sign` and the reverse would be a dependency cycle.
 
 ### Added
 
@@ -128,6 +142,39 @@ and compatibility policy.
 - `scripts/lib/find-packages.mjs`: one recursive package-discovery helper,
   now shared by `validate-examples.mjs`, `lint-examples.mjs` and
   `refresh-derived.mjs`.
+- [spec/moca-sdk-contract.md](spec/moca-sdk-contract.md): the language-neutral
+  behavioural contract every SDK implements — eight capabilities, what an SDK
+  must never do (execute package content, perform unrequested network I/O,
+  read outside the package root), manifest and content semantics, diagnostics,
+  identity and integrity, composition, profiles, index discovery, graceful
+  degradation, and level derivation. It specifies *behaviour, not API shape*:
+  method names and object models stay idiomatic per language, while what an
+  SDK concludes about a package must not vary.
+- [`conformance/`](conformance/README.md): 25 declarative cases over 25 fixture
+  packages, plus the runner contract SDKs implement. Cases assert diagnostic
+  **codes** and outcomes, never message prose, matching contract §6. Expected
+  results are *observed from the reference implementation* by
+  `scripts/generate-conformance-cases.mjs` rather than hand-written, so they
+  cannot drift from it; `npm run conformance:check` runs in CI and fails when
+  reference behaviour changes.
+- `scripts/check-vendored-schema.mjs` and `npm run validate:vendored-schemas`,
+  asserting that schemas vendored into publishable packages stay identical to
+  the canonical copies under `schemas/`.
+- [docs/releasing.md](docs/releasing.md): the maintainer release runbook —
+  one-time npm org and token setup, publish order (`moca-sign` → `moca-lint` →
+  `moca-convert`/`moca-index`, since they depend on each other), the
+  tarball-install smoke test, dist-tag handling, npm provenance from CI,
+  post-publish verification, and what to do instead of unpublishing. The stale
+  checklist in `docs/versioning-and-release.md` now points at it, leaving that
+  document to cover policy only.
+- A `--version` flag on `moca-lint`, `moca-sign` and `moca-index`, which none
+  of the CLIs previously had. `moca-convert` exposes it as `--cli-version`,
+  because its `--version <semver>` already sets the *generated package's*
+  version and redefining that would be a breaking CLI change.
+- `moca-sign generate-key` now also emits `<prefix>.trust-root.json` and prints
+  the sign/verify commands to run next. A `dsse` signature with no trust root
+  is reported as `E406` rather than silently accepted, so a freshly signed
+  package was unlintable until its author hand-wrote a trust-root file.
 
 ### Fixed
 
@@ -147,6 +194,22 @@ and compatibility policy.
   silently skipped any package nested more than one level deep — it missed all
   three new `examples/use-cases/` packages when they were added. It now uses
   recursive discovery, and covers 16 packages instead of 13.
+- **The tool packages were unusable once installed.** Three separate places
+  read files that a published tarball does not contain: `moca-lint`'s manifest
+  pass and `moca-index`'s validator each read a schema from
+  `../../schemas/`, and `moca-sign` re-exported `computeCanonicalDigest` from
+  `../../../scripts/`. All three resolved correctly inside the workspace and
+  threw `ERR_MODULE_NOT_FOUND`/`ENOENT` for anyone who installed the package.
+  The schemas are now vendored into the packages that read them (with a CI
+  drift check), and the digest implementation moved into `moca-sign`. Verified
+  by packing all four tarballs, installing them into an empty project, and
+  running convert → lint → keygen → sign → verify → index → pack → extract.
+- `@openmoca/moca-index` imported `@openmoca/moca-sign` without declaring it as
+  a dependency, resolving only because `@openmoca/moca-lint` happened to pull
+  it in. npm's flat `node_modules` hides this; pnpm, Yarn PnP, and other strict
+  installers would not. Added the declaration, plus
+  `scripts/check-tool-deps.mjs` (`npm run validate:tool-deps`, wired into CI)
+  to catch the class.
 
 ## [0.1.0-beta.1] - 2026-09-03
 

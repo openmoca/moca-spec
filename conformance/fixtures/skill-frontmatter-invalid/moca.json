@@ -1,0 +1,14 @@
+{
+  "id": "urn:moca:test:skill-frontmatter-invalid",
+  "version": "1.0.0",
+  "title": "Skill Frontmatter Invalid Fixture",
+  "signature": {
+    "type": "dsse",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2ZEdWemREcHphMmxzYkMxbWNtOXVkRzFoZEhSbGNpMXBiblpoYkdsa1FERXVNQzR3SWl3aVpHbG5aWE4wSWpwN0luTm9ZVEkxTmlJNkltRXpPR1kyTWpJeU1qYzNPV1EyWW1FeVptSmpaVGRoT1dVeFpEUmtOR1ZoWlRRNU1UTXlOVGRpWm1SaU16azBNemMzWm1abE9UUXpNbUl3TWpNek0ySWlmWDFkTENKd2NtVmthV05oZEdWVWVYQmxJam9pYUhSMGNITTZMeTl2Y0dWdWJXOWpZUzV2Y21jdllYUjBaWE4wWVhScGIyNXpMM0JoWTJ0aFoyVXRjMmxuYm1GMGRYSmxMM1l4SWl3aWNISmxaR2xqWVhSbElqcDdmWDA9IiwicGF5bG9hZFR5cGUiOiJhcHBsaWNhdGlvbi92bmQuaW4tdG90bytqc29uIiwic2lnbmF0dXJlcyI6W3sia2V5aWQiOiJtb2NhLWxpbnQtdGVzdC1maXh0dXJlLWtleSIsInNpZyI6Iit6RUl4UktzTk4wc09YMUNkSXpGaXlRUUVyZGJQTlg1MjdnY2JJK1hHeTlqdmVOdjRUNVpPMTk1SSszWk55Y1Y4OFMvSU1pc29yeXZJT3BtcVlUYURnPT0ifV19",
+    "keyid": "moca-lint-test-fixture-key"
+  },
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "a38f62222779d6ba2fbce7a9e1d4d4eae4913257bfdb394377ffe9432b02333b"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "id": "urn:moca:test:invalid-evidence-locator",
+  "version": "1.0.0",
+  "title": "Invalid Evidence Locator Fixture",
+  "@context": { "ex": "https://example.org/vocab#" }
+}

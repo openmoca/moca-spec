@@ -1,0 +1,7 @@
+{
+  "id": "urn:moca:test:signature-placeholder",
+  "version": "1.0.0",
+  "title": "Signature Placeholder Fixture",
+  "canonicalDigest": { "algorithm": "sha256", "value": "0000000000000000000000000000000000000000000000000000000000000000" },
+  "signature": { "type": "sigstore", "value": "PLACEHOLDER-NOT-A-REAL-SIGNATURE-DO-NOT-TRUST", "keyid": "placeholder-key-id" }
+}

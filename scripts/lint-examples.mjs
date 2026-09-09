@@ -16,8 +16,8 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { findPackages } from './lib/find-packages.mjs';
-import { lintPackage } from 'moca-lint/lib/lint.js';
-import { formatSarif } from 'moca-lint/lib/format.js';
+import { lintPackage } from '@openmoca/moca-lint/lib/lint.js';
+import { formatSarif } from '@openmoca/moca-lint/lib/format.js';
 
 const root = process.cwd();
 const update = process.argv.includes('--update');

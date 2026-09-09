@@ -2,7 +2,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { verifyPackageSignature } from 'moca-sign/lib/verify.js';
+import { verifyPackageSignature } from '@openmoca/moca-sign/lib/verify.js';
 import { resolvePackagePath } from '../paths.js';
 
 const SIGNATURE_FINDING_CODE = Object.freeze({

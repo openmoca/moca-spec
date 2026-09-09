@@ -59,18 +59,19 @@ external standard.
 
 ## Release Checklist
 
-Before creating a beta tag, maintainers should:
+The operational runbook — npm setup, publish order, dist-tags, provenance,
+post-publish verification, and what to do when a bad version ships — is
+[releasing.md](releasing.md).
 
-1. Update the repository, `moca-lint`, `moca-convert`, `moca-index`, and
-   `moca-sign` versions consistently.
-2. Record user-visible changes and known limitations in `CHANGELOG.md`.
-3. Run `npm ci`, `npm run validate`, `npm run lint:md`, and `npm run lint:moca`.
-4. Run `npm test` from `tools/moca-lint`, `tools/moca-convert`,
-   `tools/moca-index`, and `tools/moca-sign`.
-5. Verify that every example and schema is included in the release snapshot.
-6. Review security, signature, SHACL, RO-Crate, and profile documentation for
-   claims that exceed the implemented beta behavior.
-7. Create the annotated Git tag only after the checks pass.
+In summary, a release is two artifacts cut together:
+
+- **the specification snapshot** — `spec/`, `schemas/`, `profiles/`,
+  `examples/`, `conformance/`, captured as an annotated git tag and published
+  to no registry;
+- **the reference tooling** — the four `@openmoca/*` CLIs, published to npm.
+
+Nothing is tagged before `npm test` passes and the packed tarballs have been
+installed into an empty project and run.
 
 ## After the POC
 

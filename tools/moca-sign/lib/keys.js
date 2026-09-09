@@ -14,6 +14,29 @@ export function generateKeyPair() {
 }
 
 /**
+ * Builds a dsse-mode trust-root document listing a single key.
+ *
+ * Emitted alongside a generated keypair so the signer can immediately verify
+ * their own package: a dsse signature with no trust root supplied is reported
+ * as E406 (unverifiable), not silently accepted, so a freshly signed package
+ * is unlintable until a trust root exists. See spec/moca-trust-model.md §4.2.
+ *
+ * @param {{ keyid: string, publicKeyPem: string, identity?: string }} params
+ * @returns {{ keys: object[] }}
+ */
+export function buildTrustRoot({ keyid, publicKeyPem, identity }) {
+  return {
+    keys: [
+      {
+        keyid,
+        publicKey: publicKeyPem,
+        identity: identity ?? `locally generated key "${keyid}"`,
+      },
+    ],
+  };
+}
+
+/**
  * Loads a dsse-mode trust-root file: `{ "keys": [{ keyid, publicKey, identity?, expires? }] }`.
  * See spec/moca-trust-model.md §4.2.
  *

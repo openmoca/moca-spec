@@ -1,0 +1,14 @@
+{
+  "id": "urn:moca:test:signature-tampered",
+  "version": "1.0.0",
+  "title": "Signature Tampered Fixture",
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "c286b0c04fe523d2dbdebe4e4e6dedb4aad329382efa538453f6c5fd3754444b"
+  },
+  "signature": {
+    "type": "dsse",
+    "value": "eyJwYXlsb2FkIjoiZXlKZmRIbHdaU0k2SW1oMGRIQnpPaTh2YVc0dGRHOTBieTVwYnk5VGRHRjBaVzFsYm5RdmRqRWlMQ0p6ZFdKcVpXTjBJanBiZXlKdVlXMWxJam9pZFhKdU9tMXZZMkU2ZEdWemREcHphV2R1WVhSMWNtVXRkR0Z0Y0dWeVpXUkFNUzR3TGpBaUxDSmthV2RsYzNRaU9uc2ljMmhoTWpVMklqb2lZekk0Tm1Jd1l6QTBabVUxTWpOa01tUmlaR1ZpWlRSbE5HVTJaR1ZrWWpSaFlXUXpNamt6T0RKbFptRTFNemcwTlRObU5tTTFabVF6TnpVME5EUTBZaUo5ZlYwc0luQnlaV1JwWTJGMFpWUjVjR1VpT2lKb2RIUndjem92TDI5d1pXNXRiMk5oTG05eVp5OWhkSFJsYzNSaGRHbHZibk12Y0dGamEyRm5aUzF6YVdkdVlYUjFjbVV2ZGpFaUxDSndjbVZrYVdOaGRHVWlPbnQ5ZlE9PSIsInBheWxvYWRUeXBlIjoiYXBwbGljYXRpb24vdm5kLmluLXRvdG8ranNvbiIsInNpZ25hdHVyZXMiOlt7ImtleWlkIjoibW9jYS1saW50LWZpeHR1cmUtc2lnbmVyIiwic2lnIjoiREVFdGpIS0ZvU2VReGxLbFl5MDZNb0xEYlp4eXdJY0pIVjd0K1hWZ0dONm5LY2Q0em5zMG0vZTRuOEdIS3VzWGs5VXpvLzBYNFVGZy9hR0U3c0srQXc9PSJ9XX0=",
+    "keyid": "moca-lint-fixture-signer"
+  }
+}

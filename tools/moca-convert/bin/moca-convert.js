@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command, InvalidArgumentError } from 'commander';
-import { writeFileSync, appendFileSync } from 'node:fs';
-import { formatText, formatJson } from 'moca-lint/lib/format.js';
+import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
+import { formatText, formatJson } from '@openmoca/moca-lint/lib/format.js';
 import { resolveInputTarget, UsageError } from '../lib/target.js';
 import { resolveAdapterName } from '../lib/detect.js';
 import { getAdapter } from '../lib/adapters/index.js';
@@ -21,10 +21,19 @@ function parseRatio(value) {
   return num;
 }
 
+// npm always includes package.json in a published tarball, regardless of the
+// "files" field, so reading the version from it works once installed.
+const { version } = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+);
+
 const program = new Command();
 program
   .name('moca-convert')
   .description('Create a Level 1 MOCA package from an existing source (directory, Markdown, Obsidian vault, or suitable OpenAPI document).')
+  // `--version <semver>` already sets the *generated package's* version, so the
+  // CLI's own version is exposed as --cli-version rather than redefining it.
+  .version(version, '-V, --cli-version', "output moca-convert's own version")
   .argument('<input>', 'source file or directory to convert')
   .requiredOption('-o, --output <dir>', 'output package directory')
   .requiredOption('--id <urn>', 'manifest id for the converted package')

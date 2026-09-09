@@ -1,6 +1,5 @@
 {
-  "name": "moca-index",
-  "private": true,
+  "name": "@openmoca/moca-index",
   "version": "0.1.0-beta.1",
   "description": "CLI that builds .moca.idx sidecar indexes for MOCA packages.",
   "license": "Apache-2.0",
@@ -15,11 +14,34 @@
     "test": "node --test test/*.test.js"
   },
   "dependencies": {
+    "@openmoca/moca-lint": "^0.1.0-beta.1",
+    "@openmoca/moca-sign": "^0.1.0-beta.1",
     "adm-zip": "^0.6.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "commander": "^12.1.0",
-    "gray-matter": "^4.0.3",
-    "moca-lint": "^0.1.0-beta.1"
+    "gray-matter": "^4.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openmoca/moca-spec.git",
+    "directory": "tools/moca-index"
+  },
+  "homepage": "https://github.com/openmoca/moca-spec/tree/main/tools/moca-index#readme",
+  "bugs": {
+    "url": "https://github.com/openmoca/moca-spec/issues"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./lib/*": "./lib/*",
+    "./package.json": "./package.json"
   }
 }

@@ -49,9 +49,13 @@ You now have a conformant Level 1 package.
 ## 4. Validate
 
 ```sh
-npm install
-npx moca-lint lint my-package
+npm install --save-dev @openmoca/moca-lint
+npx @openmoca/moca-lint lint my-package
 ```
+
+The four CLIs publish under the `@openmoca` scope
+(`@openmoca/moca-lint`, `-convert`, `-index`, `-sign`). Installed globally,
+each exposes its short command name — `moca-lint`, `moca-convert`, and so on.
 
 Conformance level is *derived* from what the package contains — it is never
 declared in `moca.json`.
@@ -66,8 +70,8 @@ npx ajv-cli validate -s schemas/v1/core/moca.schema.json \
 ## 5. Package it
 
 ```sh
-npx moca-lint pack my-package -o my-package.moca
-npx moca-lint extract my-package.moca -o my-package-copy
+npx @openmoca/moca-lint pack my-package -o my-package.moca
+npx @openmoca/moca-lint extract my-package.moca -o my-package-copy
 ```
 
 `pack` is fail-closed — it refuses to write if any error-severity finding is
@@ -80,13 +84,13 @@ from what you have, and lints its own output before reporting success:
 
 ```sh
 # A folder of Markdown, structure preserved
-npx moca-convert ./docs -o my-package --id urn:moca:example:my-docs --title "My Docs"
+npx @openmoca/moca-convert ./docs -o my-package --id urn:moca:example:my-docs --title "My Docs"
 
 # An Obsidian vault, [[wikilinks]] rewritten to relative links
-npx moca-convert ./my-vault -o my-package --id urn:moca:example:my-vault
+npx @openmoca/moca-convert ./my-vault -o my-package --id urn:moca:example:my-vault
 
 # An OpenAPI 3.x document, one content node per operation
-npx moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
+npx @openmoca/moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
 ```
 
 ## Next steps

@@ -36,9 +36,16 @@ Both modes sign an in-toto statement over the package's `canonicalDigest`,
 ### Generate a dsse-mode keypair
 
 ```sh
-moca-sign generate-key -o my-key
-# writes my-key.pem (private, keep secret) and my-key.pub.pem
+moca-sign generate-key -o my-key --keyid my-key-2026
+# writes my-key.pem (private, keep secret), my-key.pub.pem,
+# and my-key.trust-root.json
 ```
+
+`--keyid` defaults to the output prefix's basename. The emitted
+`<prefix>.trust-root.json` lets you verify packages you sign with this key
+straight away — a `dsse` signature with no trust root supplied is reported as
+`E406` (unverifiable), never silently accepted, so a freshly signed package is
+unlintable until a trust root exists.
 
 ### Sign a package
 

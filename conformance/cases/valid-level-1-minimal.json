@@ -1,0 +1,22 @@
+{
+  "name": "valid-level-1-minimal",
+  "fixture": "fixtures/valid-level-1-minimal",
+  "description": "Level 1 with frontmatter identity, concept bindings, and lifecycle fields.",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "integrity",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

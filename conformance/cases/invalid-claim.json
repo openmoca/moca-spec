@@ -1,0 +1,25 @@
+{
+  "name": "invalid-claim",
+  "fixture": "fixtures/invalid-claim",
+  "description": "A structurally invalid claim is reported as a diagnostic, not thrown (contract \u00a76).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E209_INVALID_CLAIM"
+    ],
+    "bySeverity": {
+      "error": [
+        "E209_INVALID_CLAIM"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

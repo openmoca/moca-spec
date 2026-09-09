@@ -1,6 +1,5 @@
 {
-  "name": "moca-sign",
-  "private": true,
+  "name": "@openmoca/moca-sign",
   "version": "0.1.0-beta.1",
   "description": "Reference Sigstore/DSSE signing and verification CLI for MOCA packages containing skills/.",
   "license": "Apache-2.0",
@@ -19,5 +18,27 @@
     "commander": "^12.1.0",
     "picocolors": "^1.1.1",
     "sigstore": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openmoca/moca-spec.git",
+    "directory": "tools/moca-sign"
+  },
+  "homepage": "https://github.com/openmoca/moca-spec/tree/main/tools/moca-sign#readme",
+  "bugs": {
+    "url": "https://github.com/openmoca/moca-spec/issues"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./lib/*": "./lib/*",
+    "./package.json": "./package.json"
   }
 }

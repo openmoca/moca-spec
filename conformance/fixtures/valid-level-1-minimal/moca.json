@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openmoca.org/schemas/v1/core/moca.schema.json",
+  "@context": {
+    "ex": "https://example.org/vocab#"
+  },
+  "id": "urn:moca:example:level-1-minimal",
+  "version": "1.0.0",
+  "title": "Level 1 Minimal Example",
+  "description": "Minimal MOCA Core package demonstrating Level 1 (MOCA Core) conformance: a valid moca.json and one grounded CommonMark knowledge node.",
+  "license": "Apache-2.0",
+  "canonicalDigest": {
+    "algorithm": "sha256",
+    "value": "c2e4995f2c49e4cf36f644736c6cb7a2e38d3915d05110b50ee8902ba9003834"
+  },
+  "validFrom": "2025-11-01T00:00:00Z",
+  "lastReviewed": "2026-07-15T00:00:00Z",
+  "entryConcepts": ["ex:Introduction"]
+}

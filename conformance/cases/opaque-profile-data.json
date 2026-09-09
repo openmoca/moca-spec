@@ -1,0 +1,22 @@
+{
+  "name": "opaque-profile-data",
+  "fixture": "fixtures/opaque-profile-data",
+  "description": "profileData is opaque: an SDK must not validate it against a profile schema, and must not reject the package for it (contract \u00a79).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest",
+    "profiles"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

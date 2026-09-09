@@ -1,0 +1,25 @@
+{
+  "name": "duplicate-node-id",
+  "fixture": "fixtures/duplicate-node-id",
+  "description": "Two content nodes resolving to the same identity is an error (contract \u00a75.1).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E207_DUPLICATE_NODE_ID"
+    ],
+    "bySeverity": {
+      "error": [
+        "E207_DUPLICATE_NODE_ID"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

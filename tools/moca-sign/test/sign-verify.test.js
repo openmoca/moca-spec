@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { signPackage } from '../lib/sign.js';
 import { verifyPackageSignature } from '../lib/verify.js';
-import { generateKeyPair } from '../lib/keys.js';
+import { generateKeyPair, buildTrustRoot } from '../lib/keys.js';
 
 const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 
@@ -110,4 +110,34 @@ test('signature without canonicalDigest is malformed (spec/moca-trust-model.md Â
     const result = await verifyPackageSignature({ rootDir: packageDir });
     assert.equal(result.outcome, 'malformed');
   });
+});
+
+test('generate-key emits a trust root that verifies its own signatures', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'moca-sign-trustroot-'));
+  const prefix = join(dir, 'demo');
+  const { privateKeyPem, publicKeyPem } = generateKeyPair();
+  writeFileSync(`${prefix}.pem`, privateKeyPem);
+
+  const trustRoot = buildTrustRoot({ keyid: 'demo-key', publicKeyPem });
+  const trustRootPath = `${prefix}.trust-root.json`;
+  writeFileSync(trustRootPath, JSON.stringify(trustRoot, null, 2));
+
+  // The emitted trust root must round-trip: a package signed with the
+  // generated key verifies against it with no hand-editing. Without this,
+  // a freshly signed package is unlintable (E406) until the author writes a
+  // trust root by hand.
+  const pkg = join(dir, 'pkg');
+  mkdirSync(join(pkg, 'content'), { recursive: true });
+  writeFileSync(
+    join(pkg, 'moca.json'),
+    JSON.stringify({ id: 'urn:moca:test:trustroot', version: '1.0.0', title: 'T' }, null, 2)
+  );
+  writeFileSync(join(pkg, 'content', 'note.md'), '# Note\n');
+
+  await signPackage({ rootDir: pkg, mode: 'dsse', privateKeyPath: `${prefix}.pem`, keyid: 'demo-key' });
+
+  const result = await verifyPackageSignature({ rootDir: pkg, dsseTrustRootPath: trustRootPath });
+  assert.equal(result.outcome, 'valid');
+
+  rmSync(dir, { recursive: true, force: true });
 });

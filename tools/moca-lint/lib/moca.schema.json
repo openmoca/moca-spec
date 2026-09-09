@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openmoca.org/schemas/v1/core/moca.schema.json",
+  "title": "MOCA Core Manifest",
+  "description": "JSON Schema for the moca.json root manifest, per MOCA Core Package Specification \u00a75.1.",
+  "type": "object",
+  "required": ["id", "version", "title"],
+  "not": {
+    "anyOf": [
+      { "required": ["endpoints"] },
+      { "required": ["settings"] },
+      { "required": ["credentials"] },
+      { "required": ["apiKeys"] }
+    ]
+  },
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical JSON Schema URI."
+    },
+    "@context": {
+      "oneOf": [
+        { "type": "string", "format": "uri" },
+        { "type": "object" }
+      ],
+      "description": "JSON-LD 1.1 context definition. Required only when a CURIE appears anywhere in the package. At Level 1 it must be an inline object with CURIE prefix mappings; Level 2 and above may use a URI string or a fuller inline context object."
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical unique identifier for the package (URN or URI)."
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Semantic version string of the content."
+    },
+    "profile": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri" },
+      "description": "Zero or more profile URIs this package declares conformance to."
+    },
+    "title": { "$ref": "#/$defs/localizedString" },
+    "description": { "$ref": "#/$defs/localizedString" },
+    "language": {
+      "type": "string",
+      "description": "Primary BCP-47 language code."
+    },
+    "locales": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "license": {
+      "type": "string",
+      "description": "Valid SPDX license identifier."
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "categories": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "author": { "$ref": "#/$defs/entity" },
+    "publisher": { "$ref": "#/$defs/entity" },
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "modified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ontologies": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/ontologyRole" },
+      "description": "Map of ontology roles to file paths or structured ontology objects."
+    },
+    "entryConcepts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "augmentation": { "$ref": "#/$defs/augmentation" },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Per-resource SHA-256 digest manifest."
+    },
+    "canonicalDigest": { "$ref": "#/$defs/canonicalDigest" },
+    "signature": { "$ref": "#/$defs/signature" },
+    "profileData": {
+      "type": "object",
+      "description": "Namespaced container for profile-specific manifest extensions. See core \u00a710.3."    },
+    "composition": { "$ref": "#/$defs/composition" },
+    "validFrom": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this package's content became authoritative. See core §7.5."
+    },
+    "lastReviewed": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When a human or defined process last confirmed the content's continued accuracy. See core §7.5."
+    },
+    "supersedes": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ],
+      "description": "Package id(s) this package replaces. See core §7.5."    }
+  },
+  "patternProperties": {
+    "^x-[a-zA-Z0-9]+-": { "description": "Vendor extension keys, namespaced as x-<vendor>-<key>." }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "localizedString": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "BCP-47 locale-keyed string map."
+        }
+      ]
+    },
+    "entity": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" }
+      ]
+    },
+    "ontologyRole": {
+      "oneOf": [
+        { "type": "string", "description": "Path to an ontology file." },
+        {
+          "type": "object",
+          "properties": {
+            "iri": { "type": "string", "format": "uri" },
+            "role": { "type": "string" },
+            "format": { "type": "string" },
+            "uri": { "type": "string" }
+          },
+          "required": ["uri"]
+        }
+      ]
+    },
+    "augmentation": {
+      "type": "object",
+      "required": ["target", "targetType", "relationship"],
+      "properties": {
+        "target": { "type": "string" },
+        "targetType": {
+          "type": "string",
+          "description": "Open string naming the target content format (e.g. generic-archive, scorm-2004)."
+        },
+        "relationship": { "type": "string" }
+      }
+    },
+    "composition": {
+      "type": "object",
+      "description": "Package-to-package structural (members) or associative (relates) references. See core §10.",
+      "properties": {
+        "members": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/compositionMember" }
+        },
+        "relates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/compositionRelation" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "compositionMember": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "version": { "type": "string" },
+        "order": { "type": "integer" }
+      }
+    },
+    "compositionRelation": {
+      "type": "object",
+      "required": ["id", "relationship"],
+      "properties": {
+        "id": { "type": "string" },
+        "relationship": { "type": "string" }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "description": "Cryptographic signature object (Sigstore / DSSE). Required if skills/ is present \u2014 core \u00a75.1, \u00a78.2. Presence of skills/ cannot be checked by this schema alone; see the repo's CI validation workflow.",
+      "required": ["type", "value"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Signature scheme identifier, e.g. sigstore or dsse."
+        },
+        "value": {
+          "type": "string",
+          "description": "The signature payload/envelope, encoding defined by type."
+        },
+        "keyid": { "type": "string" },
+        "certificate": { "type": "string" }
+      }
+    },
+    "canonicalDigest": {
+      "type": "object",
+      "description": "Independently-reproducible whole-package SHA-256 digest. See core §5.5.",
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "description": "Digest algorithm identifier. Only \"sha256\" is defined by core §5.5."
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Lowercase hex-encoded digest."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

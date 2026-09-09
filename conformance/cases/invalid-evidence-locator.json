@@ -1,0 +1,25 @@
+{
+  "name": "invalid-evidence-locator",
+  "fixture": "fixtures/invalid-evidence-locator",
+  "description": "A malformed evidence locator is a diagnostic rather than an exception (contract \u00a76).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": false,
+    "codes": [
+      "E208_INVALID_EVIDENCE_LOCATOR"
+    ],
+    "bySeverity": {
+      "error": [
+        "E208_INVALID_EVIDENCE_LOCATOR"
+      ],
+      "warning": [],
+      "info": []
+    }
+  }
+}

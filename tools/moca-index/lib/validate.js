@@ -3,11 +3,16 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { resolvePackagePath } from 'moca-lint/lib/paths.js';
-import { computeCanonicalDigest } from '../../../scripts/validate-canonical-digest.mjs';
+import { resolvePackagePath } from '@openmoca/moca-lint/lib/paths.js';
+import { computeCanonicalDigest } from '@openmoca/moca-sign/lib/canonical-digest.js';
 
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
-const schemaPath = join(repoRoot, 'schemas', 'v1', 'core', 'sidecar-index.schema.json');
+// The schema is vendored into this package rather than read from the
+// repository, so the published package is self-contained. A published tarball
+// contains only bin/, lib/ and README.md -- reading ../../../schemas/ worked
+// in the workspace and failed for anyone who installed it.
+// scripts/check-vendored-schema.mjs asserts this copy matches
+// schemas/v1/core/sidecar-index.schema.json.
+const schemaPath = join(dirname(fileURLToPath(import.meta.url)), 'sidecar-index.schema.json');
 const schema = JSON.parse(readFileSync(schemaPath, 'utf8'));
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });

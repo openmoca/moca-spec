@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openmoca.org/schemas/v1/core/sidecar-index.schema.json",
+  "title": "MOCA Sidecar Index Manifest Schema",
+  "description": "JSON Schema for index.json in a MOCA .moca.idx sidecar archive.",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "target_package_id",
+    "index_type",
+    "item_addressing",
+    "storage"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical JSON Schema URI."
+    },
+    "manifest_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "target_package_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the target MOCA package."
+    },
+    "target_package_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-fA-F0-9]{64}$",
+      "description": "Optional SHA-256 digest of the target .moca archive. Consumers SHOULD verify a declared digest before use."
+    },
+    "index_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Retrieval characteristics, such as dense_vector, hybrid_vector_bm25, or sparse_bm25_only."
+    },
+    "model_info": {
+      "type": "object",
+      "properties": {
+        "dense_model": { "type": "string", "minLength": 1 },
+        "dimensions": { "type": "integer", "minimum": 1 },
+        "sparse_model": { "type": "string", "minLength": 1 },
+        "normalization": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "chunking": {
+      "type": "object",
+      "description": "Optional chunking strategy metadata used during index generation.",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["node_level", "paragraph", "fixed_token_sliding", "semantic_markdown"]
+        },
+        "max_tokens": { "type": "integer", "minimum": 1 },
+        "overlap_tokens": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "item_addressing": {
+      "type": "object",
+      "description": "Declares the required logical fields carried by every indexed item in the storage payload.",
+      "required": ["content_path", "chunk_index", "chunk_count"],
+      "properties": {
+        "content_path": {
+          "const": "content_path",
+          "description": "Canonical path relative to the target package's content/ directory."
+        },
+        "chunk_index": {
+          "const": "chunk_index",
+          "description": "Zero-based position of the indexed item within its content path."
+        },
+        "chunk_count": {
+          "const": "chunk_count",
+          "description": "Positive total number of indexed items for its content path."
+        }
+      },
+      "additionalProperties": false
+    },
+    "storage": {
+      "type": "object",
+      "required": ["format", "file"],
+      "properties": {
+        "format": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Open identifier for the payload format, such as sqlite-vec, jsonl, lance, or parquet."
+        },
+        "file": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$",
+          "description": "Relative path to the storage-native payload within the sidecar archive."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^x-[a-zA-Z0-9]+-": {
+      "description": "Vendor extension keys, namespaced as x-<vendor>-<key>."
+    }
+  },
+  "additionalProperties": false
+}
