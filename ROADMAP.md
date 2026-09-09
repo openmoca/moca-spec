@@ -19,7 +19,7 @@ in [CHANGELOG.md](CHANGELOG.md); this document does not duplicate it.
 | 5 | **CLI tooling** — `moca-lint` (lint/pack/extract), `moca-convert` (4 adapters), `moca-index` (build), each independently versioned with its own tests. | [tools/](tools) |
 | 6 | **Signature and trust infrastructure** — DSSE/Sigstore signing and verification, integrated into `moca-lint`'s security pass. | [spec/moca-trust-model.md](spec/moca-trust-model.md), [tools/moca-sign](tools/moca-sign/README.md) |
 
-Partially delivered: **compliance and standards profiles** (item 11 below) — the
+Partially delivered: **compliance and standards profiles** (item 12 below) — the
 EU AI Act profile has shipped with its specification, schema, example package,
 and SHACL governance shapes under [profiles/eu-ai-act/](profiles/eu-ai-act).
 
@@ -41,6 +41,34 @@ adoption more than any missing feature does.
   MOCA, and it is the direct input to the SDK contract below.
 - Use-case-shaped examples. Examples are currently named by conformance level,
   which is a specification author's taxonomy rather than a reader's.
+
+### OKF conformance and the Core boundary
+
+MOCA is not positioned against the formats it shares ground with. The Open
+Knowledge Format v0.2, published by Google, occupies the same Markdown +
+frontmatter territory as [core §7](spec/moca-core-spec.md#7-grounded-content-nodes-claims--evidence-locators)
+with considerably more weight behind it, and the specification does not mention
+it. The working conclusion is that MOCA's content model was never its
+differentiator — package and container semantics are — and the specification
+should say so by conceding the content model rather than competing on it.
+
+This sits ahead of the SDK work deliberately. Three SDKs implemented against a
+core that is about to lose several §7 fields is wasted implementation effort,
+tripled.
+
+- `content/` becomes a **required** conformant OKF v0.2 bundle, enforced in CI,
+  and the node frontmatter fields OKF already defines are deprecated in favour
+  of OKF's spelling. Breaking; see [docs/plans/01-okf-v0.2-conformance.md](docs/plans/01-okf-v0.2-conformance.md).
+- The Agent Skills vocabulary moves out of core into its own profile, while the
+  signing obligation that a `skills/` directory carries stays in core. See
+  [docs/plans/02-skills-to-agent-skills-profile.md](docs/plans/02-skills-to-agent-skills-profile.md).
+- A MIF interoperability profile and a bidirectional converter, per
+  [docs/plans/03-mif-interoperability.md](docs/plans/03-mif-interoperability.md).
+
+All of it is gated on [ADR-0001](docs/adr/0001-moca-spec-vs-oci-artifacts.md),
+which asks whether MOCA should be a specification at all or an OKF profile
+shipped as OCI artifacts. If that answer is the latter, the work above narrows
+considerably.
 
 ### SDK contract and conformance suite
 
@@ -77,9 +105,37 @@ index, discovering optional semantic data and skills, attaching an index when
 search is wanted, grounding responses in content and evidence locators, and
 degrading gracefully when optional capabilities are absent.
 
+It also carries a second job. The harness **instruments every manifest and
+frontmatter field it reads at runtime** and emits a coverage report. Any field
+never touched after a full run against a real package is a concrete
+deletion-or-demotion candidate, which turns the core-boundary question from an
+argument into a measurement. The report distinguishes "not read, but the code
+path ran" from "no code path exercised this capability" — only the first is
+evidence.
+
+This runs alongside item 9, which supplies its input.
+
+### 9. Courseware converter and the core boundary audit
+
+`SCORM/cmi5 → MOCA Education → AI tutor harness → xAPI`, built end to end
+against one real published course rather than a fixture.
+
+Generic courseware import tooling produces one package per module plus a
+composing package via
+[`composition.members`](spec/moca-core-spec.md#101-compositionmembers--containment-part-of),
+superseding the per-module sidecar-augmentation workaround in
+[moca-education-profile.md §5](profiles/education/moca-education-profile.md#5-sidecar-augmentation-for-courseware)
+and forcing the education-profile redesign listed under item 12. The chain is
+also the first end-to-end proof MOCA has, and it exercises the multi-package
+canonical digest path for the first time against generated content.
+
+Its output feeds item 8's instrumentation, and the untouched-field report
+becomes spec change proposals. Plan:
+[docs/plans/04-converter-first-core-audit.md](docs/plans/04-converter-first-core-audit.md).
+
 ## Later
 
-### 9. Framework and enterprise integration
+### 10. Framework and enterprise integration
 
 LangChain and LlamaIndex adapters, an MCP server, Microsoft Agent Framework
 support, and search-provider abstractions. **These live in their own
@@ -89,7 +145,7 @@ This is also the point at which `moca-lint`'s known single-target-directory
 limitation — no cycle or dangling-reference detection across `composition` —
 should be closed with at least a minimal multi-package check.
 
-### 10. Full end-to-end reference example
+### 11. Full end-to-end reference example
 
 One authoritative demonstration connecting source material → validated package →
 optional index → harness retrieval → framework-integrated consumption, with a
@@ -100,25 +156,25 @@ A reduced form of this — a single "load a package, answer a question with
 evidence" walkthrough — is pulled forward into the documentation work under
 "Now", because it is worth more for adoption than the third SDK.
 
-### 11. Compliance and standards profiles
+### 12. Compliance and standards profiles
 
 - A consistent profile registration and versioning model.
 - Candidate profiles for NIST AI RMF, ISO/IEC 42001, ISO/IEC 23894, and OECD AI
   Principles, per [core §11.5](spec/moca-core-spec.md#115-compliance--standards-profiles).
+- The `agent-skills` and `mif` profiles, which are not compliance profiles but
+  share the same registration and versioning question.
 - Redesign the education profile's `Course`/`Module` shape around
   `composition.members`, replacing the flat `prerequisites` URN-array approach
   in [moca-education-profile.md §4](profiles/education/moca-education-profile.md).
-- Generic courseware import tooling (SCORM/cmi5 → one package per module plus a
-  composing package), superseding the per-module sidecar-augmentation workaround
-  in [moca-education-profile.md §5](profiles/education/moca-education-profile.md).
+  Item 9 forces this rather than waiting for it.
 
-### 12. Website
+### 13. Website
 
 A public site for the project, specification, profiles, SDKs, tools, and
 examples. The in-repository documentation under "Now" is the prerequisite and
 does not wait for this.
 
-### 13. Path to 1.0.0
+### 14. Path to 1.0.0
 
 Operationalises the stability commitments in
 [docs/versioning-and-release.md](docs/versioning-and-release.md): an explicit
@@ -144,8 +200,10 @@ hard to navigate.
 
 Two categories are **out of this repository from the start**, because they carry
 third-party dependency surfaces and release cadences the specification should
-not inherit: framework integrations (item 9) and the end-to-end demonstration
-(item 10).
+not inherit: framework integrations (item 10) and the end-to-end demonstration
+(item 11). The tutor harness and xAPI emitter built for item 9 fall under the
+same rule; only the instrumentation report and the spec change proposals it
+produces come back into this repository.
 
 ## Cross-cutting principles
 
@@ -166,6 +224,16 @@ not inherit: framework integrations (item 9) and the end-to-end demonstration
 
 ## Open decisions
 
+- Whether MOCA should remain a standalone package specification, or become an
+  OKF profile shipped as OCI artifacts with cosign signing and image-index
+  composition. [ADR-0001](docs/adr/0001-moca-spec-vs-oci-artifacts.md) proposes
+  a hybrid and states what would falsify it; it gates the "Now" work above.
+- Whether `epistemicStatus` ([core §7.2](spec/moca-core-spec.md#72-core-epistemic-status-vocabulary))
+  survives OKF conformance. OKF's `verified` and `status` cover two of its six
+  values; `disputed` has no OKF equivalent and is depended on by
+  [§10.2](spec/moca-core-spec.md#102-compositionrelates--loose-reference-relates-to).
+- Whether MOCA continues to define a content model at all once item 9's
+  instrumentation reports which fields a real consumer reads.
 - First supported embedding and storage backends for `.moca.idx` payloads.
 - Release model and ownership for each SDK once more than one person maintains
   them.

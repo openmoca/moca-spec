@@ -50,5 +50,7 @@ authoritative source for each.
 | [Releasing](releasing.md) | Maintainer runbook: npm setup, publish order, dist-tags, provenance |
 | [Migrations](../MIGRATIONS.md) | Behaviour changes that affect existing packages |
 | [Roadmap](../ROADMAP.md) | What is delivered and what is next |
+| [Plans](plans/README.md) | Analysis behind changes too large for a single issue — proposals, not commitments |
+| [Decision records](adr/README.md) | Why the specification says what it says, and what was rejected |
 | [Contributing](../CONTRIBUTING.md) | Proposing spec changes and new profiles |
 | [Governance](../GOVERNANCE.md) | How decisions get made, and the repository model |
