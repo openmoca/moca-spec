@@ -46,22 +46,24 @@ export function runManifestPass({ rootDir, findings }) {
     return null;
   }
 
+  // Checked directly against the parsed manifest rather than inferred from a schema error.
+  // This check previously read `err.params.additionalProperty` from the schema's
+  // `additionalProperties` failure, which coupled it to the schema being strict -- so
+  // relaxing `additionalProperties` for core §5.6 removed the only path that reported it.
+  // The schema still states the rule declaratively in its root `not` clause; that error is
+  // skipped below because it restates what this loop reports with a clearer message.
+  for (const key of Object.keys(manifest)) {
+    if (EXCLUDED_KEYS.has(key)) {
+      findings.add(
+        'E103_EXCLUDED_PROPERTIES',
+        `moca.json contains forbidden key "${key}" (core §5.3).`,
+        { file: 'moca.json' }
+      );
+    }
+  }
+
   if (!validateCore(manifest)) {
     for (const err of validateCore.errors) {
-      const property = err.instancePath.replace(/^\//, '').split('/')[0];
-      if (err.keyword === 'additionalProperties') {
-        const badKey = err.params.additionalProperty;
-        if (EXCLUDED_KEYS.has(badKey)) {
-          findings.add(
-            'E103_EXCLUDED_PROPERTIES',
-            `moca.json contains forbidden key "${badKey}" (core §5.3).`,
-            { file: 'moca.json' }
-          );
-          continue;
-        }
-      }
-      // The schema's root "not" clause duplicates additionalProperties for excluded
-      // keys; additionalProperties already reported it above with a clearer message.
       if (err.keyword === 'not' && err.instancePath === '') continue;
       findings.add(
         'E102_SCHEMA_INVALID',

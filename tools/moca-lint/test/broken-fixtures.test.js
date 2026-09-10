@@ -23,6 +23,16 @@ test('bad-epistemic-status fixture reports E204', async () => {
   ]);
 });
 
+test('unknown top-level keys are ignored, not rejected (core §5.6)', async () => {
+  // The manifest carries an undefined `futureField` and a vendor `x-acme-tenant-id`.
+  // Neither may make the package invalid: §5.6 is the forward-compatibility guarantee that
+  // lets a package outlive the tooling that produced it. This regressed once already, when
+  // the schema used "additionalProperties": false.
+  const { findings } = await lintPackage({ rootDir: join(fixturesDir, 'unknown-top-level-key') });
+
+  assert.deepEqual(findings.map((f) => `${f.severity}:${f.code}`), []);
+});
+
 test('integrity-mismatch fixture reports E402', async () => {
   assert.deepEqual(await errorCodes(join(fixturesDir, 'integrity-mismatch')), [
     'E402_INTEGRITY_MISMATCH',
