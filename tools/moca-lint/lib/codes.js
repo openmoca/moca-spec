@@ -13,6 +13,11 @@ export const SEVERITY = Object.freeze({
 // Codes that are `warning` by default and escalate to `error` under --strict.
 export const WARN_BY_DEFAULT = new Set([
   'E203_DANGLING_EVIDENCE_SOURCE',
+  // SDK contract §5.3: an epistemicStatus outside the core vocabulary MUST be surfaced as an
+  // unrecognised value with at most warning severity -- never an error. It is most likely
+  // vocabulary from a profile this linter has no extension for, which is the same reasoning
+  // that already puts E210 in this set.
+  'E204_INVALID_EPISTEMIC_STATUS',
   'E210_UNVERIFIABLE_EPISTEMIC_STATUS',
   'E303_DUPLICATE_CONCEPT_DECLARATION',
   'E304_UNDEFINED_CONCEPT',

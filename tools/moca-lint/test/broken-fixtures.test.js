@@ -11,16 +11,26 @@ async function errorCodes(rootDir, options = {}) {
   return findings.filter((f) => f.severity === 'error').map((f) => f.code);
 }
 
+async function warningCodes(rootDir, options = {}) {
+  const { findings } = await lintPackage({ rootDir, ...options });
+  return findings.filter((f) => f.severity === 'warning').map((f) => f.code);
+}
+
 test('excluded-properties fixture reports E103', async () => {
   assert.deepEqual(await errorCodes(join(fixturesDir, 'excluded-properties')), [
     'E103_EXCLUDED_PROPERTIES',
   ]);
 });
 
-test('bad-epistemic-status fixture reports E204', async () => {
-  assert.deepEqual(await errorCodes(join(fixturesDir, 'bad-epistemic-status')), [
-    'E204_INVALID_EPISTEMIC_STATUS',
-  ]);
+test('bad-epistemic-status fixture reports E204 as a warning, never an error', async () => {
+  // SDK contract §5.3: an epistemicStatus outside the core vocabulary MUST be surfaced with
+  // at most warning severity. Asserting the absence of errors as well as the presence of the
+  // warning is the point of this test -- reporting the code at the wrong severity would still
+  // satisfy a test that only checked the code was emitted.
+  const dir = join(fixturesDir, 'bad-epistemic-status');
+
+  assert.deepEqual(await warningCodes(dir), ['E204_INVALID_EPISTEMIC_STATUS']);
+  assert.deepEqual(await errorCodes(dir), []);
 });
 
 test('integrity-mismatch fixture reports E402', async () => {
