@@ -1,7 +1,7 @@
 {
   "name": "bad-epistemic-status",
   "fixture": "fixtures/bad-epistemic-status",
-  "description": "An epistemicStatus value outside the core vocabulary is a warning, never an error \u2014 it is most likely profile vocabulary (contract \u00a75.3).",
+  "description": "An epistemicStatus value outside the core vocabulary is a warning, never an error — it is most likely profile vocabulary (contract §5.3).",
   "trustRoot": null,
   "capabilities": [
     "content",
@@ -10,15 +10,15 @@
   ],
   "expect": {
     "manifestParsed": true,
-    "valid": false,
+    "valid": true,
     "codes": [
       "E204_INVALID_EPISTEMIC_STATUS"
     ],
     "bySeverity": {
-      "error": [
+      "error": [],
+      "warning": [
         "E204_INVALID_EPISTEMIC_STATUS"
       ],
-      "warning": [],
       "info": []
     }
   }
