@@ -1,0 +1,21 @@
+{
+  "name": "unknown-top-level-key",
+  "fixture": "fixtures/unknown-top-level-key",
+  "description": "Unknown top-level manifest keys are ignored, not rejected: core §5.6's forward-compatibility guarantee. Carries both an undefined field and a vendor x- extension (§12).",
+  "trustRoot": null,
+  "capabilities": [
+    "content",
+    "diagnostics",
+    "manifest"
+  ],
+  "expect": {
+    "manifestParsed": true,
+    "valid": true,
+    "codes": [],
+    "bySeverity": {
+      "error": [],
+      "warning": [],
+      "info": []
+    }
+  }
+}

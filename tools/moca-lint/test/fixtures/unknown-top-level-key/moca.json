@@ -1,0 +1,8 @@
+{
+  "id": "urn:moca:test:unknown-top-level-key",
+  "version": "1.0.0",
+  "title": "Unknown Top-Level Key Fixture",
+  "futureField": "a key defined by a later spec revision",
+  "x-acme-tenant-id": "vendor-scoped extension",
+  "@context": { "ex": "https://example.org/vocab#" }
+}

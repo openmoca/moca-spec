@@ -114,7 +114,9 @@
   "patternProperties": {
     "^x-[a-zA-Z0-9]+-": { "description": "Vendor extension keys, namespaced as x-<vendor>-<key>." }
   },
-  "additionalProperties": false,
+  "additionalProperties": {
+    "description": "Unknown top-level keys are permitted. Core \u00a75.6 requires a consumer encountering unknown top-level manifest fields to ignore them rather than reject the package, so schema validation must not fail on them. The excluded-property prohibition is enforced separately by the root \"not\" clause above, and vendor keys are additionally described by patternProperties."
+  },
   "$defs": {
     "localizedString": {
       "oneOf": [
