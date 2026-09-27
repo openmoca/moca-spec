@@ -121,6 +121,58 @@
       }
     },
     {
+      "id": "evidence-normalised",
+      "description": "Markdown and HTML sources are matched after normalisation: markup and link syntax removed, entities decoded. A quote that keeps raw Markdown markup does not match.",
+      "target": "fixtures/evidence-normalised",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:719ca2c214a26a70718c57b4f44d6b1d10fdf46123c071148ba4386628f3fe18",
+        "evidenceMatched": {
+          "refunds.md": [
+            true,
+            true,
+            true,
+            false,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "id": "evidence-webvtt",
+      "description": "WebVTT captions: quotes match cue text with cue tags removed; Media Fragments time ranges match when they overlap a cue.",
+      "target": "fixtures/evidence-webvtt",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:4a8a2339f48cd5223077c90f2f360e084c92f894784ca8312985b0e4ca698d6e",
+        "evidenceMatched": {
+          "briefing.md": [
+            true,
+            true,
+            true,
+            false,
+            true
+          ]
+        }
+      }
+    },
+    {
       "id": "signed-reviewed",
       "description": "Publisher-signed and reviewed package, verified against the trust root.",
       "target": "fixtures/signed-reviewed",

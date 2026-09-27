@@ -54,7 +54,9 @@ and only when, they appear in capitals.
 | Content and node trust fields | OKF v0.2 |
 | Digests | SHA-256 over a BagIt-style payload manifest (RFC 8493 `manifest-sha256.txt` line format) |
 | Attestations | in-toto Statement v1, wrapped in DSSE or a Sigstore bundle |
-| Evidence selectors | W3C Web Annotation: `FragmentSelector`, `TextQuoteSelector`, `TextPositionSelector`; RFC 3778 for PDF pages |
+| Evidence selectors | W3C Web Annotation: `FragmentSelector`, `TextQuoteSelector`, `TextPositionSelector`; RFC 3778 for PDF pages; W3C Media Fragments for time ranges in audio and video |
+| Captions and transcripts | WebVTT |
+| Structure | W3C SKOS, DCMI Metadata Terms, and `owl:deprecated`, in Turtle (§5.6) |
 | Languages | BCP 47 |
 | Licences | SPDX license expressions |
 
@@ -195,7 +197,7 @@ moca:
 
 | Key | Meaning |
 | --- | --- |
-| `evidence` | List of `{ source, selector, note? }`. `source` MUST equal the `id` of an entry in the node's OKF `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN`). `selector` is a W3C Web Annotation `FragmentSelector` (`value`, optional `conformsTo`), `TextQuoteSelector` (`exact`, optional `prefix`, `suffix`) or `TextPositionSelector` (`start`, `end`). A PDF page is a `FragmentSelector` with `value: "page=12"` and `conformsTo: "http://tools.ietf.org/rfc/rfc3778"`. |
+| `evidence` | List of `{ source, selector, note? }`. `source` MUST equal the `id` of an entry in the node's OKF `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN`). `selector` is a W3C Web Annotation `FragmentSelector` (`value`, optional `conformsTo`), `TextQuoteSelector` (`exact`, optional `prefix`, `suffix`) or `TextPositionSelector` (`start`, `end`). A PDF page is a `FragmentSelector` with `value: "page=12"` and `conformsTo: "http://tools.ietf.org/rfc/rfc3778"`. A time range in audio or video is a `FragmentSelector` with `value: "t=75,210"` and `conformsTo: "http://www.w3.org/TR/media-frags/"`; carry the WebVTT captions under `media/` so the range can be checked. |
 | `valid_from`, `valid_until` | The node's own validity window (§4.4). `valid_until` MUST be later than `valid_from` (`C010_VALIDITY_WINDOW_INVALID`). |
 | `contested_by` | Node ids or package ids of content that disputes this node. |
 | `audience` | Who the node is for. Suggested values: `public`, `internal`, `restricted`; other values are allowed. It is a label a host filters on, not an access-control mechanism (§13.3). |

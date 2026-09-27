@@ -102,3 +102,15 @@ test('a source outside sources/ and media/ does not count as self-contained', as
   const pkg = await readPackage(dir);
   assert.deepEqual(pkg.capabilities, ['core', 'located-evidence']);
 });
+
+test('sources are normalised per type before matching', async () => {
+  const { markdownText, htmlText, webvtt, mediaTimeRange } = await import('../lib/evidence-text.js');
+  assert.equal(markdownText('## A *b* _c_ `d` [e](http://x) ![f](g.png)\n- item\n1. one'), 'A b c d e f\nitem\none');
+  assert.equal(htmlText('<p>a &amp; b&#163;<script>x</script></p>'), 'a & b£');
+  const v = webvtt('WEBVTT\n\nNOTE x\n\n00:01.000 --> 00:02.500\n<i>Hi</i> there\n\n01:00:00.000 --> 01:00:01.000\nLate');
+  assert.deepEqual(v.cues.map((c) => [c.start, c.end]), [[1, 2.5], [3600, 3601]]);
+  assert.equal(v.text, 'Hi there\nLate');
+  assert.deepEqual(mediaTimeRange('t=10,20'), { start: 10, end: 20 });
+  assert.deepEqual(mediaTimeRange('t=npt:00:01:05'), { start: 65, end: Infinity });
+  assert.equal(mediaTimeRange('t=20,10'), null);
+});

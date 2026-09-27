@@ -173,12 +173,30 @@ Rules:
 - `evidence[].matched` is `true` when the Reader checked the selector against
   the cited file inside the package and it matched, and `false` when it checked
   and it did not match (`C011`). It is absent when the Reader did not check:
-  the source is outside the package, is not `text/plain` or `text/markdown`,
-  or the selector is not a `TextQuoteSelector` or `TextPositionSelector`.
-  A quote matches when its `exact` text occurs in the file's UTF-8 text and,
-  when `prefix` or `suffix` is given, an occurrence has that text immediately
-  before or after it. No whitespace or case folding is applied. A position
-  matches when `start` ≤ `end` ≤ the file's length in Unicode code points.
+  the source is outside the package or of a type below that is not listed, or
+  the selector is of a kind it does not check. It says the quote is in the
+  file; it does not say the node's claim is true.
+- **Text is normalised before matching**, as W3C Web Annotation requires
+  ("the text MUST be normalized"). By source type, from the file name:
+
+  | Source | Normalised text |
+  | --- | --- |
+  | `.txt`, `.text` | The file's text, unchanged. |
+  | `.md`, `.markdown` | 1. `![alt](url)` becomes `alt` and `[text](url)` becomes `text`; 2. on each line, a leading heading marker (1-6 `#` and whitespace) and a leading list marker (`-`, `*`, `+`, or digits and `.` or `)`, then whitespace) are removed; 3. every `*`, `_` and backtick is removed. |
+  | `.html`, `.htm` | `script` and `style` elements removed, all tags removed, then character references decoded: numeric ones, and `&amp;` `&lt;` `&gt;` `&quot;` `&apos;` `&nbsp;` (U+00A0). |
+  | `.vtt` (WebVTT) | The payload lines of every cue, cue tags removed and character references decoded as for HTML, joined with LF. The header, `NOTE` and other blocks without a cue timing line are skipped. |
+
+  A `TextQuoteSelector` matches when its `exact` text occurs in the normalised
+  text and, when `prefix` or `suffix` is given, an occurrence has that text
+  immediately before or after it. No whitespace or case folding is applied. A
+  `TextPositionSelector` matches when `start` ≤ `end` ≤ the length of the
+  normalised text in Unicode code points.
+- **Media time ranges.** A `FragmentSelector` that `conformsTo`
+  `http://www.w3.org/TR/media-frags/` with a temporal value `t=start[,end]`
+  (seconds, or `hh:mm:ss` with an optional `npt:` prefix) matches a WebVTT
+  source when the range overlaps at least one cue. Against other media it is
+  not checked. Carry the captions or transcript of a video in the package to
+  make its citations checkable.
 - `concepts` lists the absolute concept IRIs the node is bound to, when the
   Reader implements the [ontology profile](../profiles/ontology/moca-ontology-profile.md).
 

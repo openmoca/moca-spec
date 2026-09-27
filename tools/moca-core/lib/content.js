@@ -3,6 +3,9 @@
 import { posix } from 'node:path';
 import { splitFrontmatter } from './frontmatter.js';
 import { validateAgainst } from './schemas.js';
+import { sourceKind, checkSelector } from './evidence-text.js';
+
+export { selectorMatches } from './evidence-text.js';
 
 export const CONTENT_DIR = 'content';
 const RESERVED = new Set(['index.md', 'log.md']);
@@ -10,7 +13,6 @@ const SCHEME = /^[A-Za-z][A-Za-z0-9+.-]*:/;
 const LINK = /!?\[[^\]]*\]\(\s*(<[^>]+>|[^)\s]+)(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)/g;
 const PATH_REF = /^(\.{1,2}\/|\/)/;
 const EVIDENCE_DIRS = ['sources/', 'media/'];
-const CHECKABLE_TEXT = /\.(txt|text|md|markdown)$/i;
 
 /**
  * @typedef {object} Representation
@@ -139,8 +141,8 @@ function checkEvidence(file, fm, diagnostics) {
 
 /**
  * Checks each moca.evidence selector against the cited file when that file is
- * inside the package and is text. Reader contract §7: exact match on the
- * file's UTF-8 text, no folding; positions count Unicode code points.
+ * inside the package and checkable (text, Markdown, HTML or WebVTT), after the
+ * normalisation in evidence-text.js (Reader contract §7).
  * @returns {EvidenceCheck[]}
  */
 function verifyEvidence(file, fm, files, bytes, diagnostics, limits, sourceText) {
@@ -152,35 +154,16 @@ function verifyEvidence(file, fm, files, bytes, diagnostics, limits, sourceText)
     if (typeof resource !== 'string' || !PATH_REF.test(resource)) return { local: false };
     const { path, escapes } = resolveReference(file, resource);
     if (escapes || !path || !files.has(path) || !EVIDENCE_DIRS.some((d) => path.startsWith(d))) return { local: false };
-    if (!CHECKABLE_TEXT.test(path) || !e.selector || typeof e.selector !== 'object') return { local: true };
+    const kind = sourceKind(path);
+    if (!kind || !e.selector || typeof e.selector !== 'object') return { local: true };
     if (i >= limits.maxEvidencePerNode || bytes.get(path).length > limits.maxSourceBytesChecked) return { local: true };
     if (!sourceText.has(path)) sourceText.set(path, bytes.get(path).toString('utf8'));
-    const matched = selectorMatches(e.selector, sourceText.get(path));
+    const matched = checkSelector(e.selector, sourceText.get(path), kind);
     if (matched === false) {
       diagnostics.add('C011_EVIDENCE_SELECTOR_UNMATCHED', `evidence ${e.selector.type} for source "${e.source}" does not match ${path}`, { file });
     }
     return matched === undefined ? { local: true } : { local: true, matched };
   });
-}
-
-/** @returns {boolean|undefined} undefined when the selector type is not checked */
-export function selectorMatches(selector, text) {
-  if (selector.type === 'TextQuoteSelector') {
-    if (typeof selector.exact !== 'string' || selector.exact === '') return false;
-    const prefix = typeof selector.prefix === 'string' ? selector.prefix : '';
-    const suffix = typeof selector.suffix === 'string' ? selector.suffix : '';
-    for (let i = text.indexOf(selector.exact); i >= 0; i = text.indexOf(selector.exact, i + 1)) {
-      const end = i + selector.exact.length;
-      if (i >= prefix.length && text.slice(i - prefix.length, i) === prefix && text.slice(end, end + suffix.length) === suffix) return true;
-    }
-    return false;
-  }
-  if (selector.type === 'TextPositionSelector') {
-    const { start, end } = selector;
-    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0) return false;
-    return start <= end && end <= [...text].length;
-  }
-  return undefined;
 }
 
 function checkWindow(file, fm, diagnostics) {
