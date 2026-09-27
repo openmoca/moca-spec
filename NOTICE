@@ -10,16 +10,17 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 ---
 
-This repository contains both specification prose (moca-core-spec.md, the
-documents under spec/ and docs/, and the profile specifications under
-profiles/) and executable reference tooling (the CLIs under tools/ and the
-validation scripts under scripts/). All of it is licensed under the Apache
-License, Version 2.0.
+This repository contains both specification prose (the documents under
+spec/ and docs/, and the profile specifications under profiles/) and
+executable reference tooling (the tools under tools/ and the validation
+scripts under scripts/). All of it is licensed under the Apache License,
+Version 2.0.
 
 The example packages under examples/ and profiles/*/examples/ are illustrative
 fixtures, also Apache-2.0 licensed. They are not production content and their
 declared `license` fields describe the example package itself.
 
-fixtures/signing-keys/ contains a deliberately published, non-production
-Ed25519 keypair used only to sign this repository's own example packages. It
+fixtures/signing-keys/ contains deliberately published, non-production
+Ed25519 key pairs used only to sign this repository's own example packages
+and conformance fixtures. It
 carries no trust value; see that directory's README.md.

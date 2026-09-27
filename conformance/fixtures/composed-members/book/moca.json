@@ -1,0 +1,17 @@
+{
+  "id": "https://example.com/conformance/book",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "members": [
+    {
+      "id": "https://example.com/conformance/chapter-a",
+      "version": "1.0.0",
+      "digest": "sha256:e98c205bc6234cea499e9589ed52c25b2f6d4970d95186e92d4799a74f0e4242"
+    },
+    {
+      "id": "https://example.com/conformance/chapter-b",
+      "version": "1.0.0",
+      "digest": "sha256:bcda574e9359c8c2bf5e13287ebcab7ca964f5af1c4b404061164aa5cef44be5"
+    }
+  ]
+}

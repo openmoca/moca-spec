@@ -1,38 +1,31 @@
 {
   "name": "moca-spec",
   "private": true,
-  "version": "0.1.0-beta.1",
-  "description": "MOCA specification, JSON Schemas, and example packages.",
+  "version": "0.2.0-alpha.1",
+  "description": "MOCA: a package layer for portable, verifiable AI knowledge. Specification, schemas, examples, conformance corpus and reference tools.",
   "license": "Apache-2.0",
   "type": "module",
   "workspaces": [
     "tools/*"
   ],
   "scripts": {
-    "test": "npm run validate:all && npm run test:tools",
+    "test": "npm run validate && npm run test:tools",
     "test:tools": "node --test \"tools/*/test/*.test.js\"",
-    "validate:all": "npm run validate && npm run validate:jsonld && npm run validate:canonical-digest && npm run validate:derived && npm run validate:sidecar-index && npm run validate:links && npm run conformance:check && npm run validate:vendored-schemas && npm run validate:tool-deps && npm run lint:md && npm run lint:moca",
-    "validate": "node scripts/validate-examples.mjs",
-    "validate:sidecar-index": "node scripts/validate-sidecar-index.mjs",
-    "validate:jsonld": "node scripts/validate-jsonld-context.mjs",
-    "validate:canonical-digest": "node scripts/validate-canonical-digest.mjs",
-    "validate:links": "node scripts/validate-links.mjs",
+    "validate": "npm run validate:examples && npm run conformance && npm run validate:derived && npm run validate:schemas && npm run validate:tool-deps && npm run validate:links && npm run lint:md",
+    "validate:examples": "node scripts/validate-examples.mjs",
+    "conformance": "node scripts/run-conformance.mjs",
+    "conformance:actual": "node scripts/run-conformance.mjs --actual",
     "validate:derived": "node scripts/refresh-derived.mjs --check",
     "refresh:derived": "node scripts/refresh-derived.mjs",
-    "lint:md": "markdownlint-cli2 \"**/*.md\" \"!**/node_modules/**\"",
-    "lint:moca": "node scripts/lint-examples.mjs",
-    "lint:moca:sarif": "node scripts/lint-examples.mjs --sarif moca-lint.sarif",
-    "lint:moca:update-baseline": "node scripts/lint-examples.mjs --update",
-    "conformance:generate": "node scripts/generate-conformance-cases.mjs",
-    "conformance:check": "node scripts/generate-conformance-cases.mjs --check",
-    "validate:vendored-schemas": "node scripts/check-vendored-schema.mjs",
-    "validate:tool-deps": "node scripts/check-tool-deps.mjs"
+    "validate:schemas": "node scripts/check-vendored-schemas.mjs",
+    "validate:tool-deps": "node scripts/check-tool-deps.mjs",
+    "validate:links": "node scripts/validate-links.mjs",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"!**/node_modules/**\""
   },
   "devDependencies": {
+    "adm-zip": "^0.6.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
-    "canonicalize": "2.1.0",
-    "jsonld": "^9.0.0",
     "markdownlint-cli2": "^0.23.2"
   }
 }

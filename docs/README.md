@@ -1,58 +1,32 @@
-# MOCA documentation
+# Documentation
 
-Non-normative guides. The normative specifications live in
-[`spec/`](../spec).
-
-## Start here
+## Understand
 
 | | |
-|---|---|
-| [Why MOCA?](why-moca.md) | The problem it solves, what it is not, and why not to just use a folder of Markdown or a vector database |
-| [Architecture](architecture.md) | The three pillars — MOCA package, Knowledge Harness, AI Harness — and where retrieval lives |
-| [Use cases](use-cases.md) | What people build with it, and how it relates to RO-Crate, DITA, MCP and others |
+| --- | --- |
+| [Why MOCA?](why-moca.md) | The problem, what MOCA adds to OKF, and what it is not |
+| [Use cases](use-cases.md) | Where a package layer pays off, and where it does not |
+| [Architecture](architecture.md) | Package, Reader, application; how it fits your retrieval stack |
+
+## Do
+
+| | |
+| --- | --- |
 | [Quickstart](quickstart.md) | A valid package in five minutes |
-| [End-to-end walkthrough](walkthrough.md) | Source files → convert → sign → index → pack → grounded answer |
+| [Walkthrough](walkthrough.md) | Convert, sign, review, index, serve over MCP |
+| [Authoring packages](guides/authoring.md) | Content, evidence, validity, versions, members, relations |
+| [Signing and review](guides/signing-and-review.md) | Publisher and review attestations, trust roots |
+| [Consuming packages](guides/consuming.md) | Readers, citation records, adapters, the default retrieval policy |
+| [Search and sidecar indexes](guides/search-and-indexes.md) | Lexical search, sidecars, vector stores |
+| [Capabilities](guides/capabilities.md) | Which features your use needs |
 
-## Guides
-
-| | |
-|---|---|
-| [Choosing a conformance level](guides/choosing-a-level.md) | Level 1, 2 or 3 — and why the answer is usually 1 |
-| [Authoring](guides/authoring.md) | Grounding metadata, lifecycle, integrity, composition, profiles |
-| [Consuming a package](guides/consuming.md) | What a Knowledge Harness does: load, validate, resolve, degrade gracefully |
-| [Signing and trust](guides/signing-and-trust.md) | Signing in practice, verification, and the `skills/` boundary |
-| [Search and indexes](guides/search-and-indexes.md) | Knowledge Harness search modes, and optional `.moca.idx` sidecars |
-
-## Reference
-
-Rather than restating them here — where they would drift — these point at the
-authoritative source for each.
-
-| Looking for | Authoritative source |
-|---|---|
-| Manifest field reference | [core spec §5.1](../spec/moca-core-spec.md#51-manifest-properties) |
-| Package directory layout | [core spec §4](../spec/moca-core-spec.md#4-logical-package-structure) |
-| Conformance level requirements | [core spec §3](../spec/moca-core-spec.md#3-conformance-levels) |
-| Content node frontmatter | [core spec §7.1](../spec/moca-core-spec.md#71-commonmark-knowledge-nodes-content) |
-| Epistemic status vocabulary | [core spec §7.2](../spec/moca-core-spec.md#72-core-epistemic-status-vocabulary) |
-| Composition semantics | [core spec §10](../spec/moca-core-spec.md#10-package-composition--relationships) |
-| Profile mechanism | [core spec §11](../spec/moca-core-spec.md#11-profiles) |
-| Sidecar index manifest | [sidecar index spec](../spec/moca-sidecar-index-spec.md) |
-| SDK Reader / Producer classes | [SDK contract](../spec/moca-sdk-contract.md) |
-| Signature format, trust roots, revocation | [trust model](../spec/moca-trust-model.md) |
-| JSON Schemas | [`schemas/v1/`](../schemas/v1) |
-| `moca-lint` finding codes | [tools/moca-lint](../tools/moca-lint/README.md#validation-passes--finding-codes) |
-| CLI options and exit codes | [moca-lint](../tools/moca-lint/README.md) · [moca-convert](../tools/moca-convert/README.md) · [moca-index](../tools/moca-index/README.md) · [moca-sign](../tools/moca-sign/README.md) |
-
-## Project
+## Decide and plan
 
 | | |
-|---|---|
-| [Versioning and release](versioning-and-release.md) | Semver policy, what beta means, compatibility |
-| [Releasing](releasing.md) | Maintainer runbook: npm setup, publish order, dist-tags, provenance |
-| [Migrations](../MIGRATIONS.md) | Behaviour changes that affect existing packages |
-| [Roadmap](../ROADMAP.md) | What is delivered and what is next |
-| [Plans](plans/README.md) | Analysis behind changes too large for a single issue — proposals, not commitments |
-| [Decision records](adr/README.md) | Why the specification says what it says, and what was rejected |
-| [Contributing](../CONTRIBUTING.md) | Proposing spec changes and new profiles |
-| [Governance](../GOVERNANCE.md) | How decisions get made, and the repository model |
+| --- | --- |
+| [Decision records](adr/README.md) | Why the design is what it is, and what would change it |
+| [Plans](plans/README.md) | Work in progress |
+| [Versioning and release](versioning-and-release.md) | What version numbers promise |
+| [Releasing](releasing.md) | The maintainer's release runbook |
+
+The normative documents are in [`spec/`](../spec).

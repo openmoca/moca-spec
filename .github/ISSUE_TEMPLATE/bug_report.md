@@ -1,23 +1,20 @@
 ---
 name: Bug report
-about: Report a problem with schemas, examples, or documentation
+about: Report a problem with the specification, schemas, tools, examples or documentation
 title: "[Bug] "
 labels: bug
 ---
 
-## Location
+## Where
 
-<!-- File and line/section, e.g. schemas/v1/core/moca.schema.json,
-     examples/level-2-semantic/moca.json, spec/moca-core-spec.md §7.4 -->
+<!-- File and section or command, e.g. tools/moca-lint `lint`, schemas/v1/node.schema.json -->
 
-## Problem
+## What happens
 
-<!-- What's wrong? Invalid JSON, schema/spec mismatch, broken link, etc. -->
+<!-- Include the command, the output, and the diagnostic codes if any. -->
 
-## Expected behavior
+## What should happen
 
-<!-- What should it say/do instead? -->
+## A minimal package that shows it
 
-## Additional context
-
-<!-- Optional -->
+<!-- Optional but very helpful. -->

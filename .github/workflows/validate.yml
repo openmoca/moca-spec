@@ -5,9 +5,12 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  validate-examples:
-    name: Validate schemas and examples
+  specification:
+    name: Examples, conformance, derived artifacts, schemas, links, Markdown
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,56 +20,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run validate
-      - run: npm run validate:jsonld
-      - run: npm run validate:canonical-digest
-      - run: npm run validate:derived
-      - run: npm run validate:sidecar-index
-      - run: npm run validate:links
-      - run: npm run conformance:check
-      - run: npm run validate:vendored-schemas
-      - run: npm run validate:tool-deps
 
-  lint-markdown:
-    name: Lint Markdown
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run lint:md
-
-  moca-lint:
-    name: moca-lint (tests + example packages)
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: node --test 'tools/moca-lint/test/*.test.js'
-      - run: npm run lint:moca:sarif
-        if: matrix.os == 'ubuntu-latest'
-      - run: npm run lint:moca
-        if: always()
-      - uses: github/codeql-action/upload-sarif@v3
-        if: matrix.os == 'ubuntu-latest' && always()
-        with:
-          sarif_file: moca-lint.sarif
-
-  moca-convert:
-    name: moca-convert (tests)
+  tools:
+    name: Tool tests (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
@@ -79,37 +35,5 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: node --test 'tools/moca-convert/test/*.test.js'
-
-  moca-index:
-    name: moca-index (tests)
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: node --test 'tools/moca-index/test/*.test.js'
-
-  moca-sign:
-    name: moca-sign (tests)
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: node --test 'tools/moca-sign/test/*.test.js'
-
+      - run: npm run test:tools
+      - run: npm run conformance

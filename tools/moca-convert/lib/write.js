@@ -1,11 +1,10 @@
 // Writes a PackageDraft (see lib/adapters/index.js) to disk and gates
-// success on lintPackage() reporting zero error-severity findings --
-// mirrors moca-lint's own pack.js fail-closed contract: lint first, refuse
-// to leave invalid output behind.
+// success on the reference Reader reporting zero error-severity diagnostics:
+// read first, refuse to leave invalid output behind.
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { lintPackage } from '@openmoca/moca-lint/lib/lint.js';
+import { readPackage } from '@openmoca/moca-core';
 import { UsageError } from './target.js';
 
 export { UsageError };
@@ -17,7 +16,7 @@ export { UsageError };
  * @param {boolean} [params.force]
  * @param {boolean} [params.strict]
  * @param {(entry: string) => void} [params.onLog]
- * @returns {Promise<{ findings: import('@openmoca/moca-lint/lib/findings.js').Finding[] }>}
+ * @returns {Promise<{ findings: object[], digest: string }>}
  */
 export async function writeDraft({ draft, outDir, force = false, strict = false, onLog = () => {} }) {
   const outDirExists = existsSync(outDir);
@@ -33,7 +32,9 @@ export async function writeDraft({ draft, outDir, force = false, strict = false,
   try {
     stageDraft(draft, stageDir);
 
-    const { findings } = await lintPackage({ rootDir: stageDir, strict, onLog });
+    onLog(`reading ${stageDir}`);
+    const result = await readPackage(stageDir, { strict });
+    const findings = result.diagnostics;
     const errors = findings.filter((f) => f.severity === 'error');
 
     if (errors.length > 0) {
@@ -48,7 +49,7 @@ export async function writeDraft({ draft, outDir, force = false, strict = false,
       renameSync(stageDir, outDir);
     }
 
-    return { findings };
+    return { findings, digest: result.digest };
   } catch (err) {
     // Never leave partial/invalid output behind: on any failure, remove the
     // staged directory. In scratch mode that's a temp dir, so the
@@ -75,7 +76,7 @@ function stageDraft(draft, stageDir) {
 export class ConversionFailedError extends Error {
   /**
    * @param {string} message
-   * @param {import('@openmoca/moca-lint/lib/findings.js').Finding[]} findings
+   * @param {object[]} findings
    */
   constructor(message, findings) {
     super(message);

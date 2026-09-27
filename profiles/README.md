@@ -1,32 +1,39 @@
 # Profiles
 
-Each subdirectory under `profiles/` is a complete, independently extractable
-profile bundle. It contains the profile specification
-(`moca-<name>-profile.md`), its JSON Schema (`profile.schema.json`), and one or
-more example packages (`examples/`).
+A profile adds vocabulary or rules on top of MOCA core without changing what
+core means ([package spec §9](../spec/moca-package-spec.md#9-profiles)). A
+package declares a profile by listing its URI as a key of `profiles` in
+`moca.json`; the value is that profile's package-level data.
 
-Per [Profile Graduation](../GOVERNANCE.md#profile-graduation), extracting a
-profile to a separate repository is simply copying its `profiles/<name>/`
-directory into that repository. A profile's identity is its URI, not this
-repository path, so extracting it does not change already-published packages.
+A Reader that does not recognise a profile reports `F001_PROFILE_UNRECOGNISED`
+(info) and reads the package as plain core. Profile data is never needed to
+use a package.
 
-This repository's `moca-lint` validates MOCA Core conformance only. It does not
-validate a profile's `profileData` against that profile's schema. A profile MAY
-ship or link to separate linting or validation tooling when its owner wants
-that; such tooling is out of scope for `moca-spec`.
+## Registry
 
-## Profiles in this repository
+| Profile | URI | Status | Where |
+| --- | --- | --- | --- |
+| Agent Skills | `https://w3id.org/moca/profiles/agent-skills/v1` | Draft | [agent-skills/](agent-skills/moca-agent-skills-profile.md) |
+| Claims | `https://w3id.org/moca/profiles/claims/v1` | Draft | [claims/](claims/moca-claims-profile.md) |
+| EU AI Act data governance | `https://w3id.org/moca/profiles/eu-ai-act/v1` | Draft | [eu-ai-act/](eu-ai-act/moca-eu-ai-act-profile.md) |
 
-| Profile | URI |
-|---|---|
-| [EU AI Act](eu-ai-act/moca-eu-ai-act-profile.md) | `https://openmoca.org/profiles/eu-ai-act/v1` |
+Candidates, not yet written: NIST AI RMF, ISO/IEC 42001 and ISO/IEC 23894
+data-governance profiles, following the pattern of the EU AI Act profile.
+Profiles maintained outside this repository are listed here when their
+owners ask; propose one with the profile issue template.
 
-## Graduated profiles
+## Writing a profile
 
-These profiles have moved to their own repositories under
-[Profile Graduation](../GOVERNANCE.md#profile-graduation). Their URIs are
-unchanged, so packages that declare them need no change.
+A profile document states:
 
-| Profile | URI | Repository |
-|---|---|---|
-| Education | `https://openmoca.org/profiles/education/v1` | `openmoca/moca-profile-education` |
+1. its URI and version;
+2. the package-level data it defines under `profiles["<uri>"]`, with a JSON
+   Schema;
+3. any node-level data under the node's `moca.profiles["<uri>"]`;
+4. any additional files or directories it defines inside a package;
+5. what a Reader that recognises it does differently, and confirmation that a
+   core-only Reader loses nothing it needs.
+
+A profile MUST NOT redefine a core field, make a core-optional field
+required for packages that do not declare the profile, or add top-level
+manifest keys.

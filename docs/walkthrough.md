@@ -1,245 +1,152 @@
-# End-to-end walkthrough
+# Walkthrough
 
-From a folder of Markdown to a signed, packed, searchable package — then
-reading it back and answering a question with grounded evidence.
-
-Every command here was run against this repository's tooling; the outputs are
-real. Total time is a few minutes.
-
-> This is the reduced form of the full reference example on the
-> [roadmap](../ROADMAP.md). It stops short of a live model call, because that
-> would tie the walkthrough to a specific provider — the point is that
-> everything up to the model is portable.
-
-## 0. Setup
+From a folder of Markdown to a signed, reviewed, indexed package served to an
+agent. Every command and output below was run against a copy of
+[`examples/support-kb`](../examples/support-kb). Start in the repository root
+after `npm install`:
 
 ```sh
-git clone https://github.com/openmoca/moca-spec
-cd moca-spec
-npm install
+M="$PWD/tools"
+mkdir -p /tmp/moca-walkthrough && cd /tmp/moca-walkthrough
+cp -R "$M/../examples/support-kb" support-kb && rm -rf support-kb/attestations
 ```
 
-Create some ordinary source content, in a working directory outside the repo:
+## 1. Check the package
 
 ```sh
-mkdir -p /tmp/wt/src
-cat > /tmp/wt/src/refunds.md <<'EOF'
-# Refund window
-Customers may request a full refund within 30 days of delivery.
-EOF
-cat > /tmp/wt/src/shipping.md <<'EOF'
-# Shipping estimates
-Standard delivery is 3-5 working days.
-EOF
-```
-
-## 1. Convert to a package
-
-```sh
-npx @openmoca/moca-convert /tmp/wt/src -o /tmp/wt/pkg \
-  --id urn:moca:example:walkthrough --title "Walkthrough"
-```
-
-```text
-Wrote /tmp/wt/pkg (2 content node(s), 0 warning(s))
-```
-
-You now have:
-
-```text
-/tmp/wt/pkg
-├── moca.json
-└── content/
-    ├── refunds.md
-    └── shipping.md
-```
-
-That is a complete, conformant Level 1 package. The converter fabricates
-nothing — no ontologies, no claims, no signatures. It also lints its own
-output before reporting success, so this already validates.
-
-## 2. Lint it
-
-```sh
-npx @openmoca/moca-lint lint /tmp/wt/pkg
+node $M/moca-lint/bin/moca-lint.js lint support-kb
 ```
 
 ```text
 No findings.
+
+sha256:6539697fc762840cbaa031aec5288aae588ff6f376d56e24bc4ca98d647e5610
+capabilities: core, localized, located-evidence
 ```
 
-## 3. Sign it
+The digest identifies this exact content. `located-evidence` comes from the
+`moca.evidence` selectors in `refund-window.md`, and `localized` from its
+French representation.
 
-Signing gives the package a reproducible identity (`canonicalDigest`) and
-proves authorship. Required if you ship `skills/`; useful regardless.
+## 2. Create keys and a trust root
+
+In production, prefer Sigstore (`--sigstore`), which needs no long-lived keys.
+Here we use local Ed25519 keys:
 
 ```sh
-# Generate a keypair — OUTSIDE the package directory
-npx @openmoca/moca-sign generate-key -o /tmp/wt/wt-key --keyid walkthrough-key
-
-npx @openmoca/moca-sign sign /tmp/wt/pkg \
-  --mode dsse --key /tmp/wt/wt-key.pem --keyid walkthrough-key
+node $M/moca-sign/bin/moca-sign.js keygen --keyid acme-publisher --roles package --identity "Acme publishing key" --out keys
+node $M/moca-sign/bin/moca-sign.js keygen --keyid sam-reviewer  --roles review  --identity "Sam Ortiz" --out keys
 ```
 
-`generate-key` writes three files and tells you what to do with them:
+`keys/trust-root.json` now lists both public keys, each limited to its role.
+The trust root belongs to whoever **reads** packages: it says whom they trust,
+for what.
 
-```text
-Wrote /tmp/wt/wt-key.pem (private, keep secret)
-      /tmp/wt/wt-key.pub.pem
-      /tmp/wt/wt-key.trust-root.json (keyid "walkthrough-key")
-
-Sign with:   moca-sign sign <package> --mode dsse --key /tmp/wt/wt-key.pem --keyid walkthrough-key
-Then verify: moca-lint lint <package> --trust-root /tmp/wt/wt-key.trust-root.json
-```
-
-```text
-Signed.
-  canonicalDigest: sha256:5ebac484bae2cf8ec151c3e9f5e8835052b62d274c572824a8d0d9a96c38e659
-  signature.type:  dsse
-```
-
-> **The key must live outside the package.** `canonicalDigest` covers every
-> file under the package root, so a private key saved next to `moca.json`
-> becomes signed package content and ships with it.
-
-### Verifying needs a trust root
-
-Lint the package again with no trust root and it **fails**:
+## 3. Sign as the publisher
 
 ```sh
-npx @openmoca/moca-lint lint /tmp/wt/pkg
+node $M/moca-sign/bin/moca-sign.js sign support-kb --key keys/acme-publisher.pem --keyid acme-publisher
 ```
 
 ```text
-ERROR E406_SIGNATURE_INVALID  dsse-mode signature but no trust root supplied (--trust-root)
-
-1 error(s), 0 warning(s), 0 info
+Signed sha256:6539697fc762840cbaa031aec5288aae588ff6f376d56e24bc4ca98d647e5610
+Wrote attestations/package.acme-publisher.dsse.json
 ```
 
-This is correct, deliberate, fail-closed behaviour: a `dsse` signature that
-cannot be checked against a trust root is **not** treated as absent, and is
-never silently passed. Supply the trust root `generate-key` emitted:
+The digest did not change: `attestations/` is outside it.
+
+## 4. Record a review
+
+Sam checked the refund policy against the customer terms:
 
 ```sh
-npx @openmoca/moca-lint lint /tmp/wt/pkg --trust-root /tmp/wt/wt-key.trust-root.json
+node $M/moca-sign/bin/moca-sign.js review support-kb --nodes refund-window.md \
+  --reviewer human:sam.ortiz --scope "Checked against the customer terms" \
+  --key keys/sam-reviewer.pem --keyid sam-reviewer
+```
+
+The review binds Sam's statement to the exact bytes of
+`content/refund-window.md`. Adding it did not change the package or need a
+re-sign.
+
+## 5. Verify, as a reader would
+
+```sh
+node $M/moca-sign/bin/moca-sign.js verify support-kb --trust-root keys/trust-root.json
+node $M/moca-lint/bin/moca-lint.js lint support-kb --trust-root keys/trust-root.json
 ```
 
 ```text
+VALID         attestations/package.acme-publisher.dsse.json  (Acme publishing key)
+VALID         attestations/reviews/human-sam-ortiz-2026-09-27.dsse.json  (Sam Ortiz)
+
+Verified sha256:6539697fc762840cbaa031aec5288aae588ff6f376d56e24bc4ca98d647e5610
+
 No findings.
+
+sha256:6539697fc762840cbaa031aec5288aae588ff6f376d56e24bc4ca98d647e5610
+capabilities: core, localized, located-evidence, reviewed, signed
 ```
 
-In production the trust root is host configuration listing the signers *you*
-accept — not a file that ships with the package. The generated one exists so
-you can verify your own work immediately.
+Without `--trust-root`, the attestations are reported as unverifiable and the
+package is neither `signed` nor `reviewed`: trust is always the reader's call.
 
-## 4. Build a search sidecar
+## 6. Build a sidecar index
 
 ```sh
-npx @openmoca/moca-index build /tmp/wt/pkg -o /tmp/wt/pkg.moca.idx
+node $M/moca-index/bin/moca-index.js build support-kb -o support-kb.moca.idx --chunk headings
+node $M/moca-lint/bin/moca-lint.js lint support-kb --sidecar support-kb.moca.idx
+```
+
+The sidecar is bound to the digest. Change the package and the sidecar is
+reported stale and ignored.
+
+## 7. Pack and ship
+
+```sh
+node $M/moca-lint/bin/moca-lint.js pack support-kb -o support-kb.moca --trust-root keys/trust-root.json
+node $M/moca-lint/bin/moca-lint.js digest support-kb.moca
 ```
 
 ```text
-Wrote /tmp/wt/pkg.moca.idx (2 item(s))
+sha256:6539697fc762840cbaa031aec5288aae588ff6f376d56e24bc4ca98d647e5610
 ```
 
-Because the package now declares `canonicalDigest`, the sidecar binds to it
-automatically. Before signing you would have needed `--allow-unbound`, and the
-result could not have proved it was synchronised with its target.
+The archive has the same digest as the folder. To publish to a registry, see
+the [OCI binding](../spec/moca-oci-binding.md).
 
-The payload:
-
-```json
-{"content_path":"refunds.md","chunk_index":0,"chunk_count":1,"text":"# Refund window\nCustomers may request a full refund within 30 days of delivery."}
-{"content_path":"shipping.md","chunk_index":0,"chunk_count":1,"text":"# Shipping estimates\nStandard delivery is 3-5 working days."}
-```
-
-Note `content_path` — every indexed item resolves back to a real file inside
-the target's `content/`. That is what lets a retrieval hit become a citation.
-
-## 5. Pack for distribution
+## 8. Serve it to an agent
 
 ```sh
-npx @openmoca/moca-lint pack /tmp/wt/pkg -o /tmp/wt/walkthrough.moca \
-  --trust-root /tmp/wt/wt-key.trust-root.json
+node $M/moca-mcp/bin/moca-mcp.js support-kb.moca --trust-root keys/trust-root.json --audience public
+```
+
+Register that command as a stdio server in any MCP client. A `moca_search` for
+"refund window" returns a citation record with the text, the package version
+and digest, `signed: true`, Sam's attested review, the evidence quote from the
+customer terms, and `stale: false`. The internal account-deletion procedure is
+never returned, because the host allowed only the `public` audience.
+
+## 9. See what tampering looks like
+
+Change one word in the reviewed node, then verify again:
+
+```sh
+sed -i.bak 's/30 days of delivery/45 days of delivery/' support-kb/content/refund-window.md
+node $M/moca-sign/bin/moca-sign.js verify support-kb --trust-root keys/trust-root.json
 ```
 
 ```text
-No findings.
-Wrote /tmp/wt/walkthrough.moca
+INVALID       attestations/package.acme-publisher.dsse.json  (Acme publishing key)  subject digest does not match the package digest
+OUTDATED      attestations/reviews/human-sam-ortiz-2026-09-27.dsse.json  (Sam Ortiz)
+
+attestations/package.acme-publisher.dsse.json
+  ERROR A002_ATTESTATION_INVALID  package attestation does not match this package: subject digest does not match the package digest
+attestations/reviews/human-sam-ortiz-2026-09-27.dsse.json
+  WARNING A006_REVIEW_OUTDATED  review of content/refund-window.md no longer matches the file
+
+Verification failed.
 ```
 
-`pack` is fail-closed: it refuses to write if any error-severity finding is
-present. You cannot accidentally ship an invalid package.
-
-## 6. Read it back
-
-```sh
-npx @openmoca/moca-lint extract /tmp/wt/walkthrough.moca -o /tmp/wt/roundtrip
-npx @openmoca/moca-lint lint /tmp/wt/roundtrip --trust-root /tmp/wt/wt-key.trust-root.json
-```
-
-The extracted copy has the same `canonicalDigest` as the original, because the
-digest is computed from content rather than archive bytes — re-zipping does
-not change package identity.
-
-## 7. Answer a question with it
-
-Steps 1–4 are what a
-[Knowledge Harness](architecture.md#pillar-2-the-knowledge-harness) does, in
-the order described in [consuming a package](guides/consuming.md). Step 5 is
-the AI Harness's job.
-
-1. **Load and validate** — parse `moca.json`, reject excluded properties,
-   check paths stay inside the package.
-2. **Verify** — recompute `canonicalDigest`, check the signature against your
-   trust root. If it fails and there were `skills/`, drop the skills but keep
-   the content.
-3. **Retrieve** — query the sidecar for "how long do I have to return
-   something?", get a hit on `content_path: refunds.md`, `chunk_index: 0`.
-4. **Resolve** — read `content/refunds.md` from the package. This step is why
-   the index binds by digest: you know the text you retrieved and the text you
-   are about to quote are the same version.
-5. **Ground the answer** — the AI Harness passes the node's content to the
-   model *with* its metadata, and carries that metadata into the response:
-
-   > Customers may request a full refund within 30 days of delivery.
-   >
-   > — Refund window (`urn:node:refund-window`), from
-   > `urn:moca:example:walkthrough@1.0.0`, digest `sha256:5ebac484…`
-
-   In a package with grounding metadata, this is also where
-   `epistemicStatus` and `lastReviewed` enter the answer — see
-   [examples/use-cases/support-kb](../examples/use-cases/support-kb), where
-   one node is `verified`, one is `sourced` and five months older, and one is
-   `disputed`.
-
-## 8. Prove the index is optional
-
-The claim that a sidecar is disposable, tested:
-
-```sh
-rm -rf /tmp/wt/pkg.moca.idx
-npx @openmoca/moca-lint lint /tmp/wt/pkg --trust-root /tmp/wt/wt-key.trust-root.json
-```
-
-```text
-No findings.
-```
-
-The package is still complete, still valid, still readable. A Knowledge
-Harness falls back to lexical search over `content/`. Rebuild the
-sidecar whenever you like — with a different chunking strategy or a different
-embedding model — without touching the package.
-
-That is the whole design in one command: **the package is the asset, the index
-is a cache.**
-
-## What to read next
-
-| If you want to… | Go to |
-|---|---|
-| Add grounding metadata | [Authoring](guides/authoring.md) |
-| Understand the three pillars | [Architecture](architecture.md) |
-| See what a Knowledge Harness does | [Consuming a package](guides/consuming.md) |
-| Decide how far up the levels to go | [Choosing a level](guides/choosing-a-level.md) |
-| Understand signing in depth | [Signing and trust](guides/signing-and-trust.md) |
+The publisher's signature no longer covers the content, and Sam's review no
+longer counts for the changed node.

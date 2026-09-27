@@ -1,0 +1,22 @@
+{
+  "keys": [
+    {
+      "keyid": "example-publisher-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAV7oSvpgKWeRJP+wg5aoP04bxrq2ZzOiT+NPhHsW1W4g=\n-----END PUBLIC KEY-----\n",
+      "identity": "MOCA examples publisher (INSECURE, published private key)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "package"
+      ]
+    },
+    {
+      "keyid": "example-reviewer-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAd+kdml4bu1kox2XqQzNnozVEIk/uqmHzldo9qc1PMKA=\n-----END PUBLIC KEY-----\n",
+      "identity": "MOCA examples reviewer (INSECURE, published private key)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "review"
+      ]
+    }
+  ]
+}

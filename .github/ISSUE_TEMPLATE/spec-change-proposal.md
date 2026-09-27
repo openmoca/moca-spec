@@ -1,28 +1,31 @@
 ---
 name: Spec change proposal
-about: Propose a change to the MOCA Core specification
+about: Propose a change to the MOCA specification, schemas, diagnostic codes or conformance corpus
 title: "[Spec] "
 labels: spec-change
 ---
 
-## Affected section(s)
+## Affected sections
 
-<!-- e.g. spec/moca-core-spec.md §5.1 Manifest Properties -->
+<!-- e.g. spec/moca-package-spec.md §7.2 Relations; spec/moca-reader-contract.md §9 -->
 
 ## Problem
 
-<!-- What can't be expressed today, or what's ambiguous/inconsistent? -->
+<!-- What cannot be expressed today, or what is ambiguous or inconsistent? -->
 
 ## Proposed change
 
-<!-- Concrete wording or structural change. Note any RFC 2119 keyword
-     (MUST/SHOULD/MAY) implications. -->
+<!-- Concrete wording. Note any RFC 2119 keyword changes, new or changed
+     diagnostic codes, and new conformance cases. -->
 
-## Impact on existing conformance levels / profiles
+## Impact
 
-<!-- Does this change break Level 1/2/3 packages that are otherwise valid
-     today? Does it affect any profile, in this repository or graduated? -->
+<!-- Does an existing valid package become invalid, or does a Reader reach a
+     different conclusion about one? Which capabilities or profiles are affected?
+     What goes in MIGRATIONS.md? -->
+
+## Evidence
+
+<!-- Why this is needed: an adopter's case, an evaluation result, a bug. -->
 
 ## Alternatives considered
-
-<!-- Optional -->

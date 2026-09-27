@@ -1,141 +1,77 @@
-# MOCA conformance suite
+# Conformance corpus
 
-A language-neutral corpus that every MOCA SDK is tested against, so
-implementations in different languages agree on what a package means. The
-first consumers are the Knowledge Harness implementations — .NET, then
-Python, then TypeScript — each in its own repository
-([ADR-0003](../docs/adr/0003-knowledge-harness-implementations.md)). They
-consume this corpus from here and never vendor a copy.
+A language-neutral test suite for anything that reads MOCA packages. An
+implementation conforms to the [Reader contract](../spec/moca-reader-contract.md)
+when it reaches the same conclusions as these cases.
 
-The behavioural contract these cases pin down is
-[spec/moca-sdk-contract.md](../spec/moca-sdk-contract.md).
+## Layout
 
 ```text
 conformance/
-├── README.md      # this file — the runner contract
-├── cases/*.json   # one declarative case per fixture
-└── fixtures/      # the packages the cases point at
+├── cases.json          43 cases: target, options, expected conclusions
+├── fixtures/           the packages, sidecars and one .zip archive they read
+└── fixtures/trust-root.json
 ```
 
-## Why this exists
-
-Implementations written against a 900-line prose specification, with no shared test
-corpus, will diverge — and the divergence will not surface until something
-built on one of them behaves differently on another. Sharing fixtures and
-expected outcomes makes each SDK's test suite a thin adapter over this corpus
-rather than an independent reinterpretation of the spec.
-
-## Case format
+## A case
 
 ```json
 {
-  "name": "signature-tampered",
-  "fixture": "fixtures/signature-tampered",
-  "description": "Content changed after signing fails verification (contract §7.3).",
-  "trustRoot": "conformance/fixtures/signature.trust-root.json",
-  "capabilities": ["content", "diagnostics", "integrity", "manifest", "signatures"],
+  "id": "signature-tampered",
+  "description": "Content changed after signing: ...",
+  "target": "fixtures/signature-tampered",
+  "options": { "trustRoot": "fixtures/trust-root.json" },
   "expect": {
-    "manifestParsed": true,
-    "valid": false,
-    "codes": ["E406_SIGNATURE_INVALID"],
-    "bySeverity": { "error": ["E406_SIGNATURE_INVALID"], "warning": [], "info": [] }
+    "valid": true,
+    "codes": ["A002_ATTESTATION_INVALID", "A006_REVIEW_OUTDATED"],
+    "capabilities": ["core"]
   }
 }
 ```
 
 | Field | Meaning |
-|---|---|
-| `name` | Stable case identifier |
-| `fixture` | Package path, relative to `conformance/` |
-| `description` | What behaviour this case pins, and which contract section |
-| `trustRoot` | Repo-relative trust root to pass when verifying, or `null` |
-| `capabilities` | Contract capabilities exercised — see below |
-| `expect.manifestParsed` | Whether the manifest parsed at all |
-| `expect.valid` | Whether zero **error**-severity findings were produced |
-| `expect.codes` | All finding codes, sorted |
-| `expect.bySeverity` | The same codes partitioned by severity |
+| --- | --- |
+| `target` | Package directory or archive, relative to `conformance/`. |
+| `options.trustRoot` | Trust root to verify attestations with. Absent means none. |
+| `options.members` | Directories a resolver searches for members by `id` and `version`. Absent means no resolver. |
+| `options.sidecar` | A sidecar to bind to the package after reading it. |
+| `expect.valid` | Whether the package is valid (no `T`/`P`/`M`/`C` error). |
+| `expect.codes` | The **set** of diagnostic codes, from the package and the sidecar. Exactly these; extra codes fail. |
+| `expect.capabilities` | The exact set of derived capabilities. |
+| `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
+| `expect.sidecarUsable` | Whether the sidecar may be used. |
 
-## What a case asserts — and what it deliberately does not
+Order, counts and message text are not compared.
 
-Cases assert **diagnostic codes and outcomes**. They never assert message
-prose, finding order, line numbers, or object shape.
+## What the corpus covers
 
-This is deliberate, and matches contract §6: codes are the stable contract,
-message wording is not. An SDK that reports
-`E406_SIGNATURE_INVALID` with entirely different wording, in a different
-order, through a different object model, is conformant.
+- **Digest agreement**: literal digests for every valid package, and equality
+  across a directory, a `.zip` archive, and a copy with hidden entries.
+- Every content, manifest, attestation, member, profile, skill and sidecar
+  diagnostic family.
+- Attestation outcomes: valid, no trust root, tampered content, untrusted key,
+  key used outside its role, malformed envelope.
 
-## Running the suite
+Some rules cannot be expressed as portable fixtures, because Git and some file
+systems cannot store them: symbolic links, unreadable folders, and file names
+that differ only in Unicode normalisation or case. The reference Reader tests
+them in [`tools/moca-core/test`](../tools/moca-core/test/reader.test.js); other
+implementations should build equivalent tests.
 
-An SDK's runner:
-
-1. Read every `cases/*.json`.
-2. Skip any case whose `capabilities` include one the SDK does not implement,
-   and report it as skipped rather than passed.
-3. Load `fixture` and validate it, passing `trustRoot` if non-null.
-4. Compare the sorted set of produced diagnostic codes to `expect.codes`, and
-   the error/warning/info partition to `expect.bySeverity`.
-5. Compare the derived validity to `expect.valid`.
-
-A case passes when the code sets match exactly. Extra codes are a failure —
-an SDK reporting findings the reference does not is as much a divergence as
-one missing them.
-
-### Declaring partial support
-
-`capabilities` values are: `manifest`, `content`, `diagnostics`, `integrity`,
-`signatures`, `composition`, `profiles`, `semantic`.
-
-An SDK that does not implement signature verification skips the `signatures`
-cases and says so. Claiming conformance requires publishing which optional
-capabilities are unimplemented (contract §14) — silently skipping is not
-conformance.
-
-Every current case exercises Reader-class behaviour (contract §1.2), so
-Readers and Producers run the same corpus. There are no Producer-only cases
-yet.
-
-## Regenerating
-
-Expectations are **observed from the reference implementation**, not
-hand-written, so they cannot drift from it:
+## Running it
 
 ```sh
-npm run conformance:generate    # rewrite cases from current behaviour
-npm run conformance:check       # verify cases still match (runs in CI)
+npm run conformance           # the reference Reader against every case
+npm run conformance:actual    # print the reference Reader's conclusions
 ```
 
-`description` is the one hand-written field and is preserved across
-regeneration.
+Another implementation reads `cases.json`, runs each case with its own Reader,
+and compares. Pin a released corpus version (`corpusVersion`); do not copy the
+corpus into another repository.
 
-If `conformance:check` fails, the reference implementation's behaviour
-changed. That is either a bug in the change or a deliberate contract
-change — and if deliberate, it belongs in
-[MIGRATIONS.md](../MIGRATIONS.md), because it is a breaking change for every
-SDK.
+## Changing the corpus
 
-## Fixtures
-
-Invalid-by-design fixtures come from `moca-lint`'s test corpus; the
-`valid-*` fixtures are copies of the example packages. They are **copied
-rather than referenced** so the suite does not depend on a tool's private test
-layout or on `examples/` staying arranged as it is today.
-
-The signing fixtures use non-production keys with no trust value.
-
-## Coverage
-
-26 cases spanning: the Level 1 floor with no frontmatter; identity from path;
-duplicate node identity; excluded manifest properties; unknown top-level keys; integrity mismatch;
-malformed claims and evidence locators; opaque `profileData`; unrecognised
-profiles; RO-Crate precedence; all five signature outcomes (valid, missing,
-placeholder, tampered, untrusted signer); invalid skill frontmatter;
-composition members and relates; a composition-only package with no content;
-and Level 2 and Level 3 packages.
-
-Known gaps, to add as SDKs surface them: locale-resolution fallback,
-composition cycle detection, archive-extraction hardening, host-supplied
-package sources, and sidecar binding. These are specified in the contract
-(§5.2, §8, §3, §3.1, §10) but not yet represented as fixtures. A
-host-supplied source case would reuse existing fixtures and assert that the
-outcome matches loading the same fixture from a directory.
+Expectations are written by hand and reviewed. `conformance:actual` helps you
+check a new case; it must never be pasted in unread. Fixtures that are derived
+(attestations, member pins, sidecars, the archive, literal digests) are
+regenerated with `npm run refresh:derived`. See [CONTRIBUTING.md](../CONTRIBUTING.md).

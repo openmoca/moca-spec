@@ -1,124 +1,87 @@
 # Quickstart
 
-Build a valid MOCA package in five minutes, using ordinary JSON and Markdown.
+A valid package in five minutes. You need Node.js 22 or later and a clone of
+this repository with `npm install` run.
 
-New to MOCA? [Why MOCA?](why-moca.md) explains what problem it solves first.
-
-## 1. Copy the smallest valid package
+## 1. Write a package
 
 ```sh
-cp -r examples/level-1-bare my-package
+mkdir -p my-kb/content
 ```
 
-[level-1-bare](../examples/level-1-bare) is a `moca.json` plus one plain
-CommonMark file. That is the entire Level 1 floor.
-
-## 2. The manifest
-
-Every package needs a root `moca.json` with at minimum `id`, `version`, and
-`title` ([core §5.1](../spec/moca-core-spec.md#51-manifest-properties)):
+`my-kb/moca.json`:
 
 ```json
 {
-  "id": "urn:moca:example:my-package",
+  "id": "https://example.com/moca/my-kb",
   "version": "1.0.0",
-  "title": "My Package"
+  "title": "My knowledge base",
+  "language": "en"
 }
 ```
 
-Do **not** add `endpoints`, `settings`, `credentials`, or `apiKeys`. These are
-forbidden in any MOCA manifest
-([core §5.3](../spec/moca-core-spec.md#53-excluded-properties)) — a package is
-portable data, never runtime configuration.
-
-## 3. Add content
-
-At least one Markdown file under `content/`:
+`my-kb/content/opening-hours.md`:
 
 ```markdown
-# My First Node
+---
+type: Fact
+title: Opening hours
+verified:
+  - by: human:you
+    at: 2026-09-27T00:00:00Z
+stale_after: 2027-03-27T00:00:00Z
+---
 
-This content can be consumed with ordinary Markdown tooling.
+# Opening hours
+
+The office is open 09:00-17:00, Monday to Friday.
 ```
 
-No frontmatter required. Without an explicit `id`, a consumer identifies the
-node by its path relative to `content/` — here, `01-my-first-node.md`.
+`type` is the one field OKF requires. The rest is optional.
 
-You now have a conformant Level 1 package.
-
-## 4. Validate
+## 2. Check it
 
 ```sh
-npm install --save-dev @openmoca/moca-lint
-npx @openmoca/moca-lint lint my-package
+node tools/moca-lint/bin/moca-lint.js lint my-kb
 ```
 
-The four CLIs publish under the `@openmoca` scope
-(`@openmoca/moca-lint`, `-convert`, `-index`, `-sign`). Installed globally,
-each exposes its short command name — `moca-lint`, `moca-convert`, and so on.
+```text
+No findings.
 
-Conformance level is *derived* from what the package contains — it is never
-declared in `moca.json`.
+sha256:…
+capabilities: core
+```
 
-To validate only the manifest against the schema:
+The `sha256:` line is the package's digest: change any byte and it changes.
+
+## 3. Or convert existing Markdown
 
 ```sh
-npx ajv-cli validate -s schemas/v1/core/moca.schema.json \
-  -d my-package/moca.json --spec=draft2020
+node tools/moca-convert/bin/moca-convert.js ./docs -o my-docs \
+  --id https://example.com/moca/my-docs --title "My docs"
 ```
 
-## 5. Package it
+`moca-convert` adds `type` and `title` to files that lack them and leaves
+everything else untouched. It also reads Obsidian vaults and OpenAPI documents.
 
-```sh
-npx @openmoca/moca-lint pack my-package -o my-package.moca
-npx @openmoca/moca-lint extract my-package.moca -o my-package-copy
+## 4. Ask it questions
+
+Add the MCP server to any MCP client. For example, in a client's JSON
+configuration:
+
+```json
+{
+  "mcpServers": {
+    "my-kb": { "command": "node", "args": ["/path/to/moca-spec/tools/moca-mcp/bin/moca-mcp.js", "/path/to/my-kb"] }
+  }
+}
 ```
 
-`pack` is fail-closed — it refuses to write if any error-severity finding is
-present.
+The client gets `moca_search`, `moca_get_node` and `moca_list_packages`, and
+every result carries its citation.
 
-## Already have content?
+## Next
 
-[`moca-convert`](../tools/moca-convert/README.md) builds a Level 1 package
-from what you have, and lints its own output before reporting success:
-
-```sh
-# A folder of Markdown, structure preserved
-npx @openmoca/moca-convert ./docs -o my-package --id urn:moca:example:my-docs --title "My Docs"
-
-# An Obsidian vault, [[wikilinks]] rewritten to relative links
-npx @openmoca/moca-convert ./my-vault -o my-package --id urn:moca:example:my-vault
-
-# An OpenAPI 3.x document, one content node per operation
-npx @openmoca/moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
-```
-
-## Next steps
-
-| If you want to… | Go to |
-|---|---|
-| See the whole pipeline, convert → sign → index → answer | [End-to-end walkthrough](walkthrough.md) |
-| Add identity, concepts, evidence, freshness, composition | [Authoring guide](guides/authoring.md) |
-| Build something that *reads* packages | [Consuming a package](guides/consuming.md) |
-| Work out which conformance level you need | [Choosing a level](guides/choosing-a-level.md) |
-| Sign a package, or ship `skills/` | [Signing and trust](guides/signing-and-trust.md) |
-| Add semantic or hybrid search | [Search and indexes](guides/search-and-indexes.md) |
-| See MOCA shaped like real corpora | [Use-case examples](../examples/use-cases) |
-
-### Example packages
-
-| Example | Shows |
-|---|---|
-| [level-1-bare](../examples/level-1-bare) | The minimum valid package |
-| [level-1-minimal](../examples/level-1-minimal) | Frontmatter, concepts, lifecycle fields |
-| [level-2-semantic](../examples/level-2-semantic) | Ontologies, SHACL, RDF-interpretable claims |
-| [level-3-extended](../examples/level-3-extended) | Web Annotation locators, a signed skill |
-| [composition-members](../examples/composition-members) | A package composed of other packages |
-| [composition-relates](../examples/composition-relates) | Loose cross-package relationships |
-| [augmentation-generic](../examples/augmentation-generic) | Grounding content you can't modify |
-| [use-cases/support-kb](../examples/use-cases/support-kb) | Epistemic status as a retrieval signal |
-| [use-cases/policy-corpus](../examples/use-cases/policy-corpus) | Versioned policy with supersession |
-| [eu-ai-act-profile](../profiles/eu-ai-act/examples/eu-ai-act-profile) | A compliance profile applied |
-
-For the full normative rules, see
-[the core specification](../spec/moca-core-spec.md).
+- [Walkthrough](walkthrough.md): sign, review, index and serve.
+- [Authoring](guides/authoring.md): evidence, validity windows, versions,
+  members and relations.

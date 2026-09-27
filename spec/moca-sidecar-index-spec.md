@@ -1,112 +1,96 @@
 # MOCA Sidecar Index Specification
 
+Specification version: `0.2.0-alpha.1`
+Status: Alpha. Expect changes before `1.0.0`.
+License: [Apache License 2.0](../LICENSE)
+
 ## 1. Scope
 
-A MOCA sidecar index (`.moca.idx`) is an optional, derived retrieval artifact
-for a MOCA package. It can support dense, sparse, hybrid, or other search
-strategies without changing the target package's logical layout, conformance,
-or runtime behavior.
+A sidecar index is an optional, derived search artifact for one package: text
+chunks, and optionally vectors, that a Reader can search instead of reading
+every node. A package is complete without one. A sidecar can always be
+deleted and rebuilt, for example for a new embedding model.
 
-This specification defines the portable manifest and source-addressing
-contract. It does not define a vector database, query API, embedding model, or
-payload serialization.
+This document defines one portable format, `moca-jsonl-v1`, so that any Reader
+can use a sidecar any Producer built. Other payload formats are allowed, but
+are not portable: a Reader that does not recognise a format ignores the
+sidecar (`S005`).
 
-## 2. Archive Layout
+## 2. Layout
 
-A `.moca.idx` sidecar is a Zip archive or equivalent uncompressed directory
-with this root layout:
+A sidecar is a directory, or a Zip archive of one, kept **outside** the
+package it indexes:
 
 ```text
-example.moca.idx/
+support-kb.moca.idx/
 ├── index.json
 └── payload/
-    └── index.jsonl
+    └── items.jsonl
 ```
 
-`index.json` is the required, canonical sidecar manifest and MUST conform to
-[`sidecar-index.schema.json`](../schemas/v1/core/sidecar-index.schema.json).
-`storage.file` identifies the storage-native payload relative to the sidecar
-root. A sidecar MUST NOT use `moca-index.json` as an alternate manifest name.
+## 3. `index.json`
 
-The payload may be JSON, JSONL, SQLite, Lance, Parquet, an HNSW index, or any
-other implementation-defined format. It may contain vectors, sparse search
-structures, and format-specific metadata. Consumers that do not recognize
-`storage.format` MAY ignore that sidecar.
+Valid against [`sidecar-index.schema.json`](../schemas/v1/sidecar-index.schema.json):
 
-## 3. Manifest
+```json
+{
+  "indexVersion": 1,
+  "target": { "id": "https://example.com/moca/support-kb", "version": "4.2.0",
+              "digest": "sha256:6539697fc762840cbaa031aec5288aae588ff6f376d56e24bc4ca98d647e5610" },
+  "indexType": "lexical",
+  "chunking": { "strategy": "headings-h1-h3" },
+  "storage": { "format": "moca-jsonl-v1", "file": "payload/items.jsonl" },
+  "createdBy": "moca-index"
+}
+```
 
-The manifest MUST contain `manifest_version`, `target_package_id`,
-`index_type`, `item_addressing`, and `storage`. `storage.format` is an open
-string tag, and `storage.file` is the relative path to its payload.
+| Field | Meaning |
+| --- | --- |
+| `target` | The package the sidecar was built from: `id`, `version` and digest. All three are required. |
+| `indexType` | `lexical`, `dense`, `sparse` or `hybrid`, or another tag. |
+| `model` | The embedding model: `name`, and optionally `version`, `dimensions`, `distance`. **Required** for `dense` and `hybrid` sidecars: vectors are useless without knowing the model that made them. |
+| `chunking` | How the text was split. Informative. |
+| `storage` | The payload `format` and its `file`, relative to the sidecar root. |
 
-`model_info` and `chunking` describe generation choices when known. They are
-metadata only; they do not configure a host model or execution environment.
+A sidecar is metadata about search only. A Reader MUST NOT derive a package's
+validity, trust, configuration or credentials from it.
 
-The reference manifest is
-[examples/sidecars/level-1-minimal.moca.idx/index.json](../examples/sidecars/level-1-minimal.moca.idx/index.json),
-bound to [examples/level-1-minimal](../examples/level-1-minimal) via its
-`canonicalDigest.value` (core §5.5) and verified against that target by
-`scripts/validate-sidecar-index.mjs`. Its `payload/index.jsonl` demonstrates
-the multi-chunk case from §5, where two items share one `content_path`.
+## 4. The `moca-jsonl-v1` payload
 
-[`tools/moca-index`](../tools/moca-index/README.md) generates a conformant
-sidecar from a target package directly, rather than requiring one to be
-hand-authored.
+One JSON object per line:
 
-## 4. Target Binding
+```json
+{"path":"refund-window.md","chunkIndex":0,"chunkCount":1,"start":802,"end":1125,"text":"# Refund eligibility window\n…"}
+{"path":"refund-window.md","locale":"fr","chunkIndex":0,"chunkCount":1,"start":214,"end":452,"text":"# Délai de remboursement\n…"}
+```
 
-`target_package_id` MUST identify the target package's `moca.json` `id`.
-`target_package_hash`, when present, MUST be the SHA-256 digest of the exact
-target `.moca` archive bytes, formatted as `sha256:<64 hexadecimal digits>`.
-A producer MAY instead set it to the package's `canonicalDigest.value`, with
-the same `sha256:` prefix. This canonical-digest form SHOULD be preferred
-going forward because it survives repackaging (re-zipping), unlike a digest of
-the archive bytes.
+| Field | Required | Meaning |
+| --- | --- | --- |
+| `path` | Yes | Node path relative to `content/` ([package spec §5.2](moca-package-spec.md#52-node-paths)). |
+| `locale` | No | The representation's locale; absent for the default language. |
+| `chunkIndex`, `chunkCount` | Yes | Position of this chunk among the representation's chunks: `0 ≤ chunkIndex < chunkCount`, and every index from 0 to `chunkCount - 1` present. |
+| `start`, `end` | Yes | UTF-8 byte offsets into the node file, `0 ≤ start ≤ end ≤` file length. These let a citation point at the exact passage. |
+| `text` | No | The chunk's text. |
+| `vector` | No | Numbers; length equal to `model.dimensions` when that is given. |
 
-A producer SHOULD include `target_package_hash`. A consumer SHOULD calculate
-the target archive digest and compare it before using a sidecar that declares
-one. When a declared digest differs, a consumer MUST reject the sidecar or mark
-it stale according to a documented local policy. A consumer MAY use a sidecar
-without a declared digest according to local policy, but its package identity
-alone cannot establish that the sidecar is synchronized with the target.
+## 5. Binding and staleness
 
-## 5. Indexed Item Addressing
+A Reader MUST use a sidecar only when:
 
-Regardless of payload format, every indexed item MUST expose these logical
-fields in the driver's records, columns, or metadata:
+1. `index.json` is valid (`S001`);
+2. `target.id` and `target.version` match the package (`S002`);
+3. `target.digest` equals the package's computed digest (`S003`);
+4. the payload format is one it supports (`S005`);
+5. every item is valid and points at an existing node representation (`S004`).
 
-| Field | Requirement |
-|---|---|
-| `content_path` | Canonical path relative to the target package's `content/` directory. |
-| `chunk_index` | Zero-based position of the item within that content path. |
-| `chunk_count` | Positive total number of indexed items for that content path. |
+If any check fails, the Reader ignores the sidecar and searches the package
+directly. Any change to a package changes its digest, so a sidecar is stale as
+soon as its package changes.
 
-The following invariant MUST hold for every item:
+## 6. Enterprise vector stores
 
-$$
-0 \leq \text{chunk_index} < \text{chunk_count}
-$$
-
-Whole-file or node-level indexing uses `chunk_index: 0` and `chunk_count: 1`.
-Many chunks may resolve to the same `content_path`. Node IDs, headings, source
-text, token/character offsets, locators, and all other item metadata are
-optional. A stable node ID supplements but does not replace `content_path`,
-because MOCA node IDs are optional.
-
-`content_path` MUST resolve beneath the target package's `content/` directory
-and MUST NOT be absolute or use parent-directory traversal.
-
-## 6. Knowledge Harness Consumption
-
-Sidecars are optional performance artifacts. A target `.moca` package remains
-complete and usable without one. Binding and searching a sidecar is the job of
-the Knowledge Harness
-([core §1.1](moca-core-spec.md#11-the-three-pillar-architecture)). A Knowledge
-Harness with no usable sidecar SHOULD fall back to searching the package
-content directly. A Knowledge Harness MUST NOT infer package integrity, trust,
-conformance, credentials, model configuration, or execution policy from a
-sidecar.
-
-Format-specific auxiliary metadata may live in the payload or in
-vendor-namespaced extension files. It is not a second portable MOCA manifest
-contract.
+When a host indexes packages into its own vector database instead of using a
+sidecar, the same principles apply: each record SHOULD carry the citation
+record fields ([Reader contract §7](moca-reader-contract.md#7-citation-records))
+and the package digest, so the host can detect that a package changed and
+re-index only the files whose SHA-256 changed.

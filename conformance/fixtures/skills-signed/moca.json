@@ -1,0 +1,8 @@
+{
+  "id": "https://example.com/conformance/skills",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "profiles": {
+    "https://w3id.org/moca/profiles/agent-skills/v1": {}
+  }
+}

@@ -35,7 +35,7 @@ test('CLI: directory adapter succeeds end-to-end and exits 0', () => {
     const result = runCli([
       join(fixturesDir, 'directory', 'basic-nested'),
       '-o', outDir,
-      '--id', 'urn:moca:test:cli-directory',
+      '--id', 'https://example.com/test/cli-directory',
       '--title', 'CLI Directory',
     ]);
     assert.equal(result.status, 0, result.stderr);
@@ -50,7 +50,7 @@ test('CLI: obsidian adapter succeeds end-to-end and exits 0', () => {
     const result = runCli([
       join(fixturesDir, 'obsidian', 'vault-basic'),
       '-o', outDir,
-      '--id', 'urn:moca:test:cli-obsidian',
+      '--id', 'https://example.com/test/cli-obsidian',
     ]);
     assert.equal(result.status, 0, result.stderr);
   } finally {
@@ -64,7 +64,7 @@ test('CLI: markdown adapter succeeds end-to-end and exits 0', () => {
     const result = runCli([
       join(fixturesDir, 'markdown', 'loose-files', 'from-heading.md'),
       '-o', outDir,
-      '--id', 'urn:moca:test:cli-markdown',
+      '--id', 'https://example.com/test/cli-markdown',
       '--title', 'CLI Markdown',
     ]);
     assert.equal(result.status, 0, result.stderr);
@@ -79,7 +79,7 @@ test('CLI: openapi adapter succeeds end-to-end and exits 0', () => {
     const result = runCli([
       join(fixturesDir, 'openapi', 'suitable.yaml'),
       '-o', outDir,
-      '--id', 'urn:moca:test:cli-openapi',
+      '--id', 'https://example.com/test/cli-openapi',
     ]);
     assert.equal(result.status, 0, result.stderr);
   } finally {
@@ -93,7 +93,7 @@ test('CLI: an unsuitable openapi document exits 2', () => {
     const result = runCli([
       join(fixturesDir, 'openapi', 'unsuitable-sparse-descriptions.yaml'),
       '-o', outDir,
-      '--id', 'urn:moca:test:cli-openapi-unsuitable',
+      '--id', 'https://example.com/test/cli-openapi-unsuitable',
     ]);
     assert.equal(result.status, 2);
   } finally {
@@ -121,7 +121,7 @@ test('CLI: --exclude on a non-obsidian adapter is a usage error (exit 2)', () =>
     const result = runCli([
       join(fixturesDir, 'directory', 'basic-nested'),
       '-o', outDir,
-      '--id', 'urn:moca:test:cli-bad-flag',
+      '--id', 'https://example.com/test/cli-bad-flag',
       '--title', 'X',
       '--exclude', 'notes/foo.md',
     ]);
@@ -134,7 +134,7 @@ test('CLI: --exclude on a non-obsidian adapter is a usage error (exit 2)', () =>
 test('CLI: nonexistent input exits 2', () => {
   const outDir = tempOutDir();
   try {
-    const result = runCli(['/no/such/path', '-o', outDir, '--id', 'urn:x', '--title', 'X']);
+    const result = runCli(['/no/such/path', '-o', outDir, '--id', 'https://example.com/x', '--title', 'X']);
     assert.equal(result.status, 2);
   } finally {
     cleanup(outDir);

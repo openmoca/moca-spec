@@ -1,41 +1,16 @@
-# Architecture Decision Records
+# Architecture decision records
 
-An ADR records a decision that shaped the specification, together with the
-options that were rejected and why. It exists so that a future reader — or a
-future maintainer arguing the opposite case — can see the reasoning rather than
-re-deriving it from the outcome.
+Each record states one decision, the options considered, and what would make
+us revisit it. Records are numbered in order and never renumbered. A decision
+that changes is superseded by a new record, not edited.
 
-ADRs are **not normative**. The normative documents are in
-[`spec/`](../../spec). An ADR explains why a normative document says what it
-says; where the two disagree, the specification wins and the ADR is stale.
+| ADR | Decision |
+| --- | --- |
+| [0001](0001-package-layer-over-okf.md) | MOCA is a package layer over the Open Knowledge Format |
+| [0002](0002-computed-digest-and-detached-attestations.md) | The digest is computed, never declared; attestations are detached |
+| [0003](0003-reader-mcp-server-and-adapters.md) | One Reader, an MCP server and framework adapters, not a harness per language |
+| [0004](0004-capabilities-not-levels.md) | Named capabilities instead of conformance levels |
+| [0005](0005-oci-transport-binding.md) | OCI registries as an optional transport binding |
+| [0006](0006-reader-rules-not-forbidden-keys.md) | Safety comes from Reader rules, not forbidden manifest keys |
 
-## When to write one
-
-Write an ADR when a decision is architectural, contested, and hard to reverse:
-
-- Adopting, deferring to, or declining an external standard.
-- Drawing or moving the Core/profile boundary.
-- Choosing a transport, integrity, or trust mechanism.
-- Deciding *not* to build something, where the absence needs justification.
-
-Do not write one for ordinary spec changes. Those go through the issue → PR
-process in [CONTRIBUTING.md](../../CONTRIBUTING.md#proposing-a-core-spec-change),
-and their rationale is recorded in the issue.
-
-## Format
-
-[MADR](https://adr.github.io/madr/)-style: Status, Context, Decision Drivers,
-Considered Options, Decision Outcome, Consequences. Filenames are
-`NNNN-kebab-case-title.md`, numbered sequentially and never reused.
-
-Status is one of `Proposed`, `Accepted`, `Rejected`, `Superseded by NNNN`. An
-accepted ADR is never edited to reflect a later reversal — supersede it with a
-new record instead, so the history of the reasoning survives.
-
-## Index
-
-| # | Title | Status |
-|---|---|---|
-| [0001](0001-moca-spec-vs-oci-artifacts.md) | MOCA as a specification vs. OKF bundles as OCI artifacts | Proposed |
-| [0002](0002-three-pillar-architecture.md) | Three pillars: package, Knowledge Harness, AI Harness | Accepted |
-| [0003](0003-knowledge-harness-implementations.md) | Knowledge Harness implementations and the Reader/Producer split | Accepted |
+New records use the template in [0000-template.md](0000-template.md).

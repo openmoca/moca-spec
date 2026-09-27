@@ -1,221 +1,106 @@
-# Authoring a MOCA package
+# Authoring packages
 
-The [quickstart](../quickstart.md) gets you a valid package. This guide covers
-what you add once you want it to be genuinely useful to a consumer.
+## Start from OKF
 
-Everything here is optional. A package with none of it is still a conformant
-Level 1 package.
+Every `.md` file under `content/` is an OKF concept document with frontmatter
+and a `type`. Use OKF's fields for what they are for:
 
-## Grounding content nodes
+| Field | Use it for |
+| --- | --- |
+| `type` | What the node is: `Policy`, `Procedure`, `Guide`, `API Operation`... There is no fixed list. |
+| `title`, `description`, `tags` | Display and search. |
+| `sources` | What the node is based on. Give each an `id` so evidence can point at it. |
+| `generated` | That a tool or model drafted it: `{ by: acme-drafter/2.1, at: ... }`. |
+| `verified` | Who says they checked it and when. For a verifiable check, add a review attestation too. |
+| `status` | `draft`, `stable` (default) or `deprecated`. |
+| `stale_after` | When it must be re-checked. |
 
-A bare content node is just Markdown. Frontmatter turns it into something a
-Knowledge Harness can carry into every answer and an AI Harness can reason
-about.
+`content/index.md` and `content/log.md` are reserved by OKF: an index with no
+frontmatter (the root one may declare `okf_version`), and a change log whose
+`##` headings start with a date.
 
-```markdown
----
-id: urn:node:refund-window
-title: Refund eligibility window
-summary: "Customers may request a refund within 30 days of delivery."
-concepts:
-  - id: ex:RefundPolicy
-    role: primary
-  - id: ex:Delivery
-    role: supporting
-epistemicStatus: verified
-lastReviewed: "2026-08-14"
-evidence:
-  - source: "./sources/commercial-policy-v4.pdf"
-    locator:
-      type: page
-      page: 12
----
-# Refund eligibility window
+## Add what MOCA adds, under `moca`
 
-Customers may request a full refund within 30 days of delivery...
+### Evidence
+
+Point at the exact part of a source that supports the node:
+
+```yaml
+sources:
+  - id: terms-7
+    resource: ../sources/refund-policy-2026.txt
+  - id: talk
+    resource: https://example.com/talks/refunds.mp4
+  - id: handbook
+    resource: ../sources/handbook.pdf
+moca:
+  evidence:
+    - source: terms-7
+      selector: { type: TextQuoteSelector, exact: "within 30 days of delivery" }
+    - source: talk
+      selector: { type: FragmentSelector, conformsTo: "http://www.w3.org/TR/media-frags/", value: "t=75,210" }
+    - source: handbook
+      selector: { type: FragmentSelector, conformsTo: "http://tools.ietf.org/rfc/rfc3778", value: "page=12" }
 ```
 
-Taking the fields in order of how much value they add:
+Put the source files in the package (for example under `sources/`) when you
+can, so the evidence travels with the claim.
 
-**`epistemicStatus`** is the highest-value field in the format and the most
-under-used. It tells a consumer how much to trust this node:
-`verified` (a human checked it), `sourced` (traceable but unverified),
-`inferred`, `generated` (AI-written, unchecked), `disputed`, `deprecated`.
-An AI Harness should rank on it. If you set nothing else, set this.
+### Validity
 
-**`lastReviewed`** and `validFrom` answer "is this current?". Content with an
-honest review date is more useful than content with a rich ontology and no
-freshness signal.
+`moca.valid_from` and `moca.valid_until` say when a node is in force; the
+manifest's `validFrom` and `validUntil` say it for the whole package. Readers
+leave out-of-force content out of search by default. Use `stale_after` for
+"check again by", and the validity window for "stops applying on".
 
-**`id`** gives the node an identity that survives file renames. Without it the
-identity is the path relative to `content/` — fine, but brittle if you
-reorganise.
+### Contest
 
-**`concepts[]`** binds the node to concepts with a `role` (`primary` or
-`supporting`), enabling graph-aware retrieval. Using a CURIE such as
-`ex:RefundPolicy` requires declaring the prefix in an inline `@context` in
-`moca.json`:
+`moca.contested_by: [<node or package id>]` records that other content
+disputes this node. Readers flag it; your application decides what to do.
+
+### Audience
+
+`moca.audience: internal` lets a host serving the public filter the node out
+before retrieval. It is a label, not protection: do not put content in a
+package that a group must never obtain.
+
+## Versions
+
+Bump `version` in `moca.json` whenever content changes:
+
+- **major** when a statement changed meaning or was removed;
+- **minor** when you only added;
+- **patch** for editorial changes.
+
+## Composing and relating packages
+
+To build one package from others, list them as `members`, pinned by digest:
 
 ```json
-{
-  "@context": { "ex": "https://example.org/vocab#" },
-  "id": "urn:moca:example:support-kb",
-  "version": "1.0.0",
-  "title": "Support knowledge base"
-}
+"members": [
+  { "id": "https://example.com/moca/handbook/service-ownership", "version": "1.0.0", "digest": "sha256:…" }
+]
 ```
 
-An `@context` is required only when a CURIE appears somewhere in the package.
+`moca-lint digest <member>` prints the digest to pin.
 
-**`evidence[]`** points at the source backing the content, optionally with a
-locator (a page, a time range, a selector). Sources must resolve inside the
-package — a consumer will reject paths that escape it.
-
-## Lifecycle: freshness and supersession
-
-Three optional fields, usable on the manifest and on content nodes
-([core §7.5](../../spec/moca-core-spec.md#75-content-node-lifecycle-fields)):
-
-| Field | Meaning |
-|---|---|
-| `validFrom` | When this content became authoritative |
-| `lastReviewed` | When a human or defined process last confirmed it |
-| `supersedes` | Package `id`(s) this replaces |
-
-`supersedes` is how you retire content without deleting it. The superseded
-package stays independently readable and auditable — important when you need
-to show what the policy *was* on a given date.
-
-## Integrity and package identity
+To retire an older version, or record a conflict, use `relations`:
 
 ```json
-{
-  "integrity": {
-    "content/01-refund-window.md": "sha256:a1b2c3…"
-  },
-  "canonicalDigest": {
-    "algorithm": "sha256",
-    "value": "d4e5f6…"
-  }
-}
+"relations": [
+  { "type": "supersedes", "target": "https://example.com/moca/policies/data-retention", "version": "1.0.0" }
+]
 ```
 
-`integrity` is per-file. `canonicalDigest` is a reproducible identity for the
-whole package, computed from on-disk bytes plus the manifest (with
-`canonicalDigest` and `signature` removed). Consumers recompute rather than
-trusting the declared value.
+## Locales
 
-**These are derived data and go stale on any edit.** `canonicalDigest` covers
-the *manifest*, so changing `license` or `description` invalidates it — and
-invalidates any signature over it. In this repository,
-`npm run refresh:derived` re-derives everything in dependency order; if you
-maintain your own corpus you will want the equivalent. See
-[trust model §2.1](../../spec/moca-trust-model.md#21-any-manifest-edit-is-a-re-signing-event).
+Add `fr` to `locales` and write `refund-window.fr.md` beside
+`refund-window.md`. It is the same node in French.
 
-## Composing packages
-
-Two independent mechanisms
-([core §10](../../spec/moca-core-spec.md#10-package-composition--relationships)):
-
-**`members`** — containment. This package is assembled from those packages:
-
-```json
-{
-  "composition": {
-    "members": [
-      { "id": "urn:moca:chapter:service-ownership", "version": "^1.0.0", "order": 1 },
-      { "id": "urn:moca:chapter:incident-response", "version": "^1.0.0", "order": 2 }
-    ]
-  }
-}
-```
-
-Direction is parent → child only. A member never names its parents, so the
-same chapter can belong to several handbooks. A composition-only package needs no
-`content/` at all.
-
-**`relates`** — loose association with no containment or ordering:
-
-```json
-{
-  "composition": {
-    "relates": [
-      { "id": "urn:moca:policy:api-usage-v1", "relationship": "supersedes" }
-    ]
-  }
-}
-```
-
-Examples: [composition-members](../../examples/composition-members),
-[composition-relates](../../examples/composition-relates).
-
-## Declaring a profile
-
-Profiles add domain vocabulary without changing core semantics:
-
-```json
-{
-  "profile": ["https://openmoca.org/profiles/eu-ai-act/v1"],
-  "profileData": {
-    "euAiAct": { "riskTier": "limited_risk" }
-  }
-}
-```
-
-Profile-specific data MUST live under `profileData`, keyed by profile name,
-never as top-level manifest properties. A consumer that doesn't recognise the
-profile still processes the package as valid MOCA Core.
-
-Note that this repository's `moca-lint` validates Core only — it deliberately
-does not validate `profileData` against a profile's schema. That is the
-profile owner's tooling to provide.
-
-## Augmenting content you can't modify
-
-When you need to ground an AI system against material you don't own — a
-vendor's PDF bundle, a wiki export — `augmentation` lets a
-package describe an external target rather than containing it
-([core §9](../../spec/moca-core-spec.md#9-sidecar-augmentation-pattern-augmentation)).
-
-Example: [augmentation-generic](../../examples/augmentation-generic).
-
-## Converting from what you already have
+## Check before you ship
 
 ```sh
-# A folder of Markdown, structure preserved
-npx @openmoca/moca-convert ./docs -o my-package --id urn:moca:example:my-docs --title "My Docs"
-
-# An Obsidian vault, [[wikilinks]] rewritten to relative links
-npx @openmoca/moca-convert ./my-vault -o my-package --id urn:moca:example:my-vault
-
-# An OpenAPI 3.x document, one content node per operation
-npx @openmoca/moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my-api
+node tools/moca-lint/bin/moca-lint.js lint my-package --strict
 ```
 
-Converters never fabricate ontologies, claims, profiles, or signatures —
-output is bare/identified Level 1, and semantic grounding stays a deliberate
-manual step. Each run lints its own output before reporting success, so a
-successful conversion is already a validated package.
-
-Full reference: [tools/moca-convert](../../tools/moca-convert/README.md).
-
-## Validating as you go
-
-```sh
-npx @openmoca/moca-lint lint my-package            # human-readable
-npx @openmoca/moca-lint lint my-package --format json
-npx @openmoca/moca-lint lint my-package --strict   # warnings become errors
-```
-
-Once it validates, `pack` produces an archive and refuses to write if any
-error-severity finding is present:
-
-```sh
-npx @openmoca/moca-lint pack my-package -o my-package.moca
-```
-
-## Next
-
-- [Signing and trust](signing-and-trust.md) — required if you ship `skills/`.
-- [Search and indexes](search-and-indexes.md) — optional retrieval sidecars.
-- [Consuming a package](consuming.md) — what a reader does with all of this.
+Then sign it ([signing and review](signing-and-review.md)).

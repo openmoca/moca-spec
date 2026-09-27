@@ -1,219 +1,137 @@
-// Re-derives every derived artifact in this repository's example corpus, in
-// dependency order, after example content or manifest metadata changes.
+#!/usr/bin/env node
+// Regenerates every derived artifact listed in scripts/derived.config.json:
+// member digest pins, publisher and review attestations, sidecar indexes and
+// archive fixtures, then the literal digests in conformance/cases.json.
 //
-// Three artifacts in a MOCA package are *derived* and go stale the moment any
-// input byte changes:
+//   node scripts/refresh-derived.mjs          rewrite in place
+//   node scripts/refresh-derived.mjs --check  fail if anything is out of date
 //
-//   1. `canonicalDigest`  -- covers resource bytes AND the manifest itself
-//                            (core §5.5), so editing metadata as innocuous as
-//                            `license` invalidates it.
-//   2. `signature`        -- signs over `canonicalDigest.value` (trust model
-//                            §2), so it is invalidated by anything that
-//                            invalidates the digest. A manifest edit is
-//                            therefore a re-signing event.
-//   3. A sidecar's `target_package_hash` -- binds a `.moca.idx` to its target's
-//                            canonical digest (sidecar index spec §4).
-//
-// They also cascade: a composed package folds its members' *declared* digests
-// (core §5.5), so members must be refreshed before the package composing them.
-// Doing this by hand is error-prone, which is why this script exists.
-//
-// Usage:
-//   node scripts/refresh-derived.mjs            # rewrite anything stale
-//   node scripts/refresh-derived.mjs --check    # report drift, write nothing
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, resolve } from 'node:path';
-import { computeCanonicalDigest } from './validate-canonical-digest.mjs';
-import { signPackage } from '../tools/moca-sign/lib/sign.js';
-import { findPackages } from './lib/find-packages.mjs';
+// --check runs the same refresh on a temporary copy and compares the result
+// with the working tree, so there is only one code path to trust.
+import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import AdmZip from 'adm-zip';
+import { readPackage, directoryResolver } from '@openmoca/moca-core';
+import { signPackage, reviewNodes } from '@openmoca/moca-sign';
+import { buildSidecar } from '@openmoca/moca-index';
 
-const root = process.cwd();
-const checkOnly = process.argv.includes('--check');
+const repo = join(dirname(fileURLToPath(import.meta.url)), '..');
+const check = process.argv.includes('--check');
 
-// The repository's own non-production example signing key. See its README --
-// this key has no trust value and exists only so the example packages carry
-// real, verifiable signatures.
-const EXAMPLE_KEY = join(root, 'fixtures/signing-keys/INSECURE-example-signing-key.pem');
-const EXAMPLE_KEYID = 'moca-spec-example-signing-key-2026';
+async function refresh(root) {
+  const config = JSON.parse(readFileSync(join(repo, 'scripts/derived.config.json'), 'utf8'));
+  const at = (p) => join(root, p);
+  const key = (name) => ({ privateKeyPem: readFileSync(join(repo, config.keys[name].file), 'utf8'), keyid: config.keys[name].keyid });
 
-const SEARCH_ROOTS = ['examples', 'profiles'];
-const SIDECAR_ROOT = join(root, 'examples/sidecars');
+  // Attestations are regenerated from scratch for every package we sign.
+  const owned = new Set([...config.sign, ...config.review].map((s) => s.package).concat(config.copyAttestations.map((c) => c.to)));
+  for (const p of owned) rmSync(at(join(p, 'attestations')), { recursive: true, force: true });
 
-let changed = 0;
-let stale = 0;
-
-function note(message) {
-  console.log(`  ${message}`);
-}
-
-function readManifest(packageRoot) {
-  return JSON.parse(readFileSync(join(packageRoot, 'moca.json'), 'utf8'));
-}
-
-// Replaces only canonicalDigest.value, leaving the rest of the file's
-// hand-authored formatting (compact arrays, key order) untouched. Several
-// example manifests are not JSON.stringify-canonical, so a parse/serialize
-// round-trip would produce unrelated diff noise.
-function writeDigestInPlace(packageRoot, newValue) {
-  const manifestPath = join(packageRoot, 'moca.json');
-  const raw = readFileSync(manifestPath, 'utf8');
-  const pattern = /("canonicalDigest"\s*:\s*\{[^}]*?"value"\s*:\s*")([a-f0-9]{64})(")/;
-  if (!pattern.test(raw)) {
-    throw new Error(`${relative(root, manifestPath)}: could not locate canonicalDigest.value to rewrite`);
-  }
-  writeFileSync(manifestPath, raw.replace(pattern, `$1${newValue}$3`), 'utf8');
-}
-
-/** Orders packages so that composition members are refreshed before composers. */
-function inDependencyOrder(packageRoots) {
-  const byId = new Map();
-  for (const packageRoot of packageRoots) {
-    byId.set(readManifest(packageRoot).id, packageRoot);
+  for (const { package: pkg, search } of config.pins) {
+    const path = at(join(pkg, 'moca.json'));
+    const manifest = JSON.parse(readFileSync(path, 'utf8'));
+    const resolve = directoryResolver(search.map(at));
+    for (const member of manifest.members) {
+      const target = resolve(member);
+      if (!target) throw new Error(`${pkg}: cannot resolve member ${member.id}@${member.version}`);
+      const r = await readPackage(target);
+      if (!r.digest) throw new Error(`${pkg}: member ${member.id} has no digest`);
+      member.digest = r.digest;
+    }
+    writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);
   }
 
-  const ordered = [];
-  const state = new Map();
+  for (const s of config.sign) await signPackage({ dir: at(s.package), ...key(s.key) });
+  for (const r of config.review) {
+    await reviewNodes({ dir: at(r.package), nodes: r.nodes, reviewer: r.reviewer, outcome: r.outcome ?? 'accurate', reviewedAt: r.at, scope: r.scope, name: r.name, ...key(r.key) });
+  }
+  for (const c of config.copyAttestations) cpSync(at(join(c.from, 'attestations')), at(join(c.to, 'attestations')), { recursive: true });
 
-  function visit(packageRoot, trail) {
-    const status = state.get(packageRoot);
-    if (status === 'done') return;
-    if (status === 'visiting') {
-      throw new Error(`composition cycle: ${[...trail, packageRoot].map((p) => relative(root, p)).join(' -> ')}`);
-    }
-    state.set(packageRoot, 'visiting');
-    for (const member of readManifest(packageRoot).composition?.members ?? []) {
-      const memberRoot = byId.get(member.id);
-      if (memberRoot) visit(memberRoot, [...trail, packageRoot]);
-    }
-    state.set(packageRoot, 'done');
-    ordered.push(packageRoot);
+  for (const s of config.sidecars) {
+    await buildSidecar({ pkg: at(s.package), out: at(s.out), chunker: s.chunk, force: true });
+    for (const [name, kind] of Object.entries(s.variants ?? {})) writeVariant(at(s.out), at(join(dirname(s.out), name)), kind);
   }
 
-  for (const packageRoot of packageRoots) visit(packageRoot, []);
-  return ordered;
-}
-
-// Digests computed during this run, keyed by package id. A composed package
-// folds its members' declared digests, so in --check mode (which writes
-// nothing) resolving a member from disk would return its *stale* declared
-// value and hide the cascade -- the composer would be reported as current
-// even though refreshing its members is about to invalidate it. Preferring
-// the freshly computed value makes --check agree with what a real refresh
-// would produce.
-const freshDigests = new Map();
-
-function memberResolver(packageRoot) {
-  const parentDir = dirname(packageRoot);
-  return ({ id, version }) => {
-    for (const entry of readdirSync(parentDir, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      const manifestPath = join(parentDir, entry.name, 'moca.json');
-      if (!existsSync(manifestPath)) continue;
-      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-      const majorMatches = !version
-        || version === manifest.version
-        || (version.startsWith('^') && version.slice(1).split('.')[0] === manifest.version.split('.')[0]);
-      if (manifest.id !== id || !majorMatches) continue;
-      const fresh = freshDigests.get(manifest.id);
-      return fresh
-        ? { ...manifest, canonicalDigest: { algorithm: 'sha256', value: fresh } }
-        : manifest;
-    }
-    throw new Error(`could not resolve member ${id}@${version ?? '*'}`);
-  };
-}
-
-async function refreshPackages() {
-  const packageRoots = SEARCH_ROOTS.flatMap((searchRoot) => findPackages(join(root, searchRoot)));
-
-  for (const packageRoot of inDependencyOrder(packageRoots)) {
-    const manifest = readManifest(packageRoot);
-    if (!manifest.canonicalDigest) continue;
-
-    const label = relative(root, packageRoot);
-    const signed = Boolean(manifest.signature);
-
-    if (signed && manifest.composition?.members?.length) {
-      throw new Error(`${label}: signing a composed package is not supported (see tools/moca-sign/README.md)`);
-    }
-
-    const actual = computeCanonicalDigest(packageRoot, { resolveMember: memberResolver(packageRoot) });
-    freshDigests.set(manifest.id, actual);
-    if (actual === manifest.canonicalDigest.value) continue;
-
-    stale += 1;
-    if (checkOnly) {
-      note(`STALE  ${label} (declared ${manifest.canonicalDigest.value.slice(0, 12)}…, computed ${actual.slice(0, 12)}…)${signed ? ' + signature' : ''}`);
-      continue;
-    }
-
-    if (signed) {
-      await signPackage({
-        rootDir: packageRoot,
-        mode: 'dsse',
-        privateKeyPath: EXAMPLE_KEY,
-        keyid: EXAMPLE_KEYID,
-      });
-      note(`re-signed  ${label} -> ${actual.slice(0, 12)}…`);
-    } else {
-      writeDigestInPlace(packageRoot, actual);
-      note(`digest     ${label} -> ${actual.slice(0, 12)}…`);
-    }
-    changed += 1;
+  for (const a of config.archives) {
+    const zip = new AdmZip();
+    const r = await readPackage(at(a.package));
+    for (const e of r.source.list()) zip.addFile(e.path, r.source.read(e.path));
+    zip.writeZip(at(a.out));
   }
+
+  const casesPath = at('conformance/cases.json');
+  const corpus = JSON.parse(readFileSync(casesPath, 'utf8'));
+  for (const c of corpus.cases) {
+    if (!c.expect.digest || c.expect.digest.startsWith('SAME:')) continue;
+    const r = await readPackage(at(join('conformance', c.target)));
+    c.expect.digest = r.digest;
+  }
+  writeFileSync(casesPath, `${JSON.stringify(corpus, null, 2)}\n`);
 }
 
-function refreshSidecars() {
-  if (!existsSync(SIDECAR_ROOT)) return;
-
-  const packageRoots = SEARCH_ROOTS.flatMap((searchRoot) => findPackages(join(root, searchRoot)));
-  const byId = new Map(packageRoots.map((packageRoot) => [readManifest(packageRoot).id, packageRoot]));
-
-  for (const entry of readdirSync(SIDECAR_ROOT, { withFileTypes: true })) {
-    if (!entry.isDirectory() || !entry.name.endsWith('.moca.idx')) continue;
-
-    const indexPath = join(SIDECAR_ROOT, entry.name, 'index.json');
-    if (!existsSync(indexPath)) continue;
-
-    const raw = readFileSync(indexPath, 'utf8');
-    const index = JSON.parse(raw);
-    if (!index.target_package_hash) continue;
-
-    const targetRoot = byId.get(index.target_package_id);
-    if (!targetRoot) {
-      throw new Error(`${entry.name}: target_package_id ${index.target_package_id} resolves to no package`);
-    }
-
-    const targetDigest = readManifest(targetRoot).canonicalDigest?.value;
-    if (!targetDigest) continue;
-
-    const expected = `sha256:${targetDigest}`;
-    if (index.target_package_hash === expected) continue;
-
-    stale += 1;
-    if (checkOnly) {
-      note(`STALE  ${entry.name} target_package_hash`);
-      continue;
-    }
-
-    writeFileSync(indexPath, raw.replace(index.target_package_hash, expected), 'utf8');
-    note(`sidecar    ${entry.name} -> ${targetDigest.slice(0, 12)}…`);
-    changed += 1;
+// Deliberately broken copies of a valid sidecar, one fault each.
+function writeVariant(validDir, outDir, kind) {
+  rmSync(outDir, { recursive: true, force: true });
+  cpSync(validDir, outDir, { recursive: true });
+  const indexPath = join(outDir, 'index.json');
+  const index = JSON.parse(readFileSync(indexPath, 'utf8'));
+  const payloadPath = join(outDir, index.storage.file);
+  if (kind === 'digest') index.target.digest = `sha256:${'0'.repeat(64)}`;
+  if (kind === 'format') index.storage.format = 'lance';
+  if (kind === 'target') index.target.id = 'https://example.com/conformance/another-package';
+  if (kind === 'schema') index.indexType = 'dense';
+  if (kind === 'item') {
+    const items = readFileSync(payloadPath, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+    items[0].chunkIndex = items[0].chunkCount;
+    writeFileSync(payloadPath, `${items.map((i) => JSON.stringify(i)).join('\n')}\n`);
   }
+  writeFileSync(indexPath, `${JSON.stringify(index, null, 2)}\n`);
 }
 
-console.log(checkOnly ? 'Checking derived artifacts…' : 'Refreshing derived artifacts…');
-await refreshPackages();
-refreshSidecars();
+function listFiles(dir, base = dir) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir).flatMap((name) => {
+    const p = join(dir, name);
+    return statSync(p).isDirectory() ? listFiles(p, base) : [relative(base, p)];
+  });
+}
 
-if (checkOnly) {
-  if (stale > 0) {
-    console.error(`\n${stale} derived artifact(s) are stale. Run: npm run refresh:derived`);
-    process.exit(1);
-  }
-  console.log('\nAll derived artifacts are current.');
-} else if (changed === 0) {
-  console.log('\nNothing to do — all derived artifacts were already current.');
+if (!check) {
+  await refresh(repo);
+  console.log('Derived artifacts refreshed.');
 } else {
-  console.log(`\nRefreshed ${changed} derived artifact(s).`);
+  const scratch = mkdtempSync(join(tmpdir(), 'moca-derived-'));
+  try {
+    for (const d of ['examples', 'conformance']) cpSync(join(repo, d), join(scratch, d), { recursive: true });
+    mkdirSync(join(scratch, 'scripts'), { recursive: true });
+    await refresh(scratch);
+    const drift = [];
+    for (const d of ['examples', 'conformance']) {
+      const files = new Set([...listFiles(join(repo, d)), ...listFiles(join(scratch, d))]);
+      for (const f of files) {
+        const a = join(repo, d, f);
+        const b = join(scratch, d, f);
+        if (!existsSync(a) || !existsSync(b)) {
+          drift.push(`${d}/${f} (${existsSync(a) ? 'should not exist' : 'missing'})`);
+          continue;
+        }
+        if (f.endsWith('.zip')) {
+          const [ra, rb] = await Promise.all([readPackage(a), readPackage(b)]);
+          if (ra.digest !== rb.digest) drift.push(`${d}/${f}`);
+        } else if (!readFileSync(a).equals(readFileSync(b))) {
+          drift.push(`${d}/${f}`);
+        }
+      }
+    }
+    if (drift.length > 0) {
+      console.error(`Derived artifacts are out of date; run npm run refresh:derived.\n  ${drift.join('\n  ')}`);
+      process.exitCode = 1;
+    } else {
+      console.log('Derived artifacts are up to date.');
+    }
+  } finally {
+    rmSync(scratch, { recursive: true, force: true });
+  }
 }

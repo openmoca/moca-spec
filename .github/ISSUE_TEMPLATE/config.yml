@@ -8,6 +8,5 @@ contact_links:
   - name: Report a security vulnerability
     url: https://github.com/openmoca/moca-spec/security/advisories/new
     about: >-
-      Report privately, not as a public issue. This includes schema or
-      moca-lint false negatives and moca-sign verification bugs — see
-      SECURITY.md for what is in scope.
+      Report privately, not as a public issue. This includes wrong attestation
+      verdicts, digest gaps and archive-handling bugs. See SECURITY.md.

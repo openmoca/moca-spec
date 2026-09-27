@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/moca/schemas/v1/trust-root.schema.json",
+  "title": "MOCA trust root",
+  "description": "Host-supplied: which keys and Sigstore identities a host trusts, and for what. See spec/moca-attestations.md section 6.",
+  "type": "object",
+  "properties": {
+    "keys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "keyid",
+          "publicKey"
+        ],
+        "properties": {
+          "keyid": {
+            "type": "string",
+            "minLength": 1
+          },
+          "publicKey": {
+            "type": "string",
+            "minLength": 1
+          },
+          "identity": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "package",
+                "review"
+              ]
+            },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sigstore": {
+      "type": "object",
+      "properties": {
+        "identities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "issuer",
+              "subject"
+            ],
+            "properties": {
+              "issuer": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "roles": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "package",
+                    "review"
+                  ]
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

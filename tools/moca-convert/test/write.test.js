@@ -10,14 +10,14 @@ function tempDir() {
 }
 
 const VALID_DRAFT = {
-  manifest: { id: 'urn:moca:test:write', version: '1.0.0', title: 'Write Test' },
-  contentNodes: [{ path: 'content/intro.md', body: '# Intro\n' }],
+  manifest: { id: 'https://example.com/test/write', version: '1.0.0', title: 'Write Test' },
+  contentNodes: [{ path: 'content/intro.md', body: '---\ntype: Note\n---\n# Intro\n' }],
   warnings: [],
 };
 
 const INVALID_DRAFT = {
   // Missing required "title" -> schema-invalid manifest -> lintPackage error finding.
-  manifest: { id: 'urn:moca:test:write-invalid', version: '1.0.0' },
+  manifest: { id: 'https://example.com/test/write-invalid', version: '1.0.0' },
   contentNodes: [{ path: 'content/intro.md', body: '# Intro\n' }],
   warnings: [],
 };

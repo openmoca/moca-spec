@@ -1,6 +1,6 @@
 // Renders parsed OpenAPI operations into content nodes: either one node per
 // operation, or one node per tag with each operation as a subsection.
-import matter from 'gray-matter';
+import { joinFrontmatter } from '@openmoca/moca-core';
 import { slugify } from '../../slug.js';
 import { resolveSchema } from './parse.js';
 
@@ -15,12 +15,17 @@ const OPERATION_ID_PATTERN = /^[A-Za-z0-9_.:-]+$/;
  */
 export function renderOperationNode(path, method, operation, doc) {
   const title = firstNonEmpty(operation.summary, `${method.toUpperCase()} ${path}`);
-  const id = safeOperationId(operation.operationId);
-  const frontmatter = id ? { id, title } : { title };
+  const operationId = safeOperationId(operation.operationId);
+  const frontmatter = {
+    type: 'API Operation',
+    title,
+    resource: `${method.toUpperCase()} ${path}`,
+    ...(operationId ? { tags: [operationId] } : {}),
+  };
   const body = `# ${title}\n\n${renderSections(operation, doc, 2)}`;
   return {
     path: `content/${method}-${slugifyOperationPath(path)}.md`,
-    body: matter.stringify(body, frontmatter),
+    body: joinFrontmatter(frontmatter, body),
   };
 }
 
@@ -40,7 +45,7 @@ export function renderTagNode(tag, operations, doc) {
   const body = `# ${tag}\n\n${sections}`;
   return {
     path: `content/${slugify(tag)}.md`,
-    body: matter.stringify(body, { title: tag }),
+    body: joinFrontmatter({ type: 'API Tag', title: tag }, body),
   };
 }
 

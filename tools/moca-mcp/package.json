@@ -1,0 +1,39 @@
+{
+  "name": "@openmoca/moca-mcp",
+  "version": "0.2.0-alpha.1",
+  "description": "MCP server that serves MOCA packages to any agent: search, fetch and cite verified knowledge.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "moca-mcp": "./bin/moca-mcp.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@openmoca/moca-core": "^0.2.0-alpha.1",
+    "commander": "^12.1.0",
+    "zod": "^3.23.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openmoca/moca-spec.git",
+    "directory": "tools/moca-mcp"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  }
+}
