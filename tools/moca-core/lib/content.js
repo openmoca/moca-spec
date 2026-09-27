@@ -8,6 +8,9 @@ export const CONTENT_DIR = 'content';
 const RESERVED = new Set(['index.md', 'log.md']);
 const SCHEME = /^[A-Za-z][A-Za-z0-9+.-]*:/;
 const LINK = /!?\[[^\]]*\]\(\s*(<[^>]+>|[^)\s]+)(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)/g;
+const PATH_REF = /^(\.{1,2}\/|\/)/;
+const EVIDENCE_DIRS = ['sources/', 'media/'];
+const CHECKABLE_TEXT = /\.(txt|text|md|markdown)$/i;
 
 /**
  * @typedef {object} Representation
@@ -17,6 +20,11 @@ const LINK = /!?\[[^\]]*\]\(\s*(<[^>]+>|[^)\s]+)(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)
  * @property {string} body
  * @property {number} bodyOffset   UTF-8 byte offset of the body in the file
  * @property {string} sha256       hex digest of the file bytes
+ * @property {EvidenceCheck[]} evidenceChecks  one per moca.evidence entry, in order
+ *
+ * @typedef {object} EvidenceCheck
+ * @property {boolean} local       the source is a file under sources/ or media/ in the package
+ * @property {boolean} [verified]  set only when the selector was checked against that file
  *
  * @typedef {object} ContentNode
  * @property {string} path  node path relative to content/ (the default-language file name)
@@ -68,8 +76,9 @@ export function readContent({ manifest, files, bytes, fileDigests, diagnostics }
     checkEvidence(file, fm, diagnostics);
     checkWindow(file, fm, diagnostics);
     checkPaths(file, fm, split.body, files, diagnostics);
+    const evidenceChecks = verifyEvidence(file, fm, files, bytes, diagnostics);
 
-    const rep = { locale, file, frontmatter: fm, body: split.body, bodyOffset: split.bodyOffset, sha256: fileDigests.get(file) };
+    const rep = { locale, file, frontmatter: fm, body: split.body, bodyOffset: split.bodyOffset, sha256: fileDigests.get(file), evidenceChecks };
     if (!byKey.has(key)) byKey.set(key, { path: key, representations: [] });
     byKey.get(key).representations.push(rep);
   }
@@ -124,6 +133,50 @@ function checkEvidence(file, fm, diagnostics) {
       diagnostics.add('C006_EVIDENCE_SOURCE_UNKNOWN', `evidence names source "${e.source}", which sources[] does not declare with that id`, { file });
     }
   }
+}
+
+/**
+ * Checks each moca.evidence selector against the cited file when that file is
+ * inside the package and is text. Reader contract §7: exact match on the
+ * file's UTF-8 text, no folding; positions count Unicode code points.
+ * @returns {EvidenceCheck[]}
+ */
+function verifyEvidence(file, fm, files, bytes, diagnostics) {
+  const evidence = fm.moca?.evidence;
+  if (!Array.isArray(evidence)) return [];
+  const sources = new Map((Array.isArray(fm.sources) ? fm.sources : []).filter((s) => s?.id).map((s) => [s.id, s]));
+  return evidence.map((e) => {
+    const resource = sources.get(e?.source)?.resource;
+    if (typeof resource !== 'string' || !PATH_REF.test(resource)) return { local: false };
+    const { path, escapes } = resolveReference(file, resource);
+    if (escapes || !path || !files.has(path) || !EVIDENCE_DIRS.some((d) => path.startsWith(d))) return { local: false };
+    if (!CHECKABLE_TEXT.test(path) || !e.selector || typeof e.selector !== 'object') return { local: true };
+    const verified = selectorMatches(e.selector, bytes.get(path).toString('utf8'));
+    if (verified === false) {
+      diagnostics.add('C011_EVIDENCE_SELECTOR_UNMATCHED', `evidence ${e.selector.type} for source "${e.source}" does not match ${path}`, { file });
+    }
+    return verified === undefined ? { local: true } : { local: true, verified };
+  });
+}
+
+/** @returns {boolean|undefined} undefined when the selector type is not checked */
+export function selectorMatches(selector, text) {
+  if (selector.type === 'TextQuoteSelector') {
+    if (typeof selector.exact !== 'string' || selector.exact === '') return false;
+    const prefix = typeof selector.prefix === 'string' ? selector.prefix : '';
+    const suffix = typeof selector.suffix === 'string' ? selector.suffix : '';
+    for (let i = text.indexOf(selector.exact); i >= 0; i = text.indexOf(selector.exact, i + 1)) {
+      const end = i + selector.exact.length;
+      if (i >= prefix.length && text.slice(i - prefix.length, i) === prefix && text.slice(end, end + suffix.length) === suffix) return true;
+    }
+    return false;
+  }
+  if (selector.type === 'TextPositionSelector') {
+    const { start, end } = selector;
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0) return false;
+    return start <= end && end <= [...text].length;
+  }
+  return undefined;
 }
 
 function checkWindow(file, fm, diagnostics) {

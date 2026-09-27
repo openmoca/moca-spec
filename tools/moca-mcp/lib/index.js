@@ -3,10 +3,12 @@
 //
 // Every result is a citation record (schemas/v1/citation-record.schema.json).
 // Package text is returned as data inside those records, never as
-// instructions: see spec/moca-reader-contract.md §10.
+// instructions: see spec/moca-reader-contract.md §11.
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { Library, readPackage, bindSidecar, directoryResolver, formatText } from '@openmoca/moca-core';
+import {
+  Library, Search, LexicalBackend, DenseBackend, readPackage, bindSidecar, directoryResolver, formatText,
+} from '@openmoca/moca-core';
 
 /**
  * Reads and verifies packages, then returns a Library of the valid ones.
@@ -28,12 +30,13 @@ export async function loadLibrary({ packages, trustRoot, memberDirs, log = () =>
       continue;
     }
     let chunks;
+    let index;
     if (sidecar) {
       const bound = bindSidecar(sidecar, result);
-      if (bound.usable) chunks = bound.chunks;
+      if (bound.usable) ({ chunks, index } = bound);
       else log(`ignoring sidecar ${sidecar} for ${target}: ${bound.diagnostics.map((d) => d.code).join(', ')}`);
     }
-    library.add(result, { chunks });
+    library.add(result, { chunks, index });
     log(`loaded ${result.manifest.id}@${result.manifest.version} ${result.digest} [${result.capabilities.join(', ')}]`);
   }
   return library;
@@ -43,11 +46,20 @@ const asText = (value) => ({ content: [{ type: 'text', text: JSON.stringify(valu
 
 /**
  * @param {Library} library
- * @param {{ audiences?: string[], name?: string, version?: string }} [options]
+ * @param {{ audiences?: string[], embedder?: object, name?: string, version?: string, log?: (line: string) => void }} [options]
  *   audiences: the host's audience filter, applied to every call; callers cannot widen it.
+ *   embedder: the host's embedder; when given, search uses sidecar vectors (DenseBackend).
  */
-export function createServer(library, { audiences, name = 'moca', version = '0.2.0-alpha.1' } = {}) {
+export function createServer(library, { audiences, embedder, name = 'moca', version = '0.3.0-alpha.1', log = () => {} } = {}) {
   const server = new McpServer({ name, version });
+  const backend = embedder ? new DenseBackend(library, { embedder }) : new LexicalBackend(library);
+  for (const d of backend.diagnostics) log(`${d.code}: ${d.message}`);
+  const search = new Search(library, { backend, audiences });
+  // With an embedder only packages whose sidecar vectors match it are searchable.
+  const searchMode = (result, chunks) => {
+    if (embedder) return backend.checked.get(result.digest) ? 'dense' : 'unavailable';
+    return chunks ? 'sidecar' : 'lexical';
+  };
   const allowed = (record) => !audiences || !record?.audience || audiences.includes(record.audience);
 
   server.registerTool('moca_list_packages', {
@@ -62,7 +74,7 @@ export function createServer(library, { audiences, name = 'moca', version = '0.2
     signed: result.signers.length > 0,
     capabilities: result.capabilities,
     nodes: result.nodes.length,
-    searchMode: chunks ? 'sidecar' : 'lexical',
+    searchMode: searchMode(result, chunks),
   }))));
 
   server.registerTool('moca_search', {
@@ -73,10 +85,11 @@ export function createServer(library, { audiences, name = 'moca', version = '0.2
       limit: z.number().int().min(1).max(20).optional().describe('maximum results (default 5)'),
       locale: z.string().optional().describe('preferred BCP 47 locale'),
       include_all: z.boolean().optional().describe('also return out-of-force, superseded and deprecated content, flagged as such'),
+      concepts: z.array(z.string().min(1)).optional().describe('only return content bound to at least one of these concept IRIs (ontology profile)'),
     },
-  }, async ({ query, limit, locale, include_all: includeAll }) => asText({
+  }, async ({ query, limit, locale, include_all: includeAll, concepts }) => asText({
     query,
-    results: library.search(query, { limit: limit ?? 5, locale, includeAll: includeAll ?? false, audiences }),
+    results: await search.search(query, { limit: limit ?? 5, locale, includeAll: includeAll ?? false, concepts }),
   }));
 
   server.registerTool('moca_get_node', {

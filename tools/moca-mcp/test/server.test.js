@@ -60,3 +60,14 @@ test('get_node returns the reviewed node with its attested review', async () => 
   const fr = await call('moca_get_node', { node_id: 'https://example.com/moca/support-kb#refund-window.md', locale: 'fr' });
   assert.equal(fr.node.locale, 'fr');
 });
+
+test('search can be limited to content bound to given concepts', async () => {
+  const library = await loadLibrary({ packages: [join(repo, 'profiles/ontology/examples/service-catalogue')] });
+  const server = createServer(library);
+  const [a, b] = InMemoryTransport.createLinkedPair();
+  const client = new Client({ name: 'test', version: '0.0.0' });
+  await Promise.all([server.connect(a), client.connect(b)]);
+  const call = async (name, args) => JSON.parse((await client.callTool({ name, arguments: args })).content[0].text);
+  const { results } = await call('moca_search', { query: 'service', concepts: ['https://example.org/services#ServiceBoundary'] });
+  assert.deepEqual(results.map((r) => r.node.path), ['service-boundaries.md']);
+});

@@ -16,6 +16,7 @@
     "ajv-formats": "^3.0.1",
     "canonicalize": "2.1.0",
     "js-yaml": "^5.2.2",
+    "n3": "^2.7.12",
     "sigstore": "^5.0.0"
   },
   "publishConfig": {

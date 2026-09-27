@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Runs the MOCA MCP server over stdio. Logs go to stderr; stdout is the protocol.
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Command } from 'commander';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { loadLibrary, createServer } from '../lib/index.js';
@@ -15,6 +17,7 @@ program
   .option('--trust-root <file>', 'trust root for verifying package and review attestations')
   .option('--members <dirs...>', 'directories to search for member packages')
   .option('--audience <list>', 'comma-separated audiences this host may serve (default: no filter)')
+  .option('--embedder <module>', 'experimental: a module whose default export is an embedder { name, version?, dimensions, embed(texts) }; search then uses sidecar vectors')
   .action(async (packages, opts) => {
     const log = (line) => process.stderr.write(`moca-mcp: ${line}\n`);
     const entries = packages.map((p) => {
@@ -27,7 +30,8 @@ program
       process.exit(1);
     }
     const audiences = opts.audience ? opts.audience.split(',').map((a) => a.trim()).filter(Boolean) : undefined;
-    const server = createServer(library, { audiences, version });
+    const embedder = opts.embedder ? (await import(pathToFileURL(resolve(opts.embedder)).href)).default : undefined;
+    const server = createServer(library, { audiences, embedder, version, log });
     await server.connect(new StdioServerTransport());
   });
 

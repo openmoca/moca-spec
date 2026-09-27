@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Command } from 'commander';
 import { readPackage, bindSidecar, formatText } from '@openmoca/moca-core';
 import { buildSidecar, IndexError, CHUNKERS } from '../lib/index.js';
@@ -14,8 +16,10 @@ program.command('build')
   .option('--zip', 'write a single .zip archive', false)
   .option('--chunk <mode>', `chunking: ${CHUNKERS.join(' | ')}`, 'node')
   .option('--force', 'replace an existing output', false)
+  .option('--embedder <module>', 'experimental: a module whose default export is an embedder { name, version?, dimensions, embed(texts) }; adds vectors')
   .action((pkg, opts) => run(async () => {
-    const r = await buildSidecar({ pkg, out: opts.out, zip: opts.zip, chunker: opts.chunk, force: opts.force });
+    const embedder = opts.embedder ? (await import(pathToFileURL(resolve(opts.embedder)).href)).default : undefined;
+    const r = await buildSidecar({ pkg, out: opts.out, zip: opts.zip, chunker: opts.chunk, force: opts.force, embedder });
     console.log(`Wrote ${r.out} (${r.items} item(s)) bound to ${r.digest}`);
   }));
 
