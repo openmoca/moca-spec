@@ -36,8 +36,8 @@ raise the level.
 
 **Choose it when:** you want portable, grounded, versioned content that any
 consumer can read with JSON and Markdown tooling. This covers support
-knowledge bases, policy corpora, engineering documentation, and most course
-material.
+knowledge bases, policy corpora, engineering documentation, and most
+product and training manuals.
 
 **Informal rungs within Level 1** — these are descriptive, not conformance
 levels:
@@ -85,7 +85,7 @@ digital signatures.
   `skills/` MUST meet Level 3 signature requirements regardless of what it
   otherwise satisfies ([core §3.1](../../spec/moca-core-spec.md#31-level-requirement-clarification)),
   because executable-adjacent content is the highest-risk artifact in a
-  package. A harness must refuse unsigned skills.
+  package. A Knowledge Harness must refuse unsigned skills.
 - You need to prove the bytes a consumer holds are the bytes you published.
 - You cite into video, audio, or precise regions of documents.
 - You distribute across a trust boundary — between organisations, or into a
@@ -106,14 +106,14 @@ produces warnings and misleads consumers into expecting a graph that isn't
 real. Add it when you use it.
 
 **Assuming higher is better.** A well-maintained Level 1 corpus with accurate
-`lastReviewed` dates and honest `epistemicStatus` is more useful to a harness
+`lastReviewed` dates and honest `epistemicStatus` is more useful to an AI Harness
 than a Level 2 corpus with a stale ontology.
 
 **Treating levels as a migration ladder.** They are capability sets, not
 maturity stages. Plenty of packages should stay at Level 1 permanently.
 
 **Putting `skills/` in an unsigned package.** `moca-lint` reports `E401`, and
-a conformant harness will refuse the skills. Sign it or don't ship it.
+a conformant Knowledge Harness will refuse the skills. Sign it or don't ship it.
 
 ## Upgrading later
 

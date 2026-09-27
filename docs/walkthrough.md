@@ -184,8 +184,10 @@ not change package identity.
 
 ## 7. Answer a question with it
 
-What a harness does, in the order described in
-[consuming a package](guides/consuming.md):
+Steps 1–4 are what a
+[Knowledge Harness](architecture.md#pillar-2-the-knowledge-harness) does, in
+the order described in [consuming a package](guides/consuming.md). Step 5 is
+the AI Harness's job.
 
 1. **Load and validate** — parse `moca.json`, reject excluded properties,
    check paths stay inside the package.
@@ -197,8 +199,8 @@ What a harness does, in the order described in
 4. **Resolve** — read `content/refunds.md` from the package. This step is why
    the index binds by digest: you know the text you retrieved and the text you
    are about to quote are the same version.
-5. **Ground the answer** — pass the node's content to the model *with* its
-   metadata, and carry that metadata into the response:
+5. **Ground the answer** — the AI Harness passes the node's content to the
+   model *with* its metadata, and carries that metadata into the response:
 
    > Customers may request a full refund within 30 days of delivery.
    >
@@ -224,8 +226,8 @@ npx @openmoca/moca-lint lint /tmp/wt/pkg --trust-root /tmp/wt/wt-key.trust-root.
 No findings.
 ```
 
-The package is still complete, still valid, still readable. Retrieval falls
-back to lexical search or plain enumeration over `content/`. Rebuild the
+The package is still complete, still valid, still readable. A Knowledge
+Harness falls back to lexical search over `content/`. Rebuild the
 sidecar whenever you like — with a different chunking strategy or a different
 embedding model — without touching the package.
 
@@ -237,6 +239,7 @@ is a cache.**
 | If you want to… | Go to |
 |---|---|
 | Add grounding metadata | [Authoring](guides/authoring.md) |
-| Build the harness side properly | [Consuming a package](guides/consuming.md) |
+| Understand the three pillars | [Architecture](architecture.md) |
+| See what a Knowledge Harness does | [Consuming a package](guides/consuming.md) |
 | Decide how far up the levels to go | [Choosing a level](guides/choosing-a-level.md) |
 | Understand signing in depth | [Signing and trust](guides/signing-and-trust.md) |

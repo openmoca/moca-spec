@@ -34,8 +34,9 @@ npm login
 npm org ls openmoca            # confirm you are a member
 ```
 
-Reserve the equivalent namespaces on **PyPI** and **NuGet** at the same time,
-before the Python and .NET SDKs exist. Names are cheap now and contested later.
+Reserve the equivalent namespaces on **NuGet** and **PyPI** at the same time,
+before the .NET and Python Knowledge Harness implementations publish. Names are
+cheap now and contested later.
 
 ### 2. Enable 2FA and create a publish token
 
@@ -305,9 +306,11 @@ Every release
       (moca-convert: --cli-version)
 ```
 
-## Not yet applicable
+## Knowledge Harness releases
 
-The Python and .NET SDKs do not exist. When they do, this document gains a
-PyPI section (`build`, `twine`, trusted publishing) and a NuGet section, and
-the "publish order" section grows to cover cross-language release coordination
-against a shared [conformance suite](../conformance/README.md) version.
+Knowledge Harness implementations (.NET, then Python, then TypeScript) publish
+from their own repositories to NuGet, PyPI, and npm, with their own runbooks.
+What this repository owes them is a tagged
+[conformance suite](../conformance/README.md) they can pin: a release here
+that changes a conformance case is announced in the release notes so each
+implementation can update its pin deliberately.

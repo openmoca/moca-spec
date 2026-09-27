@@ -118,7 +118,6 @@ npx @openmoca/moca-convert ./openapi.yaml -o my-package --id urn:moca:example:my
 | [augmentation-generic](../examples/augmentation-generic) | Grounding content you can't modify |
 | [use-cases/support-kb](../examples/use-cases/support-kb) | Epistemic status as a retrieval signal |
 | [use-cases/policy-corpus](../examples/use-cases/policy-corpus) | Versioned policy with supersession |
-| [education-profile](../profiles/education/examples/education-profile) | A domain profile applied |
 | [eu-ai-act-profile](../profiles/eu-ai-act/examples/eu-ai-act-profile) | A compliance profile applied |
 
 For the full normative rules, see

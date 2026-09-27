@@ -12,8 +12,9 @@ This repository is preparing the first public beta:
 - Git tag: `v0.1.0-beta.1`
 
 This is a beta of the format and reference tooling, not a promise that the
-MOCA specification is stable. Consumers should expect feedback from the POC
-SDK and real-world packages to change the specification before `1.0.0`.
+MOCA specification is stable. Consumers should expect feedback from the first
+Knowledge Harness implementation and real-world packages to change the
+specification before `1.0.0`.
 
 ## Versioned Artifacts
 
@@ -73,9 +74,14 @@ In summary, a release is two artifacts cut together:
 Nothing is tagged before `npm test` passes and the packed tarballs have been
 installed into an empty project and run.
 
-## After the POC
+## After the first implementation
 
-The Framework-Agnostic MOCA SDK Standard and its first SDK implementation are
+The [SDK contract](../spec/moca-sdk-contract.md) and the first Knowledge Harness
+implementation — .NET, in `openmoca/moca-knowledge-harness-dotnet` — are
 expected to test the assumptions in this beta. Findings from that work should
 be captured as specification changes, compatibility notes, or a new beta
 release before the format is promoted to `1.0.0`.
+
+Knowledge Harness implementations are versioned and released from their own
+repositories. Each declares the SDK contract version and class it implements,
+and the conformance-corpus release it passes.

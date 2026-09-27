@@ -46,7 +46,7 @@ What the manifest adds on top of "a folder of Markdown":
 | **Epistemic status** | Per-node: is this `verified`, merely `sourced`, `inferred`, `generated`, or `disputed`? |
 | **Integrity** | Per-file SHA-256 digests plus a reproducible whole-package `canonicalDigest`. |
 | **Composition** | One package can be assembled from others, or relate to them, without copying content. |
-| **A trust boundary** | Executable content (`skills/`) must be cryptographically signed, and a harness must refuse it otherwise. |
+| **A trust boundary** | Executable content (`skills/`) must be cryptographically signed, and a Knowledge Harness must refuse it otherwise. |
 
 None of that is required to start. A valid Level 1 package needs three
 manifest fields and one Markdown file.
@@ -79,9 +79,12 @@ inspectable data outside the model.
 
 Being explicit here, because a format that claims everything is useless:
 
-- **Not a retrieval engine.** MOCA does not specify how to search. It defines
-  an optional sidecar index format and stops there — no query API, no
-  ranking, no embedding model.
+- **Not a retrieval engine.** The specification does not define how to
+  search. It defines an optional sidecar index format and stops there — no
+  query API, no ranking, no embedding model. Search lives in the
+  [Knowledge Harness](architecture.md#pillar-2-the-knowledge-harness), a
+  separate open-source project built on the specification, so the format
+  stays neutral while adopters still get a working search engine.
 - **Not a runtime or an agent framework.** A package contains no endpoints, no
   model selection, no temperature, no credentials. These are *forbidden* in a
   manifest ([core §5.3](../spec/moca-core-spec.md#53-excluded-properties)) —
@@ -99,27 +102,36 @@ Being explicit here, because a format that claims everything is useless:
 
 ## The layering that makes this work
 
-MOCA packages are inert data. Everything that *acts* sits above them:
+MOCA splits an AI knowledge system into
+[three pillars](architecture.md), with a host application above them:
 
 ```text
-Application / Host   — identity, tenancy, PII policy, authorization
+Host application     — identity, tenancy, PII policy, authorization
         ▲
-AI Harness           — retrieval, prompt assembly, tool execution, memory
+AI Harness           — agents, prompts, workflow; your product, one per use case
+        ▲
+Knowledge Harness    — open, validate, verify, resolve, search; open source
         ▲
 MOCA package         — concepts, content, evidence, provenance  (inert)
 ```
 
+The package holds content, the Knowledge Harness holds retrieval, and the AI
+Harness holds behaviour. Any one can be replaced without touching the others:
+change the model or the agent framework and the package and Knowledge Harness
+are unaffected; move from a local sidecar to an enterprise vector database and
+the AI Harness is unaffected.
+
 The rule that makes the boundary real: **loading a package must never execute
 anything.** The one category of package content that is executable-adjacent —
-`skills/` — must be signed, and a harness must refuse to load it from an
-unsigned or signature-invalid package
+`skills/` — must be signed, and a Knowledge Harness must refuse to load it from
+an unsigned or signature-invalid package
 ([core §8.2](../spec/moca-core-spec.md#82-security--trust-boundary-rule)).
 
 ## Where this is honest about maturity
 
 MOCA is at `0.1.0-beta.1`. The format is not stable, there is no `1.0.0`
-compatibility promise yet, and the SDKs that will exercise it in anger are not
-built. The specification, schemas, examples, and four reference CLIs are real
+compatibility promise yet, and the Knowledge Harness implementations that will
+exercise it in anger are not built. The specification, schemas, examples, and four reference CLIs are real
 and tested; treat everything as subject to change until `1.0.0`. See
 [versioning and release](versioning-and-release.md).
 
@@ -130,4 +142,5 @@ and tested; treat everything as subject to change until `1.0.0`. See
 - [Quickstart](quickstart.md) — a package in five minutes.
 - [Choosing a conformance level](guides/choosing-a-level.md) — how far up the
   stack you actually need to go.
-- [Consuming a package](guides/consuming.md) — the harness side.
+- [Architecture](architecture.md) — the three pillars in full.
+- [Consuming a package](guides/consuming.md) — what a Knowledge Harness does.

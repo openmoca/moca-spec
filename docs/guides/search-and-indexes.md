@@ -23,6 +23,39 @@ the reasoning is worth understanding because it shapes how you use it:
 - **Indexes are disposable.** Delete the sidecar and the package still works.
   That is the test the format is designed to pass.
 
+## Search modes in the Knowledge Harness
+
+The specification defines no retrieval engine. Search is the job of the
+[Knowledge Harness](../architecture.md#pillar-2-the-knowledge-harness), which
+gives an AI Harness one interface whatever the storage behind it. This section
+is non-normative. It describes how Knowledge Harness implementations are
+expected to search, not requirements on packages.
+
+| Mode | How it works |
+|---|---|
+| **Lexical** | Keyword search over the package's Markdown and node metadata. No model and no index needed, so it works offline on any device, and it is the fallback whenever a sidecar is missing or stale. |
+| **Sidecar index** | An optional `.moca.idx` next to the package, bound to it by digest (below). Supports vector and keyword (hybrid) search. The payload can be JSONL, SQLite, Parquet, or another format. |
+| **Enterprise** | An existing vector database (pgvector, Qdrant, Elasticsearch, …) serving many tenants and packages, while keeping node IDs, sources, and trust data attached to every hit. |
+
+Whatever the mode, every result carries its node identity, package and
+version, `epistemicStatus`, evidence, and freshness, so the AI Harness can
+cite it and apply its own trust policy.
+
+**When a package has ontologies**, each mode gains two optional steps that
+traverse the concept graph:
+
+```text
+query → ingress (ontology) → search: lexical | sidecar | enterprise → egress (ontology) → results
+```
+
+- **Ingress** maps the query onto the ontology before searching, to find the
+  relevant concepts and their related, broader, or prerequisite concepts. This
+  widens and focuses what gets searched.
+- **Egress** traverses the results through the ontology after searching, to
+  pull in connected content and to rank or filter by concept relationships.
+
+Without ontologies both steps are skipped and the search runs directly.
+
 ## Building one
 
 ```sh
@@ -106,7 +139,7 @@ Before using one:
 3. A sidecar with no declared hash MAY be used per local policy — but package
    identity alone does not prove synchronisation.
 
-**Never infer trust from a sidecar.** A harness MUST NOT take package
+**Never infer trust from a sidecar.** A Knowledge Harness MUST NOT take package
 integrity, conformance, credentials, model configuration, or execution policy
 from an index. It is a retrieval accelerator and nothing else.
 

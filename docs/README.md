@@ -8,7 +8,8 @@ Non-normative guides. The normative specifications live in
 | | |
 |---|---|
 | [Why MOCA?](why-moca.md) | The problem it solves, what it is not, and why not to just use a folder of Markdown or a vector database |
-| [Use cases](use-cases.md) | What people build with it, and how it relates to RO-Crate, DITA, SCORM, MCP and others |
+| [Architecture](architecture.md) | The three pillars — MOCA package, Knowledge Harness, AI Harness — and where retrieval lives |
+| [Use cases](use-cases.md) | What people build with it, and how it relates to RO-Crate, DITA, MCP and others |
 | [Quickstart](quickstart.md) | A valid package in five minutes |
 | [End-to-end walkthrough](walkthrough.md) | Source files → convert → sign → index → pack → grounded answer |
 
@@ -18,9 +19,9 @@ Non-normative guides. The normative specifications live in
 |---|---|
 | [Choosing a conformance level](guides/choosing-a-level.md) | Level 1, 2 or 3 — and why the answer is usually 1 |
 | [Authoring](guides/authoring.md) | Grounding metadata, lifecycle, integrity, composition, profiles |
-| [Consuming a package](guides/consuming.md) | Building a harness: load, validate, resolve, degrade gracefully |
+| [Consuming a package](guides/consuming.md) | What a Knowledge Harness does: load, validate, resolve, degrade gracefully |
 | [Signing and trust](guides/signing-and-trust.md) | Signing in practice, verification, and the `skills/` boundary |
-| [Search and indexes](guides/search-and-indexes.md) | Optional `.moca.idx` sidecars and how they bind |
+| [Search and indexes](guides/search-and-indexes.md) | Knowledge Harness search modes, and optional `.moca.idx` sidecars |
 
 ## Reference
 
@@ -37,6 +38,7 @@ authoritative source for each.
 | Composition semantics | [core spec §10](../spec/moca-core-spec.md#10-package-composition--relationships) |
 | Profile mechanism | [core spec §11](../spec/moca-core-spec.md#11-profiles) |
 | Sidecar index manifest | [sidecar index spec](../spec/moca-sidecar-index-spec.md) |
+| SDK Reader / Producer classes | [SDK contract](../spec/moca-sdk-contract.md) |
 | Signature format, trust roots, revocation | [trust model](../spec/moca-trust-model.md) |
 | JSON Schemas | [`schemas/v1/`](../schemas/v1) |
 | `moca-lint` finding codes | [tools/moca-lint](../tools/moca-lint/README.md#validation-passes--finding-codes) |

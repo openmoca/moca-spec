@@ -9,7 +9,8 @@ Level 1 package.
 ## Grounding content nodes
 
 A bare content node is just Markdown. Frontmatter turns it into something a
-harness can reason about.
+Knowledge Harness can carry into every answer and an AI Harness can reason
+about.
 
 ```markdown
 ---
@@ -40,7 +41,7 @@ Taking the fields in order of how much value they add:
 under-used. It tells a consumer how much to trust this node:
 `verified` (a human checked it), `sourced` (traceable but unverified),
 `inferred`, `generated` (AI-written, unchecked), `disputed`, `deprecated`.
-A harness should rank on it. If you set nothing else, set this.
+An AI Harness should rank on it. If you set nothing else, set this.
 
 **`lastReviewed`** and `validFrom` answer "is this current?". Content with an
 honest review date is more useful than content with a rich ontology and no
@@ -122,15 +123,15 @@ Two independent mechanisms
 {
   "composition": {
     "members": [
-      { "id": "urn:moca:module:probability-basics", "version": "^1.0.0", "order": 1 },
-      { "id": "urn:moca:module:bayes-theorem",      "version": "^1.0.0", "order": 2 }
+      { "id": "urn:moca:chapter:service-ownership", "version": "^1.0.0", "order": 1 },
+      { "id": "urn:moca:chapter:incident-response", "version": "^1.0.0", "order": 2 }
     ]
   }
 }
 ```
 
 Direction is parent → child only. A member never names its parents, so the
-same module can belong to several courses. A composition-only package needs no
+same chapter can belong to several handbooks. A composition-only package needs no
 `content/` at all.
 
 **`relates`** — loose association with no containment or ordering:
@@ -154,9 +155,9 @@ Profiles add domain vocabulary without changing core semantics:
 
 ```json
 {
-  "profile": ["https://openmoca.org/profiles/education/v1"],
+  "profile": ["https://openmoca.org/profiles/eu-ai-act/v1"],
   "profileData": {
-    "education": { "difficulty": "introductory" }
+    "euAiAct": { "riskTier": "limited_risk" }
   }
 }
 ```
@@ -172,12 +173,11 @@ profile owner's tooling to provide.
 ## Augmenting content you can't modify
 
 When you need to ground an AI system against material you don't own — a
-vendor's PDF bundle, a legacy courseware archive — `augmentation` lets a
+vendor's PDF bundle, a wiki export — `augmentation` lets a
 package describe an external target rather than containing it
 ([core §9](../../spec/moca-core-spec.md#9-sidecar-augmentation-pattern-augmentation)).
 
-Examples: [augmentation-generic](../../examples/augmentation-generic),
-[augmentation-scorm2004](../../examples/augmentation-scorm2004).
+Example: [augmentation-generic](../../examples/augmentation-generic).
 
 ## Converting from what you already have
 

@@ -7,7 +7,7 @@ actually do it.
 ## When you must sign
 
 **Any package containing `skills/` must be signed.** Not "should" — a
-conformant harness must refuse to load skill content from an unsigned or
+conformant Knowledge Harness must refuse to load skill content from an unsigned or
 signature-invalid package
 ([core §8.2](../../spec/moca-core-spec.md#82-security--trust-boundary-rule)).
 `skills/` is executable-adjacent content, and it is never permitted to ship
@@ -166,7 +166,7 @@ channel you already use for configuration.
 ## Rejecting skills without rejecting the package
 
 The rule most often implemented wrongly: if signature verification fails, a
-harness must refuse the `skills/` content — but it MUST NOT treat the rest of
+Knowledge Harness must refuse the `skills/` content — but it MUST NOT treat the rest of
 the package as untrustworthy on those grounds, or vice versa. Unsigned skills
 mean "ignore the skills", not "reject the package".
 

@@ -1,9 +1,14 @@
 # Use cases
 
 MOCA Core is domain-agnostic — nothing in the format knows whether it is
-carrying support articles, case law, API documentation, or a statistics
-course. This page describes concrete shapes the format takes in practice, and
+carrying support articles, case law, API documentation, or a repair
+manual. This page describes concrete shapes the format takes in practice, and
 how it relates to standards you may already be using.
+
+In each case the package is the same kind of artifact. A
+[Knowledge Harness](architecture.md#pillar-2-the-knowledge-harness) reads and
+searches it; what changes is the AI Harness built on top, which decides what
+to do with the trust signals the package carries.
 
 ## Support knowledge base
 
@@ -11,7 +16,7 @@ how it relates to standards you may already be using.
 product is still in the index when v4 ships, and the assistant quoting it has
 no way to know. Nobody can tell which answers a human has actually verified.
 
-**What MOCA adds.** `lastReviewed` and `validFrom` let a harness down-rank or
+**What MOCA adds.** `lastReviewed` and `validFrom` let an AI Harness down-rank or
 refuse stale content. `epistemicStatus` separates `verified` answers from
 `generated` summaries. `supersedes` lets a rewritten article explicitly retire
 its predecessor rather than silently coexisting with it.
@@ -56,15 +61,21 @@ Profiles carry regulatory vocabulary — see the shipped
 [EU AI Act profile](../profiles/eu-ai-act/moca-eu-ai-act-profile.md) — without
 that vocabulary leaking into core.
 
-## Courseware and training
+## Field service and technical manuals
 
-**The problem.** Course content is inherently composite (course → module →
-lesson) and existing standards for it are tied to delivery runtimes.
+**The problem.** Technicians need the current repair procedure, often on site
+with no connection. Manuals and service bulletins overlap, and a bulletin that
+replaces a procedure is easy to miss.
 
-**What MOCA adds.** `composition.members` expresses the hierarchy while each
-module stays an independently usable package. The
-[education profile](../profiles/education/moca-education-profile.md) adds
-pedagogical vocabulary on top.
+**What MOCA adds.** A package is a small set of files that a Knowledge Harness
+can search on a device with no index and no network. `supersedes` retires the
+old procedure explicitly, and evidence locators point at the exact page of the
+source manual. `composition.members` assembles per-product manuals into one
+fleet-wide package without copying content.
+
+Education and training material is another possible use. It is composite in
+the same way, and domain vocabulary for it lives in a profile outside this
+repository.
 
 ## How MOCA relates to adjacent standards
 
@@ -80,10 +91,9 @@ the honest comparison is mostly "what layer does this sit at".
 | **W3C Web Annotation** | Pointing precisely into a resource | Adopted at Level 3 for evidence locators (a page, a time range, a text selector). |
 | **SHACL** | Validating RDF shapes | Optional Level 2 validation; MOCA does not define its own shape language. |
 | **DITA** | Structured technical authoring and publishing | Authoring/publishing pipeline for humans; MOCA is a consumption format for machines. A DITA shop would convert, not replace. |
-| **SCORM / cmi5** | Packaging e-learning for an LMS runtime | Both package learning content, but SCORM binds to a delivery runtime and its tracking model. MOCA is runtime-neutral. Import tooling is on the roadmap. |
-| **MCP resources** | Exposing resources to a model at runtime | Complementary and at a different layer: MCP is a *transport* for handing content to a model; MOCA is the *artifact* being handed over. An MCP server serving MOCA packages is a planned integration. |
+| **MCP resources** | Exposing resources to a model at runtime | Complementary and at a different layer: MCP is a *transport* for handing content to a model; MOCA is the *artifact* being handed over. A MOCA MCP server that loads packages through the Knowledge Harness is a planned integration. |
 | **OpenAPI** | Describing an HTTP API | A source format MOCA converts *from* ([`moca-convert openapi`](../tools/moca-convert/README.md)), producing one content node per operation. |
-| **Vector databases** | Storing and searching embeddings | Downstream and derived. MOCA's [sidecar index](guides/search-and-indexes.md) binds an index to a package by digest without prescribing a database. |
+| **Vector databases** | Storing and searching embeddings | Downstream and derived. MOCA's [sidecar index](guides/search-and-indexes.md) binds an index to a package by digest without prescribing a database, and the Knowledge Harness can search an existing enterprise vector store while keeping node IDs, sources, and trust data. |
 
 ## Where MOCA is a poor fit
 

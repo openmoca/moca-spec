@@ -1,14 +1,21 @@
 # Consuming a MOCA package
 
-This guide is for people building the thing that *reads* packages — a harness,
-a retrieval pipeline, an agent, an importer. Everything else in these docs is
+This guide describes what a **Knowledge Harness** does when it reads a
+package — the second of MOCA's [three pillars](../architecture.md). It is for
+people building one, and for anyone else who reads packages directly: a
+retrieval pipeline, an importer, a validator. Everything else in these docs is
 about authoring; this is the other half.
 
 It describes the behaviour a correct consumer implements, in the order you
 implement it. The normative rules live in
-[the core specification](../../spec/moca-core-spec.md); this guide is the
-practical reading of them, and it is also the source material for the
-forthcoming SDK contract, so the shape here is the shape the SDKs will have.
+[the core specification](../../spec/moca-core-spec.md), and the behaviour here
+is what the [SDK contract](../../spec/moca-sdk-contract.md)'s **Reader class**
+requires. A Knowledge Harness is a Reader-class implementation plus search.
+
+Most AI Harness builders will not implement any of this. They will use a
+Knowledge Harness implementation — .NET first
+(`openmoca/moca-knowledge-harness-dotnet`, planned), then Python, then
+TypeScript — and ask it for knowledge.
 
 > **Rule zero:** loading a package MUST NOT execute anything. A MOCA package
 > is inert data. If your loader evaluates, imports, or shells out to anything
@@ -86,8 +93,8 @@ the node.
 **Epistemic status is a ranking signal, not decoration.** The core vocabulary
 is `sourced`, `verified`, `inferred`, `generated`, `disputed`, and
 `deprecated` ([core §7.2](../../spec/moca-core-spec.md#72-core-epistemic-status-vocabulary)).
-A harness answering a question should prefer `verified` over `generated`, and
-should be reluctant to present `disputed` or `deprecated` content without
+An AI Harness answering a question should prefer `verified` over `generated`,
+and should be reluctant to present `disputed` or `deprecated` content without
 saying so. A value you don't recognise probably comes from a profile — treat
 it as unknown rather than invalid.
 
@@ -164,15 +171,16 @@ Practical requirements for a consumer:
 
 This is the one part of consuming a package with real security consequences.
 
-`skills/` contains Agent Skills — instructions intended to be executed by a
-harness. The rules are not advisory
+`skills/` contains Agent Skills — instructions intended to be executed by an
+AI Harness. The rules are not advisory
 ([core §8.2](../../spec/moca-core-spec.md#82-security--trust-boundary-rule)):
 
 1. Any package containing `skills/` MUST have a valid `signature`, regardless
    of what level it otherwise satisfies.
-2. A harness MUST refuse to load `skills/` content from an unsigned or
-   signature-invalid package.
-3. A harness MUST filter each skill's `allowed-tools` against host policy
+2. A Knowledge Harness MUST refuse to load `skills/` content from an unsigned
+   or signature-invalid package, and an AI Harness MUST NOT execute skills the
+   Knowledge Harness withheld.
+3. An AI Harness MUST filter each skill's `allowed-tools` against host policy
    before executing anything. `allowed-tools` is the skill's *request*, never
    a grant.
 4. Rejecting `skills/` MUST NOT invalidate the rest of the package — and
@@ -197,7 +205,7 @@ reduce capability, not cause failure.**
 | Unrecognised profile URI in `profile[]` | Process as valid MOCA Core, ignore the profile's semantics. Required by [core §11.2](../../spec/moca-core-spec.md#112-graceful-degradation). |
 | Unknown `profileData.<name>` | Leave it opaque. It belongs to a profile, not to you. |
 | Unknown `epistemicStatus` value | Treat as unknown, not invalid — likely profile vocabulary. |
-| No sidecar index | Fall back to lexical search or straight enumeration. The package is complete without one. |
+| No sidecar index | Fall back to lexical search over the package's Markdown and node metadata. The package is complete without one. |
 | No `ontologies/` | Level 1 behaviour. Concepts are opaque strings. |
 | No frontmatter anywhere | Fully valid. Identify nodes by path. |
 | Unknown `x-*` vendor key | Ignore it. |
@@ -218,7 +226,7 @@ Every indexed item exposes `content_path`, `chunk_index`, and `chunk_count`,
 with `0 ≤ chunk_index < chunk_count`. Resolve retrieval hits back to real
 content through `content_path`, which must land inside the target's `content/`.
 
-**Never infer trust from a sidecar.** A harness MUST NOT take package
+**Never infer trust from a sidecar.** A Knowledge Harness MUST NOT take package
 integrity, conformance, credentials, model configuration, or execution policy
 from an index.
 
@@ -236,14 +244,23 @@ A minimal but correct load sequence:
 7.  resolve composition.members                     (cycle-guarded)
 8.  if skills/ → verify signature or drop skills only
 9.  attach sidecar index if present and bound       (optional)
-10. serve content, carrying epistemicStatus and evidence into the answer
+10. search, and return content carrying epistemicStatus, evidence, and
+    freshness to the AI Harness
 ```
 
 Steps 6, 7, 9 are optional capabilities. Steps 2 and 8 are the ones with
-security consequences.
+security consequences. Step 10 is where the Knowledge Harness goes beyond the
+SDK contract: it answers queries in one of three
+[search modes](search-and-indexes.md#search-modes-in-the-knowledge-harness),
+and every result keeps its source, status, and freshness so the AI Harness can
+decide what to do with it.
 
 ## See also
 
+- [Architecture](../architecture.md) — where the Knowledge Harness sits among
+  the three pillars.
+- [SDK contract](../../spec/moca-sdk-contract.md) — the normative Reader and
+  Producer classes.
 - [Choosing a conformance level](choosing-a-level.md) — what to support first.
 - [Signing and trust](signing-and-trust.md) — the verification side in practice.
 - [Search and indexes](search-and-indexes.md) — building and binding a sidecar.
