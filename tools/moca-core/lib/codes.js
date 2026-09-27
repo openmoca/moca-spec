@@ -27,6 +27,7 @@ export const CODES = Object.freeze({
   M005_DUPLICATE_MEMBER: { severity: E, summary: 'The same member id appears more than once.' },
   M006_VALIDITY_WINDOW_INVALID: { severity: W, summary: 'validUntil is not later than validFrom.' },
   M007_UNREGISTERED_URN: { severity: I, summary: 'The package id uses a URN namespace that is not registered with IANA.' },
+  M008_DIGEST_V1_PACKAGE: { severity: I, summary: 'The package was written for a mocaVersion before 0.4; digests, pins and attestations made then will not match moca-digest-v2.' },
 
   // Content (OKF bundle rules plus MOCA extensions)
   C001_FRONTMATTER_MISSING: { severity: E, summary: 'A concept document has no YAML frontmatter (OKF MUST).' },
@@ -46,7 +47,6 @@ export const CODES = Object.freeze({
   A002_ATTESTATION_INVALID: { severity: E, summary: 'An attestation failed verification or does not match the package.' },
   A003_ATTESTATION_UNVERIFIABLE: { severity: W, summary: 'An attestation could not be checked because no trust root was supplied.' },
   A004_ATTESTATION_INDETERMINATE: { severity: W, summary: 'Online verification was requested but could not complete.' },
-  A005_SKILLS_WITHHELD: { severity: E, summary: 'skills/ is present without a valid package attestation; skills are withheld.' },
   A006_REVIEW_OUTDATED: { severity: W, summary: 'A review attestation covers a file whose bytes have since changed or been removed.' },
 
   // Members (composition)
@@ -57,8 +57,6 @@ export const CODES = Object.freeze({
   // Profiles
   F001_PROFILE_UNRECOGNISED: { severity: I, summary: 'A declared profile is not recognised by this reader.' },
 
-  // Skills (agent-skills profile)
-  K001_SKILL_INVALID: { severity: W, summary: 'A skill does not conform to the Agent Skills specification.' },
   O001_ONTOLOGY_UNPARSEABLE: { severity: W, summary: 'An ontology file listed by the ontology profile is missing or is not parseable Turtle.' },
   O002_CONCEPT_UNDECLARED: { severity: W, summary: 'A node is bound to a concept IRI that no ontology file in the package declares.' },
   O003_REMOTE_REFERENCE: { severity: W, summary: 'An ontology file or concept binding relies on something a Reader would have to fetch or resolve.' },
@@ -73,6 +71,9 @@ export const CODES = Object.freeze({
 });
 
 /** @param {string} code */
+/** Codes that are no longer emitted. Codes are never reused (spec/moca-reader-contract.md). */
+export const RETIRED_CODES = Object.freeze(['A005_SKILLS_WITHHELD', 'K001_SKILL_INVALID']);
+
 export function defaultSeverity(code) {
   const entry = CODES[code];
   if (!entry) throw new Error(`unknown diagnostic code ${code}`);

@@ -11,7 +11,7 @@
         "capabilities": [
           "core"
         ],
-        "digest": "sha256:361cba9c7dc2b5a3d09472fe88badd8655e1d1f8c921643ba7f4e04a45b9eb76"
+        "digest": "sha256:d38eef8a9aa059faabed7a60aba6b3d18031deabd3be1b7347ac7abfbc66b708"
       }
     },
     {
@@ -51,7 +51,7 @@
           "core",
           "localized"
         ],
-        "digest": "sha256:891c2608e09f733f95b6f0fe1fdf9b06ce48159a676185c26ba01b521a83fb83"
+        "digest": "sha256:db78c7fc514d10667e4c990a2bcf3398f7e08913e6cf63566146cab461c5a3ac"
       }
     },
     {
@@ -65,7 +65,7 @@
           "core",
           "located-evidence"
         ],
-        "digest": "sha256:28e33ca55345b0ce041e8068d4a21ba40ea6c48d9e57c04387eaa62cd10ef3df",
+        "digest": "sha256:f1ca665de05b4022a5e2eb351bf008b81341793e62bb43d499ebf4e4633d25c9",
         "evidenceVerified": {
           "refunds.md": [
             true,
@@ -87,7 +87,7 @@
           "located-evidence",
           "self-contained-evidence"
         ],
-        "digest": "sha256:3ca15773ee36f0ae5e59b7ff4b3f7542c2799c59e51fe1d2bb4c6ed7b4eddabb",
+        "digest": "sha256:f5b0ad1432bae664217265c0fddb65dba56fb6f5c081598da746b7acf549cb1e",
         "evidenceVerified": {
           "refunds.md": [
             true,
@@ -111,7 +111,7 @@
           "located-evidence",
           "self-contained-evidence"
         ],
-        "digest": "sha256:52978aa457e0855db2b29b6ee30cf4631f0a3ecf7111a288193e4939d3459595",
+        "digest": "sha256:9f505aeaad74c4c9f4713fc520ba33b7df73c9f07456376189f40d73044ce68a",
         "evidenceVerified": {
           "refunds.md": [
             false,
@@ -135,7 +135,7 @@
           "reviewed",
           "signed"
         ],
-        "digest": "sha256:b03e0c4f4859ec35cc3a855d2291a72497eef89b84fb74e10780d379a1b9a3e4"
+        "digest": "sha256:d56a9665bb17013df662492f4c4a897cdb8727bd59a65dc0c903158f4f504a36"
       }
     },
     {
@@ -219,60 +219,6 @@
         ],
         "capabilities": [
           "core"
-        ]
-      }
-    },
-    {
-      "id": "skills-signed",
-      "description": "Skills are exposed when the package attestation is valid.",
-      "target": "fixtures/skills-signed",
-      "options": {
-        "trustRoot": "fixtures/trust-root.json"
-      },
-      "expect": {
-        "valid": true,
-        "codes": [],
-        "capabilities": [
-          "core",
-          "signed",
-          "skills"
-        ],
-        "digest": "sha256:992a2e4e50aed794369c0bc25100eb1bc40a088b018d1d5d98f1e92669707a01"
-      }
-    },
-    {
-      "id": "skills-unsigned",
-      "description": "Unsigned skills are withheld; the rest of the package stays valid and usable.",
-      "target": "fixtures/skills-unsigned",
-      "options": {
-        "trustRoot": "fixtures/trust-root.json"
-      },
-      "expect": {
-        "valid": true,
-        "codes": [
-          "A005_SKILLS_WITHHELD"
-        ],
-        "capabilities": [
-          "core"
-        ]
-      }
-    },
-    {
-      "id": "skill-invalid",
-      "description": "A skill that does not follow the Agent Skills spec: name/directory mismatch, array metadata, array allowed-tools.",
-      "target": "fixtures/skill-invalid",
-      "options": {
-        "trustRoot": "fixtures/trust-root.json"
-      },
-      "expect": {
-        "valid": true,
-        "codes": [
-          "K001_SKILL_INVALID"
-        ],
-        "capabilities": [
-          "core",
-          "signed",
-          "skills"
         ]
       }
     },
@@ -524,7 +470,7 @@
           "core",
           "ontology"
         ],
-        "digest": "sha256:49d64c2f6fad7437cfcd55747a038af0a089d32e875749c42ef9d461e43aaed3"
+        "digest": "sha256:11666e2fa146b52fdc8e5c5b7a0ee467cbeb15cee167224186b8967954dcf3d6"
       }
     },
     {
@@ -586,7 +532,7 @@
           "core",
           "composed"
         ],
-        "digest": "sha256:61961568f8e053fe76c24b8c40594f17e127321f863355b673f9727b25bb1c9c"
+        "digest": "sha256:053883c0995b2cb643467d52327268e7a5c50189f151c64dbe6db4f6d68cfa62"
       }
     },
     {

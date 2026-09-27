@@ -63,9 +63,7 @@ This file describes direction. What shipped is in [CHANGELOG.md](CHANGELOG.md).
    to their own repository. This repository then holds only the specification,
    schemas, profiles and corpus.
 3. **Python Reader**, when an adopter needs one in-process.
-4. **OCI tooling**: `moca-lint push` and `pull`, following the
-   [binding](spec/moca-oci-binding.md).
-5. **Talk to the OKF maintainers** about the package layer as a companion
+4. **Talk to the OKF maintainers** about the package layer as a companion
    specification ([GOVERNANCE.md](GOVERNANCE.md#path-to-a-standard)).
 
 ## Later
@@ -73,9 +71,7 @@ This file describes direction. What shipped is in [CHANGELOG.md](CHANGELOG.md).
 1. Readers for mobile edge platforms (Swift, Kotlin), when an adopter needs one.
 2. Concept expansion over `skos:broader`, `narrower` and `related` in search,
    if the outcome evaluation shows concept binding helps.
-3. Data-governance profiles for NIST AI RMF and ISO/IEC 42001, following the
-   [EU AI Act profile](profiles/eu-ai-act/moca-eu-ai-act-profile.md).
-4. `1.0.0`: a stability review of everything normative, once the criteria in
+3. `1.0.0`: a stability review of everything normative, once the criteria in
    [GOVERNANCE.md](GOVERNANCE.md#path-to-a-standard) are met.
 
 ## Principles

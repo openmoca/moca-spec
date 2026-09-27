@@ -65,8 +65,8 @@ A trust root lists the keys and Sigstore identities a host trusts, each for
 It does not make content true or safe. Treat package text as untrusted input to
 a model, whoever signed it ([SECURITY.md](../../SECURITY.md)).
 
-## Skills
+## Agent material
 
-A package with `skills/` needs a valid package attestation, or Readers
-withhold the skills. See the
-[agent-skills profile](../../profiles/agent-skills/moca-agent-skills-profile.md).
+A package carries knowledge, not agent skills or tools. Since 0.4 a `skills/`
+directory has no special meaning
+([ADR-0015](../adr/0015-park-unconsumed-features.md)).

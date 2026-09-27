@@ -11,12 +11,9 @@
   ],
   "sign": [
     { "package": "examples/support-kb", "key": "publisher" },
-    { "package": "examples/skills", "key": "publisher" },
     { "package": "conformance/fixtures/signed-reviewed", "key": "publisher" },
     { "package": "conformance/fixtures/signature-untrusted-key", "key": "rogue" },
-    { "package": "conformance/fixtures/review-wrong-role", "key": "publisher" },
-    { "package": "conformance/fixtures/skills-signed", "key": "publisher" },
-    { "package": "conformance/fixtures/skill-invalid", "key": "publisher" }
+    { "package": "conformance/fixtures/review-wrong-role", "key": "publisher" }
   ],
   "review": [
     { "package": "examples/support-kb", "key": "reviewer", "nodes": ["refund-window.md"], "reviewer": "human:sam.ortiz", "at": "2026-08-14T00:00:00Z", "scope": "Checked against Acme Customer Terms section 7", "name": "sam-ortiz-2026-08-14" },

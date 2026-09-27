@@ -95,7 +95,7 @@ explains how to move a draft package.
   in-toto, DSSE and Sigstore; role-scoped trust roots.
 - [Sidecar index](spec/moca-sidecar-index-spec.md): the portable
   `moca-jsonl-v1` payload with byte offsets; `model` required for dense indexes.
-- [OCI binding](spec/moca-oci-binding.md).
+- [OCI binding](https://github.com/openmoca/moca-spec/blob/v0.3.0-alpha.1/spec/moca-oci-binding.md).
 
 ### Schemas
 

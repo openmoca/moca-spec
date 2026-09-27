@@ -41,7 +41,7 @@ members pinned by digest, typed relations between versions, and a
 degradation contract.
 
 The claims graph and RDF machinery move to an optional
-[claims profile](../../profiles/claims/moca-claims-profile.md) based on
+[claims profile](https://github.com/openmoca/moca-spec/blob/v0.3.0-alpha.1/profiles/claims/moca-claims-profile.md) based on
 nanopublications.
 
 ## Consequences

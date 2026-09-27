@@ -17,7 +17,7 @@ RDF. Packages and Readers that do not use this profile are unaffected.
 
 This profile is about **vocabulary**. For machine-readable **assertions**
 ("service A depends on database B, according to page 12"), use the
-[claims profile](../claims/moca-claims-profile.md). A package can use both.
+[claims profile](https://github.com/openmoca/moca-spec/blob/v0.3.0-alpha.1/profiles/claims/moca-claims-profile.md) (removed in 0.4). A package can use both.
 
 ## 2. Layout
 

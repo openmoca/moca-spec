@@ -29,8 +29,7 @@ the system that reads it.
 This document defines the package format. Reader behaviour is in the
 [Reader contract](moca-reader-contract.md), attestations in
 [moca-attestations.md](moca-attestations.md), search indexes in the
-[sidecar index specification](moca-sidecar-index-spec.md), and registry
-transport in the [OCI binding](moca-oci-binding.md).
+[sidecar index specification](moca-sidecar-index-spec.md).
 
 ## 2. Conventions
 
@@ -53,14 +52,11 @@ and only when, they appear in capitals.
 | Concern | Standard |
 | --- | --- |
 | Content and node trust fields | OKF v0.2 |
-| Manifest canonical form | RFC 8785 (JSON Canonicalization Scheme) |
-| Digests | SHA-256 |
+| Digests | SHA-256 over a BagIt-style payload manifest (RFC 8493 `manifest-sha256.txt` line format) |
 | Attestations | in-toto Statement v1, wrapped in DSSE or a Sigstore bundle |
 | Evidence selectors | W3C Web Annotation: `FragmentSelector`, `TextQuoteSelector`, `TextPositionSelector`; RFC 3778 for PDF pages |
 | Languages | BCP 47 |
 | Licences | SPDX license expressions |
-| Skills (profile) | Agent Skills specification |
-| Registry transport (binding) | OCI image and distribution specifications |
 
 ## 4. Manifest
 
@@ -231,7 +227,7 @@ Citation records keep declared verification (`declaredVerified`) apart from
 attested reviews (`attestedReviews`) so that an application never mistakes one
 for the other.
 
-## 6. Package contents and the canonical digest
+## 6. Package contents and the digest
 
 ### 6.1 Layout
 
@@ -241,7 +237,6 @@ for the other.
 ├── content/         the OKF bundle (required unless the package has members)
 ├── sources/         optional: the original files that nodes cite
 ├── media/           optional: images, audio and other cited files
-├── skills/          optional: see §8
 ├── attestations/    optional: see §10; outside the digest
 └── ...              any other regular files
 ```
@@ -277,23 +272,35 @@ by some readers and not covered by the digest.
 
 ### 6.4 Algorithm
 
-The digest is `moca-digest-v1`:
+The digest is `moca-digest-v2` ([ADR-0014](../docs/adr/0014-digest-v2-bagit-manifest.md)):
 
-1. List the package's regular files (§6.1, §6.2). For each, take its path
-   relative to the package root with `/` separators, normalised to NFC.
-2. Remove `moca.json` from the list. For every other file, compute the
-   lowercase hexadecimal SHA-256 of its bytes. File modes, timestamps and empty
-   directories are ignored.
-3. Parse `moca.json`, canonicalise it with RFC 8785, and compute the lowercase
-   hexadecimal SHA-256 of the resulting UTF-8 bytes.
-4. Build this object, canonicalise it with RFC 8785, and compute the SHA-256
-   of the UTF-8 bytes:
+1. List the package's regular files (§6.1, §6.2), excluding `attestations/`.
+   For each, take its path relative to the package root with `/` separators,
+   normalised to NFC. `moca.json` is included like any other file.
+2. For every file, compute the lowercase hexadecimal SHA-256 of its bytes.
+   File modes, timestamps and empty directories are ignored.
+3. Write one line per file: the hash, two spaces, the path, and a line feed
+   (U+000A). In the path, `%`, CR and LF are percent-encoded as `%25`, `%0D`
+   and `%0A`, as RFC 8493 requires. Sort the lines by the UTF-8 bytes of the
+   path.
+4. The digest is `sha256:` followed by the lowercase hexadecimal SHA-256 of
+   that text, encoded as UTF-8.
 
-   ```json
-   { "algorithm": "moca-digest-v1", "manifest": "<step 3>", "files": { "<path>": "<step 2>" } }
-   ```
+The text in step 3 is a BagIt `manifest-sha256.txt`. Saved outside the
+package, it lets anyone check every file with a standard tool, and its own
+hash is the digest:
 
-5. The digest is `sha256:` followed by that hash in lowercase hexadecimal.
+```sh
+moca-lint manifest kb > kb.manifest-sha256.txt
+(cd kb && shasum -a 256 -c ../kb.manifest-sha256.txt)
+shasum -a 256 kb.manifest-sha256.txt    # equals the package digest
+```
+
+Because `moca.json` is hashed as bytes, any edit to it, including
+reformatting, changes the digest. Packages written for an earlier
+`mocaVersion` were digested with `moca-digest-v1`. A Reader computes v2 for
+them and reports `M008_DIGEST_V1_PACKAGE` (info), so hosts know that older
+pins and attestations will not match.
 
 Because members are pinned by digest inside `moca.json` (§7.1), a composed
 package's digest covers its members without any resolution step, and is
@@ -327,7 +334,7 @@ member MUST NOT appear twice (`M005_DUPLICATE_MEMBER`). A package with members
 MAY have no content of its own.
 
 How a member is located is the host's decision: a folder, a database, or a
-registry (see the [OCI binding](moca-oci-binding.md)). Whatever the resolver
+registry. Whatever the resolver
 returns, a Reader MUST compute its digest and MUST refuse it if the digest
 differs from the pin (`R002_MEMBER_DIGEST_MISMATCH`). Resolution is therefore
 verification, not trust in the resolver.
@@ -353,20 +360,14 @@ Profiles MAY define further types; Readers preserve relations they do not
 understand. MOCA surfaces conflicts as information; it does not arbitrate
 them.
 
-## 8. Skills
+## 8. No agent material
 
-`skills/` is reserved for executable-adjacent material such as Agent Skills.
-Its format is defined by the
-[agent-skills profile](../profiles/agent-skills/moca-agent-skills-profile.md).
-One rule stays in core, so it cannot be avoided by not declaring the profile:
-
-- A Reader MUST NOT expose anything under `skills/` unless the package has at
-  least one valid package attestation from a signer the host trusts
-  ([attestations §3](moca-attestations.md#3-package-attestations)). Otherwise
-  it reports `A005_SKILLS_WITHHELD` and the rest of the package stays usable.
-
-Loading a package never runs a skill. What an application does with an exposed
-skill is its own, sandboxed decision.
+A package carries knowledge, not instructions for an agent to act on. MOCA
+defines no directory with special meaning for skills, prompts or tools
+([ADR-0015](../docs/adr/0015-park-unconsumed-features.md)). A `skills/`
+directory, if present, is ordinary package data: it is covered by the digest,
+and a Reader gives it no special treatment. An application that needs agent
+skills ships them as its own code.
 
 ## 9. Profiles
 
@@ -420,9 +421,8 @@ a package actually has from what it contains and what verifies:
 | `localized` | At least one node has a locale representation. |
 | `signed` | At least one package attestation verifies against the host's trust root. |
 | `reviewed` | At least one review attestation verifies and matches a current file. |
-| `skills` | `skills/` is present and exposed (§8). |
 
-`signed`, `reviewed` and `skills` depend on the host's trust root: the same
+`signed` and `reviewed` depend on the host's trust root: the same
 package can be `signed` for one host and not for another.
 
 `self-contained-evidence` says the originals are inside the package. It does
@@ -444,10 +444,10 @@ A package is the same package whether it is:
 - a **`.moca` archive**: a Zip file with `moca.json` at its root, containing
   the package's regular files (and, optionally, `attestations/`);
 - **records a host supplies** through a package source
-  ([Reader contract §3](moca-reader-contract.md#3-opening-a-package));
-- an **OCI artifact** ([OCI binding](moca-oci-binding.md)).
+  ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)), for
+  example from blob storage, a database or a registry.
 
-All four give the same digest.
+All three give the same digest.
 
 ## 13. Security considerations
 

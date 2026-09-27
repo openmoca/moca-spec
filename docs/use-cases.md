@@ -58,9 +58,10 @@ An organisation must show which knowledge its assistant used and where it came
 from.
 
 - Record the **package digest** with every answer: it names the exact content.
-- The [EU AI Act data-governance profile](../profiles/eu-ai-act/moca-eu-ai-act-profile.md)
-  records sources, collection period, preparation and known gaps. Risk
-  classification stays with the AI system, not the package.
+- Keep the originals under `sources/`, so each citation can be matched
+  against its source. For dataset-level governance records, link an SPDX 3.0
+  Dataset or Croissant document; risk classification stays with the AI
+  system, not the package.
 
 ## Where MOCA is a poor fit
 

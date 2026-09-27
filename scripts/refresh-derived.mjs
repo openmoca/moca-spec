@@ -57,7 +57,11 @@ async function refresh(root) {
   for (const a of config.archives) {
     const zip = new AdmZip();
     const r = await readPackage(at(a.package));
-    for (const e of r.source.list()) zip.addFile(e.path, r.source.read(e.path));
+    // A fixed entry time keeps the archive byte-identical across refreshes.
+    for (const e of r.source.list()) {
+      zip.addFile(e.path, r.source.read(e.path));
+      zip.getEntry(e.path).header.time = new Date(1980, 0, 1);
+    }
     zip.writeZip(at(a.out));
   }
 

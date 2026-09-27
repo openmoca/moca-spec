@@ -87,9 +87,10 @@ chunking scheme. Keep it; feed it from packages. MOCA gives it verified input
 and metadata to filter and cite with, and its Search layer applies the trust
 rules to what the index returns.
 
-**...OCI artifacts and cosign?** Use them for distribution: MOCA has an
-[OCI binding](../spec/moca-oci-binding.md). OCI digests identify archive bytes;
-MOCA's digest identifies content across archives. And OCI has no notion of a
+**...OCI artifacts and cosign?** Use them for distribution: a package is a
+set of files, which any registry can carry. OCI digests identify archive
+bytes; MOCA's digest identifies content across archives, and is the hash of a
+standard BagIt manifest. And OCI has no notion of a
 reviewed node or a superseded policy.
 
 ## What MOCA is not

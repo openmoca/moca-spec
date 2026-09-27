@@ -39,7 +39,7 @@ common(program.command('lint')
   }));
 
 program.command('digest')
-  .description('print the canonical digest of a package')
+  .description('print the digest of a package (moca-digest-v2)')
   .argument('<target>', 'package directory or .moca archive')
   .action((target) => run(async () => {
     const result = await readPackage(target);
@@ -49,6 +49,19 @@ program.command('digest')
       return;
     }
     console.log(result.digest);
+  }));
+
+program.command('manifest')
+  .description('print the BagIt-style manifest the digest is computed over; save it outside the package and check with shasum -a 256 -c')
+  .argument('<target>', 'package directory or .moca archive')
+  .action((target) => run(async () => {
+    const result = await readPackage(target);
+    if (!result.payloadManifest) {
+      console.error(formatText(result.diagnostics.filter((d) => d.severity === 'error')));
+      process.exitCode = 1;
+      return;
+    }
+    process.stdout.write(result.payloadManifest);
   }));
 
 program.command('info')

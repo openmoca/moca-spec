@@ -62,7 +62,7 @@ has no `moca.json`" (`T002`).
 These apply to both classes.
 
 - **Never execute anything from a package.** No evaluation, dynamic import or
-  subprocess for any content, including `skills/`.
+  subprocess for any content.
 - **Never act on a location or setting a package supplies.** A Reader performs
   I/O only through things the host supplied and enabled: a package source, a
   member resolver, online signature checks, and search back ends. Nothing in a
@@ -86,11 +86,9 @@ A Reader MUST:
 4. read `content/` as an OKF bundle ([package spec §5](moca-package-spec.md#5-content)),
    group locale representations into nodes, and check paths and links;
 5. verify attestations against the host's trust root (§6);
-6. withhold `skills/` unless a package attestation verified
-   ([package spec §8](moca-package-spec.md#8-skills));
-7. resolve members through the host's resolver, if one is supplied, and check
+6. resolve members through the host's resolver, if one is supplied, and check
    each against its pin (§7.1 of the package spec);
-8. derive capabilities ([package spec §11](moca-package-spec.md#11-capabilities)).
+7. derive capabilities ([package spec §11](moca-package-spec.md#11-capabilities)).
 
 Frontmatter MUST be parsed with the YAML 1.2 core schema, so that timestamps
 stay strings.
@@ -295,7 +293,7 @@ promotes warnings to errors without changing codes.
 
 A package is **valid** when it has no error in the `T`, `P`, `M` or `C`
 families. Errors in other families affect only the feature concerned: an
-invalid attestation does not count, withheld skills are not exposed, a
+invalid attestation does not count, a
 mismatched member is not used, an unusable sidecar is ignored. `O` diagnostics
 withhold only the `ontology` capability.
 
@@ -314,6 +312,7 @@ withhold only the `ontology` capability.
 | `M005_DUPLICATE_MEMBER` | error | The same member id appears more than once. |
 | `M006_VALIDITY_WINDOW_INVALID` | warning | validUntil is not later than validFrom. |
 | `M007_UNREGISTERED_URN` | info | The package id uses a URN namespace that is not registered with IANA. |
+| `M008_DIGEST_V1_PACKAGE` | info | The package was written for a `mocaVersion` before 0.4; digests, pins and attestations made then will not match `moca-digest-v2`. |
 | `C001_FRONTMATTER_MISSING` | error | A concept document has no YAML frontmatter (OKF MUST). |
 | `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML or is not a mapping. |
 | `C003_TYPE_MISSING` | error | Frontmatter has no non-empty type (OKF MUST). |
@@ -329,13 +328,11 @@ withhold only the `ontology` capability.
 | `A002_ATTESTATION_INVALID` | error | An attestation failed verification or does not match the package. |
 | `A003_ATTESTATION_UNVERIFIABLE` | warning | An attestation could not be checked because no trust root was supplied. |
 | `A004_ATTESTATION_INDETERMINATE` | warning | Online verification was requested but could not complete. |
-| `A005_SKILLS_WITHHELD` | error | skills/ is present without a valid package attestation; skills are withheld. |
 | `A006_REVIEW_OUTDATED` | warning | A review attestation covers a file whose bytes have since changed or been removed. |
 | `R001_MEMBER_UNRESOLVED` | warning | A member could not be resolved by the host resolver. |
 | `R002_MEMBER_DIGEST_MISMATCH` | error | A resolved member does not match its pinned digest. |
 | `R003_MEMBER_CYCLE` | error | Members form a cycle. |
 | `F001_PROFILE_UNRECOGNISED` | info | A declared profile is not recognised by this reader. |
-| `K001_SKILL_INVALID` | warning | A skill does not conform to the Agent Skills specification. |
 | `O001_ONTOLOGY_UNPARSEABLE` | warning | An ontology file listed by the ontology profile is missing or is not parseable Turtle. |
 | `O002_CONCEPT_UNDECLARED` | warning | A node is bound to a concept IRI that no ontology file in the package declares. |
 | `O003_REMOTE_REFERENCE` | warning | An ontology file or concept binding relies on something a Reader would have to fetch or resolve: owl:imports, or an IRI that is not absolute. |
@@ -345,6 +342,8 @@ withhold only the `ontology` capability.
 | `S004_SIDECAR_ITEM_INVALID` | error | A payload item breaks the addressing rules. |
 | `S005_SIDECAR_FORMAT_UNKNOWN` | info | The payload format is not recognised; the sidecar is ignored. |
 | `S006_MODEL_MISMATCH` | warning | The host's embedder does not match the index's model; dense search is refused. |
+
+Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0015](../docs/adr/0015-park-unconsumed-features.md)).
 
 ## 11. Handing content to a model
 
@@ -368,8 +367,7 @@ A Reader, adapter or server that passes content to a model:
 | Malformed optional frontmatter field | `C005` (warning); node still read. |
 | Unknown relation type | Preserved; no effect. |
 | Unknown attestation predicate | Ignored. |
-| No trust root | Attestations unverifiable; package still readable; skills withheld. |
-| Invalid or missing package attestation with `skills/` present | Skills withheld (`A005`); the rest of the package usable. |
+| No trust root | Attestations unverifiable; package still readable. |
 | No resolver | Members exposed unresolved; no diagnostic. |
 | Unresolvable or mismatched member | That member is not used; the rest usable. |
 | No sidecar, stale sidecar, or unknown payload format | Sidecar ignored; the package searched directly. |

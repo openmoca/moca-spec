@@ -112,8 +112,8 @@ node $M/moca-lint/bin/moca-lint.js digest support-kb.moca
 sha256:6539697fc762840cbaa031aec5288aae588ff6f376d56e24bc4ca98d647e5610
 ```
 
-The archive has the same digest as the folder. To publish to a registry, see
-the [OCI binding](../spec/moca-oci-binding.md).
+The archive has the same digest as the folder. Any registry that stores
+files, OCI registries included, can carry it.
 
 ## 8. Serve it to an agent
 

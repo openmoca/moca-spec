@@ -163,8 +163,7 @@ you already use; MOCA adds trust and citation. See
 | [Reader interface](spec/moca-reader-interface.md) | The operations every language's Reader offers: Reader, Search, Bindings |
 | [Attestations](spec/moca-attestations.md) | Package and review attestations, trust roots, verification outcomes |
 | [Sidecar index](spec/moca-sidecar-index-spec.md) | The portable `moca-jsonl-v1` search index |
-| [OCI binding](spec/moca-oci-binding.md) | Storing and pulling packages from OCI registries |
-| [Profiles](profiles/README.md) | Agent Skills, claims (nanopublications), ontology (SKOS/OWL), EU AI Act data governance |
+| [Profiles](profiles/README.md) | Optional extensions; today the ontology profile (extra vocabulary) |
 | [Schemas](schemas/v1) | Manifest, node, citation record, search hit, sidecar, review predicate, trust root |
 | [Conformance corpus](conformance/README.md) | 57 cases, with pinned digests, that any implementation must pass, runnable against a Reader in any language |
 

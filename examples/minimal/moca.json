@@ -1,6 +1,6 @@
 {
   "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
-  "mocaVersion": "0.2",
+  "mocaVersion": "0.4",
   "id": "https://example.com/moca/minimal",
   "version": "1.0.0",
   "title": "Minimal package"

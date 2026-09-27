@@ -56,8 +56,7 @@ subject matches the package's `id`, `version` and computed digest. Otherwise it
 is **invalid** (`A002_ATTESTATION_INVALID`).
 
 Several package attestations MAY be present, for example a publisher and a
-distributor. Each valid one names a signer; any one is enough to expose
-`skills/`.
+distributor. Each valid one names a signer.
 
 ## 4. Review attestations
 

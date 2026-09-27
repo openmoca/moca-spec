@@ -1,6 +1,6 @@
 {
   "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
-  "mocaVersion": "0.2",
+  "mocaVersion": "0.4",
   "id": "https://example.com/moca/policies/data-retention",
   "version": "2.0.0",
   "title": "Data retention policy",
