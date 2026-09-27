@@ -1,10 +1,28 @@
 # Roadmap
 
-MOCA's job is narrow: a package layer that makes OKF knowledge exchangeable,
-verifiable, composable and citable. The roadmap is ordered by what would prove
-or disprove that it is worth having.
+MOCA is portable grounding for AI: a package (structure, content, evidence,
+with trust across them), an open Reader per language, and applications built
+on both. The roadmap is ordered by what would prove or disprove that it is
+worth having.
 
 This file describes direction. What shipped is in [CHANGELOG.md](CHANGELOG.md).
+
+## Done in 0.4.0-alpha.1
+
+- Three pillars (MOCA Package, Reader, Application) and an admission test for
+  what enters the standard ([ADR-0011](docs/adr/0011-three-pillars-and-admission-test.md)).
+- A structure core, and structure operations in the Reader
+  ([ADR-0012](docs/adr/0012-structure-core.md)); application and organisation
+  overlays ([ADR-0013](docs/adr/0013-package-application-organisation-layers.md));
+  pluggable ontology-guided retrieval with the gate always last
+  ([ADR-0016](docs/adr/0016-pluggable-ontology-guided-retrieval.md)).
+- `moca-digest-v2` over a BagIt-style manifest ([ADR-0014](docs/adr/0014-digest-v2-bagit-manifest.md)).
+- Defect fixes: versioned node references, `evidence[].matched`, resource
+  limits, store search from ingest-time records.
+- Normalised evidence matching, WebVTT captions and media time ranges; binary
+  sidecar vectors; MCP resources and a structure tool.
+- Skills, claims, EU AI Act and OCI parked ([ADR-0015](docs/adr/0015-park-unconsumed-features.md)).
+- A 76-case corpus.
 
 ## Done in 0.3.0-alpha.1
 
@@ -34,18 +52,23 @@ This file describes direction. What shipped is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Now: prove it is useful
 
-1. **Outcome evaluation.** Does MOCA metadata make answers better? Measure
-   citation accuracy, citation-verification rate, stale-answer rate and
-   handling of contested content, with and without it, including offline on a
-   device and with and without concept binding
-   ([plan](docs/plans/01-outcome-evaluation.md)). If it does not help, the
-   fields that do not help are removed.
-2. **The .NET Reader**, `openmoca/moca-reader-dotnet`, for a first .NET host:
-   Reader and Search layers, passing the whole corpus through the runner
-   protocol, with an independent check of the host's outcome evaluation.
-3. **Front door.** Publish the `@openmoca` packages to npm; register
+1. **Two pilots and the outcome evaluation.** One pilot in the first
+   application's domain, and one in a different domain with existing
+   structure (manuals or SOPs, or a regulation with amendments). Measure
+   answer accuracy, scope violations, order errors, citation matching and
+   stale answers, with and without MOCA and with and without structure
+   ([plan](docs/plans/01-outcome-evaluation.md)), with an outside reviewer.
+   Gates decided in advance: structure stays in core only if it reduces scope
+   violations or order errors in both pilots.
+2. **The .NET Reader**, `openmoca/moca-reader-dotnet`, for a first .NET host,
+   built against 0.4: read, search, structure operations and the Agent
+   Framework binding, passing the whole corpus through the runner protocol.
+3. **Package signing with OpenSSF Model Signing** (0.5), after a spike
+   against its specification and tooling
+   ([ADR-0014](docs/adr/0014-digest-v2-bagit-manifest.md)).
+4. **Front door.** Publish the `@openmoca` packages to npm; register
    `w3id.org/moca`; keep `npm test` green.
-4. **First outside adopter.** Find one organisation that exchanges knowledge
+5. **First outside adopter.** Find one organisation that exchanges knowledge
    across a boundary (a vendor shipping documentation to customers, a regulator
    publishing guidance, a platform team serving many product teams) and support
    them to production.
@@ -69,15 +92,21 @@ This file describes direction. What shipped is in [CHANGELOG.md](CHANGELOG.md).
 ## Later
 
 1. Readers for mobile edge platforms (Swift, Kotlin), when an adopter needs one.
-2. Concept expansion over `skos:broader`, `narrower` and `related` in search,
-   if the outcome evaluation shows concept binding helps.
-3. `1.0.0`: a stability review of everything normative, once the criteria in
+2. Manifest overlays (application and organisation additions to `moca.json`),
+   once two use cases need them.
+3. Importers from structured sources (for example DITA maps), as tooling
+   beside the Reader.
+4. `1.0.0`: a stability review of everything normative, once the criteria in
    [GOVERNANCE.md](GOVERNANCE.md#path-to-a-standard) are met.
 
 ## Principles
 
-- **Borrow before inventing.** OKF for content, Sigstore and DSSE for
-  signing, W3C selectors for evidence, OCI for registries, MCP for access.
+- **Borrow before inventing.** OKF for content, SKOS and Dublin Core for
+  structure, BagIt for the manifest, Sigstore and DSSE for signing, W3C
+  selectors, Media Fragments and WebVTT for evidence, MCP for access.
+- **Two use cases or it stays out.** A feature enters the package or the
+  Reader only when two use cases need it, one of them real and named
+  ([ADR-0011](docs/adr/0011-three-pillars-and-admission-test.md)).
 - **Fail closed on identity, degrade gracefully on meaning.** Anything that
   could make the digest ambiguous is an error; anything a Reader does not
   understand is ignored and reported.

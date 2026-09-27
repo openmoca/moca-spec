@@ -1,6 +1,6 @@
 # MOCA Package Specification
 
-Specification version: `0.3.0-alpha.1` (`mocaVersion` `0.3`)
+Specification version: `0.4.0-alpha.1` (`mocaVersion` `0.4`)
 Status: Alpha. Expect changes before `1.0.0`.
 License: [Apache License 2.0](../LICENSE)
 
@@ -546,6 +546,7 @@ Before `1.0.0`, a minor version change MAY be breaking and is described in
 major version. A Reader that meets a newer `mocaVersion` SHOULD read the
 package on a best-effort basis rather than refuse it.
 
-A package written for `mocaVersion` `0.2` is a valid `0.3` package without
-change; `0.3` adds capabilities, a profile and Reader behaviour, not package
-requirements.
+`0.4` changes the digest algorithm (§6.4), so every package written for an
+earlier `mocaVersion` has a different digest under `0.4`; a Reader reports
+`M008_DIGEST_V1_PACKAGE` (info) for them. See
+[MIGRATIONS.md](../MIGRATIONS.md).

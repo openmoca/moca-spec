@@ -4,6 +4,87 @@ All notable changes to the MOCA specification, schemas, conformance corpus and
 reference tools. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [the versioning policy](docs/versioning-and-release.md).
 
+## [0.4.0-alpha.1] - 2026-09-27
+
+MOCA as three pillars: an open package with an optional structure layer, an
+open Reader per language that searches and navigates it, and applications
+built on both. Breaking: every digest changes; see
+[MIGRATIONS.md](MIGRATIONS.md).
+
+### Decisions
+
+- [ADR-0011](docs/adr/0011-three-pillars-and-admission-test.md): MOCA Package,
+  MOCA Reader and MOCA Application, and the admission test (two use cases, one
+  real and named). Supersedes ADR-0008.
+- [ADR-0012](docs/adr/0012-structure-core.md): a structure core and Reader
+  structure operations. Supersedes ADR-0009.
+- [ADR-0013](docs/adr/0013-package-application-organisation-layers.md):
+  package, application and organisation layers.
+- [ADR-0014](docs/adr/0014-digest-v2-bagit-manifest.md): `moca-digest-v2`.
+  Supersedes ADR-0002.
+- [ADR-0015](docs/adr/0015-park-unconsumed-features.md): skills, claims, EU AI
+  Act and OCI parked. Supersedes ADR-0005.
+- [ADR-0016](docs/adr/0016-pluggable-ontology-guided-retrieval.md): structure
+  facts are normative; ontology-guided retrieval is pluggable.
+
+### Specification
+
+- Package: the structure layer (§5.6): `structure.ttl` with SKOS and DCMI
+  terms, `moca.concepts` bindings, an optional derived `structure.json`, and
+  the `structured` capability. `moca-digest-v2`: the SHA-256 of a BagIt-style
+  manifest, with `moca.json` hashed as bytes. Media Fragments and WebVTT for
+  evidence. §8 now says a package carries no agent material. Profiles never
+  define capabilities.
+- Reader contract: search is part of the Reader class. §9 is the search
+  pipeline and its gate, with hooks and store search from ingest-time records.
+  New §10 Structure: operations, layers and overlays. `node.ref`,
+  `evidence[].matched`, `retrieval`. Evidence is matched against normalised
+  text. Resource limits are documented (§3). Sections 10-13 become 11-14.
+- New codes: `M008`, `O004`, `O005`. `A005` and `K001` are retired. The `O`
+  codes now describe the structure file.
+- Reader interface: rewritten around the pillars, with structure operations,
+  overlays, hooks and domain extensions.
+- Sidecar index: binary float32 vectors (`storage.vectors`); the JSON `vector`
+  field is deprecated.
+- The OCI binding is removed.
+
+### Schemas
+
+- New `structure.schema.json`. The node schema gains `moca.concepts`.
+  Citation records gain `node.ref`, `evidence[].matched` (replacing
+  `verified`) and `retrieval`. Search hits gain an optional `record`. The
+  sidecar schema gains `storage.vectors`.
+
+### Profiles
+
+- Ontology: reduced to pass-through vocabulary files. Agent Skills, claims and
+  EU AI Act: removed.
+
+### Tools
+
+- `moca-core`: digest v2 without canonical JSON (the `canonicalize`
+  dependency is dropped); `lib/structure.js` and `Library.structure` with
+  overlays; the `Search` pipeline with hooks and the `ontologyGuided`
+  strategy; normalised evidence (`lib/evidence-text.js`); resource limits;
+  binary sidecar vectors; skills handling removed.
+- `moca-mcp`: node resources, `moca_structure`, `scope`, compact records by
+  default, and `--overlay`.
+- `moca-lint`: `manifest` and `structure` commands.
+- `moca-index`: writes `payload/vectors.f32`.
+
+### Conformance
+
+- 76 cases, including a new `structure` case kind, overlays, limits, M008,
+  scope, ontology-guided and hostile hooks, and store search. The runner
+  protocol gains structure cases and new options.
+
+### Examples
+
+- `examples/service-catalogue` (from the ontology profile) and
+  `examples/handbook/incident-response` (ordered steps and `requires`) are
+  structured. `examples/skills` is removed. All examples are at
+  `mocaVersion` 0.4.
+
 ## [0.3.0-alpha.1] - 2026-09-27
 
 Adds what MOCA's second purpose needs: reading and searching packages

@@ -15,6 +15,10 @@ questions go unanswered:
    the index, and nothing tells the pipeline to stop serving them.
 4. **Where is the original?** An answer cites a source, but the source stayed
    behind on the sender's side, so nobody downstream can check the quote.
+5. **How is this knowledge organised?** Procedures have steps in order,
+   regulations have clauses that depend on each other, courses have
+   prerequisites. Plain retrieval flattens all of it, so an assistant answers
+   out of order or out of scope.
 
 And more and more, knowledge is read where there is no service to ask: inside
 a mobile app, on an embedded device, or in a client network that allows no
@@ -34,18 +38,18 @@ can reference sources, but because it defines no packaging, nothing
 guarantees that the originals travel with the knowledge or arrive unchanged.
 That is the layer MOCA provides.
 
-In one sentence: **OKF describes knowledge; MOCA ships it with its evidence,
-sealed.**
+In one sentence: **OKF describes knowledge; MOCA ships it with its structure
+and its evidence, sealed when signed.**
 
 MOCA has two purposes, and every part of it serves one of them:
 
 1. **Moving knowledge between platforms securely and verifiably**: identity,
-   a digest, signatures, reviews, pinned members, and the original sources
-   inside the package.
+   a digest, signatures, reviews, pinned members, the structure, and the
+   original sources inside the package.
 2. **Reading and integrating packages locally**, on edge devices or on
-   infrastructure a client owns: an in-process Reader in the host's language,
-   offline search, one search API whatever the backend, and bindings to the
-   host's framework.
+   infrastructure a client owns: an in-process MOCA Reader in the host's
+   language, offline search, structure operations, and bindings to the host's
+   framework.
 
 ## What MOCA adds
 
@@ -65,6 +69,10 @@ MOCA has two purposes, and every part of it serves one of them:
 - **Evidence, validity and audience** on nodes: cite the exact sentence of a
   source, stop serving content outside its validity window, filter internal
   content before retrieval.
+- **An optional structure layer** built from SKOS and Dublin Core terms:
+  hierarchy, parts, order, what requires what, what replaces what. Every
+  Reader answers questions about it the same way, and applications can use it
+  for ontology-guided retrieval.
 - **One search entry point** over whatever backend a host uses, from the
   package's own text to a client's vector store, with the same trust rules
   applied every time.
@@ -84,8 +92,13 @@ policy is no longer in force.
 
 **...a vector database?** A vector index is derived data for one model and one
 chunking scheme. Keep it; feed it from packages. MOCA gives it verified input
-and metadata to filter and cite with, and its Search layer applies the trust
-rules to what the index returns.
+and metadata to filter and cite with, and the Reader's search applies the
+trust rules to what the index returns.
+
+**...a knowledge graph or GraphRAG?** GraphRAG usually means a graph an LLM
+extracts from text. MOCA's structure is curated with the content, from
+standard vocabularies, and travels with it; any graph tooling can load
+`structure.ttl`.
 
 **...OCI artifacts and cosign?** Use them for distribution: a package is a
 set of files, which any registry can carry. OCI digests identify archive
@@ -98,8 +111,9 @@ reviewed node or a superseded policy.
 - Not a content model, a vector database, an embedding format or an agent
   framework.
 - Not configuration: nothing in a package can make a Reader contact anything.
-- Not proof of truth: attestations say who published and who reviewed.
-  Content is still untrusted input to a model.
+- Not proof of truth: attestations say who published and who reviewed, and
+  `matched` says a quote is in its source. Content is still untrusted input to
+  a model, and structure narrows what is retrieved, not what a model says.
 
 ## Honest status
 

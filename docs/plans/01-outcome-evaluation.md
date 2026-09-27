@@ -19,7 +19,7 @@ open-source project's documentation across releases. Convert each version to
 a package with `moca-convert`, add `relations`, validity windows and a sample
 of review attestations. Carry the original source documents under `sources/`
 with evidence selectors into them, and bind a subset of nodes to a small SKOS
-concept scheme with the [ontology profile](../../profiles/ontology/moca-ontology-profile.md).
+structure layer ([package spec §5.6](../../spec/moca-package-spec.md#56-structure)): concepts, parts, order and `requires`.
 
 **Question set.** 200 questions with reference answers, written before the
 runs, including:
@@ -41,7 +41,7 @@ retriever and model see:
 | B | OKF fields only. |
 | C | Full MOCA citation records with the default retrieval policy. |
 | D | As C, with sidecar chunk citations. |
-| E | As C, with the concept filter from the ontology profile. |
+| E | As C, with structure: search scoped to the question's concepts and the default ontology-guided hooks. |
 | F | As D, run offline in-process on a constrained device: no network, the Reader's own lexical and dense-sidecar search, a small embedder. |
 
 ## Measures
@@ -53,6 +53,8 @@ retriever and model see:
 | Citation precision | Share of citations that point at a passage that supports the claim. |
 | Citation-verification rate | Share of answers whose every citation has `evidence[].matched: true` against the original inside the package. |
 | Contest handling | Share of contested questions where the answer surfaces the conflict. |
+| Scope violations | Share of answers that cite material outside the topic or system the question is about. |
+| Order errors | Share of answers that give advanced material before its prerequisites, or a later step before an earlier one. |
 | Cost | Authoring effort per package (including concept binding), and retrieval latency, on a server and on the device in condition F. |
 
 ## Decision rule
@@ -61,9 +63,10 @@ A field or feature stays in core when it improves at least one measure with a
 clear margin and does not hurt another. Features that do not are moved to a
 profile or removed in the next minor version, recorded as an ADR.
 
-The ontology profile stays Draft unless condition E beats condition C on
-answer accuracy or citation precision
-([ADR-0009](../adr/0009-ontology-profile.md)).
+The structure core stays in core only if condition E beats condition C on
+scope violations or order errors in two pilots of different domains
+([ADR-0012](../adr/0012-structure-core.md)); otherwise it returns to an
+optional profile.
 
 When the first host running the evaluation is also a MOCA maintainer's
 project, an outside reviewer checks the question set, the grading and the

@@ -144,7 +144,7 @@ standard output.
 
 - Input: `{ "root": "<absolute path of conformance/>", "case": { … } }`.
 - Output for a package case: `{ "valid", "codes", "capabilities", "digest",
-  "sidecarUsable", "evidenceVerified" }`, as defined above.
+  "sidecarUsable", "evidenceMatched" }`, as defined above.
 - Output for a search case: `{ "codes", "records" }`, where `records` are the
   citation records the search returned.
 - Output for a structure case: `{ "codes", "result" }`, shaped as above.

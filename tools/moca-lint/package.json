@@ -1,6 +1,6 @@
 {
   "name": "@openmoca/moca-lint",
-  "version": "0.3.0-alpha.1",
+  "version": "0.4.0-alpha.1",
   "description": "Check, pack and extract MOCA packages using the reference Reader.",
   "license": "Apache-2.0",
   "type": "module",
@@ -14,7 +14,7 @@
     "test": "node --test test/*.test.js"
   },
   "dependencies": {
-    "@openmoca/moca-core": "^0.3.0-alpha.1",
+    "@openmoca/moca-core": "^0.4.0-alpha.1",
     "adm-zip": "^0.6.0",
     "commander": "^12.1.0"
   },

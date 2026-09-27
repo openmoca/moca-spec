@@ -58,7 +58,8 @@ citation record:
 | `moca_status`, `moca_in_force_until`, `moca_stale_after`, `moca_superseded` | `trust` |
 | `moca_attested_reviews`, `moca_signed` | `trust.attestedReviews`, `package.signed` |
 | `moca_audience` | `audience` |
-| `moca_concepts` | `concepts` (ontology profile) |
+| `moca_node_ref` | `node.ref` (versioned node reference; the key to cite by) |
+| `moca_concepts` | `concepts` (from the package structure) |
 | `moca_evidence_matched` | `evidence[].matched` |
 
 At query time, search the store through a store backend, so that Search

@@ -13,12 +13,10 @@ Pick the ones your use needs.
 | `composed` | Reproducible assembly from other packages. | `members` pinned by digest. |
 | `signed` | Readers can verify who published. | A package attestation, ideally from CI with Sigstore. |
 | `reviewed` | Readers can verify who checked which node. | Review attestations from reviewers. |
-| `skills` | Agent Skills shipped with the knowledge they use. | `skills/` plus a package attestation. |
-| `ontology` | Nodes bound to a shared vocabulary; search by concept. Defined by the [ontology profile](../../profiles/ontology/moca-ontology-profile.md). | A Turtle concept scheme under `ontologies/`, and concept bindings on nodes. |
+| `structured` | Concepts, parts, order and `requires`: structure questions, scoped search, ontology-guided retrieval. | A `structure.ttl` at the root and `moca.concepts` on nodes ([structure guide](structure.md)). |
 
-`signed`, `reviewed` and `skills` depend on the reader's trust root. The same
-package can be `signed` for one host and not for another. `ontology` is
-reported only by Readers that implement the ontology profile.
+`signed` and `reviewed` depend on the reader's trust root. The same
+package can be `signed` for one host and not for another.
 
 ## Suggested starting points
 
@@ -29,3 +27,4 @@ reported only by Readers that implement the ontology profile.
 | Regulated or high-stakes answers | `core`, `signed`, `reviewed`, `located-evidence`, `self-contained-evidence` |
 | Knowledge migrated to another platform or read on a device with no network | add `self-contained-evidence` |
 | A handbook or product line assembled from parts | add `composed` |
+| Procedures, regulations, guidelines or courses: anything with parts, order or prerequisites | add `structured` |
