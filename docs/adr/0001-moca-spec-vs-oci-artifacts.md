@@ -45,8 +45,9 @@ concluding that MOCA should shrink.
 ## Decision drivers
 
 - **Honesty over sunk cost.** The specification is at `0.1.0-beta.1`. It is
-  cheaper to shrink it now than after SDKs exist in three languages
-  ([ROADMAP item 7](../../ROADMAP.md#7-core-sdks-across-languages)).
+  cheaper to shrink it now than after Knowledge Harness implementations exist
+  in three languages
+  ([ROADMAP item 7](../../ROADMAP.md#7-knowledge-harness-implementations)).
 - **Maintenance surface.** A solo maintainer
   ([GOVERNANCE.md](../../GOVERNANCE.md#current-model)) currently owns a bespoke
   signing and trust model. Every line of it is a line cosign already maintains.
@@ -118,7 +119,7 @@ so it survives repacking and is stable across the three storage forms in
 is real and it is not something OCI can be configured into. Its weight depends
 entirely on whether anyone actually needs a package identity that survives
 transport-format changes — which is a question the
-[plan 04 instrumentation](../plans/04-converter-first-core-audit.md) can
+[plan 04 instrumentation](../plans/04-reference-consumer-core-audit.md) can
 partially answer.
 
 **2. Composition carries meaning, not just structure.** An OCI image index
@@ -126,7 +127,7 @@ says "these artifacts are related." It cannot say *how*. MOCA's
 [§10.2](../../spec/moca-core-spec.md#102-compositionrelates--loose-reference-relates-to)
 distinguishes `supersedes` from `amends` from `conflictsWith`, and treats
 `conflictsWith` as informative rather than an error — surfacing the tension and
-leaving arbitration to the harness. Encoding that in OCI means inventing
+leaving arbitration to the AI Harness. Encoding that in OCI means inventing
 annotations, at which point the semantics live in MOCA's specification again
 and OCI is only carrying them.
 
@@ -198,9 +199,9 @@ Concretely, this means:
 
 Stated up front so the ADR can be falsified rather than defended:
 
-- If the [plan 04](../plans/04-converter-first-core-audit.md) instrumentation
-  shows a harness reads almost none of the manifest, differentiators 1–3 are
-  theoretical and option 2 becomes correct.
+- If the [plan 04](../plans/04-reference-consumer-core-audit.md) instrumentation
+  shows a Knowledge Harness reads almost none of the manifest,
+  differentiators 1–3 are theoretical and option 2 becomes correct.
 - If no adopter ever needs a package outside a registry, differentiator 4
   evaporates and option 2 becomes correct.
 - If typed composition turns out to be unused in practice — if every real
@@ -212,11 +213,11 @@ running plan 04 early, and against treating this ADR as settled.
 
 ## Consequences
 
-**Positive.** A materially smaller specification to maintain and to implement
-an SDK against. Distribution and resolution are answered rather than deferred.
-The signing surface shrinks to a binding document. The remaining specification
-says something OCI does not, which makes "why not just use OCI?" answerable in
-a sentence instead of an essay.
+**Positive.** A materially smaller specification to maintain and for
+Knowledge Harness implementations to implement. Distribution and resolution
+are answered rather than deferred. The signing surface shrinks to a binding
+document. The remaining specification says something OCI does not, which makes
+"why not just use OCI?" answerable in a sentence instead of an essay.
 
 **Negative.** The OCI binding is new specification work not currently on
 [ROADMAP.md](../../ROADMAP.md), and it adds a dependency on an ecosystem with

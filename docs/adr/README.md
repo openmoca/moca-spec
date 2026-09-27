@@ -37,3 +37,5 @@ new record instead, so the history of the reasoning survives.
 | # | Title | Status |
 |---|---|---|
 | [0001](0001-moca-spec-vs-oci-artifacts.md) | MOCA as a specification vs. OKF bundles as OCI artifacts | Proposed |
+| [0002](0002-three-pillar-architecture.md) | Three pillars: package, Knowledge Harness, AI Harness | Accepted |
+| [0003](0003-knowledge-harness-implementations.md) | Knowledge Harness implementations and the Reader/Producer split | Accepted |
