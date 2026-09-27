@@ -71,15 +71,26 @@ function checkSearch(e, actual) {
   return problems;
 }
 
+function checkStructure(e, actual) {
+  const problems = [];
+  if (!same(e.codes ?? [], actual.codes ?? [])) problems.push(`codes: expected [${uniqueSorted(e.codes ?? [])}], got [${uniqueSorted(actual.codes ?? [])}]`);
+  if (JSON.stringify(e.result) !== JSON.stringify(actual.result)) problems.push(`result: expected ${JSON.stringify(e.result)}, got ${JSON.stringify(actual.result)}`);
+  return problems;
+}
+
 let failures = 0;
 for (const c of corpus.cases) {
   const actual = await run(c);
   if (showActual) {
-    const shown = c.kind === 'search' ? { codes: uniqueSorted(actual.codes ?? []), results: (actual.records ?? []).map(keyOf) } : { ...actual, codes: uniqueSorted(actual.codes), capabilities: uniqueSorted(actual.capabilities) };
+    const shown = c.kind === 'search' ? { codes: uniqueSorted(actual.codes ?? []), results: (actual.records ?? []).map(keyOf) }
+      : c.kind === 'structure' ? actual
+        : { ...actual, codes: uniqueSorted(actual.codes), capabilities: uniqueSorted(actual.capabilities) };
     console.log(`${c.id}: ${JSON.stringify(shown)}`);
     continue;
   }
-  const problems = c.kind === 'search' ? checkSearch(c.expect, actual) : checkPackage(c.expect, actual);
+  const problems = c.kind === 'search' ? checkSearch(c.expect, actual)
+    : c.kind === 'structure' ? checkStructure(c.expect, actual)
+      : checkPackage(c.expect, actual);
   if (problems.length > 0) {
     failures++;
     console.error(`FAIL ${c.id}\n  ${problems.join('\n  ')}`);

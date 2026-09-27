@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "0.3.0-alpha.1",
+  "corpusVersion": "0.4.0-alpha.1",
   "cases": [
     {
       "id": "valid-minimal",
@@ -569,6 +569,97 @@
       }
     },
     {
+      "id": "structure-cycle",
+      "description": "requires forms a cycle.",
+      "target": "fixtures/structure-cycle",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O005_STRUCTURE_CYCLE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:16c08dda9c33fb2dd388854972b9996fd687361d87d416d9d13c6d378a69676d"
+      }
+    },
+    {
+      "id": "structure-view-mismatch",
+      "description": "structure.json does not match the view derived from structure.ttl.",
+      "target": "fixtures/structure-view-mismatch",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O004_STRUCTURE_VIEW_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "structure-procedure",
+      "description": "A procedure: parts, an ordered collection of steps, and requires.",
+      "target": "fixtures/structure-procedure",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "digest": "sha256:ff29ef636ccda010b418d72b02dc6372b8764d98c35654fd21350d14e75cd7b3"
+      }
+    },
+    {
+      "id": "limit-structure-triples",
+      "description": "A structure file over the host's triple limit is refused (O001), and its bindings are then undeclared.",
+      "target": "fixtures/structure-procedure",
+      "options": {
+        "limits": {
+          "maxTriples": 3
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O001_ONTOLOGY_UNPARSEABLE",
+          "O002_CONCEPT_UNDECLARED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "limit-yaml-alias",
+      "description": "YAML aliases in frontmatter are refused (C002): alias expansion is a denial-of-service vector.",
+      "target": "fixtures/limit-yaml-alias",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID",
+          "M003_NO_CONTENT"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "digest-v1-package",
+      "description": "A package written for mocaVersion 0.3: the digest is computed with moca-digest-v2, and M008 tells the host older pins will not match.",
+      "target": "fixtures/digest-v1-package",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M008_DIGEST_V1_PACKAGE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:890b4a4aabe41627b64424071d012a542a9350c9c1b6fd68f504c53f88839cd9"
+      }
+    },
+    {
       "id": "composed-members",
       "description": "A composition-only package whose members resolve and match their pinned digests.",
       "target": "fixtures/composed-members/book",
@@ -1031,6 +1122,339 @@
         ],
         "count": 0,
         "include": []
+      }
+    },
+    {
+      "id": "structure-op-concept",
+      "kind": "structure",
+      "description": "concept: preferred label, labels, definition, deprecation and layer.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "concept",
+      "iri": "https://example.org/handbook/incident#NotifyCustomers",
+      "expect": {
+        "codes": [],
+        "result": {
+          "iri": "https://example.org/handbook/incident#NotifyCustomers",
+          "label": "Notify customers",
+          "labels": {
+            "en": "Notify customers"
+          },
+          "deprecated": false,
+          "replacedBy": [],
+          "replaces": [],
+          "layer": "package"
+        }
+      }
+    },
+    {
+      "id": "structure-op-sequence",
+      "kind": "structure",
+      "description": "sequence: members in list order.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "sequence",
+      "iri": "https://example.org/handbook/incident#ResponseSteps",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#ResolveAndReview",
+            "label": "Resolve and review",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-parts",
+      "kind": "structure",
+      "description": "parts: direct parts, ordered by IRI.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "parts",
+      "iri": "https://example.org/handbook/incident#IncidentResponse",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#ResolveAndReview",
+            "label": "Resolve and review",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-requires",
+      "kind": "structure",
+      "description": "requires, direct.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "requires",
+      "iri": "https://example.org/handbook/incident#NotifyCustomers",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-required-by",
+      "kind": "structure",
+      "description": "requiredBy, ordered by IRI.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "requiredBy",
+      "iri": "https://example.org/handbook/incident#AssessSeverity",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-nodes",
+      "kind": "structure",
+      "description": "nodes bound to a concept and its parts, ordered by node reference.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "nodes",
+      "iri": "https://example.org/handbook/incident#IncidentResponse",
+      "args": {
+        "include": "parts"
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          "https://example.com/conformance/structure-procedure@1.0.0#incident-response.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/assess-severity.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/declare-incident.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/resolve-and-review.md"
+        ]
+      }
+    },
+    {
+      "id": "structure-overlay-requires",
+      "kind": "structure",
+      "description": "An organisation overlay adds a requirement; transitive requires lists dependencies first, and each item names the layer that stated it.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "overlays": [
+          {
+            "id": "acme",
+            "layer": "organisation",
+            "path": "fixtures/overlays/organisation-review.ttl"
+          }
+        ]
+      },
+      "op": "requires",
+      "iri": "https://example.org/handbook/incident#ResolveAndReview",
+      "args": {
+        "transitive": true
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "organisation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-overlay-narrower",
+      "kind": "structure",
+      "description": "An overlay can declare new concepts under a package concept.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "overlays": [
+          {
+            "id": "acme",
+            "layer": "organisation",
+            "path": "fixtures/overlays/organisation-review.ttl"
+          }
+        ]
+      },
+      "op": "narrower",
+      "iri": "https://example.org/handbook/incident#ResolveAndReview",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#LegalHold",
+            "label": "Legal hold",
+            "layer": "organisation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-scope",
+      "kind": "search",
+      "description": "scope keeps only nodes bound to the concept or its descendants.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "scope": "https://example.org/handbook/incident#NotifyCustomers"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md"
+        ]
+      }
+    },
+    {
+      "id": "search-ontology-guided",
+      "kind": "search",
+      "description": "The default ontology-guided hooks add the nodes of required concepts; the gate still applies.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "hooks": "ontology-guided"
+      },
+      "search": {
+        "query": "notify customers"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/assess-severity.md"
+        ]
+      }
+    },
+    {
+      "id": "search-hostile-egress",
+      "kind": "search",
+      "description": "An egress hook that returns everything, and a record from a package that is not loaded: the gate removes all that policy and audience exclude.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "hooks": "hostile",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "retention"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ],
+        "count": 2
+      }
+    },
+    {
+      "id": "search-store-records",
+      "kind": "search",
+      "description": "A store search resolves hits from ingest-time records and returns only packages in the host's allowlist.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/search-policy/v1"
+        ]
+      },
+      "search": {
+        "query": "retention period",
+        "includeAll": true
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md"
+        ]
       }
     }
   ]

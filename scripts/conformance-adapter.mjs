@@ -7,7 +7,7 @@
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  readPackage, bindSidecar, directoryResolver, Library, Search, LexicalBackend, DenseBackend,
+  readPackage, bindSidecar, directoryResolver, Library, Search, LexicalBackend, DenseBackend, MemoryStoreBackend, ontologyGuided,
 } from '@openmoca/moca-core';
 
 /** The conformance embedder: the identity a case names, and [1, 0, 0, ...] for every text. */
@@ -28,15 +28,52 @@ function everyHitBackend(library) {
   };
 }
 
+/** An egress hook that tries to return everything, plus a record from a package that is not loaded. */
+function hostileHooks() {
+  return {
+    egress: (candidates, ctx) => {
+      const all = ctx.library.citations({ includeText: true });
+      const fake = all[0] ? { ...all[0], package: { ...all[0].package, digest: `sha256:${'0'.repeat(64)}` } } : null;
+      return [...candidates, ...all, ...(fake ? [fake] : [])];
+    },
+  };
+}
+
+const conceptItem = (x) => x && ({ iri: x.iri, ...(x.label !== undefined ? { label: x.label } : {}), layer: x.layer });
+
 export async function actualFor(root, c) {
   const o = c.options ?? {};
   const readOptions = {
     trustRoot: o.trustRoot ? join(root, o.trustRoot) : undefined,
     resolveMember: o.members ? directoryResolver(o.members.map((m) => join(root, m))) : undefined,
+    limits: o.limits,
   };
+  const overlays = (o.overlays ?? []).map((v) => ({ id: v.id, layer: v.layer, path: join(root, v.path) }));
+
+  if (c.kind === 'structure') {
+    const library = new Library({ overlays });
+    for (const target of c.packages) {
+      const result = await readPackage(join(root, target), readOptions);
+      if (result.valid) library.add(result);
+    }
+    const s = library.structure;
+    const a = c.args ?? {};
+    const ops = {
+      concept: () => s.concept(c.iri),
+      requires: () => s.requires(c.iri, a).map(conceptItem),
+      requiredBy: () => s.requiredBy(c.iri).map(conceptItem),
+      parts: () => s.parts(c.iri).map(conceptItem),
+      narrower: () => s.narrower(c.iri, a).map(conceptItem),
+      broader: () => s.broader(c.iri).map(conceptItem),
+      related: () => s.related(c.iri).map(conceptItem),
+      sequence: () => s.sequence(c.iri)?.map(conceptItem) ?? null,
+      nodes: () => s.nodes(c.iri, a).map((r) => r.node.ref),
+    };
+    return { codes: library.diagnostics.items.map((d) => d.code), result: ops[c.op]() };
+  }
 
   if (c.kind === 'search') {
-    const library = new Library({ clock: () => new Date(o.now) });
+    const library = new Library({ clock: () => new Date(o.now), overlays });
     const codes = [];
     for (const target of c.packages) {
       const result = await readPackage(join(root, target), readOptions);
@@ -48,14 +85,21 @@ export async function actualFor(root, c) {
       }
       library.add(result, bound.usable ? { chunks: bound.chunks, index: bound.index } : {});
     }
+    const hooks = o.hooks === 'hostile' ? hostileHooks() : o.hooks === 'ontology-guided' ? ontologyGuided() : undefined;
+    const s = c.search;
+    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, concepts: s.concepts, scope: s.scope };
+    if (o.backend === 'store') {
+      // Everything listed is ingested; only the packages in `allow` are "loaded".
+      const store = await new MemoryStoreBackend({ filterPushdown: false }).ingest(library);
+      const allowed = library.packages.filter(({ result }) => (o.allow ?? []).some((t) => join(root, t) === result.source?.location)).map(({ result }) => result.digest);
+      const records = await new Search({ digests: allowed, clock: () => new Date(o.now) }, { backend: store, audiences: o.audiences }).search(s.query, searchOptions);
+      return { codes, records };
+    }
     const backend = o.backend === 'all' ? everyHitBackend(library)
       : o.backend === 'dense' ? new DenseBackend(library, { embedder: conformanceEmbedder(o.embedder) })
         : new LexicalBackend(library);
     codes.push(...(backend.diagnostics ?? []).map((d) => d.code));
-    const s = c.search;
-    const records = await new Search(library, { backend, audiences: o.audiences }).search(s.query, {
-      limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, concepts: s.concepts,
-    });
+    const records = await new Search(library, { backend, audiences: o.audiences, hooks }).search(s.query, searchOptions);
     return { codes, records };
   }
 
