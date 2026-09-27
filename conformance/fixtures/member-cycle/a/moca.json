@@ -1,0 +1,12 @@
+{
+  "id": "https://example.com/conformance/cycle-a",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "members": [
+    {
+      "id": "https://example.com/conformance/cycle-b",
+      "version": "1.0.0",
+      "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ]
+}

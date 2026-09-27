@@ -1,0 +1,20 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.2",
+  "id": "https://example.com/moca/handbook",
+  "version": "1.0.0",
+  "title": "Platform engineering handbook",
+  "language": "en",
+  "members": [
+    {
+      "id": "https://example.com/moca/handbook/service-ownership",
+      "version": "1.0.0",
+      "digest": "sha256:abc88735bcb5143a02f50147e37bbe5beec89fd152b8c0ef91f5c474dbce32b7"
+    },
+    {
+      "id": "https://example.com/moca/handbook/incident-response",
+      "version": "1.0.0",
+      "digest": "sha256:851dfe8afaade80050484645e1dd8c1322458c2db8193a4b7b1cdfc52d52664b"
+    }
+  ]
+}

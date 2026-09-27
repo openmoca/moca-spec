@@ -1,0 +1,38 @@
+{
+  "name": "@openmoca/moca-core",
+  "version": "0.2.0-alpha.1",
+  "description": "Reference MOCA Reader: open, check, digest, verify and cite MOCA packages.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "canonicalize": "2.1.0",
+    "js-yaml": "^5.2.2",
+    "sigstore": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openmoca/moca-spec.git",
+    "directory": "tools/moca-core"
+  },
+  "files": [
+    "lib/",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./lib/*": "./lib/*",
+    "./package.json": "./package.json"
+  }
+}

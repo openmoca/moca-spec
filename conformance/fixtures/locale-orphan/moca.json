@@ -1,0 +1,8 @@
+{
+  "id": "https://example.com/conformance/c009",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "locales": [
+    "fr"
+  ]
+}

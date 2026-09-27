@@ -5,7 +5,7 @@
 // implemented -- an external or unresolvable $ref is left as literal
 // {"$ref": "..."} text in the rendered output rather than failing.
 import { readFileSync } from 'node:fs';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import { UsageError } from '../../target.js';
 
 export const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.2",
+  "id": "https://example.com/moca/policies/data-retention",
+  "version": "1.0.0",
+  "title": "Data retention policy",
+  "language": "en",
+  "validFrom": "2025-01-01T00:00:00Z",
+  "validUntil": "2026-04-01T00:00:00Z"
+}

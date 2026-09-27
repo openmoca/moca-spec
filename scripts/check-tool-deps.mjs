@@ -1,81 +1,41 @@
-// Asserts every workspace-internal import is a DECLARED dependency of the
-// package that makes it.
-//
-// npm's flat node_modules makes an undeclared transitive dependency work by
-// accident -- moca-index imported @openmoca/moca-sign while declaring only
-// @openmoca/moca-lint, and resolved fine because moca-lint pulled moca-sign
-// in. Under pnpm, Yarn PnP, or any strict installer that breaks. This check
-// catches it before publication rather than in a user's install.
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+#!/usr/bin/env node
+// Each tool must declare every package it imports, so it installs and runs
+// on its own once published, not only inside this workspace.
+import { builtinModules } from 'node:module';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = process.cwd();
-const TOOLS_DIR = join(root, 'tools');
-const SCOPE = '@openmoca/';
+const repo = join(dirname(fileURLToPath(import.meta.url)), '..');
+const builtins = new Set(builtinModules.flatMap((m) => [m, `node:${m}`]));
+const IMPORT = /(?:import\s[^'"]*?from\s*|import\s*\(\s*|import\s+)['"]([^'"]+)['"]/g;
 
-function sourceFiles(dir, found = []) {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === 'node_modules') continue;
-    const abs = join(dir, entry.name);
-    if (entry.isDirectory()) sourceFiles(abs, found);
-    else if (entry.name.endsWith('.js') || entry.name.endsWith('.mjs')) found.push(abs);
-  }
-  return found;
+function walk(dir) {
+  return readdirSync(dir).flatMap((name) => {
+    const p = join(dir, name);
+    return statSync(p).isDirectory() ? walk(p) : p.endsWith('.js') ? [p] : [];
+  });
 }
 
-let failed = false;
-
-for (const entry of readdirSync(TOOLS_DIR, { withFileTypes: true })) {
-  if (!entry.isDirectory()) continue;
-  const toolDir = join(TOOLS_DIR, entry.name);
-  const pkg = JSON.parse(readFileSync(join(toolDir, 'package.json'), 'utf8'));
-  const declared = new Set([
-    ...Object.keys(pkg.dependencies ?? {}),
-    ...Object.keys(pkg.devDependencies ?? {}),
-    pkg.name,
-  ]);
-
-  // Only shipped code matters: tests are not installed by consumers.
-  const shipped = ['lib', 'bin']
-    .map((sub) => join(toolDir, sub))
-    .filter((dir) => { try { return statSync(dir).isDirectory(); } catch { return false; } })
-    .flatMap((dir) => sourceFiles(dir));
-
-  for (const file of shipped) {
-    const src = readFileSync(file, 'utf8');
-    // Capture the whole specifier, then reduce it to a package name. An
-    // earlier version matched a prefix of the specifier and silently passed
-    // deep imports like "@openmoca/moca-sign/lib/x.js" -- the exact shape
-    // this check exists to catch.
-    for (const match of src.matchAll(/(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g)) {
-      const spec = match[1];
-      if (!spec.startsWith(SCOPE)) continue;
-      const packageName = spec.split('/').slice(0, 2).join('/');
-      if (!declared.has(packageName)) {
-        console.error(
-          `[FAIL] ${relative(root, file)} imports ${packageName}, which ${pkg.name} does not declare as a dependency`
-        );
-        failed = true;
+let failed = 0;
+for (const tool of readdirSync(join(repo, 'tools'))) {
+  const dir = join(repo, 'tools', tool);
+  const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
+  const declared = new Set(Object.keys(pkg.dependencies ?? {}));
+  for (const sub of ['lib', 'bin']) {
+    let files = [];
+    try { files = walk(join(dir, sub)); } catch { continue; }
+    for (const file of files) {
+      for (const [, spec] of readFileSync(file, 'utf8').matchAll(IMPORT)) {
+        if (spec.startsWith('.') || builtins.has(spec)) continue;
+        const name = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0];
+        if (!declared.has(name)) {
+          console.error(`FAIL tools/${tool}: ${file.slice(dir.length + 1)} imports "${name}", which package.json does not declare`);
+          failed++;
+        }
       }
     }
   }
-
-  // A dependency declared but never imported is dead weight in a consumer's
-  // install; report it, but don't fail the build over it.
-  const importedNames = new Set(
-    shipped.flatMap((file) =>
-      [...readFileSync(file, 'utf8').matchAll(/from\s+['"](@openmoca\/[^'"/]+)/g)].map((m) => m[1])
-    )
-  );
-  for (const dep of Object.keys(pkg.dependencies ?? {})) {
-    if (dep.startsWith(SCOPE) && !importedNames.has(dep)) {
-      console.warn(`[WARN] ${pkg.name} declares ${dep} but never imports it from lib/ or bin/`);
-    }
-  }
 }
-
-if (failed) {
-  console.error('\nWorkspace dependency check failed: an undeclared import will break under a strict installer.');
-  process.exit(1);
-}
-console.log('[OK]   every workspace-internal import is a declared dependency.');
+if (failed > 0) process.exitCode = 1;
+else console.log('Every tool declares the packages it imports.');

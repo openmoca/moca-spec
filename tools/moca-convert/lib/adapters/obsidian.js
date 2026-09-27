@@ -4,12 +4,14 @@
 import { existsSync, statSync } from 'node:fs';
 import { basename, join, posix } from 'node:path';
 import { walkFiles } from '../walk.js';
-import { readContentFile } from '../frontmatter.js';
+import { readContentFile, ensureOkf, deriveTitle } from '../frontmatter.js';
+import { buildManifest } from '../manifest.js';
 import { matchesAny } from '../glob.js';
 import { slugify } from '../slug.js';
 import { UsageError } from '../target.js';
 
 export const name = 'obsidian';
+export const DEFAULT_TYPE = 'Note';
 
 const WIKILINK = /(!?)\[\[([^\]|#]+)(#[^\]|]+)?(?:\|([^\]]+))?\]\]/g;
 
@@ -31,10 +33,8 @@ export function detect(inputPath) {
  * @returns {import('./index.js').PackageDraft}
  */
 export function convert({ inputPath, options }) {
-  if (!options.id) {
-    throw new UsageError('--id is required for the obsidian adapter.');
-  }
-
+  const manifest = buildManifest({ ...options, title: options.title ?? basename(inputPath) });
+  const type = options.type ?? DEFAULT_TYPE;
   const excludePatterns = options.exclude ?? [];
   const allNotePaths = walkFiles(inputPath)
     .filter((f) => f.endsWith('.md'))
@@ -54,19 +54,14 @@ export function convert({ inputPath, options }) {
   const warnings = [];
   const contentNodes = allNotes
     .filter((note) => !note.excluded)
-    .map((note) => buildContentNode(note, noteIndex, warnings));
-
-  const manifest = {
-    id: options.id,
-    version: options.version ?? '1.0.0',
-    title: options.title ?? basename(inputPath),
-  };
+    .map((note) => buildContentNode(note, noteIndex, warnings, type));
 
   return { manifest, contentNodes, warnings };
 }
 
-function buildContentNode(note, noteIndex, warnings) {
-  const body = rewriteWikilinks(note.body, note, noteIndex, warnings);
+function buildContentNode(note, noteIndex, warnings, type) {
+  const title = deriveTitle(note.data, note.content, basename(note.relPath, '.md'));
+  const body = rewriteWikilinks(ensureOkf(note.raw, note.data, { type, title }), note, noteIndex, warnings);
   return { path: `content/${note.relPath}`, body };
 }
 

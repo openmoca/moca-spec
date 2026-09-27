@@ -1,0 +1,14 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.2",
+  "id": "https://example.com/moca/support-kb",
+  "version": "4.2.0",
+  "title": "Acme Support Knowledge Base",
+  "description": "Answers the Acme support team gives customers about refunds, shipping and accounts.",
+  "language": "en",
+  "locales": [
+    "fr"
+  ],
+  "license": "CC-BY-4.0",
+  "publisher": "Acme Support"
+}

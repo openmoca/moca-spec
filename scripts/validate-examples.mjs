@@ -1,61 +1,62 @@
-// Validates every example package's moca.json against the core JSON Schema and
-// cross-checks the skills/ + signature rule
-// from core §3.1/§8.2 that the schema itself can't express (see CONTRIBUTING.md).
-import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
-import { join } from 'node:path';
-import { findAllExamplePackages } from './lib/find-packages.mjs';
+#!/usr/bin/env node
+// Every example package must read cleanly: valid, no warnings, and the
+// capabilities its README promises. Profile examples are also checked
+// against their profile's schema.
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { readPackage, bindSidecar, directoryResolver, formatText } from '@openmoca/moca-core';
 
-const root = process.cwd();
+const repo = join(dirname(fileURLToPath(import.meta.url)), '..');
+const trustRoot = join(repo, 'fixtures/signing-keys/trust-root.json');
+
+const EXAMPLES = [
+  { dir: 'examples/minimal', capabilities: ['core'] },
+  { dir: 'examples/support-kb', capabilities: ['core', 'located-evidence', 'localized', 'reviewed', 'signed'], sidecar: 'examples/sidecars/support-kb.moca.idx' },
+  { dir: 'examples/policy-corpus/retention-2025', capabilities: ['core'] },
+  { dir: 'examples/policy-corpus/retention-2026', capabilities: ['core'] },
+  { dir: 'examples/handbook/service-ownership', capabilities: ['core'] },
+  { dir: 'examples/handbook/incident-response', capabilities: ['core'] },
+  { dir: 'examples/handbook/handbook', capabilities: ['core', 'composed'], members: ['examples/handbook'] },
+  { dir: 'examples/skills', capabilities: ['core', 'signed', 'skills'] },
+  {
+    dir: 'profiles/eu-ai-act/examples/support-kb-governance',
+    capabilities: ['core'],
+    profile: { uri: 'https://w3id.org/moca/profiles/eu-ai-act/v1', schema: 'profiles/eu-ai-act/profile.schema.json' },
+  },
+];
+
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
 
-const coreSchema = JSON.parse(
-  readFileSync(join(root, 'schemas/v1/core/moca.schema.json'), 'utf8')
-);
-// Sanity-check the JSON-LD context is at least well-formed JSON.
-JSON.parse(readFileSync(join(root, 'schemas/v1/core/context.jsonld'), 'utf8'));
-
-const validateCore = ajv.compile(coreSchema);
-
-const exampleDirs = findAllExamplePackages(root);
-
-let failed = false;
-
-for (const dir of exampleDirs) {
-  const manifestPath = join(root, dir, 'moca.json');
-  if (!existsSync(manifestPath)) {
-    console.error(`[FAIL] ${dir}: missing moca.json`);
-    failed = true;
-    continue;
+let failed = 0;
+for (const ex of EXAMPLES) {
+  const result = await readPackage(join(repo, ex.dir), {
+    trustRoot,
+    resolveMember: ex.members ? directoryResolver(ex.members.map((m) => join(repo, m))) : undefined,
+  });
+  const problems = result.diagnostics.filter((d) => d.severity !== 'info');
+  const caps = [...result.capabilities].sort().join(',');
+  const want = [...ex.capabilities].sort().join(',');
+  const messages = [];
+  if (!result.valid) messages.push('not valid');
+  if (problems.length > 0) messages.push(formatText(problems));
+  if (caps !== want) messages.push(`capabilities: expected ${want}, got ${caps}`);
+  if (ex.sidecar) {
+    const bound = bindSidecar(join(repo, ex.sidecar), result);
+    if (!bound.usable) messages.push(`sidecar not usable: ${formatText(bound.diagnostics)}`);
   }
-
-  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-
-  if (!validateCore(manifest)) {
-    failed = true;
-    console.error(`[FAIL] ${dir}/moca.json does not conform to schemas/v1/core/moca.schema.json:`);
-    for (const err of validateCore.errors) {
-      console.error(`  ${err.instancePath || '/'} ${err.message}`);
-    }
+  if (ex.profile) {
+    const validate = ajv.compile(JSON.parse(readFileSync(join(repo, ex.profile.schema), 'utf8')));
+    if (!validate(result.manifest.profiles?.[ex.profile.uri])) messages.push(`profile data: ${ajv.errorsText(validate.errors)}`);
+  }
+  if (messages.length > 0) {
+    failed++;
+    console.error(`FAIL ${ex.dir}\n  ${messages.join('\n  ')}`);
   } else {
-    console.log(`[OK]   ${dir}/moca.json conforms to core schema`);
-  }
-
-  const skillsDirExists = existsSync(join(root, dir, 'skills'));
-  const hasSignature = manifest.signature && typeof manifest.signature === 'object';
-  if (skillsDirExists && !hasSignature) {
-    failed = true;
-    console.error(`[FAIL] ${dir}: contains skills/ but moca.json has no signature object (core §3.1/§8.2)`);
-  } else if (skillsDirExists) {
-    console.log(`[OK]   ${dir}: skills/ present and signature object declared`);
+    console.log(`ok   ${ex.dir}  ${result.digest}  [${caps}]`);
   }
 }
-
-if (failed) {
-  console.error('\nValidation failed.');
-  process.exit(1);
-} else {
-  console.log('\nAll examples validated successfully.');
-}
+if (failed > 0) process.exitCode = 1;

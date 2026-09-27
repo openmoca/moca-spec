@@ -1,9 +1,0 @@
-{
-  "id": "urn:moca:chapter:incident-response",
-  "version": "1.0.0",
-  "title": "Incident Response",
-  "canonicalDigest": {
-    "algorithm": "sha256",
-    "value": "82d036f37537b8d7f495db1b04edadd1782c75376c6f5ea26cc192ca0bc53047"
-  }
-}

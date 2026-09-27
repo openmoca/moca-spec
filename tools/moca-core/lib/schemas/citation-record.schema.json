@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/moca/schemas/v1/citation-record.schema.json",
+  "title": "MOCA citation record",
+  "description": "What a Reader or adapter hands to an application for one node or chunk. Normative: spec/moca-reader-contract.md section 7.",
+  "type": "object",
+  "required": [
+    "package",
+    "node",
+    "trust"
+  ],
+  "properties": {
+    "package": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "digest",
+        "signed"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "signed": {
+          "type": "boolean"
+        },
+        "signers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "id",
+        "path",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "span": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "description": "UTF-8 byte offsets into the node file."
+    },
+    "text": {
+      "type": "string"
+    },
+    "trust": {
+      "type": "object",
+      "required": [
+        "status",
+        "declaredVerified",
+        "attestedReviews",
+        "stale",
+        "inForce",
+        "superseded",
+        "contested"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "stable",
+            "deprecated"
+          ]
+        },
+        "generated": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "by"
+              ],
+              "properties": {
+                "by": {
+                  "type": "string"
+                },
+                "at": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "declaredVerified": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "by"
+            ],
+            "properties": {
+              "by": {
+                "type": "string"
+              },
+              "at": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "OKF verified entries: self-declared, not cryptographically checked."
+        },
+        "attestedReviews": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "reviewer",
+              "reviewedAt",
+              "outcome",
+              "signer"
+            ],
+            "properties": {
+              "reviewer": {
+                "type": "string"
+              },
+              "reviewedAt": {
+                "type": "string"
+              },
+              "outcome": {
+                "type": "string"
+              },
+              "scope": {
+                "type": "string"
+              },
+              "signer": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "staleAfter": {
+          "type": "string"
+        },
+        "validFrom": {
+          "type": "string"
+        },
+        "validUntil": {
+          "type": "string"
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "inForce": {
+          "type": "boolean"
+        },
+        "superseded": {
+          "type": "boolean"
+        },
+        "supersededBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contested": {
+          "type": "boolean"
+        },
+        "contestedBy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "object"
+          },
+          "selector": {
+            "type": "object"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "audience": {
+      "type": "string"
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "score": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": false
+}

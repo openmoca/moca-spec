@@ -39,27 +39,27 @@ async function assertDeterministic(convertFn, inputPath, options) {
 
 test('directory adapter: repeated runs against the same input produce byte-identical output', async () => {
   await assertDeterministic(convertDirectory, join(fixturesDir, 'directory', 'basic-nested'), {
-    id: 'urn:moca:test:determinism-directory',
+    id: 'https://example.com/test/determinism-directory',
     title: 'Determinism Directory',
   });
 });
 
 test('markdown adapter: repeated runs against the same input produce byte-identical output', async () => {
   await assertDeterministic(convertMarkdown, join(fixturesDir, 'markdown', 'loose-files', '*.md'), {
-    id: 'urn:moca:test:determinism-markdown',
+    id: 'https://example.com/test/determinism-markdown',
     title: 'Determinism Markdown',
   });
 });
 
 test('obsidian adapter: repeated runs against the same input produce byte-identical output', async () => {
   await assertDeterministic(convertObsidian, join(fixturesDir, 'obsidian', 'vault-basic'), {
-    id: 'urn:moca:test:determinism-obsidian',
+    id: 'https://example.com/test/determinism-obsidian',
     title: 'Determinism Obsidian',
   });
 });
 
 test('openapi adapter: repeated runs against the same input produce byte-identical output', async () => {
   await assertDeterministic(convertOpenapi, join(fixturesDir, 'openapi', 'suitable.yaml'), {
-    id: 'urn:moca:test:determinism-openapi',
+    id: 'https://example.com/test/determinism-openapi',
   });
 });

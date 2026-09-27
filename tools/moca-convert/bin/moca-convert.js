@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command, InvalidArgumentError } from 'commander';
 import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
-import { formatText, formatJson } from '@openmoca/moca-lint/lib/format.js';
+import { formatText, formatJson } from '@openmoca/moca-core';
 import { resolveInputTarget, UsageError } from '../lib/target.js';
 import { resolveAdapterName } from '../lib/detect.js';
 import { getAdapter } from '../lib/adapters/index.js';
@@ -30,15 +30,18 @@ const { version } = JSON.parse(
 const program = new Command();
 program
   .name('moca-convert')
-  .description('Create a Level 1 MOCA package from an existing source (directory, Markdown, Obsidian vault, or suitable OpenAPI document).')
+  .description('Create a MOCA package, with an OKF content bundle, from a directory, Markdown files, an Obsidian vault, or a suitable OpenAPI document.')
   // `--version <semver>` already sets the *generated package's* version, so the
   // CLI's own version is exposed as --cli-version rather than redefining it.
   .version(version, '-V, --cli-version', "output moca-convert's own version")
   .argument('<input>', 'source file or directory to convert')
   .requiredOption('-o, --output <dir>', 'output package directory')
-  .requiredOption('--id <urn>', 'manifest id for the converted package')
+  .requiredOption('--id <uri>', 'package id: an absolute URI, e.g. https://example.com/kb/support')
   .option('--title <string>', 'manifest title for the converted package')
   .option('--version <semver>', 'manifest version for the converted package', '1.0.0')
+  .option('--type <type>', 'OKF type for nodes that lack one (default per adapter: Document, Note, API Operation)')
+  .option('--language <bcp47>', 'default content language, e.g. en')
+  .option('--license <spdx>', 'SPDX license expression for the package')
   .option('--from <format>', 'source format: directory|markdown|obsidian|openapi (auto-detected if omitted)')
   .option('--exclude <glob...>', 'obsidian only: note paths to exclude from conversion (still indexed for wikilink resolution)')
   .option('--min-description-ratio <ratio>', 'openapi only: minimum fraction of operations needing a summary/description, 0-1 (default 0.5)', parseRatio)
@@ -108,10 +111,13 @@ async function run(input, options) {
         exclude: options.exclude,
         minDescriptionRatio: options.minDescriptionRatio,
         chunker: options.chunker,
+        type: options.type,
+        language: options.language,
+        license: options.license,
       },
     });
 
-    const { findings } = await writeDraft({
+    const { findings, digest } = await writeDraft({
       draft,
       outDir: options.output,
       force: options.force,
@@ -120,7 +126,7 @@ async function run(input, options) {
     });
 
     if (!options.quiet) {
-      console.log(`Wrote ${options.output} (${draft.contentNodes.length} content node(s), ${draft.warnings.length} warning(s))`);
+      console.log(`Wrote ${options.output} (${draft.contentNodes.length} content node(s), ${draft.warnings.length} warning(s))\n${digest}`);
     }
     for (const warning of draft.warnings) {
       console.error(`moca-convert: WARNING ${warning.code}  ${warning.file ? `${warning.file}: ` : ''}${warning.message}`);

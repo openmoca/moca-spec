@@ -1,7 +1,7 @@
 {
   "name": "@openmoca/moca-lint",
-  "version": "0.1.0-beta.1",
-  "description": "Static analysis CLI for MOCA package directories and .moca archives.",
+  "version": "0.2.0-alpha.1",
+  "description": "Check, pack and extract MOCA packages using the reference Reader.",
   "license": "Apache-2.0",
   "type": "module",
   "engines": {
@@ -14,14 +14,9 @@
     "test": "node --test test/*.test.js"
   },
   "dependencies": {
+    "@openmoca/moca-core": "^0.2.0-alpha.1",
     "adm-zip": "^0.6.0",
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
-    "commander": "^12.1.0",
-    "gray-matter": "^4.0.3",
-    "@openmoca/moca-sign": "^0.1.0-beta.1",
-    "n3": "^1.24.1",
-    "picocolors": "^1.1.1"
+    "commander": "^12.1.0"
   },
   "publishConfig": {
     "access": "public"

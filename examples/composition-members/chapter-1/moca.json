@@ -1,9 +1,0 @@
-{
-  "id": "urn:moca:chapter:service-ownership",
-  "version": "1.0.0",
-  "title": "Service Ownership",
-  "canonicalDigest": {
-    "algorithm": "sha256",
-    "value": "e809f005719ff525a8319ff98ddf0a1613afdfa1092586de46c14a3724ed7987"
-  }
-}

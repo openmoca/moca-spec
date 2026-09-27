@@ -3,13 +3,14 @@
 // where the slug is derived from the file's title, not its source path.
 import { existsSync, globSync, statSync } from 'node:fs';
 import { basename, extname } from 'node:path';
-import { readContentFile } from '../frontmatter.js';
+import { readContentFile, ensureOkf, deriveTitle } from '../frontmatter.js';
+import { buildManifest } from '../manifest.js';
 import { slugify } from '../slug.js';
 import { UsageError, isGlobPattern } from '../target.js';
 
 export const name = 'markdown';
+export const DEFAULT_TYPE = 'Document';
 
-const H1_PATTERN = /^#\s+(.+)$/m;
 
 /**
  * @param {string} inputPath
@@ -30,26 +31,15 @@ export function detect(inputPath) {
  * @returns {import('./index.js').PackageDraft}
  */
 export function convert({ inputPath, options }) {
-  if (!options.id) {
-    throw new UsageError('--id is required for the markdown adapter.');
-  }
-  if (!options.title) {
-    throw new UsageError('--title is required for the markdown adapter.');
-  }
-
+  const manifest = buildManifest(options);
   const files = resolveFiles(inputPath);
   if (files.length === 0) {
     throw new UsageError(`No Markdown files matched "${inputPath}".`);
   }
 
   const usedSlugs = new Map(); // slug -> count seen so far, for deterministic -2/-3 suffixes
-  const contentNodes = files.map((absPath) => buildContentNode(absPath, usedSlugs));
-
-  const manifest = {
-    id: options.id,
-    version: options.version ?? '1.0.0',
-    title: options.title,
-  };
+  const type = options.type ?? DEFAULT_TYPE;
+  const contentNodes = files.map((absPath) => buildContentNode(absPath, usedSlugs, type));
 
   return { manifest, contentNodes, warnings: [] };
 }
@@ -61,18 +51,11 @@ function resolveFiles(inputPath) {
     .sort();
 }
 
-function buildContentNode(absPath, usedSlugs) {
-  const { data, content, body } = readContentFile(absPath);
-  const title = deriveTitle(data, content, absPath);
+function buildContentNode(absPath, usedSlugs, type) {
+  const { data, content, raw } = readContentFile(absPath);
+  const title = deriveTitle(data, content, basename(absPath, extname(absPath)));
   const slug = uniqueSlug(slugify(title), usedSlugs);
-  return { path: `content/${slug}.md`, body };
-}
-
-function deriveTitle(data, content, absPath) {
-  if (typeof data.title === 'string' && data.title.trim()) return data.title.trim();
-  const heading = content.match(H1_PATTERN);
-  if (heading) return heading[1].trim();
-  return basename(absPath, extname(absPath));
+  return { path: `content/${slug}.md`, body: ensureOkf(raw, data, { type, title }) };
 }
 
 function uniqueSlug(baseSlug, usedSlugs) {

@@ -1,0 +1,42 @@
+{
+  "$comment": "What scripts/refresh-derived.mjs regenerates, in order. Everything listed here is derived from other files and must never be edited by hand.",
+  "keys": {
+    "publisher": { "file": "fixtures/signing-keys/INSECURE-publisher.pem", "keyid": "example-publisher-2026" },
+    "reviewer": { "file": "fixtures/signing-keys/INSECURE-reviewer.pem", "keyid": "example-reviewer-2026" },
+    "rogue": { "file": "fixtures/signing-keys/INSECURE-rogue.pem", "keyid": "example-rogue-2026" }
+  },
+  "pins": [
+    { "package": "examples/handbook/handbook", "search": ["examples/handbook"] },
+    { "package": "conformance/fixtures/composed-members/book", "search": ["conformance/fixtures/composed-members"] }
+  ],
+  "sign": [
+    { "package": "examples/support-kb", "key": "publisher" },
+    { "package": "examples/skills", "key": "publisher" },
+    { "package": "conformance/fixtures/signed-reviewed", "key": "publisher" },
+    { "package": "conformance/fixtures/signature-untrusted-key", "key": "rogue" },
+    { "package": "conformance/fixtures/review-wrong-role", "key": "publisher" },
+    { "package": "conformance/fixtures/skills-signed", "key": "publisher" },
+    { "package": "conformance/fixtures/skill-invalid", "key": "publisher" }
+  ],
+  "review": [
+    { "package": "examples/support-kb", "key": "reviewer", "nodes": ["refund-window.md"], "reviewer": "human:sam.ortiz", "at": "2026-08-14T00:00:00Z", "scope": "Checked against Acme Customer Terms section 7", "name": "sam-ortiz-2026-08-14" },
+    { "package": "conformance/fixtures/signed-reviewed", "key": "reviewer", "nodes": ["policy.md"], "reviewer": "human:reviewer", "at": "2026-09-01T00:00:00Z", "name": "reviewer-2026-09-01" },
+    { "package": "conformance/fixtures/review-wrong-role", "key": "publisher", "nodes": ["hello.md"], "reviewer": "human:publisher", "at": "2026-09-01T00:00:00Z", "name": "publisher-2026-09-01" }
+  ],
+  "copyAttestations": [
+    { "from": "conformance/fixtures/signed-reviewed", "to": "conformance/fixtures/signature-tampered" }
+  ],
+  "sidecars": [
+    { "package": "examples/support-kb", "out": "examples/sidecars/support-kb.moca.idx", "chunk": "headings" },
+    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/sidecars/valid", "chunk": "node", "variants": {
+      "stale": "digest",
+      "item-invalid": "item",
+      "format-unknown": "format",
+      "target-mismatch": "target",
+      "invalid": "schema"
+    } }
+  ],
+  "archives": [
+    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/archive-minimal.zip" }
+  ]
+}

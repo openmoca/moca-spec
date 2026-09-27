@@ -7,7 +7,9 @@ import { tmpdir } from 'node:os';
 import { convert } from '../lib/adapters/obsidian.js';
 import { UsageError } from '../lib/target.js';
 import { writeDraft } from '../lib/write.js';
-import { lintPackage } from '@openmoca/moca-lint/lib/lint.js';
+import { readPackage } from '@openmoca/moca-core';
+
+const lintPackage = async ({ rootDir }) => ({ findings: (await readPackage(rootDir)).diagnostics });
 
 const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'obsidian');
 
@@ -20,7 +22,7 @@ function node(draft, relPath) {
 test('.obsidian/ itself is not converted into a content node', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic' },
+    options: { id: 'https://example.com/test/vault-basic' },
   });
   assert.ok(!draft.contentNodes.some((n) => n.path.includes('.obsidian')));
   assert.equal(draft.contentNodes.length, 3);
@@ -29,7 +31,7 @@ test('.obsidian/ itself is not converted into a content node', () => {
 test('--title defaults to the vault directory basename when omitted', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic' },
+    options: { id: 'https://example.com/test/vault-basic' },
   });
   assert.equal(draft.manifest.title, 'vault-basic');
 });
@@ -37,7 +39,7 @@ test('--title defaults to the vault directory basename when omitted', () => {
 test('a wikilink resolves via an alias to a relative Markdown link', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic', title: 'Vault Basic' },
+    options: { id: 'https://example.com/test/vault-basic', title: 'Vault Basic' },
   });
   const reference = node(draft, 'Reference.md');
   assert.match(reference.body, /\[Getting Started\]\(<\.\/Setup Guide\.md>\)/);
@@ -46,7 +48,7 @@ test('a wikilink resolves via an alias to a relative Markdown link', () => {
 test('a wikilink with a #heading anchor resolves and appends a slugified anchor', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic', title: 'Vault Basic' },
+    options: { id: 'https://example.com/test/vault-basic', title: 'Vault Basic' },
   });
   const reference = node(draft, 'Reference.md');
   assert.match(reference.body, /\[Setup Guide\]\(<\.\/Setup Guide\.md#installation>\)/);
@@ -55,7 +57,7 @@ test('a wikilink with a #heading anchor resolves and appends a slugified anchor'
 test('a wikilink with a |displayText alias renders that text as the link label', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic', title: 'Vault Basic' },
+    options: { id: 'https://example.com/test/vault-basic', title: 'Vault Basic' },
   });
   const intro = node(draft, 'Introduction.md');
   assert.match(intro.body, /\[Get Started Here\]\(<\.\/Setup Guide\.md>\)/);
@@ -68,7 +70,7 @@ test('a link destination containing a space is wrapped in angle brackets so it s
   // actually needed.
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic', title: 'Vault Basic' },
+    options: { id: 'https://example.com/test/vault-basic', title: 'Vault Basic' },
   });
   const reference = node(draft, 'Reference.md');
   assert.doesNotMatch(reference.body, /\]\(Setup Guide\.md\)/, 'an unwrapped destination with a space must never appear');
@@ -77,7 +79,7 @@ test('a link destination containing a space is wrapped in angle brackets so it s
 test('wikilink syntax inside a fenced code block is left untouched', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic', title: 'Vault Basic' },
+    options: { id: 'https://example.com/test/vault-basic', title: 'Vault Basic' },
   });
   const intro = node(draft, 'Introduction.md');
   assert.match(intro.body, /\[\[Should Not Rewrite\]\]/);
@@ -86,7 +88,7 @@ test('wikilink syntax inside a fenced code block is left untouched', () => {
 test('all frontmatter keys, including aliases, are preserved verbatim', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic', title: 'Vault Basic' },
+    options: { id: 'https://example.com/test/vault-basic', title: 'Vault Basic' },
   });
   const setup = node(draft, 'Setup Guide.md');
   assert.match(setup.body, /aliases:/);
@@ -96,7 +98,7 @@ test('all frontmatter keys, including aliases, are preserved verbatim', () => {
 test('an unresolvable wikilink is left as literal text and produces a W_UNRESOLVED_WIKILINK warning', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-unresolvable-link'),
-    options: { id: 'urn:moca:test:unresolvable' },
+    options: { id: 'https://example.com/test/unresolvable' },
   });
   const a = draft.contentNodes.find((n) => n.path === 'content/notes/A.md');
   assert.match(a.body, /\[\[Does Not Exist\]\]/);
@@ -106,7 +108,7 @@ test('an unresolvable wikilink is left as literal text and produces a W_UNRESOLV
 test('an embed (![[...]]) is left as literal text and produces a W_UNSUPPORTED_EMBED warning', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-unresolvable-link'),
-    options: { id: 'urn:moca:test:unresolvable' },
+    options: { id: 'https://example.com/test/unresolvable' },
   });
   const a = draft.contentNodes.find((n) => n.path === 'content/notes/A.md');
   assert.match(a.body, /!\[\[diagram\.png\]\]/);
@@ -116,7 +118,7 @@ test('an embed (![[...]]) is left as literal text and produces a W_UNSUPPORTED_E
 test('a wikilink to a note excluded via --exclude is left as literal text with a W_EXCLUDED_WIKILINK warning, and the excluded note produces no content node', () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-unresolvable-link'),
-    options: { id: 'urn:moca:test:unresolvable', exclude: ['notes/Excluded Note.md'] },
+    options: { id: 'https://example.com/test/unresolvable', exclude: ['notes/Excluded Note.md'] },
   });
   assert.ok(!draft.contentNodes.some((n) => n.path === 'content/notes/Excluded Note.md'));
   const a = draft.contentNodes.find((n) => n.path === 'content/notes/A.md');
@@ -136,7 +138,7 @@ test('a vault with no notes is a usage error', () => {
   try {
     mkdirSync(join(outDir, '.obsidian'));
     assert.throws(
-      () => convert({ inputPath: outDir, options: { id: 'urn:x' } }),
+      () => convert({ inputPath: outDir, options: { id: 'https://example.com/x' } }),
       UsageError
     );
   } finally {
@@ -147,7 +149,7 @@ test('a vault with no notes is a usage error', () => {
 test('end-to-end: converted output passes moca-lint with zero error-severity findings', async () => {
   const draft = convert({
     inputPath: join(fixturesDir, 'vault-basic'),
-    options: { id: 'urn:moca:test:vault-basic-e2e', title: 'Vault Basic E2E' },
+    options: { id: 'https://example.com/test/vault-basic-e2e', title: 'Vault Basic E2E' },
   });
   const outDir = mkdtempSync(join(tmpdir(), 'moca-convert-test-'));
   try {

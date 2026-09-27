@@ -1,0 +1,664 @@
+{
+  "corpusVersion": "0.2.0-alpha.1",
+  "cases": [
+    {
+      "id": "valid-minimal",
+      "description": "Smallest valid package.",
+      "target": "fixtures/valid-minimal",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:361cba9c7dc2b5a3d09472fe88badd8655e1d1f8c921643ba7f4e04a45b9eb76"
+      }
+    },
+    {
+      "id": "valid-hidden-entries",
+      "description": "Entries whose name starts with \".\" are not part of the package and do not change its digest.",
+      "target": "fixtures/valid-hidden-entries",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal"
+      }
+    },
+    {
+      "id": "valid-archive",
+      "description": "The same package as a .zip archive has the same digest as the directory.",
+      "target": "fixtures/archive-minimal.zip",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal"
+      }
+    },
+    {
+      "id": "valid-locales",
+      "description": "Locale variants are representations of one node; a dotted name that is not a declared locale is a separate node.",
+      "target": "fixtures/valid-locales",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "sha256:891c2608e09f733f95b6f0fe1fdf9b06ce48159a676185c26ba01b521a83fb83"
+      }
+    },
+    {
+      "id": "valid-evidence",
+      "description": "Evidence joined to OKF sources by id, with the three selector types.",
+      "target": "fixtures/valid-evidence",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ],
+        "digest": "sha256:28e33ca55345b0ce041e8068d4a21ba40ea6c48d9e57c04387eaa62cd10ef3df"
+      }
+    },
+    {
+      "id": "signed-reviewed",
+      "description": "Publisher-signed and reviewed package, verified against the trust root.",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "digest": "sha256:b03e0c4f4859ec35cc3a855d2291a72497eef89b84fb74e10780d379a1b9a3e4"
+      }
+    },
+    {
+      "id": "signed-no-trust-root",
+      "description": "Without a trust root, attestations are unverifiable, never valid.",
+      "target": "fixtures/signed-reviewed",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A003_ATTESTATION_UNVERIFIABLE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "signature-tampered",
+      "description": "Content changed after signing: the package attestation no longer matches and the review of the changed file is outdated.",
+      "target": "fixtures/signature-tampered",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A006_REVIEW_OUTDATED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "signature-untrusted-key",
+      "description": "Signed with a key the trust root does not list.",
+      "target": "fixtures/signature-untrusted-key",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "review-wrong-role",
+      "description": "A review signed with a key trusted only for the package role does not verify.",
+      "target": "fixtures/review-wrong-role",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "attestation-malformed",
+      "description": "An attestation that is not an in-toto envelope.",
+      "target": "fixtures/attestation-malformed",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "skills-signed",
+      "description": "Skills are exposed when the package attestation is valid.",
+      "target": "fixtures/skills-signed",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed",
+          "skills"
+        ],
+        "digest": "sha256:992a2e4e50aed794369c0bc25100eb1bc40a088b018d1d5d98f1e92669707a01"
+      }
+    },
+    {
+      "id": "skills-unsigned",
+      "description": "Unsigned skills are withheld; the rest of the package stays valid and usable.",
+      "target": "fixtures/skills-unsigned",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A005_SKILLS_WITHHELD"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "skill-invalid",
+      "description": "A skill that does not follow the Agent Skills spec: name/directory mismatch, array metadata, array allowed-tools.",
+      "target": "fixtures/skill-invalid",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "K001_SKILL_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "signed",
+          "skills"
+        ]
+      }
+    },
+    {
+      "id": "frontmatter-missing",
+      "description": "OKF requires frontmatter on every concept document.",
+      "target": "fixtures/frontmatter-missing",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C001_FRONTMATTER_MISSING",
+          "M003_NO_CONTENT"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "frontmatter-invalid",
+      "description": "Frontmatter that is not parseable YAML.",
+      "target": "fixtures/frontmatter-invalid",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "type-missing",
+      "description": "OKF requires a non-empty type.",
+      "target": "fixtures/type-missing",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C003_TYPE_MISSING"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "reserved-file-invalid",
+      "description": "Root index.md may declare okf_version only; nested index.md has no frontmatter; log.md headings start with a date.",
+      "target": "fixtures/reserved-file-invalid",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C004_RESERVED_FILE_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "field-invalid",
+      "description": "Optional fields that break the node schema are warnings, never errors.",
+      "target": "fixtures/field-invalid",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "evidence-source-unknown",
+      "description": "Evidence must name a declared source id.",
+      "target": "fixtures/evidence-source-unknown",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C006_EVIDENCE_SOURCE_UNKNOWN"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ]
+      }
+    },
+    {
+      "id": "link-unresolved",
+      "description": "Internal links that do not resolve are warnings; external links, inline code and fenced code are not checked.",
+      "target": "fixtures/link-unresolved",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C007_LINK_UNRESOLVED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "unsafe-path",
+      "description": "References that escape the package root are errors.",
+      "target": "fixtures/unsafe-path",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C008_UNSAFE_PATH"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "locale-orphan",
+      "description": "A locale variant with no default-language file.",
+      "target": "fixtures/locale-orphan",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C009_LOCALE_ORPHAN"
+        ],
+        "capabilities": [
+          "core",
+          "localized"
+        ]
+      }
+    },
+    {
+      "id": "node-validity-window",
+      "description": "moca.valid_until must be after moca.valid_from.",
+      "target": "fixtures/node-validity-window",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C010_VALIDITY_WINDOW_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "manifest-invalid-json",
+      "description": "moca.json must be JSON.",
+      "target": "fixtures/manifest-invalid-json",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M001_MANIFEST_INVALID_JSON"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "manifest-schema",
+      "description": "id must be an absolute URI, version semver, and title is required.",
+      "target": "fixtures/manifest-schema",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "no-content",
+      "description": "A package needs a content node or a member.",
+      "target": "fixtures/no-content",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M003_NO_CONTENT"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "unknown-key",
+      "description": "Unknown top-level keys are reported as info and ignored; a Reader never acts on them. x-<vendor>-<key> keys are not reported.",
+      "target": "fixtures/unknown-key",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M004_UNKNOWN_KEY"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "duplicate-member",
+      "description": "The same member twice.",
+      "target": "fixtures/duplicate-member",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M005_DUPLICATE_MEMBER"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "validity-window",
+      "description": "validUntil must be after validFrom.",
+      "target": "fixtures/validity-window",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M006_VALIDITY_WINDOW_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "unregistered-urn",
+      "description": "urn:moca: is not a registered URN namespace.",
+      "target": "fixtures/unregistered-urn",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M007_UNREGISTERED_URN"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "profile-unrecognised",
+      "description": "An unknown profile is info only and its data is preserved; a recognised one is silent.",
+      "target": "fixtures/profile-unrecognised",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "F001_PROFILE_UNRECOGNISED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "composed-members",
+      "description": "A composition-only package whose members resolve and match their pinned digests.",
+      "target": "fixtures/composed-members/book",
+      "options": {
+        "members": [
+          "fixtures/composed-members"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "composed"
+        ],
+        "digest": "sha256:61961568f8e053fe76c24b8c40594f17e127321f863355b673f9727b25bb1c9c"
+      }
+    },
+    {
+      "id": "composed-members-no-resolver",
+      "description": "Without a resolver, members are exposed unresolved and nothing is reported.",
+      "target": "fixtures/composed-members/book",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "composed"
+        ],
+        "digest": "SAME:composed-members"
+      }
+    },
+    {
+      "id": "member-digest-mismatch",
+      "description": "A resolved member whose digest differs from its pin.",
+      "target": "fixtures/member-digest-mismatch/book",
+      "options": {
+        "members": [
+          "fixtures/member-digest-mismatch"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "R002_MEMBER_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core",
+          "composed"
+        ]
+      }
+    },
+    {
+      "id": "member-unresolved",
+      "description": "The resolver cannot find a member.",
+      "target": "fixtures/member-unresolved",
+      "options": {
+        "members": [
+          "fixtures/member-unresolved"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "R001_MEMBER_UNRESOLVED"
+        ],
+        "capabilities": [
+          "core",
+          "composed"
+        ]
+      }
+    },
+    {
+      "id": "member-cycle",
+      "description": "Members that include each other.",
+      "target": "fixtures/member-cycle/a",
+      "options": {
+        "members": [
+          "fixtures/member-cycle"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "R003_MEMBER_CYCLE"
+        ],
+        "capabilities": [
+          "core",
+          "composed"
+        ]
+      }
+    },
+    {
+      "id": "sidecar-valid",
+      "description": "A lexical sidecar bound to the package digest.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/valid"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": true
+      }
+    },
+    {
+      "id": "sidecar-stale",
+      "description": "Built for a different digest.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/stale"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S003_SIDECAR_STALE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-item-invalid",
+      "description": "chunkIndex is not below chunkCount.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/item-invalid"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S004_SIDECAR_ITEM_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-format-unknown",
+      "description": "Payload format this Reader does not know.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/format-unknown"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S005_SIDECAR_FORMAT_UNKNOWN"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-target-mismatch",
+      "description": "Bound to another package.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/target-mismatch"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S002_SIDECAR_TARGET_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-invalid",
+      "description": "index.json breaks the schema: a dense index without a model.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/invalid"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S001_SIDECAR_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    }
+  ]
+}

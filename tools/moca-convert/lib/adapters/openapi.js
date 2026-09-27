@@ -6,6 +6,7 @@ import { UsageError } from '../target.js';
 import { parseOpenApiDocument, collectOperations } from './openapi/parse.js';
 import { checkSuitability, DEFAULT_MIN_DESCRIPTION_RATIO } from './openapi/suitability.js';
 import { renderOperationNode, renderTagNode } from './openapi/render.js';
+import { buildManifest } from '../manifest.js';
 
 export const name = 'openapi';
 
@@ -35,10 +36,6 @@ export function detect(inputPath) {
  * @returns {import('./index.js').PackageDraft}
  */
 export function convert({ inputPath, options }) {
-  if (!options.id) {
-    throw new UsageError('--id is required for the openapi adapter.');
-  }
-
   const chunker = options.chunker ?? 'operation';
   if (!CHUNKER_MODES.includes(chunker)) {
     throw new UsageError(`Unknown --chunker "${chunker}"; expected one of: ${CHUNKER_MODES.join(', ')}.`);
@@ -57,17 +54,10 @@ export function convert({ inputPath, options }) {
     throw new UsageError(`"${inputPath}" has no "info.title" and no --title was given.`);
   }
 
+  const description = typeof doc.info?.description === 'string' ? doc.info.description.trim() : '';
+  const manifest = buildManifest({ ...options, title, description });
   const operations = collectOperations(doc);
   const contentNodes = chunker === 'tag' ? buildTagNodes(operations, doc) : buildOperationNodes(operations, doc);
-
-  const description = typeof doc.info?.description === 'string' ? doc.info.description.trim() : '';
-
-  const manifest = {
-    id: options.id,
-    version: options.version ?? '1.0.0',
-    title,
-    ...(description ? { description } : {}),
-  };
 
   return { manifest, contentNodes, warnings: [] };
 }

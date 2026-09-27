@@ -1,59 +1,82 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openmoca.org/schemas/v1/eu-ai-act/profile.schema.json",
-  "title": "MOCA EU AI Act Profile Data",
-  "description": "JSON Schema for the profileData.euAiAct object, per MOCA EU AI Act Profile §3.",
+  "$id": "https://w3id.org/moca/profiles/eu-ai-act/v1/profile.schema.json",
+  "title": "MOCA EU AI Act data-governance profile data",
   "type": "object",
+  "required": [
+    "regulation",
+    "dataGovernance"
+  ],
   "properties": {
-    "riskTier": {
+    "regulation": {
       "type": "string",
-      "description": "Regulatory risk classification, e.g. prohibited, high_risk, limited, minimal. Open vocabulary — no enforced enum, allowing for regulatory evolution and domain-specific variants."
-    },
-    "regulationVersion": {
-      "type": "string",
-      "description": "Version, edition, or regulation ID being applied, e.g. 2024/1689. Allows classifications to remain traceable as regulation is amended."
-    },
-    "intendedPurpose": {
-      "type": "string",
-      "description": "Natural-language description of the system's intended purpose and use case."
-    },
-    "annexIiiCategory": {
-      "type": "string",
-      "description": "Annex III high-risk category, e.g. Employment decision-making, Biometric identification. Open string; applicable if the package is classified as high-risk."
+      "minLength": 1
     },
     "dataGovernance": {
       "type": "object",
+      "required": [
+        "sources",
+        "personalData"
+      ],
       "properties": {
-        "provenanceUri": {
-          "type": "string",
-          "format": "uri",
-          "description": "Reference (URL or URN) to documentation or a knowledge node describing data provenance, collection method, and preprocessing."
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
         },
-        "dataCutoff": {
-          "type": "string",
-          "format": "date",
-          "description": "Most recent date of data collection or update (ISO-8601), e.g. 2024-06-30."
+        "collectionPeriod": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "format": "date"
+            },
+            "to": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "additionalProperties": false
+        },
+        "preparation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "knownGaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "personalData": {
+          "enum": [
+            "none",
+            "pseudonymised",
+            "present"
+          ]
         }
-      }
+      },
+      "additionalProperties": false
     },
-    "humanOversight": {
+    "syntheticContent": {
       "type": "object",
+      "required": [
+        "present"
+      ],
       "properties": {
-        "level": {
-          "type": "string",
-          "description": "Oversight model, e.g. human_in_the_loop (human reviews every decision), human_on_the_loop (human available for monitoring/override), human_in_command (human retains final authority). Open vocabulary; variations allowed."
+        "present": {
+          "type": "boolean"
         },
-        "overrideNode": {
-          "type": "string",
-          "description": "URN reference to a content node documenting the human override or escalation procedure, e.g. urn:node:override-procedure."
-        },
-        "requiredRole": {
-          "type": "string",
-          "description": "Role or team responsible for oversight, e.g. compliance-officer, ethics-review-board."
+        "marking": {
+          "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
-  "required": ["riskTier", "regulationVersion", "intendedPurpose"],
   "additionalProperties": false
 }

@@ -1,0 +1,17 @@
+{
+  "indexVersion": 1,
+  "target": {
+    "id": "https://example.com/conformance/minimal",
+    "version": "1.0.0",
+    "digest": "sha256:361cba9c7dc2b5a3d09472fe88badd8655e1d1f8c921643ba7f4e04a45b9eb76"
+  },
+  "indexType": "lexical",
+  "chunking": {
+    "strategy": "whole-node"
+  },
+  "storage": {
+    "format": "moca-jsonl-v1",
+    "file": "payload/items.jsonl"
+  },
+  "createdBy": "moca-index"
+}
