@@ -33,7 +33,8 @@
       "item-invalid": "item",
       "format-unknown": "format",
       "target-mismatch": "target",
-      "invalid": "schema"
+      "invalid": "schema",
+      "dense": "dense"
     } }
   ],
   "archives": [

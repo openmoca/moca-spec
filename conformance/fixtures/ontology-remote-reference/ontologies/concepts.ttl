@@ -1,0 +1,6 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix c: <https://example.org/conformance#> .
+
+c:ServiceBoundary a skos:Concept ;
+  skos:prefLabel "Service boundary"@en .
+<https://example.org/conformance> <http://www.w3.org/2002/07/owl#imports> <https://example.org/elsewhere> .

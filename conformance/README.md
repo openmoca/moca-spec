@@ -2,13 +2,14 @@
 
 A language-neutral test suite for anything that reads MOCA packages. An
 implementation conforms to the [Reader contract](../spec/moca-reader-contract.md)
-when it reaches the same conclusions as these cases.
+when it reaches the same conclusions as these cases. Package cases apply to
+every Reader; `search` cases apply to implementations of the Search class.
 
 ## Layout
 
 ```text
 conformance/
-├── cases.json          43 cases: target, options, expected conclusions
+├── cases.json          57 cases: target, options, expected conclusions
 ├── fixtures/           the packages, sidecars and one .zip archive they read
 └── fixtures/trust-root.json
 ```
@@ -40,8 +41,45 @@ conformance/
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
+| `expect.evidenceVerified` | For each node path, the `verified` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
 
 Order, counts and message text are not compared.
+
+## A search case
+
+```json
+{
+  "id": "search-default-policy",
+  "kind": "search",
+  "packages": ["fixtures/search-policy/v1", "fixtures/search-policy/v2"],
+  "options": { "now": "2026-09-27T00:00:00Z", "backend": "lexical" },
+  "search": { "query": "retention period" },
+  "expect": {
+    "include": ["https://example.com/conformance/search-policy@2.0.0#current.md"],
+    "exclude": ["https://example.com/conformance/search-policy@1.0.0#current.md"]
+  }
+}
+```
+
+Every valid package in `packages` is loaded into one library, then one search
+runs. Results are named `<package id>@<version>#<node path>`.
+
+| Field | Meaning |
+| --- | --- |
+| `options.now` | The host clock. |
+| `options.backend` | `lexical`: the Reader's own lexical search. `all`: a test backend that ignores every filter, declares no features, and returns one hit with score 1 for every representation of every loaded package, plus one hit from the digest `sha256:000…0`, which is not loaded. `dense`: dense search over `options.sidecar` with the conformance embedder. |
+| `options.audiences` | The host's audience set. |
+| `options.sidecar` | A sidecar to bind to every package that it matches. |
+| `options.embedder` | The conformance embedder's identity: `name`, optional `version`, `dimensions`. It returns `[1, 0, …, 0]` of that length for every text. |
+| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`. |
+| `expect.codes` | The set of diagnostic codes from sidecars and the backend. |
+| `expect.include` | Results that must be returned. |
+| `expect.exclude` | Results that must never be returned. |
+| `expect.count` | The exact number of results, when given. |
+| `expect.locales` | The `node.locale` a result must have. |
+
+Every result must be a valid citation record with a `score`. Ranking is never
+compared, so lexical and dense implementations can differ.
 
 ## What the corpus covers
 
@@ -51,6 +89,11 @@ Order, counts and message text are not compared.
   diagnostic family.
 - Attestation outcomes: valid, no trust root, tampered content, untrusted key,
   key used outside its role, malformed envelope.
+- Evidence checks against in-package sources, and `self-contained-evidence`.
+- The ontology profile: a valid scheme and each `O` diagnostic.
+- The Search class: the default retrieval policy, the host's opt-in, audience
+  sets, the re-check of every hit whatever the backend returns, locale,
+  concepts, and the dense model check.
 
 Some rules cannot be expressed as portable fixtures, because Git and some file
 systems cannot store them: symbolic links, unreadable folders, and file names
@@ -65,9 +108,29 @@ npm run conformance           # the reference Reader against every case
 npm run conformance:actual    # print the reference Reader's conclusions
 ```
 
-Another implementation reads `cases.json`, runs each case with its own Reader,
-and compares. Pin a released corpus version (`corpusVersion`); do not copy the
-corpus into another repository.
+## Running it against another Reader
+
+A Reader in another repository or language provides an **adapter**: a command
+that reads one JSON object on standard input and writes one JSON object to
+standard output.
+
+- Input: `{ "root": "<absolute path of conformance/>", "case": { … } }`.
+- Output for a package case: `{ "valid", "codes", "capabilities", "digest",
+  "sidecarUsable", "evidenceVerified" }`, as defined above.
+- Output for a search case: `{ "codes", "records" }`, where `records` are the
+  citation records the search returned.
+
+Run the corpus through it with:
+
+```sh
+node scripts/run-conformance.mjs --reader "dotnet run --project tests/Conformance"
+```
+
+[`scripts/conformance-adapter.mjs`](../scripts/conformance-adapter.mjs) is the
+reference adapter, and `--reader "node scripts/conformance-adapter.mjs"` must
+give the same result as the in-process run. Pin a released corpus version
+(`corpusVersion`); each release attaches the corpus as an archive. Do not copy
+the corpus into another repository.
 
 ## Changing the corpus
 
