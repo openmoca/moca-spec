@@ -1,0 +1,63 @@
+{
+  "structureVersion": 1,
+  "concepts": [
+    {
+      "iri": "https://example.org/services#Microservice",
+      "label": "Microservice",
+      "broader": [],
+      "related": [
+        "https://example.org/services#ServiceBoundary"
+      ],
+      "parts": [],
+      "requires": [],
+      "replaces": []
+    },
+    {
+      "iri": "https://example.org/services#OrderDatabase",
+      "label": "Order database",
+      "broader": [],
+      "related": [],
+      "parts": [],
+      "requires": [],
+      "replaces": []
+    },
+    {
+      "iri": "https://example.org/services#OrderPlatform",
+      "label": "Order platform",
+      "broader": [],
+      "related": [],
+      "parts": [
+        "https://example.org/services#OrderDatabase",
+        "https://example.org/services#OrderService"
+      ],
+      "requires": [],
+      "replaces": []
+    },
+    {
+      "iri": "https://example.org/services#OrderService",
+      "label": "Order service",
+      "broader": [
+        "https://example.org/services#Microservice"
+      ],
+      "related": [],
+      "parts": [],
+      "requires": [
+        "https://example.org/services#OrderDatabase"
+      ],
+      "replaces": []
+    },
+    {
+      "iri": "https://example.org/services#ServiceBoundary",
+      "label": "Service boundary",
+      "definition": "The ownership and data-isolation perimeter of a service.",
+      "broader": [],
+      "related": [
+        "https://example.org/services#Microservice"
+      ],
+      "parts": [],
+      "requires": [],
+      "replaces": []
+    }
+  ],
+  "sequences": []
+}

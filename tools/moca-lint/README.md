@@ -13,7 +13,7 @@ moca-lint extract <archive> -o <dir>
 ```
 
 - `lint` exits 1 when there is any error-severity diagnostic, 0 otherwise.
-  Codes are listed in [Reader contract §10](../../spec/moca-reader-contract.md#10-diagnostics).
+  Codes are listed in [Reader contract §11](../../spec/moca-reader-contract.md#11-diagnostics).
 - `digest` prints the package digest (`moca-digest-v2`); it is the same for a
   folder and its archive.
 - `manifest` prints the BagIt-style manifest the digest is the SHA-256 of.

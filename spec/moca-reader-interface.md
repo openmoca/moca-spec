@@ -1,6 +1,6 @@
 # MOCA Reader Interface
 
-Specification version: `0.3.0-alpha.1`
+Specification version: `0.4.0-alpha.1`
 Status: Alpha. Expect changes before `1.0.0`.
 License: [Apache License 2.0](../LICENSE)
 
@@ -11,24 +11,31 @@ conclude and how it must behave. This document names the operations and
 objects every MOCA Reader offers, once for all languages, so that the Readers
 for different languages look alike to the people who use them.
 
-Names here are logical. Each language uses its own conventions: `readPackage`
-in TypeScript, `ReadPackageAsync` in .NET and `read_package` in Python are the
-same operation. Where this document and the Reader contract disagree, the
-contract wins.
+The names here are logical. Each language uses its own conventions: for
+example `readPackage` in TypeScript, `ReadPackageAsync` in .NET and
+`read_package` in Python are the same operation. Where this document and the
+contract disagree, the contract wins.
 
-Each language has its own Reader repository ([ADR-0007](../docs/adr/0007-reader-interface-and-per-language-readers.md)).
-The TypeScript reference Reader is [`@openmoca/moca-core`](../tools/moca-core/README.md).
+MOCA has three pillars
+([ADR-0011](../docs/adr/0011-three-pillars-and-admission-test.md)):
 
-## 2. Layers
+| Pillar | What it is |
+| --- | --- |
+| **MOCA Package** | The open standard. |
+| **MOCA Reader** | The open-source library that reads packages, one per language. It is the standard way to get anything out of a package, whether for RAG or any other search, for structure navigation or for citation. |
+| **MOCA Application** | The product built on a Reader and an agent harness. |
 
-| Layer | Does | Must not |
+Each language has its own Reader repository. The TypeScript reference Reader
+is [`@openmoca/moca-core`](../tools/moca-core/README.md).
+
+## 2. What a Reader does
+
+| Part | Does | Must not |
 | --- | --- | --- |
-| **Reader** | Open, check, digest, verify, resolve members, and build citation records. | Execute package content, or act on a location or setting a package supplies. |
-| **Search** | One `search` over a pluggable backend, applying the default retrieval policy and the host's audience set. | Reimplement a vector database or an embedding stack. |
+| **Read** | Open, check, digest, verify, resolve members, and build citation records. | Execute package content, or act on a location or setting a package supplies. |
+| **Search** | One `search` over a backend the host chooses, with the retrieval policy applied in its gate. | Reimplement a vector database or an embedding stack. |
+| **Structure** | Answer structure operations over the packages and the host's overlays. | Enforce what the structure says; that is the application's job. |
 | **Bindings** | Present citation records in a framework's own types. | Change what a citation record says. |
-
-A Reader implementation claims the Reader class of the contract. With the
-Search layer it claims the Search class.
 
 ## 3. What the host supplies
 
@@ -41,71 +48,114 @@ Everything a Reader touches outside a package's bytes comes from the host
 | Member resolver | Given a member's id, version and pinned digest, returns a package target or nothing. | Composition. |
 | Trust root | A trust-root document ([schema](../schemas/v1/trust-root.schema.json)). | Verifying attestations. |
 | Clock | Returns the current time. | `stale` and `inForce`. |
-| Limits | Maximum entries and uncompressed bytes. | Archive and source safety. |
+| Limits | Entry, byte, frontmatter, structure and evidence limits ([contract §3](moca-reader-contract.md#3-opening-a-package)). | Safety with untrusted packages. |
+| Overlays | `{ id, layer, source }`, where `layer` is `application` or `organisation` and `source` is Turtle. | Adding the application's and the organisation's structure and vocabulary. |
 | Search backend | §5.2. | Search. |
 | Embedder | §5.3. | Dense search. |
+| Retrieval hooks | `ingress` and `egress` (§5.4). | Ontology-guided retrieval strategies. |
 | Audience set | A list of audience labels. | Removing records outside it. |
 
-## 4. Reader operations
+A package never supplies any of these.
+
+## 4. Reading
 
 | Operation | Takes | Returns |
 | --- | --- | --- |
-| `readPackage` | A target (directory, archive path, archive bytes or package source) and options: trust root, member resolver, clock, limits, strict. | A package result. Never throws for a malformed package. |
+| `readPackage` | A target (a directory, archive path, archive bytes or package source) and options: trust root, member resolver, limits, strict. | A package result. Never throws for a malformed package. |
 | `bindSidecar` | A sidecar target and a package result. | `{ usable, index, chunks, diagnostics }`. |
-| `Library.add` | A valid package result, and optionally its sidecar chunks. | The library, with the package and its resolved members loaded. |
+| `Library(options)` | Clock, overlays, limits. | An empty library. |
+| `Library.add` | A valid package result, and optionally its sidecar chunks and index. | The library, with the package and its resolved members loaded. |
 | `Library.citations` | Options: locale, include text. | Every node's citation record. |
-| `Library.get` | A node id, and options: locale. | One citation record, or nothing. |
+| `Library.get` | A node id or a versioned node reference, and options: locale. | One citation record, or nothing. |
 
-A **package result** has at least: `manifest`, `digest`, `nodes`,
-`members`, `profiles`, `diagnostics`, `valid` and `capabilities`, with the
-meanings in the contract. A **diagnostic** has `code`, `severity`, `message`,
-and optionally `file` and `line`.
+A **package result** has at least these fields, with the meanings in the
+contract:
+
+- `manifest`, `digest` and `payloadManifest`;
+- `nodes`, `members` and `profiles`;
+- `structure`;
+- `diagnostics`, `valid` and `capabilities`.
+
+A **diagnostic** has `code`, `severity` and `message`, and optionally `file`
+and `line`.
 
 ## 5. Search
 
-### 5.1 The search entry point
+### 5.1 The search operation
 
 | Operation | Takes | Returns |
 | --- | --- | --- |
-| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`. | Citation records, each with `score`, best first. |
+| `Search(source, options)` | A library, or, for a store backend, the loaded digests and a clock; then a backend, an audience set and optional hooks. | A search. |
+| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
 
-A `Search` is created over a library, one backend, and the host's options:
-audience set and clock. It follows
-[Reader contract §9.2](moca-reader-contract.md#92-the-search-entry-point) on
-every call. `includeAll` is the host's opt-in from contract §8; a host that
-lets a caller set it has chosen to.
+Every call follows
+[Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate).
+`includeAll` is the host's opt-in from contract §8; a host that lets a caller
+set it has chosen to.
 
 ### 5.2 Backends
 
 A backend has:
 
-- `features`: a set of `lexical`, `dense`, `hybrid`, `filterPushdown`;
-- `search(query, { limit, filters })`, returning hits valid against
+- `features`: `lexical` or `dense`, plus `filterPushdown`;
+- `search(query, { limit, filters })`, which returns hits valid against
   [`search-hit.schema.json`](../schemas/v1/search-hit.schema.json);
 - `diagnostics`: findings about the backend itself, for example
   `S006_MODEL_MISMATCH`.
 
-`filters` holds the values in
-[Reader contract §9.5](moca-reader-contract.md#95-filter-pushdown). A backend
-that does not declare `filterPushdown` may ignore them.
-
 Every Reader provides a **lexical backend** over the loaded packages' own
-text, so that search works offline with no other software. A Reader that
-reads sidecars provides a **sidecar backend**. A **store backend** wraps the
-host's own vector store. It is usually part of a binding, because each store
-has its own client library.
+text. A Reader that reads sidecars may provide a **dense backend** over their
+vectors. A **store backend** wraps the host's own vector store. It is usually
+part of a binding. It stores whole citation records at ingest, and returns
+each one with its hit.
 
 ### 5.3 Embedder
 
-An embedder is supplied by the host:
+The host supplies the embedder:
 
-- `name`, optional `version`, and `dimensions`, compared with an index's
+- `name`, an optional `version`, and `dimensions`, compared with an index's
   `model` ([Reader contract §9.3](moca-reader-contract.md#93-dense-backends));
-- `embed(texts)`, returning one vector per text.
+- `embed(texts)`, which returns one vector per text.
 
 A Reader never chooses, downloads or configures an embedder.
 
-## 6. Bindings
+### 5.4 Retrieval hooks
+
+Ontology-guided retrieval is a strategy, not a fact, so it is pluggable
+([ADR-0016](../docs/adr/0016-pluggable-ontology-guided-retrieval.md)):
+
+- `ingress(query, ctx)` may return `{ query, concepts, scope }`, which change
+  what the backend searches;
+- `egress(candidates, ctx)` returns the candidates, possibly reordered, and
+  possibly with records added from structure operations. Each added record is
+  tagged `retrieval: { via, from }`.
+
+`ctx` holds the request, the library, its structure operations, the audience
+set and the clock, all read-only. The gate runs after both hooks, so no hook
+can return what the retrieval policy excludes. Each Reader ships a default
+strategy (`ontologyGuided` in the reference Reader).
+
+**Domain extensions.** A domain extension, such as a legal, procedures or
+course extension, is a set of hooks plus a vocabulary overlay. It is built on
+the standard Reader, never as a separate Reader, and lives in its own
+repository with its own tests.
+
+## 6. Structure
+
+`Library.structure` answers the operations in
+[Reader contract §10](moca-reader-contract.md#10-structure). They run over the
+merged structure of every loaded package and every overlay, and each item
+carries its `layer`:
+
+| Operation | Returns |
+| --- | --- |
+| `concept(iri)` | The concept, or nothing |
+| `requires(iri, { transitive })`, `requiredBy(iri)` | Concept items |
+| `parts(iri)`, `narrower(iri, { transitive })`, `broader(iri)`, `related(iri)` | Concept items |
+| `sequence(iri)` | Ordered concept items, or nothing |
+| `nodes(iri, { include })` | Citation records |
+
+## 7. Bindings
 
 A binding maps citation records to a framework's own types, and a framework's
 query to `Search.search`. It lives in the language Reader's repository or its
@@ -113,21 +163,21 @@ own, never in the framework.
 
 | Framework | Type a binding provides | Language |
 | --- | --- | --- |
-| LangChain / LangGraph | Retriever returning documents | Python, TypeScript |
-| LlamaIndex | Retriever returning nodes with scores | Python, TypeScript |
-| Microsoft Agent Framework | Context provider | .NET, Python |
-| Microsoft.Extensions.VectorData | Store backend over any supported vector store | .NET |
-| Model Context Protocol | Server tools (`moca_list_packages`, `moca_search`, `moca_get_node`) | Any; the reference is [`@openmoca/moca-mcp`](../tools/moca-mcp/README.md) |
+| LangChain / LangGraph | A retriever returning documents | Python, TypeScript |
+| LlamaIndex | A retriever returning nodes with scores | Python, TypeScript |
+| Microsoft Agent Framework | A context provider | .NET, Python |
+| Microsoft.Extensions.VectorData | A store backend over any supported vector store | .NET |
+| Model Context Protocol | Server resources and tools | Any; the reference is [`@openmoca/moca-mcp`](../tools/moca-mcp/README.md) |
 
 A binding MUST carry the whole citation record in the framework type's
-metadata. When the framework needs flat metadata, it MUST at least use the
-fields in the
+metadata, including `node.ref`. When the framework needs flat metadata, the
+binding MUST at least use the fields in the
 [consuming guide's metadata table](../docs/guides/consuming.md#feeding-your-own-retrieval-stack),
 including the package digest. The text it hands to a model follows
-[Reader contract §11](moca-reader-contract.md#11-handing-content-to-a-model).
+[Reader contract §12](moca-reader-contract.md#12-handing-content-to-a-model).
 
-## 7. Conformance
+## 8. Conformance
 
 A Reader in any language shows conformance by running the corpus through the
 runner protocol in [conformance/README.md](../conformance/README.md). It ships
-only when it passes every case for the classes and features it claims.
+only when it passes every case.

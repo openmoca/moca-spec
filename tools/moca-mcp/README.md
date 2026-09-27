@@ -49,4 +49,4 @@ start if none are valid.
 
 Package text is returned as data inside citation records. Tool descriptions
 tell the model to quote and cite it, not follow it
-([Reader contract §11](../../spec/moca-reader-contract.md#11-handing-content-to-a-model)).
+([Reader contract §12](../../spec/moca-reader-contract.md#12-handing-content-to-a-model)).

@@ -4,7 +4,7 @@ The reference MOCA Reader, in TypeScript/JavaScript: open a package from a
 directory, a `.moca` archive or a host-supplied source; check it; compute its
 digest; verify attestations and evidence; resolve members; produce citation
 records; and search with one entry point over lexical, dense-sidecar or store
-backends. It implements the Reader and Search classes of the
+backends. It implements the Reader class of the
 [Reader contract](../../spec/moca-reader-contract.md), follows the
 [Reader interface](../../spec/moca-reader-interface.md), and passes the
 [conformance corpus](../../conformance/README.md).

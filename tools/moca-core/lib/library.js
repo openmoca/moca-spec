@@ -1,23 +1,53 @@
-// A library of loaded packages: citation records and relations between
-// packages. Search over a library lives in search.js.
-// See spec/moca-reader-contract.md §7-§9.
+// A library of loaded packages: citation records, relations between
+// packages, and their merged structure with the host's overlays. Search over
+// a library lives in search.js. See spec/moca-reader-contract.md §7-§10.
+import { readFileSync } from 'node:fs';
 import { citationFor, passesDefaultPolicy, pickRepresentation } from './citation.js';
 import { Search } from './search.js';
 import { LexicalBackend } from './backends/lexical.js';
+import { StructureIndex } from './structure-ops.js';
+import { parseStructure, LAYERS } from './structure.js';
+import { Diagnostics } from './diagnostics.js';
+import { DEFAULT_LIMITS } from './source.js';
 
 export { citationFor, passesDefaultPolicy, pickRepresentation };
 
 /**
+ * @typedef {object} Overlay  host-supplied, never package content (ADR-0013)
+ * @property {string} id
+ * @property {'application'|'organisation'} layer
+ * @property {string|Buffer} [path]    a Turtle file
+ * @property {string|Buffer} [source]  Turtle text
+ *
  * @typedef {object} LibraryOptions
  * @property {() => Date} [clock]  defaults to the system clock
+ * @property {Overlay[]} [overlays]
+ * @property {Partial<typeof DEFAULT_LIMITS>} [limits]
  */
 
 export class Library {
   /** @param {LibraryOptions} [options] */
-  constructor({ clock = () => new Date() } = {}) {
+  constructor({ clock = () => new Date(), overlays = [], limits } = {}) {
     this.clock = clock;
     /** @type {Array<{ result: object, chunks: object[]|null, index: object|null }>} */
     this.packages = [];
+    this.diagnostics = new Diagnostics();
+    this.overlayFacts = [];
+    const max = { ...DEFAULT_LIMITS, ...limits };
+    for (const o of overlays) {
+      if (!['application', 'organisation'].includes(o.layer)) throw new TypeError(`overlay ${o.id}: layer must be application or organisation`);
+      const text = o.source ?? readFileSync(o.path);
+      const parsed = parseStructure(text, { file: `overlay:${o.id}`, layer: o.layer, origin: `overlay:${o.id}`, diagnostics: this.diagnostics, limits: max });
+      this.overlayFacts.push(...parsed.facts);
+    }
+    this.overlayFacts.sort((a, b) => LAYERS.indexOf(a.layer) - LAYERS.indexOf(b.layer));
+    this.structureIndex = null;
+  }
+
+  /** The merged structure of every loaded package and overlay (Reader contract §10). */
+  get structure() {
+    if (!this.structureIndex) this.structureIndex = new StructureIndex(this, this.overlayFacts);
+    return this.structureIndex;
   }
 
   /**
@@ -30,6 +60,7 @@ export class Library {
     const key = (r) => `${r.manifest.id}@${r.manifest.version}`;
     if (this.packages.some((p) => key(p.result) === key(result))) return this;
     this.packages.push({ result, chunks: chunks ?? null, index: index ?? null });
+    this.structureIndex = null;
     // A composed package brings its verified members with it.
     for (const member of result.members) {
       if (member.status === 'resolved' && member.result?.valid) this.add(member.result);

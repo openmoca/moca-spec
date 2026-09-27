@@ -3,10 +3,13 @@
 export { readPackage } from './reader.js';
 export { Library, citationFor, passesDefaultPolicy } from './library.js';
 export { Search } from './search.js';
+export { StructureIndex } from './structure-ops.js';
+export { ontologyGuided } from './strategies/ontology-guided.js';
 export { LexicalBackend } from './backends/lexical.js';
 export { DenseBackend, modelMismatch } from './backends/dense.js';
 export { MemoryStoreBackend } from './backends/memory-store.js';
 export { selectorMatches } from './content.js';
+export { readStructure, parseStructure, StructureGraph, structureView, STRUCTURE_FILE, STRUCTURE_VIEW_FILE, LAYERS } from './structure.js';
 export { bindSidecar, PORTABLE_FORMAT, SIDECAR_MANIFEST } from './sidecar.js';
 export { directoryResolver } from './resolver.js';
 export { openSource, directorySource, archiveSource, hostSource, TargetError, DEFAULT_LIMITS } from './source.js';

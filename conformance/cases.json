@@ -460,23 +460,23 @@
       }
     },
     {
-      "id": "ontology-valid",
-      "description": "Ontology profile: a local Turtle concept scheme and a node bound to a declared concept.",
-      "target": "fixtures/ontology-valid",
+      "id": "structure-valid",
+      "description": "Structure: a structure.ttl concept scheme and a node bound to a declared concept.",
+      "target": "fixtures/structure-valid",
       "expect": {
         "valid": true,
         "codes": [],
         "capabilities": [
           "core",
-          "ontology"
+          "structured"
         ],
-        "digest": "sha256:11666e2fa146b52fdc8e5c5b7a0ee467cbeb15cee167224186b8967954dcf3d6"
+        "digest": "sha256:5bce001b37c438ad209a157ae343a30ffa5c16a2938247e7010de4787298cb36"
       }
     },
     {
-      "id": "ontology-unparseable",
-      "description": "Ontology profile: the listed file is not Turtle, so nothing is declared. Warnings only; the ontology capability is withheld.",
-      "target": "fixtures/ontology-unparseable",
+      "id": "structure-unparseable",
+      "description": "Structure: structure.ttl is not Turtle, so nothing is declared. Warnings only; the structured capability is withheld.",
+      "target": "fixtures/structure-unparseable",
       "expect": {
         "valid": true,
         "codes": [
@@ -489,9 +489,9 @@
       }
     },
     {
-      "id": "ontology-concept-undeclared",
-      "description": "Ontology profile: a node binds to a concept no ontology file declares.",
-      "target": "fixtures/ontology-concept-undeclared",
+      "id": "structure-undeclared-concept",
+      "description": "Structure: a node binds to a concept no structure file declares.",
+      "target": "fixtures/structure-undeclared-concept",
       "expect": {
         "valid": true,
         "codes": [
@@ -503,9 +503,9 @@
       }
     },
     {
-      "id": "ontology-remote-reference",
-      "description": "Ontology profile: owl:imports would make a Reader fetch; it is reported, never followed.",
-      "target": "fixtures/ontology-remote-reference",
+      "id": "structure-remote-reference",
+      "description": "Structure: owl:imports would make a Reader fetch; it is reported, never followed.",
+      "target": "fixtures/structure-remote-reference",
       "expect": {
         "valid": true,
         "codes": [
@@ -860,9 +860,9 @@
     {
       "id": "search-concepts",
       "kind": "search",
-      "description": "Ontology profile: a concept filter keeps only records bound to one of the concepts.",
+      "description": "Structure: a concept filter keeps only records bound to one of the concepts.",
       "packages": [
-        "fixtures/ontology-valid",
+        "fixtures/structure-valid",
         "fixtures/valid-minimal"
       ],
       "options": {
@@ -878,7 +878,7 @@
       "expect": {
         "count": 1,
         "include": [
-          "https://example.com/conformance/ontology-valid@1.0.0#boundaries.md"
+          "https://example.com/conformance/structure-valid@1.0.0#boundaries.md"
         ]
       }
     },
@@ -932,7 +932,8 @@
         "codes": [
           "S006_MODEL_MISMATCH"
         ],
-        "count": 0
+        "count": 0,
+        "include": []
       }
     }
   ]

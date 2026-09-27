@@ -13,8 +13,8 @@
     },
     {
       "id": "https://example.com/moca/handbook/incident-response",
-      "version": "1.0.0",
-      "digest": "sha256:7e2fab3de1b186d6e9d1d37cbfe7f362b66879c9afe8c1842a4c97296687910c"
+      "version": "1.1.0",
+      "digest": "sha256:2af099d05f6c26fa588ae72e5e56561f23513584781a3a3870afd59125f93ccb"
     }
   ]
 }

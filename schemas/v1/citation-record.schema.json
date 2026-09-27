@@ -257,7 +257,7 @@
     },
     "concepts": {
       "type": "array",
-      "description": "Absolute concept IRIs the node is bound to, from the ontology profile.",
+      "description": "Absolute concept IRIs the node is bound to, from the package structure (moca.concepts).",
       "items": {
         "type": "string",
         "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$"
@@ -274,6 +274,29 @@
     },
     "score": {
       "type": "number"
+    },
+    "retrieval": {
+      "type": "object",
+      "description": "How a search found this record (ADR-0016): through the backend, or added by a retrieval hook following the structure.",
+      "required": [
+        "via"
+      ],
+      "properties": {
+        "via": {
+          "enum": [
+            "search",
+            "requires",
+            "parts",
+            "narrower",
+            "related"
+          ]
+        },
+        "from": {
+          "type": "string",
+          "description": "The concept IRI the record was reached from."
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

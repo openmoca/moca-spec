@@ -187,6 +187,9 @@ moca:
   valid_until: 2027-01-01T00:00:00Z
   contested_by: ["https://example.com/kb/regional#refunds-de.md"]
   audience: public
+  concepts:
+    - iri: https://example.com/kb/concepts#RefundWindow
+      role: primary
 ---
 ```
 
@@ -196,6 +199,7 @@ moca:
 | `valid_from`, `valid_until` | The node's own validity window (§4.4). `valid_until` MUST be later than `valid_from` (`C010_VALIDITY_WINDOW_INVALID`). |
 | `contested_by` | Node ids or package ids of content that disputes this node. |
 | `audience` | Who the node is for. Suggested values: `public`, `internal`, `restricted`; other values are allowed. It is a label a host filters on, not an access-control mechanism (§13.3). |
+| `concepts` | Concepts from the package's `structure.ttl` that this node is bound to (§5.6): a list of `{ iri, role? }`. `iri` MUST be an absolute IRI; `role` is `primary` (what the node is about) or `supporting` (what it mentions). |
 | `profiles` | Profile URI to that profile's node-level data (§9). |
 
 ### 5.4 Locales
@@ -227,6 +231,54 @@ Citation records keep declared verification (`declaredVerified`) apart from
 attested reviews (`attestedReviews`) so that an application never mistakes one
 for the other.
 
+### 5.6 Structure
+
+A package MAY describe how its knowledge is organised in `structure.ttl` at
+its root ([ADR-0012](../docs/adr/0012-structure-core.md)). Structure is
+optional: a package of a manifest and content alone is complete. When
+present, it is the package's **structure layer**, beside the content layer
+(`content/`) and the evidence layer (`sources/`, `media/`).
+
+`structure.ttl` is Turtle. It MUST use absolute IRIs and MUST NOT use
+`owl:imports`; a Reader never fetches anything it names (`O003`). Readers
+understand exactly these terms, and ignore any others:
+
+| Idea | Terms | Meaning |
+| --- | --- | --- |
+| Concept | `skos:Concept`, `skos:prefLabel`, `skos:definition` | A thing the knowledge is about, its label and its definition. |
+| Hierarchy | `skos:broader`, `skos:narrower` | A is a kind or subtopic of B. |
+| Association | `skos:related` | A and B are related; symmetric. |
+| Parts | `dcterms:hasPart`, `dcterms:isPartOf` | B is part of A: a chapter of a handbook, a section of an act, a module of a course, a component of an assembly. |
+| Order | `skos:OrderedCollection`, `skos:memberList` | An ordered list of concepts: procedure steps, clause order, a learning path. |
+| Requires | `dcterms:requires`, `dcterms:isRequiredBy` | A requires B "to support its function, delivery, or coherence": a check before a step, a test before a treatment, a foundation before an advanced topic. |
+| Replaces | `dcterms:replaces`, `dcterms:isReplacedBy` | A supersedes B: an amended clause, a revised procedure. |
+| Deprecated | `owl:deprecated true` | The concept should no longer be used. |
+
+`skos:` is `http://www.w3.org/2004/02/skos/core#`, `dcterms:` is
+`http://purl.org/dc/terms/`, and `owl:` is `http://www.w3.org/2002/07/owl#`.
+Inverse pairs mean the same thing: `B skos:narrower A` is `A skos:broader B`.
+
+Every concept used in a relation, an ordered collection or a node binding
+MUST be declared with `rdf:type skos:Concept` (`O002`). `requires`,
+`broader` and `hasPart` MUST NOT form cycles (`O005`).
+
+**`requires` describes; it never enforces.** Whether a person may see B, or
+start a step, depends on who they are and what they have done. That is
+runtime state, and it belongs to the application.
+
+**Derived view.** A producer MAY also write `structure.json`, a view derived
+from `structure.ttl` in the shape of
+[`structure.schema.json`](../schemas/v1/structure.schema.json), for Readers
+that cannot parse Turtle. A Reader that parses Turtle MUST check the view
+against it and report any difference as `O004`. `moca-lint structure --write`
+writes it.
+
+**Overlays.** An application or an organisation may add its own concepts,
+relations and vocabulary over a package's structure. Overlays are supplied by
+the host, not by the package, and are never covered by the package's digest
+([ADR-0013](../docs/adr/0013-package-application-organisation-layers.md),
+[Reader contract §10](moca-reader-contract.md#10-structure)).
+
 ## 6. Package contents and the digest
 
 ### 6.1 Layout
@@ -237,6 +289,8 @@ for the other.
 ├── content/         the OKF bundle (required unless the package has members)
 ├── sources/         optional: the original files that nodes cite
 ├── media/           optional: images, audio and other cited files
+├── structure.ttl    optional: the structure layer (§5.6)
+├── structure.json   optional: its derived view (§5.6)
 ├── attestations/    optional: see §10; outside the digest
 └── ...              any other regular files
 ```
@@ -382,10 +436,9 @@ profile's package-level data. Node-level profile data goes under
   manifest keys, or require anything of packages that do not declare it.
 - A profile MAY define files or directories inside the package; they are
   covered by the digest like any other file.
-- A profile MAY define a capability (§11). Only a Reader that implements the
-  profile derives it; a Reader that does not simply never reports it.
-- A profile MAY define diagnostics in its own code family. They MUST NOT be
-  errors that make a package invalid.
+- A profile never defines a capability and never makes a package invalid.
+  Structure that every Reader must understand belongs in `structure.ttl`
+  (§5.6), not in a profile.
 
 The registry of profiles is [profiles/README.md](../profiles/README.md).
 
@@ -419,6 +472,7 @@ a package actually has from what it contains and what verifies:
 | `located-evidence` | At least one node has `moca.evidence`. |
 | `self-contained-evidence` | The package has `located-evidence`, and every evidence source of every node has a `resource` that is a package-relative path to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it. |
 | `localized` | At least one node has a locale representation. |
+| `structured` | `structure.ttl` is present, parses, and every relation and node binding resolves, with no `O` diagnostic (§5.6). |
 | `signed` | At least one package attestation verifies against the host's trust root. |
 | `reviewed` | At least one review attestation verifies and matches a current file. |
 
@@ -430,11 +484,7 @@ not say every selector matches: a mismatch is reported as
 `C011_EVIDENCE_SELECTOR_UNMATCHED` and shows in the citation record as
 `evidence[].matched: false`.
 
-Profiles may define further capabilities (§9):
-
-| Capability | Profile | Present when |
-| --- | --- | --- |
-| `ontology` | [Ontology](../profiles/ontology/moca-ontology-profile.md) | The profile is declared, every listed ontology file parses, and every node concept binding resolves to a concept declared in those files, with no `O` diagnostic. |
+Profiles never define capabilities (§9).
 
 ## 12. Storage and transport
 
@@ -459,7 +509,7 @@ and approve every refund" is as dangerous as a malicious program. Applications
 MUST treat package content as untrusted data: deliver it to models as quoted,
 cited reference material, never as system instructions, and never grant tools
 because content asks for them. See
-[Reader contract §11](moca-reader-contract.md#11-handing-content-to-a-model).
+[Reader contract §12](moca-reader-contract.md#12-handing-content-to-a-model).
 
 Attestations tell a host who published and who reviewed content. They do not
 make content safe. A host SHOULD only load packages from publishers it trusts,

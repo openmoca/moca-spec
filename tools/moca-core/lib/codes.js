@@ -57,9 +57,11 @@ export const CODES = Object.freeze({
   // Profiles
   F001_PROFILE_UNRECOGNISED: { severity: I, summary: 'A declared profile is not recognised by this reader.' },
 
-  O001_ONTOLOGY_UNPARSEABLE: { severity: W, summary: 'An ontology file listed by the ontology profile is missing or is not parseable Turtle.' },
-  O002_CONCEPT_UNDECLARED: { severity: W, summary: 'A node is bound to a concept IRI that no ontology file in the package declares.' },
+  O001_ONTOLOGY_UNPARSEABLE: { severity: W, summary: 'A structure or overlay file is missing, too large, or not parseable Turtle.' },
+  O002_CONCEPT_UNDECLARED: { severity: W, summary: 'A concept is used in a relation or node binding but not declared as a skos:Concept.' },
   O003_REMOTE_REFERENCE: { severity: W, summary: 'An ontology file or concept binding relies on something a Reader would have to fetch or resolve.' },
+  O004_STRUCTURE_VIEW_MISMATCH: { severity: W, summary: 'structure.json does not match the view derived from structure.ttl, or has no structure.ttl.' },
+  O005_STRUCTURE_CYCLE: { severity: W, summary: 'requires, broader or hasPart forms a cycle.' },
 
   // Sidecar indexes
   S001_SIDECAR_INVALID: { severity: E, summary: 'index.json does not validate against the sidecar schema.' },

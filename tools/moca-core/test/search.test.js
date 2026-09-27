@@ -120,7 +120,7 @@ test('a store backend never returns records from a package version that is not l
 });
 
 test('concept filters return only content bound to one of the concepts', async () => {
-  const library = new Library().add(await readPackage(at('profiles/ontology/examples/service-catalogue')));
+  const library = new Library().add(await readPackage(at('examples/service-catalogue')));
   const search = new Search(library, { backend: new LexicalBackend(library) });
   const order = await search.search('service data', { concepts: ['https://example.org/services#OrderDatabase'] });
   assert.deepEqual(order.map((r) => r.node.path), ['order-service.md']);

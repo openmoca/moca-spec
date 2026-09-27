@@ -2,8 +2,8 @@
 
 A language-neutral test suite for anything that reads MOCA packages. An
 implementation conforms to the [Reader contract](../spec/moca-reader-contract.md)
-when it reaches the same conclusions as these cases. Package cases apply to
-every Reader; `search` cases apply to implementations of the Search class.
+when it reaches the same conclusions as these cases: package, `search` and
+`structure` cases all apply to every Reader.
 
 ## Layout
 
@@ -91,7 +91,7 @@ compared, so lexical and dense implementations can differ.
   key used outside its role, malformed envelope.
 - Evidence checks against in-package sources, and `self-contained-evidence`.
 - The ontology profile: a valid scheme and each `O` diagnostic.
-- The Search class: the default retrieval policy, the host's opt-in, audience
+- Search: the default retrieval policy, the host's opt-in, audience
   sets, the re-check of every hit whatever the backend returns, locale,
   concepts, and the dense model check.
 

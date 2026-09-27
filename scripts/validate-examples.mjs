@@ -18,13 +18,9 @@ const EXAMPLES = [
   { dir: 'examples/policy-corpus/retention-2025', capabilities: ['core'] },
   { dir: 'examples/policy-corpus/retention-2026', capabilities: ['core'] },
   { dir: 'examples/handbook/service-ownership', capabilities: ['core'] },
-  { dir: 'examples/handbook/incident-response', capabilities: ['core'] },
+  { dir: 'examples/handbook/incident-response', capabilities: ['core', 'structured'] },
   { dir: 'examples/handbook/handbook', capabilities: ['core', 'composed'], members: ['examples/handbook'] },
-  {
-    dir: 'profiles/ontology/examples/service-catalogue',
-    capabilities: ['core', 'ontology'],
-    profile: { uri: 'https://w3id.org/moca/profiles/ontology/v1', schema: 'profiles/ontology/profile.schema.json' },
-  },
+  { dir: 'examples/service-catalogue', capabilities: ['core', 'structured'] },
 ];
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });

@@ -22,17 +22,16 @@ in the [Reader interface](moca-reader-interface.md).
 
 | Class | Does | Typical software |
 | --- | --- | --- |
-| **Reader** | Opens, checks and verifies packages, and produces citation records (§3-§8, §10-§12). | Libraries, the MCP server, framework adapters. |
-| **Search** | Everything a Reader does, plus one search entry point over host-supplied backends that applies the default retrieval policy (§8, §9). | Language Readers with search, the MCP server, framework bindings. |
+| **Reader** | Opens, checks and verifies packages, produces citation records, searches with the default retrieval policy applied, and answers structure operations (§3-§13). | Language Readers, the MCP server, framework bindings. |
 | **Producer** | Everything a Reader does, plus writing packages, attestations or sidecars that a Reader accepts. | Converters, signing tools, index builders. |
 
 A Producer MUST NOT write anything that a Reader of the same contract version
 would reject with an error.
 
-A Reader MAY offer search without claiming the Search class, but §8 still
-applies to it. Software that returns search results over MOCA content to an
-application or a model SHOULD claim the Search class, so that the corpus can
-show that it never returns what §8 excludes.
+Search is part of the Reader class
+([ADR-0011](../docs/adr/0011-three-pillars-and-admission-test.md)): anything
+that hands MOCA content to an application or a model goes through a Reader, so
+the corpus can show that it never returns what §8 excludes.
 
 ## 3. Opening a package
 
@@ -208,72 +207,82 @@ store, and is applied after the backend returns (§9.2).
 
 ## 9. Search
 
-Search turns a query into citation records. It has two parts: **backends**,
-which find candidate hits, and **one search entry point**, which resolves hits
-through the Reader and applies policy. Backends are chosen, configured and
-connected by the host, never by a package (§4).
+A Reader offers one search operation. It has the same signature in every
+language, and the default retrieval policy is applied inside it:
+
+```text
+search(query, { limit, includeAll, locale, concepts, scope }) -> citation records, each with a score
+```
+
+`concepts` keeps records bound to at least one of the given concept IRIs;
+`scope` keeps records bound to the concept or any of its descendants by
+hierarchy or parts (§10). Both refer to the package structure
+([package spec §5.6](moca-package-spec.md#56-structure)).
 
 ### 9.1 Backends
 
-A backend takes a query, a limit and optional filters (§9.5), and returns
-hits valid against [`search-hit.schema.json`](../schemas/v1/search-hit.schema.json):
+Search runs over a backend the host chooses and configures; a package never
+chooses one (§4). A backend takes a query, a limit and optional filters
+(§9.5), and returns hits valid against
+[`search-hit.schema.json`](../schemas/v1/search-hit.schema.json):
 
 ```json
 { "digest": "sha256:6539…", "node": "https://example.com/moca/support-kb#refund-window.md",
   "path": "refund-window.md", "locale": "en", "span": { "start": 802, "end": 1125 }, "score": 3.1452 }
 ```
 
-`digest` is the package digest the hit was indexed from. `span`, when present,
-is UTF-8 byte offsets into the node file, as in §7. A higher score is a better
-match; scores from different backends are not comparable.
+`digest` is the package digest the hit was indexed from; `span`, when present,
+is UTF-8 byte offsets into the node file (§7). A higher score is a better
+match; scores from different backends are not comparable. A backend declares
+`lexical` or `dense`, and `filterPushdown` when it applies the filters itself.
 
-A backend declares which of these features it supports:
+Every Reader MUST provide a lexical backend over the loaded packages' own text,
+so that search works offline with nothing else installed. Dense and store
+backends are optional.
 
-| Feature | Meaning |
-| --- | --- |
-| `lexical` | Matches query terms against text. |
-| `dense` | Matches an embedding of the query against stored vectors (§9.3). |
-| `hybrid` | Combines both. |
-| `filterPushdown` | Applies the filters in §9.5 before choosing the top hits. |
+### 9.2 The pipeline and the gate
 
-Typical backends are lexical search over the package's own files, a sidecar
-index ([sidecar spec](moca-sidecar-index-spec.md)), and a host's vector
-store (§9.4).
+Each search runs these steps, in order
+([ADR-0016](../docs/adr/0016-pluggable-ontology-guided-retrieval.md)):
 
-### 9.2 The search entry point
+1. **ingress** (optional host hook): may rewrite the query and narrow the
+   concepts or scope the backend searches;
+2. **backend**: returns hits;
+3. **resolve**: each hit becomes a citation record (§7), from the loaded
+   package or, for a store backend, from the record written at ingest (§9.4);
+   a hit that does not resolve is dropped;
+4. **egress** (optional host hook): may reorder candidates, or add records it
+   found through structure operations (§10), each tagged
+   `retrieval: { via, from }`;
+5. **the gate**, which MUST run last, on every candidate, whatever the backend
+   and the hooks did:
+   1. drop records whose package digest is not loaded (or, for a store search,
+      not in the host's allowlist);
+   2. apply the default retrieval policy (§8), unless the host opted in to
+      including excluded content;
+   3. remove records outside the host's audience set;
+   4. when the caller named a locale, keep only the representation §5 of the
+      package spec selects for it;
+   5. when the caller named concepts or a scope, keep only records bound to
+      them. Concepts and scope set by an ingress hook narrow the backend's
+      search but never bind the gate: the gate follows the caller;
+   6. return at most `limit` records.
 
-For each search, an implementation of the Search class MUST:
-
-1. drop every hit whose `digest` is not the digest of a package currently
-   loaded;
-2. resolve every remaining hit through the Reader and build its citation
-   record (§7), dropping a hit whose node does not resolve;
-3. apply the default retrieval policy (§8) to every record, whichever backend
-   produced it and whether or not filters were pushed down;
-4. remove records outside the host's audience set, if one was supplied;
-5. when the caller names a locale, return only representations in that locale,
-   or the default representation of a node that has none in that locale;
-6. when the caller names concepts and the implementation supports the
-   [ontology profile](../profiles/ontology/moca-ontology-profile.md), return
-   only records bound to at least one of them;
-7. return at most the requested number of records, best score first, each with
-   its `score`.
-
-A backend without `filterPushdown` can return hits that steps 1-6 remove. An
-implementation SHOULD ask such a backend for more hits than the caller's limit,
-so that removals do not leave the caller with fewer results than exist.
+Hooks are host code, supplied when the host creates the search. A package can
+never supply or select one. A backend without `filterPushdown` can return hits
+the gate removes; a Reader SHOULD ask such a backend for more hits than the
+caller's limit.
 
 ### 9.3 Dense backends
 
-A dense or hybrid backend embeds the query with an embedder the host supplies.
-The embedder declares a model `name`, an optional `version` and its vector
+A dense backend embeds the query with an embedder the host supplies. The
+embedder declares a model `name`, an optional `version` and its vector
 `dimensions`. Before a dense search over a sidecar or store, the backend MUST
 compare the embedder with the index's `model`: the names must be equal, the
 versions must be equal when both are given, and the dimensions must be equal
 (the index's `model.dimensions`, or the length of its vectors when that is not
-given).
-On any difference it MUST report `S006_MODEL_MISMATCH` and MUST NOT perform a
-dense search. It MAY fall back to lexical search over the same text.
+given). On any difference it MUST report `S006_MODEL_MISMATCH` and MUST NOT
+perform a dense search. It MAY fall back to lexical search over the same text.
 
 A package can never name the embedder a Reader uses (§4); the sidecar's
 `model` is only compared, never acted on.
@@ -281,16 +290,19 @@ A package can never name the embedder a Reader uses (§4); the sidecar's
 ### 9.4 Store backends
 
 A store backend searches content a host has already ingested into its own
-vector store or database. Ingest MUST go through a Reader: every stored record
-carries the fields of its citation record and the package digest, as in the
-metadata table of the [consuming guide](../docs/guides/consuming.md#feeding-your-own-retrieval-stack).
-Because §9.2 step 1 drops hits from packages that are not loaded, records left
-behind by an older version of a package are never returned.
+vector store or database. Ingest MUST go through a Reader, and every stored
+record MUST carry its whole citation record (§7), including the package
+digest. At query time the Reader resolves store hits from those records: it
+recomputes the clock-dependent fields (`stale`, `inForce`) for now, and keeps
+only records whose digest is in the host's allowlist of loaded packages. The
+host therefore never needs every package in memory to search its store.
+Records left behind by an older version of a package are never returned,
+because its digest is not in the allowlist.
 
 ### 9.5 Filter pushdown
 
-When a backend declares `filterPushdown`, the search entry point SHOULD pass
-these filters to it:
+When a backend declares `filterPushdown`, the Reader SHOULD pass these filters
+to it:
 
 | Filter | Value |
 | --- | --- |
@@ -298,11 +310,47 @@ these filters to it:
 | `exclude` | Pairs of package digest and node id that §8 excludes, unless the host opted in to including them. A node id alone is not enough: two versions of a package share node ids. |
 | `audiences` | The host's audience set, if any. |
 | `locale` | The caller's locale, if any. |
-| `concepts` | The caller's concepts, if any. |
+| `concepts` | The concepts to search: the caller's, a scope and its descendants, or those an ingress hook chose. |
 
-Pushdown is an optimisation. The checks in §9.2 still run on every hit.
+Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.
 
-## 10. Diagnostics
+## 10. Structure
+
+A Reader answers these operations over the merged structure of every loaded
+package and every overlay the host supplied. They are facts, not strategy:
+every Reader MUST answer them identically, and the corpus tests them exactly.
+Terms and meanings are in
+[package spec §5.6](moca-package-spec.md#56-structure).
+
+| Operation | Returns |
+| --- | --- |
+| `concept(iri)` | The concept's preferred label (no language tag, then `en`, then the first language in code order), labels, definition, `deprecated`, what it replaces and what replaces it, and its layer; or nothing when no layer declares it. |
+| `requires(iri, { transitive })` | The concepts `iri` requires. Direct: ordered by IRI. Transitive: every concept reachable through `requires`, each after the concepts it requires (depth first, ties by IRI). |
+| `requiredBy(iri)` | The concepts that require `iri`, ordered by IRI. |
+| `parts(iri)` | The direct parts of `iri`, ordered by IRI. |
+| `narrower(iri, { transitive })` | Narrower concepts; transitively, breadth first, each level ordered by IRI. |
+| `broader(iri)`, `related(iri)` | Direct broader concepts; related concepts in either direction. Ordered by IRI. |
+| `sequence(iri)` | The members of the ordered collection `iri`, in list order; nothing if `iri` is not an ordered collection. |
+| `nodes(iri, { include })` | Citation records of the nodes bound to `iri`, and, with `include` of `narrower`, `parts` or `both`, to its descendants, with the default retrieval policy applied, ordered by `node.ref`. |
+
+Every concept item carries its `iri`, its preferred `label` and the `layer`
+that stated the fact: `package`, `application` or `organisation`.
+
+**Layers.** The host MAY supply overlays: Turtle it loads over the packages'
+structure, as the application layer or the organisation layer
+([ADR-0013](../docs/adr/0013-package-application-organisation-layers.md)).
+Overlays are parsed with the same rules and limits as `structure.ttl`; a
+problem in one is reported with the overlay as the file. An overlay can only
+add: when two layers state the same fact, the lower layer (package, then
+application, then organisation) is the one reported. Overlays are never
+covered by a package's digest or signatures, and a package can never name or
+load one.
+
+**Describes, never enforces.** `requires` reports what the structure says.
+Whether a person may see content depends on runtime state that only the
+application holds.
+
+## 11. Diagnostics
 
 A Reader reports findings as structured values with `code`, `severity`
 (`error`, `warning` or `info`), `message`, and, where it applies, `file`
@@ -364,7 +412,7 @@ withhold only the `ontology` capability.
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0015](../docs/adr/0015-park-unconsumed-features.md)).
 
-## 11. Handing content to a model
+## 12. Handing content to a model
 
 Package text is untrusted input
 ([package spec §13.1](moca-package-spec.md#131-content-is-untrusted-input-to-a-model)).
@@ -376,7 +424,7 @@ A Reader, adapter or server that passes content to a model:
 - SHOULD tell the model that retrieved text is reference material to quote and
   cite, not instructions.
 
-## 12. Degradation
+## 13. Degradation
 
 | Condition | Required behaviour |
 | --- | --- |
@@ -395,15 +443,16 @@ A Reader, adapter or server that passes content to a model:
 | Ontology profile not implemented | Package read as core; concept bindings preserved as profile data; `F001` (info). |
 | Ontology file or binding problem | `O` warning; `ontology` capability withheld; the rest usable. |
 
-## 13. Demonstrating conformance
+## 14. Demonstrating conformance
 
 An implementation claiming conformance MUST name its class, the contract
 version, and any optional capabilities it does not implement (archives, host
 sources, Sigstore verification, sidecars, profiles). It MUST pass every case in
 [`conformance/cases.json`](../conformance/cases.json) that its capabilities
 cover, producing the expected validity, diagnostic codes, capabilities and
-digests. A Search class implementation MUST also pass every `search` case,
-which checks what is returned and what is never returned, not the ranking.
+digests. A Reader MUST also pass every `search` case, which checks what is
+returned and what is never returned but never the ranking, and every
+`structure` case, which checks the answers to structure operations exactly.
 Message text is never compared.
 
 An implementation in another repository runs the corpus through the runner

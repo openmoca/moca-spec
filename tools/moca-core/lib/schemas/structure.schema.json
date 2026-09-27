@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/moca/schemas/v1/structure.schema.json",
+  "title": "MOCA structure view",
+  "description": "structure.json: the view a producer derives from structure.ttl, for Readers without an RDF parser. Readers that parse Turtle check it against structure.ttl. Normative: spec/moca-package-spec.md section 5.6.",
+  "type": "object",
+  "required": [
+    "structureVersion",
+    "concepts",
+    "sequences"
+  ],
+  "properties": {
+    "structureVersion": {
+      "const": 1
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "iri",
+          "broader",
+          "related",
+          "parts",
+          "requires",
+          "replaces"
+        ],
+        "properties": {
+          "iri": {
+            "$ref": "#/$defs/iri"
+          },
+          "label": {
+            "type": "string"
+          },
+          "definition": {
+            "type": "string"
+          },
+          "deprecated": {
+            "const": true
+          },
+          "broader": {
+            "$ref": "#/$defs/iris"
+          },
+          "related": {
+            "$ref": "#/$defs/iris"
+          },
+          "parts": {
+            "$ref": "#/$defs/iris"
+          },
+          "requires": {
+            "$ref": "#/$defs/iris"
+          },
+          "replaces": {
+            "$ref": "#/$defs/iris"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sequences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "iri",
+          "members"
+        ],
+        "properties": {
+          "iri": {
+            "$ref": "#/$defs/iri"
+          },
+          "members": {
+            "$ref": "#/$defs/iris"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "iri": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$"
+    },
+    "iris": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/iri"
+      }
+    }
+  }
+}

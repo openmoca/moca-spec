@@ -77,7 +77,7 @@ export class Search {
     const plan = this.#plan(ctx);
     const hits = await this.backend.search(ctx.request.query ?? query, plan);
     let candidates = this.#resolve(hits, ctx);
-    if (this.hooks.egress) candidates = await this.hooks.egress(candidates, ctx.hookContext);
+    if (this.hooks.egress) candidates = await this.hooks.egress(candidates.map((r) => ({ ...r, retrieval: { via: 'search' } })), ctx.hookContext);
     return this.#gate(candidates, ctx);
   }
 
@@ -93,7 +93,7 @@ export class Search {
     if (typeof hits?.then === 'function') throw new TypeError('this backend is asynchronous; use search()');
     let candidates = this.#resolve(hits, ctx);
     if (this.hooks.egress) {
-      candidates = this.hooks.egress(candidates, ctx.hookContext);
+      candidates = this.hooks.egress(candidates.map((r) => ({ ...r, retrieval: { via: 'search' } })), ctx.hookContext);
       if (typeof candidates?.then === 'function') throw new TypeError('the egress hook is asynchronous; use search()');
     }
     return this.#gate(candidates, ctx);
@@ -102,7 +102,10 @@ export class Search {
   #context({ limit = 5, includeAll = false, locale, concepts, scope } = {}) {
     const now = this.clock();
     const index = this.library?.relationIndex();
-    const request = { limit, includeAll, locale, concepts: concepts?.length ? [...concepts] : undefined, scope };
+    // The caller's concepts and scope bind the gate. Ingress may narrow what
+    // the backend searches, but cannot widen what the caller asked for.
+    const caller = Object.freeze({ concepts: concepts?.length ? [...concepts] : undefined, scope });
+    const request = { limit, includeAll, locale, concepts: caller.concepts, scope };
     const loaded = new Map((this.library?.packages ?? []).map((p) => [p.result.digest, p.result]));
     const hookContext = Object.freeze({
       request,
@@ -111,7 +114,7 @@ export class Search {
       audiences: this.audiences,
       now,
     });
-    return { now, index, request, loaded, hookContext };
+    return { now, index, request, caller, loaded, hookContext };
   }
 
   #plan({ now, index, request }) {
@@ -170,8 +173,8 @@ export class Search {
   }
 
   /** The gate: always last, whatever the backend and the hooks did. */
-  #gate(candidates, { request, loaded }) {
-    const concepts = this.#concepts(request);
+  #gate(candidates, { request, caller, loaded }) {
+    const concepts = this.#concepts({ ...caller });
     const allowed = this.library ? new Set(loaded.keys()) : this.allowed;
     const seen = new Set();
     const out = [];

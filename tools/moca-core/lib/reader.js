@@ -14,8 +14,8 @@ import {
   loadTrustRoot, parseAttestation, verifySignature, checkPackageStatement, checkReviewStatement,
   PREDICATE_PACKAGE, PREDICATE_REVIEW,
 } from './attestations.js';
-import { KNOWN_PROFILES, PROFILE_ONTOLOGY } from './profiles.js';
-import { readOntology } from './ontology.js';
+import { KNOWN_PROFILES } from './profiles.js';
+import { readStructure } from './structure.js';
 
 const INVALIDATING = /^(T|P|M|C)\d/;
 
@@ -56,7 +56,7 @@ async function readInternal(target, options, stack) {
     valid: false,
     capabilities: [],
     payloadManifest: null,
-    ontology: null,
+    structure: null,
     source: null,
   };
 
@@ -114,10 +114,7 @@ async function readInternal(target, options, stack) {
 
   const limits = { ...DEFAULT_LIMITS, ...options.limits };
   result.nodes = readContent({ manifest, files, bytes, fileDigests: result.fileDigests, diagnostics, limits });
-  const knownProfiles = [...(options.knownProfiles ?? KNOWN_PROFILES)];
-  if (result.profiles.includes(PROFILE_ONTOLOGY) && knownProfiles.includes(PROFILE_ONTOLOGY)) {
-    result.ontology = readOntology({ manifest, bytes, nodes: result.nodes, diagnostics, limits });
-  }
+  result.structure = readStructure({ bytes, nodes: result.nodes, diagnostics, limits, origin: result.digest });
   const members = Array.isArray(manifest?.members) ? manifest.members : [];
   if (result.nodes.length === 0 && members.length === 0) {
     diagnostics.add('M003_NO_CONTENT', 'a package needs at least one content node under content/ or at least one member');
@@ -247,7 +244,7 @@ function finish(result, diagnostics) {
     }
   }
   if (caps.has('located-evidence') && allEvidenceLocal) caps.add('self-contained-evidence');
-  if (result.ontology?.ok) caps.add('ontology');
+  if (result.structure?.ok) caps.add('structured');
   if (result.members.length > 0) caps.add('composed');
   if (result.signers.length > 0) caps.add('signed');
   result.capabilities = [...caps].sort();

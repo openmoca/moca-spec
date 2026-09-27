@@ -62,7 +62,7 @@ test('get_node returns the reviewed node with its attested review', async () => 
 });
 
 test('search can be limited to content bound to given concepts', async () => {
-  const library = await loadLibrary({ packages: [join(repo, 'profiles/ontology/examples/service-catalogue')] });
+  const library = await loadLibrary({ packages: [join(repo, 'examples/service-catalogue')] });
   const server = createServer(library);
   const [a, b] = InMemoryTransport.createLinkedPair();
   const client = new Client({ name: 'test', version: '0.0.0' });

@@ -35,9 +35,10 @@ A profile document states:
 5. what a Reader that recognises it does differently, and confirmation that a
    core-only Reader loses nothing it needs.
 
-A profile MAY also define a capability that Readers implementing it derive,
-and diagnostics in its own code family, which are never errors that make a
-package invalid ([package spec §9](../spec/moca-package-spec.md#9-profiles)).
+A profile never defines a capability, and never makes a package invalid. The
+structure every Reader understands is part of core
+([package spec §5.6](../spec/moca-package-spec.md#56-structure)), not a
+profile.
 
 A profile MUST NOT redefine a core field, make a core-optional field
 required for packages that do not declare the profile, or add top-level

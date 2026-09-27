@@ -14,6 +14,7 @@ export const SCHEMAS = Object.freeze({
   reviewPredicate: load('review-predicate'),
   trustRoot: load('trust-root'),
   searchHit: load('search-hit'),
+  structure: load('structure'),
 });
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
