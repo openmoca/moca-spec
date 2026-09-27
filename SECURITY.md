@@ -1,58 +1,48 @@
-# Security Policy
+# Security policy
 
-## Scope
+## Reporting a vulnerability
 
-This repository contains a specification, JSON Schemas, JSON-LD contexts,
-static example packages, and the executable `moca-lint`/`moca-sign` CLIs. It
-does not ship a runtime or server, but the CLIs and their
-archive-handling/cryptographic code are in scope for traditional code
-vulnerabilities.
-
-That said, security issues are still in scope:
-
-- Errors in `schemas/` that would let an invalid or malicious `moca.json`
-  pass validation (e.g. a schema that fails to reject the excluded
-  properties in
-  [core §5.3](spec/moca-core-spec.md#53-excluded-properties)).
-- A `moca-lint` error-severity check (`E1xx`–`E4xx`) that fails to flag a
-  manifest or package it should reject — a false negative in the
-  validation contract itself, not just in the schema it validates against.
-  See [tools/moca-lint/README.md](tools/moca-lint/README.md#validation-contract)
-  for which checks are normative.
-- A `moca-sign` verification bug that accepts a signature that shouldn't
-  verify — a bad signature, a subject digest that doesn't match
-  `canonicalDigest.value`, an untrusted signer, or an expired/removed
-  `dsse`-mode trust-root entry. See
-  [spec/moca-trust-model.md](spec/moca-trust-model.md) for the intended behavior.
-- Errors in example packages that model insecure or misleading patterns
-  implementers might copy.
-- Issues in CI tooling (`.github/workflows/`) that could be abused (e.g.
-  script injection via untrusted PR input).
-
-## Security Model for Implementers
-
-MOCA Core packages are intended to be **inert data**. The one area with
-direct security implications for anyone building a Knowledge Harness or an
-AI Harness against this spec is the `skills/` + `signature` model in
-[core §8.2](spec/moca-core-spec.md#82-security--trust-boundary-rule):
-
-- Loading a MOCA package MUST NOT automatically execute code.
-- Any package containing `skills/` MUST include a valid `signature` object,
-  regardless of declared conformance level.
-- A Knowledge Harness MUST refuse to load `skills/` content from an unsigned
-  or signature-invalid package, and MUST NOT treat the rest of a package as
-  untrustworthy just because its `skills/` are rejected (or vice versa).
-- An AI Harness MUST sandbox `allowed-tools` against host policy before
-  executing a skill, and MUST NOT execute skills a Knowledge Harness has
-  withheld.
-
-Implementers of either should treat any package's `skills/` directory as
-untrusted, attacker-controlled input until signature verification succeeds.
-
-## Reporting a Vulnerability
-
-Please report security issues privately using GitHub's
+Report security issues privately with GitHub's
 ["Report a vulnerability"](https://github.com/openmoca/moca-spec/security/advisories/new)
-flow on this repository rather than opening a public issue. Include the
-affected file(s), the concern, and if applicable, a minimal example package
-demonstrating the issue.
+form, not in a public issue. Include the files affected, what goes wrong, and,
+if you can, a minimal package that shows it.
+
+## In scope
+
+- A Reader conclusion that is wrong in a security-relevant way: an attestation
+  reported valid when it should not be, skills exposed without a valid package
+  attestation, a digest that does not change when content changes, a member
+  accepted despite a digest mismatch, or content read from outside the package.
+- Entries the digest silently ignores but a Reader still serves (for example
+  links or unreadable files: these must fail closed).
+- Archive handling in `moca-core` and `moca-lint`: traversal, zip bombs,
+  entry limits.
+- The MCP server widening what the host allows, for example returning content
+  outside the host's audience filter.
+- Schemas that accept what the specification forbids.
+- Examples or documentation that teach an insecure pattern.
+- CI workflows that untrusted pull requests could abuse.
+
+## The security model in one page
+
+- **A package is data, never configuration.** A Reader never executes package
+  content and never acts on a location, model, setting or credential a package
+  supplies ([Reader contract §4](spec/moca-reader-contract.md#4-what-a-reader-must-never-do)).
+- **Content is untrusted input to a model.** Retrieved text can carry
+  instructions. Hand it to models as cited data, never as instructions, and
+  never grant tools because content asks
+  ([Reader contract §10](spec/moca-reader-contract.md#10-handing-content-to-a-model)).
+- **Attestations prove who, not what.** A valid package attestation proves who
+  published the bytes; a valid review proves who signed a statement about them.
+  Neither proves the content is true or safe. Whom to trust is the host's trust
+  root ([attestations §6](spec/moca-attestations.md#6-trust-roots)).
+- **Skills are withheld unless the package is attested**, and an application
+  that runs one must sandbox it and grant only tools that host policy allows.
+- **Audience is a label, not access control.** Anyone with the package can
+  read every file.
+
+## The example keys are insecure on purpose
+
+`fixtures/signing-keys/` contains private keys that are published so that the
+examples and conformance fixtures can be regenerated deterministically. Never
+trust them outside this repository.

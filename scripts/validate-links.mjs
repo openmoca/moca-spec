@@ -8,12 +8,14 @@ import { fileURLToPath } from 'node:url';
 
 const repo = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SKIP = new Set(['node_modules', '.git', '.claude']);
+// Conformance fixtures contain deliberately broken links.
+const SKIP_DIRS = [join(repo, 'conformance', 'fixtures')];
 const LINK = /\[[^\]]*\]\(\s*(<[^>]+>|[^)\s]+)(?:\s+"[^"]*")?\s*\)/g;
 
 function walk(dir) {
   return readdirSync(dir).flatMap((name) => {
-    if (SKIP.has(name)) return [];
     const p = join(dir, name);
+    if (SKIP.has(name) || SKIP_DIRS.includes(p)) return [];
     return statSync(p).isDirectory() ? walk(p) : p.endsWith('.md') ? [p] : [];
   });
 }

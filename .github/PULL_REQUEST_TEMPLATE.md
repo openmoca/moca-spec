@@ -1,21 +1,18 @@
 ## Summary
 
-<!-- What does this PR change and why? -->
+<!-- What does this change, and why? -->
 
 ## Related issue
 
-<!-- Link the spec-change/profile-proposal/bug issue this PR resolves, if any -->
+<!-- The spec-change, profile or bug issue this resolves. -->
 
 ## Checklist
 
-- [ ] If this changes `spec/moca-core-spec.md` or a profile specification under `profiles/`,
-      the corresponding `schemas/` were updated to match.
-- [ ] If this changes `schemas/`, all packages under `examples/` still
-      validate (`npx ajv-cli validate -s schemas/v1/core/moca.schema.json -d
-      "examples/*/moca.json"`).
-- [ ] If this adds/changes an example package containing `skills/`, it
-      includes a structurally valid `signature` object (cryptographic
-      verification is not implemented in the beta, see core §8.2).
-- [ ] No new example introduces the properties excluded by core §5.3
-      (`endpoints`, `settings`, `credentials`, `apiKeys`).
-- [ ] Markdown links resolve.
+- [ ] `npm test` passes.
+- [ ] A normative change updates prose, schema, the reference Reader and
+      conformance cases together.
+- [ ] New or changed diagnostic codes are in `tools/moca-core/lib/codes.js` and
+      the Reader contract §9 table, with a conformance case.
+- [ ] Derived artifacts were regenerated with `npm run refresh:derived`, not
+      edited by hand.
+- [ ] CHANGELOG.md is updated; MIGRATIONS.md too if anything breaks.

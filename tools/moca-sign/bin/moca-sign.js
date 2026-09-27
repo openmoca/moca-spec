@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { Command } from 'commander';
 import { generateKeyPair, trustRootFor, signPackage, reviewNodes, verifyPackage, SignError } from '../lib/index.js';
@@ -24,7 +24,7 @@ function keyArgs(opts) {
 }
 
 program.command('keygen')
-  .description('generate an Ed25519 key pair and a trust root that lists it')
+  .description('generate an Ed25519 key pair and add it to <out>/trust-root.json (created if missing)')
   .requiredOption('--keyid <id>', 'key id')
   .requiredOption('-o, --out <dir>', 'output directory')
   .option('--identity <text>', 'human-readable label for the key')
@@ -35,9 +35,12 @@ program.command('keygen')
     writeFileSync(join(opts.out, `${opts.keyid}.pem`), privateKeyPem, { mode: 0o600 });
     writeFileSync(join(opts.out, `${opts.keyid}.pub.pem`), publicKeyPem);
     const roles = opts.roles ? opts.roles.split(',').map((r) => r.trim()) : undefined;
-    const root = trustRootFor({ keyid: opts.keyid, publicKeyPem, identity: opts.identity, roles });
-    writeFileSync(join(opts.out, 'trust-root.json'), `${JSON.stringify(root, null, 2)}\n`);
-    console.log(`Wrote ${opts.keyid}.pem, ${opts.keyid}.pub.pem and trust-root.json to ${opts.out}. Keep the private key out of any package.`);
+    const entry = trustRootFor({ keyid: opts.keyid, publicKeyPem, identity: opts.identity, roles }).keys[0];
+    const rootPath = join(opts.out, 'trust-root.json');
+    const root = existsSync(rootPath) ? JSON.parse(readFileSync(rootPath, 'utf8')) : { keys: [] };
+    root.keys = [...(root.keys ?? []).filter((k) => k.keyid !== opts.keyid), entry];
+    writeFileSync(rootPath, `${JSON.stringify(root, null, 2)}\n`);
+    console.log(`Wrote ${opts.keyid}.pem and ${opts.keyid}.pub.pem, and added the key to ${rootPath}. Keep private keys out of every package.`);
   }));
 
 keyOptions(program.command('sign')
@@ -79,7 +82,8 @@ program.command('verify')
       dir, trustRoot: opts.trustRoot, online: opts.online, allowOfflineFallback: opts.allowOfflineFallback, tufCachePath: opts.tufCache,
     });
     for (const a of result.attestations) {
-      console.log(`${a.outcome.toUpperCase().padEnd(13)} ${a.file}${a.signer ? `  (${a.signer})` : ''}${a.reason ? `  ${a.reason}` : ''}`);
+      const status = a.outcome === 'valid' && a.outdated?.length && !a.current?.length ? 'outdated' : a.outcome;
+      console.log(`${status.toUpperCase().padEnd(13)} ${a.file}${a.signer ? `  (${a.signer})` : ''}${a.reason ? `  ${a.reason}` : ''}`);
     }
     const relevant = result.diagnostics.filter((d) => /^(A|T|P|M)\d/.test(d.code));
     if (relevant.length > 0) console.log(`\n${formatText(relevant)}`);

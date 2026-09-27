@@ -248,6 +248,6 @@ function finish(result, diagnostics) {
   if (result.members.length > 0) caps.add('composed');
   if (result.signers.length > 0) caps.add('signed');
   if (result.skills.exposed) caps.add('skills');
-  result.capabilities = [...caps];
+  result.capabilities = [...caps].sort();
   return result;
 }

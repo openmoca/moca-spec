@@ -1,103 +1,85 @@
 # Contributing to MOCA
 
-MOCA is currently a solo/small-team beta project (see [GOVERNANCE.md](GOVERNANCE.md)).
-This process is intentionally lightweight — there is no formal RFC process
-at this stage.
+Thank you for helping. MOCA is small and young, and the process is light (see
+[GOVERNANCE.md](GOVERNANCE.md)).
 
-## Proposing a Core Spec Change
+## Set up
 
-1. Open an issue using the **Spec Change Proposal** template describing the
-   problem, the affected section(s) of
-   [moca-core-spec.md](spec/moca-core-spec.md), and the proposed change. The issue
-   is where the proposal is developed and where its rationale is recorded —
-   design discussion happens in the open, not in a working draft merged
-   ahead of the discussion.
-2. Once there's rough consensus in the issue, open a PR editing the spec
-   directly. Keep the diff focused on the change under discussion.
-3. A maintainer reviews for consistency with the rest of the spec (see
-   keyword conventions below) before merging.
+```sh
+npm install
+npm test   # every check CI runs: examples, conformance, derived artifacts, schemas, links, Markdown, tool tests
+```
 
-Breaking changes are possible during the `0.x` beta period, but should still
-go through an issue first so the rationale and migration impact are captured.
+Node.js 22 or later is required.
 
-Conformance level is derived from a package's contents and validation results;
-it is not declared in `moca.json`.
+## Proposing a specification change
 
-## RFC 2119 Keyword Conventions
+1. Open an issue with the **Spec change proposal** template: the problem, the
+   sections affected, the change, and its migration impact.
+2. When there is rough agreement, open one pull request that changes, together:
+   - the prose in `spec/`;
+   - the schema in `schemas/v1/` (then copy it to `tools/moca-core/lib/schemas/`;
+     `npm run validate:schemas` checks they match);
+   - the reference Reader in `tools/moca-core/`;
+   - the conformance cases in `conformance/`;
+   - [CHANGELOG.md](CHANGELOG.md), and [MIGRATIONS.md](MIGRATIONS.md) if packages
+     or Readers must change.
 
-The spec uses RFC 2119 keywords (`MUST`, `MUST NOT`, `REQUIRED`, `SHOULD`,
-`SHOULD NOT`, `MAY`, `OPTIONAL`) with their standard normative meanings.
-When editing spec text:
+A behaviour described in the specification but missing from the schema, the
+Reader or the corpus is a bug.
 
-- Use `MUST` / `MUST NOT` only for hard interoperability requirements.
-- Use `SHOULD` / `SHOULD NOT` for strong recommendations that allow a
-  documented exception.
-- Use `MAY` for genuinely optional behavior.
-- Don't downgrade or upgrade an existing keyword in a PR unless that's the
-  explicit subject of the change — keyword changes affect conformance and
-  deserve their own issue.
+### Keywords
 
-## Proposing a New Profile
+The specification uses RFC 2119 keywords. Use MUST only for interoperability
+requirements, SHOULD for strong recommendations with documented exceptions,
+and MAY for genuine options. Changing an existing keyword is a specification
+change in its own right and needs its own issue.
 
-Profiles are additive extensions to MOCA Core (see
-[moca-core-spec.md §11](spec/moca-core-spec.md#11-profiles)). To propose one:
+### Diagnostic codes
 
-1. Open an issue using the **Profile Proposal** template naming the domain,
-   the ontology roles / epistemic-status values / `profileData` fields it
-   would add, and why it can't be expressed with existing profiles.
-2. A profile MUST comply with the restrictions in
-   [core §11.4](spec/moca-core-spec.md#114-profile-restrictions) — additive only,
-   namespaced fields, no redefinition of core semantics.
-3. Once agreed, the profile is authored at
-   `profiles/<profile-name>/moca-<profile-name>-profile.md`, alongside its
-   own `profile.schema.json` and `examples/`, following the structure of
-   [moca-eu-ai-act-profile.md](profiles/eu-ai-act/moca-eu-ai-act-profile.md).
+Codes are the contract between implementations. Add a code to
+`tools/moca-core/lib/codes.js` and to the table in
+[Reader contract §9](spec/moca-reader-contract.md#9-diagnostics) in the same
+pull request, with at least one conformance case that produces it. Never
+change what an existing code means; add a new one.
 
-Profile-specific linting is the profile owner's responsibility and is not part
-of this repository's `moca-lint`.
+## Adding or changing conformance cases
 
-**Compliance and regulatory-standard profiles** follow the same process. See
-[core §11.5](spec/moca-core-spec.md#115-compliance--standards-profiles) for how regulatory
-standards (EU AI Act, NIST AI RMF, etc.) are modeled using the ordinary profile mechanism.
-When proposing a compliance profile, the reference table in §11.5 should be updated
-to avoid namespace collisions with other contributors working on compliance profiles.
+Cases live in [`conformance/cases.json`](conformance/cases.json) and fixtures
+under `conformance/fixtures/`. Expectations are written and reviewed by hand;
+`npm run conformance:actual` prints what the reference Reader concludes, to
+help you check a new case, never to generate expectations blindly. See
+[conformance/README.md](conformance/README.md).
 
-## Schemas and Examples
+## After editing an example or fixture
 
-Changes to `schemas/` or `examples/` should keep pace with the prose spec —
-a manifest field described in the spec but not reflected in
-`schemas/v1/core/moca.schema.json` is a bug. PRs touching the schema should
-validate all existing examples still pass (see the repo's CI workflow).
-
-### After editing an example package
-
-Example packages carry **derived** artifacts that go stale as soon as any input
-byte changes: `canonicalDigest` (which covers the manifest as well as the
-content files), `signature` (which signs over that digest), and a sidecar's
-`target_package_hash`. Editing a single word of Markdown — or a metadata field
-as incidental as `license` — invalidates them, and the effect is transitive,
-because a composed package folds its members' digests.
-
-Rather than repairing these by hand in the right order, run:
+Some files are derived: member digest pins, attestations, sidecar indexes and
+the archive fixture. They go stale when any byte they depend on changes.
+Never edit them by hand. Run:
 
 ```sh
 npm run refresh:derived
 ```
 
-It orders packages so members are refreshed before the packages composing them,
-recomputes digests, re-signs signed packages with the repository's
-non-production example key, and re-binds dependent sidecars. `npm test` runs
-the read-only equivalent (`npm run validate:derived`) and fails if anything is
-stale, so CI will tell you if you forget.
+It regenerates everything listed in
+[`scripts/derived.config.json`](scripts/derived.config.json), in dependency
+order, signing with the published, insecure example keys in
+[`fixtures/signing-keys/`](fixtures/signing-keys/README.md). `npm test` fails
+if anything is stale.
+
+## Proposing a profile
+
+Open an issue with the **Profile proposal** template. Follow
+[profiles/README.md](profiles/README.md#writing-a-profile): state the URI, the
+package- and node-level data with a JSON Schema, any files the profile adds,
+and confirm that a core-only Reader loses nothing it needs.
 
 ## Releasing
 
-Maintainers: see [docs/releasing.md](docs/releasing.md) for the release runbook,
-and [docs/versioning-and-release.md](docs/versioning-and-release.md) for the
-versioning policy behind it.
+Maintainers: see [docs/releasing.md](docs/releasing.md).
 
-## Bug Reports
+## Bugs
 
-Use the **Bug Report** issue template for problems with the schemas, example
-packages, or documentation (broken links, invalid JSON, inconsistencies
-between spec prose and schema).
+Use the **Bug report** template for problems in the specification, schemas,
+tools, examples or documentation. Report security issues privately; see
+[SECURITY.md](SECURITY.md).

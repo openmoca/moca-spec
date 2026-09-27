@@ -1,0 +1,45 @@
+# @openmoca/moca-mcp
+
+An MCP server that serves MOCA packages to any agent. Every result is a
+[citation record](../../spec/moca-reader-contract.md#7-citation-records): the
+text plus package, version, digest, signature status, reviews, freshness and
+evidence.
+
+```sh
+node tools/moca-mcp/bin/moca-mcp.js <package...> [--trust-root file] [--members dirs...] [--audience public,internal]
+```
+
+- A `<package>` is a directory or `.moca` archive. Write `package=sidecar` to
+  search through a sidecar index.
+- `--trust-root` verifies publisher and review attestations. Without it,
+  nothing is reported as signed or reviewed.
+- `--audience` is the host's filter. Callers cannot widen it.
+
+Invalid packages are skipped and reported on stderr; the server refuses to
+start if none are valid.
+
+## Tools
+
+| Tool | Arguments | Returns |
+| --- | --- | --- |
+| `moca_list_packages` | none | Loaded packages: id, version, digest, signed, capabilities, search mode. |
+| `moca_search` | `query`, `limit?`, `locale?`, `include_all?` | Citation records. Out-of-force, superseded and deprecated content is left out unless `include_all`. |
+| `moca_get_node` | `node_id`, `locale?` | One citation record with the node's full text. |
+
+## Client configuration
+
+```json
+{
+  "mcpServers": {
+    "support-kb": {
+      "command": "node",
+      "args": ["/path/to/moca-spec/tools/moca-mcp/bin/moca-mcp.js", "/path/to/support-kb.moca",
+               "--trust-root", "/path/to/trust-root.json", "--audience", "public"]
+    }
+  }
+}
+```
+
+Package text is returned as data inside citation records. Tool descriptions
+tell the model to quote and cite it, not follow it
+([Reader contract §10](../../spec/moca-reader-contract.md#10-handing-content-to-a-model)).

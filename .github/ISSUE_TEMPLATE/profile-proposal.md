@@ -5,34 +5,28 @@ title: "[Profile] "
 labels: profile-proposal
 ---
 
-## Domain
+## Purpose
 
-<!-- What domain/use case is this profile for? e.g. legal research,
-     customer support, healthcare documentation -->
+<!-- What the profile is for, and who will use it. -->
 
-## Why existing profiles don't cover this
+## Why core and existing profiles are not enough
 
-<!-- Why can't this be expressed with MOCA Core alone or an existing
-     profile? -->
+## Proposed profile
 
-## Proposed additions
+- **URI**: `https://w3id.org/moca/profiles/<name>/v1` (or your own domain)
+- **Package-level data** under `profiles["<uri>"]`:
+- **Node-level data** under `moca.profiles["<uri>"]`:
+- **Files or directories** the profile adds to a package:
+- **What a Reader that recognises it does differently**:
 
-- **New ontology roles** (namespaced, e.g. `mydomain:taxonomy`):
-- **Extended epistemic-status values**:
-- **New `profileData.<profile-name>` fields**:
-- **Expected `augmentation.targetType` values** (if any):
+## Additive only
 
-## Conformance to core §11.4
+<!-- Confirm that a core-only Reader loses nothing it needs, that no core field
+     changes meaning, and that no top-level manifest key is added.
+     See spec/moca-package-spec.md §9. -->
 
-<!-- Confirm this profile is purely additive: it does not redefine any core
-     field/vocabulary term, does not introduce top-level manifest properties
-     outside profileData, and does not change any core-required/optional
-     field. See spec/moca-core-spec.md §11.4. -->
-
-## Example manifest snippet
+## Example
 
 ```json
-{
-  "profile": ["https://openmoca.org/profiles/<name>/v1"]
-}
+{ "profiles": { "https://w3id.org/moca/profiles/<name>/v1": {} } }
 ```
