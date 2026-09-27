@@ -21,7 +21,7 @@ Different kinds of changes get different scrutiny:
   highest scrutiny, since they affect every profile and every conformance
   level. Require an issue discussing rationale before a PR is merged.
 - **Profile additions** (new `moca-<name>-profile.md` files, or additions to
-  the education profile): lighter weight, since profiles are additive-only
+  an existing profile): lighter weight, since profiles are additive-only
   by construction ([core §11.2](spec/moca-core-spec.md#112-graceful-degradation),
   [§11.4](spec/moca-core-spec.md#114-profile-restrictions)) and cannot break
   existing core-only consumers. Still require an issue first.
