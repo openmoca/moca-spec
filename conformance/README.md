@@ -125,8 +125,8 @@ The signing fixtures use non-production keys with no trust value.
 
 ## Coverage
 
-25 cases spanning: the Level 1 floor with no frontmatter; identity from path;
-duplicate node identity; excluded manifest properties; integrity mismatch;
+26 cases spanning: the Level 1 floor with no frontmatter; identity from path;
+duplicate node identity; excluded manifest properties; unknown top-level keys; integrity mismatch;
 malformed claims and evidence locators; opaque `profileData`; unrecognised
 profiles; RO-Crate precedence; all five signature outcomes (valid, missing,
 placeholder, tampered, untrusted signer); invalid skill frontmatter;

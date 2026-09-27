@@ -75,7 +75,7 @@ considerably.
 ### SDK contract and conformance suite
 
 First versions of both have shipped:
-[spec/moca-sdk-contract.md](spec/moca-sdk-contract.md) and a 25-case
+[spec/moca-sdk-contract.md](spec/moca-sdk-contract.md) and a 26-case
 [`conformance/`](conformance/README.md) corpus. They are what keeps item 7's
 implementations consistent across languages and repositories, so the
 remaining work sits ahead of item 7:
