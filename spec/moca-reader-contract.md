@@ -278,7 +278,7 @@ these filters to it:
 | Filter | Value |
 | --- | --- |
 | `digests` | The digests of the loaded packages. |
-| `excludeNodes` | Node ids that §8 excludes, unless the host opted in to including them. |
+| `exclude` | Pairs of package digest and node id that §8 excludes, unless the host opted in to including them. A node id alone is not enough: two versions of a package share node ids. |
 | `audiences` | The host's audience set, if any. |
 | `locale` | The caller's locale, if any. |
 | `concepts` | The caller's concepts, if any. |
