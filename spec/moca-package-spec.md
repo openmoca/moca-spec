@@ -428,7 +428,7 @@ package can be `signed` for one host and not for another.
 `self-contained-evidence` says the originals are inside the package. It does
 not say every selector matches: a mismatch is reported as
 `C011_EVIDENCE_SELECTOR_UNMATCHED` and shows in the citation record as
-`evidence[].verified: false`.
+`evidence[].matched: false`.
 
 Profiles may define further capabilities (§9):
 

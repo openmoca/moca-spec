@@ -8,7 +8,7 @@
 import { checkManifest } from './manifest.js';
 import { readContent } from './content.js';
 import { Diagnostics } from './diagnostics.js';
-import { openSource, TargetError } from './source.js';
+import { openSource, TargetError, DEFAULT_LIMITS } from './source.js';
 import { packageFiles, computeDigest, MANIFEST, ATTESTATIONS_DIR } from './digest.js';
 import {
   loadTrustRoot, parseAttestation, verifySignature, checkPackageStatement, checkReviewStatement,
@@ -25,7 +25,7 @@ const INVALIDATING = /^(T|P|M|C)\d/;
  * @property {(member: { id: string, version: string, digest: string }) => (string|object|null|Promise<string|object|null>)} [resolveMember]
  *   host resolver returning a target (path or source) for a member, or null
  * @property {boolean} [strict]  promote warnings to errors
- * @property {{ maxEntries?: number, maxBytes?: number }} [limits]
+ * @property {Partial<typeof DEFAULT_LIMITS>} [limits]  see DEFAULT_LIMITS in source.js
  * @property {Iterable<string>} [knownProfiles]
  * @property {boolean} [online]  opt in to online Sigstore verification
  * @property {boolean} [allowOfflineFallback]
@@ -112,10 +112,11 @@ async function readInternal(target, options, stack) {
     result.payloadManifest = payloadManifest;
   }
 
-  result.nodes = readContent({ manifest, files, bytes, fileDigests: result.fileDigests, diagnostics });
+  const limits = { ...DEFAULT_LIMITS, ...options.limits };
+  result.nodes = readContent({ manifest, files, bytes, fileDigests: result.fileDigests, diagnostics, limits });
   const knownProfiles = [...(options.knownProfiles ?? KNOWN_PROFILES)];
   if (result.profiles.includes(PROFILE_ONTOLOGY) && knownProfiles.includes(PROFILE_ONTOLOGY)) {
-    result.ontology = readOntology({ manifest, bytes, nodes: result.nodes, diagnostics });
+    result.ontology = readOntology({ manifest, bytes, nodes: result.nodes, diagnostics, limits });
   }
   const members = Array.isArray(manifest?.members) ? manifest.members : [];
   if (result.nodes.length === 0 && members.length === 0) {

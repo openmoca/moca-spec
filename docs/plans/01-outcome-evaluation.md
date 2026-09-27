@@ -51,7 +51,7 @@ retriever and model see:
 | Answer accuracy | Graded against the reference answer. |
 | Stale-answer rate | Answers that rely on superseded, out-of-force or stale content without saying so. |
 | Citation precision | Share of citations that point at a passage that supports the claim. |
-| Citation-verification rate | Share of answers whose every citation has `evidence[].verified: true` against the original inside the package. |
+| Citation-verification rate | Share of answers whose every citation has `evidence[].matched: true` against the original inside the package. |
 | Contest handling | Share of contested questions where the answer surfaces the conflict. |
 | Cost | Authoring effort per package (including concept binding), and retrieval latency, on a server and on the device in condition F. |
 

@@ -28,14 +28,14 @@ const library = new Library().add(pkg);
 const search = new Search(library, { backend: new LexicalBackend(library), audiences: ['public'] });
 const hits = await search.search('refund window');
 hits[0].trust;      // { status, declaredVerified, attestedReviews, stale, inForce, superseded, contested, ... }
-hits[0].evidence;   // [{ source, selector, verified: true }]
+hits[0].evidence;   // [{ source, selector, matched: true }]
 ```
 
 Every result is a
 [citation record](../../spec/moca-reader-contract.md#7-citation-records). Show
 users where an answer came from (`package.id`, `package.version`, `node.title`,
 `evidence`), and log `package.digest` with the answer so you can later prove
-what the assistant read. `evidence[].verified` is `true` when the quote was
+what the assistant read. `evidence[].matched` is `true` when the quote was
 found in the original inside the package, `false` when it was not, and absent
 when the Reader could not check it.
 
@@ -59,7 +59,7 @@ citation record:
 | `moca_attested_reviews`, `moca_signed` | `trust.attestedReviews`, `package.signed` |
 | `moca_audience` | `audience` |
 | `moca_concepts` | `concepts` (ontology profile) |
-| `moca_evidence_verified` | `evidence[].verified` |
+| `moca_evidence_matched` | `evidence[].matched` |
 
 At query time, search the store through a store backend, so that Search
 applies the default policy and your audience rules to every hit, and drops

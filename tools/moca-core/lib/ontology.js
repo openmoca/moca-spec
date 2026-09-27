@@ -14,7 +14,7 @@ const PREFIX_DECL = /^\s*(?:@prefix|PREFIX)\s+([A-Za-z][\w.-]*)?:/gim;
  * O diagnostics.
  * @returns {{ ok: boolean, declared: Set<string> }}
  */
-export function readOntology({ manifest, bytes, nodes, diagnostics }) {
+export function readOntology({ manifest, bytes, nodes, diagnostics, limits }) {
   const data = manifest?.profiles?.[PROFILE_ONTOLOGY];
   const before = diagnostics.items.length;
   const declared = new Set();
@@ -29,12 +29,20 @@ export function readOntology({ manifest, bytes, nodes, diagnostics }) {
       diagnostics.add('O001_ONTOLOGY_UNPARSEABLE', `ontology file "${entry?.path}" is not in the package`, { file: 'moca.json' });
       continue;
     }
+    if (text.length > limits.maxStructureBytes) {
+      diagnostics.add('O001_ONTOLOGY_UNPARSEABLE', `ontology file is larger than the ${limits.maxStructureBytes}-byte limit`, { file: path });
+      continue;
+    }
     for (const m of text.toString('utf8').matchAll(PREFIX_DECL)) if (m[1]) prefixes.add(m[1]);
     let quads;
     try {
       quads = new Parser({ format: 'text/turtle' }).parse(text.toString('utf8'));
     } catch (err) {
       diagnostics.add('O001_ONTOLOGY_UNPARSEABLE', `ontology file is not parseable Turtle: ${err.message}`, { file: path });
+      continue;
+    }
+    if (quads.length > limits.maxTriples) {
+      diagnostics.add('O001_ONTOLOGY_UNPARSEABLE', `ontology file has ${quads.length} triples, over the ${limits.maxTriples} limit`, { file: path });
       continue;
     }
     for (const q of quads) {

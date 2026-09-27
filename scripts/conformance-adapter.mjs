@@ -67,13 +67,13 @@ export async function actualFor(root, c) {
     codes.push(...bound.diagnostics.map((d) => d.code));
     sidecarUsable = bound.usable;
   }
-  const evidenceVerified = {};
+  const evidenceMatched = {};
   if (result.valid) {
     for (const r of new Library().add(result).citations()) {
-      if (r.evidence.length > 0) evidenceVerified[r.node.path] = r.evidence.map((e) => e.verified ?? null);
+      if (r.evidence.length > 0) evidenceMatched[r.node.path] = r.evidence.map((e) => e.matched ?? null);
     }
   }
-  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, sidecarUsable, evidenceVerified };
+  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, sidecarUsable, evidenceMatched };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

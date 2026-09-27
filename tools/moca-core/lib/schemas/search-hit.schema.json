@@ -52,6 +52,10 @@
     "score": {
       "type": "number",
       "description": "Higher is a better match. Not comparable across backends."
+    },
+    "record": {
+      "type": "object",
+      "description": "A citation record written at ingest by a store backend. The Reader re-applies the clock and the policy to it, and checks its package digest against the loaded packages."
     }
   },
   "additionalProperties": false

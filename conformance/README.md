@@ -41,7 +41,7 @@ conformance/
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
-| `expect.evidenceVerified` | For each node path, the `verified` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
+| `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
 
 Order, counts and message text are not compared.
 

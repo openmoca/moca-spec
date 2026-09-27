@@ -51,8 +51,22 @@ Before reading any entry of an archive or host source, a Reader MUST reject
 - more total uncompressed bytes than an implementation-defined limit.
 
 Limits MUST be documented and SHOULD be configurable. The reference
-implementation uses 20,000 entries and 512 MiB. A Reader MUST NOT request a
-path from a host source that the source did not list.
+implementation uses 20,000 entries and 512 MiB.
+
+Package content is untrusted input, so a Reader MUST also bound the work it
+does while reading. The reference implementation's limits are:
+
+| Limit | Default | When exceeded |
+| --- | --- | --- |
+| Frontmatter block size | 64 KiB | `C002` for that node |
+| YAML aliases in frontmatter | 0 (aliases are refused) | `C002` for that node |
+| Structure file size | 4 MiB | `O001` |
+| Triples in a structure file | 100,000 | `O001` |
+| Evidence entries checked per node | 256 | Further entries are not checked; `matched` is absent |
+| Source file size checked for evidence | 8 MiB | Not checked; `matched` is absent |
+
+A Reader MUST NOT request a path from a host source that the source did not
+list.
 
 A Reader MUST report "target does not exist" (`T001`) separately from "target
 has no `moca.json`" (`T002`).
@@ -120,7 +134,8 @@ MUST be expressible as a citation record valid against
 {
   "package": { "id": "https://example.com/moca/support-kb", "version": "4.2.0",
                "digest": "sha256:6539…", "signed": true, "signers": ["MOCA examples publisher"] },
-  "node": { "id": "https://example.com/moca/support-kb#refund-window.md", "path": "refund-window.md",
+  "node": { "id": "https://example.com/moca/support-kb#refund-window.md",
+            "ref": "https://example.com/moca/support-kb@4.2.0#refund-window.md", "path": "refund-window.md",
             "locale": "en", "type": "Policy", "title": "Refund eligibility window", "digest": "sha256:…" },
   "span": { "start": 802, "end": 1125 },
   "text": "# Refund eligibility window …",
@@ -135,13 +150,17 @@ MUST be expressible as a citation record valid against
   },
   "evidence": [{ "source": { "id": "terms-7", "resource": "../sources/refund-policy-2026.txt" },
                  "selector": { "type": "TextQuoteSelector", "exact": "Customers may request …" },
-                 "verified": true }],
+                 "matched": true }],
   "audience": "public"
 }
 ```
 
 Rules:
 
+- `node.ref` is the versioned node reference, `<package id>@<version>#<path>`.
+  `node.id` is the same across versions of a package, so applications MUST
+  use `node.ref` (or `node.id` with `package.digest`) as the key when they
+  record what an answer cited.
 - `span` offsets are UTF-8 byte offsets into the node file.
 - `declaredVerified` copies OKF `verified`; `attestedReviews` lists only reviews
   that verified against the trust root and match the current file. An
@@ -152,7 +171,7 @@ Rules:
 - `superseded` and `contested` reflect the relations among the packages the
   Reader has loaded, and the node's `moca.contested_by`
   ([package spec §7.2](moca-package-spec.md#72-relations)).
-- `evidence[].verified` is `true` when the Reader checked the selector against
+- `evidence[].matched` is `true` when the Reader checked the selector against
   the cited file inside the package and it matched, and `false` when it checked
   and it did not match (`C011`). It is absent when the Reader did not check:
   the source is outside the package, is not `text/plain` or `text/markdown`,
@@ -372,7 +391,7 @@ A Reader, adapter or server that passes content to a model:
 | Unresolvable or mismatched member | That member is not used; the rest usable. |
 | No sidecar, stale sidecar, or unknown payload format | Sidecar ignored; the package searched directly. |
 | No embedder, or an embedder that does not match the index model | No dense search (`S006` on mismatch); lexical search still available. |
-| Evidence source that cannot be checked | `evidence[].verified` absent; no diagnostic. |
+| Evidence source that cannot be checked | `evidence[].matched` absent; no diagnostic. |
 | Ontology profile not implemented | Package read as core; concept bindings preserved as profile data; `F001` (info). |
 | Ontology file or binding problem | `O` warning; `ontology` capability withheld; the rest usable. |
 

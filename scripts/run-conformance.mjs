@@ -23,7 +23,7 @@ const byId = new Map(corpus.cases.map((c) => [c.id, c]));
 
 const uniqueSorted = (xs) => [...new Set(xs)].sort();
 const same = (a, b) => JSON.stringify(uniqueSorted(a)) === JSON.stringify(uniqueSorted(b));
-const keyOf = (r) => `${r.package.id}@${r.package.version}#${r.node.path}`;
+const keyOf = (r) => r.node.ref;
 
 async function run(c) {
   if (!readerCommand) return actualFor(root, c);
@@ -44,9 +44,9 @@ function checkPackage(e, actual) {
   if (e.sidecarUsable !== undefined && e.sidecarUsable !== actual.sidecarUsable) {
     problems.push(`sidecarUsable: expected ${e.sidecarUsable}, got ${actual.sidecarUsable}`);
   }
-  for (const [path, want] of Object.entries(e.evidenceVerified ?? {})) {
-    const got = actual.evidenceVerified?.[path];
-    if (JSON.stringify(got) !== JSON.stringify(want)) problems.push(`evidenceVerified ${path}: expected ${JSON.stringify(want)}, got ${JSON.stringify(got)}`);
+  for (const [path, want] of Object.entries(e.evidenceMatched ?? {})) {
+    const got = actual.evidenceMatched?.[path];
+    if (JSON.stringify(got) !== JSON.stringify(want)) problems.push(`evidenceMatched ${path}: expected ${JSON.stringify(want)}, got ${JSON.stringify(got)}`);
   }
   return problems;
 }

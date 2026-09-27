@@ -66,7 +66,7 @@
           "located-evidence"
         ],
         "digest": "sha256:f1ca665de05b4022a5e2eb351bf008b81341793e62bb43d499ebf4e4633d25c9",
-        "evidenceVerified": {
+        "evidenceMatched": {
           "refunds.md": [
             true,
             true,
@@ -88,7 +88,7 @@
           "self-contained-evidence"
         ],
         "digest": "sha256:f5b0ad1432bae664217265c0fddb65dba56fb6f5c081598da746b7acf549cb1e",
-        "evidenceVerified": {
+        "evidenceMatched": {
           "refunds.md": [
             true,
             true,
@@ -112,7 +112,7 @@
           "self-contained-evidence"
         ],
         "digest": "sha256:9f505aeaad74c4c9f4713fc520ba33b7df73c9f07456376189f40d73044ce68a",
-        "evidenceVerified": {
+        "evidenceMatched": {
           "refunds.md": [
             false,
             false

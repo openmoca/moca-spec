@@ -46,7 +46,8 @@
       "required": [
         "id",
         "path",
-        "type"
+        "type",
+        "ref"
       ],
       "properties": {
         "id": {
@@ -76,6 +77,11 @@
         "digest": {
           "type": "string",
           "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Versioned node reference: <package id>@<version>#<path>. Unique across package versions; use it as the citation key."
         }
       },
       "additionalProperties": false
@@ -242,9 +248,9 @@
           "note": {
             "type": "string"
           },
-          "verified": {
+          "matched": {
             "type": "boolean",
-            "description": "true when the Reader checked the selector against the cited file inside the package and it matched; false when it did not match; absent when not checked."
+            "description": "true when the Reader checked the selector against the cited file inside the package and it matched; false when it did not match; absent when not checked. It says the quote is in the file, not that the claim is true."
           }
         }
       }

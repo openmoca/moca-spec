@@ -91,15 +91,19 @@ export class Library {
     return new Search(this, { backend: new LexicalBackend(this), audiences }).searchSync(query, options);
   }
 
-  /** Finds a node by its full id (`<package id>#<path>`). */
-  get(nodeId, { locale, includeText = true } = {}) {
-    const hash = nodeId.lastIndexOf('#');
+  /**
+   * Finds a node by its id (`<package id>#<path>`) or its versioned reference
+   * (`<package id>@<version>#<path>`). An id matches the first loaded version.
+   */
+  get(nodeRef, { locale, includeText = true } = {}) {
+    const hash = nodeRef.lastIndexOf('#');
     if (hash < 0) return null;
-    const pkgId = nodeId.slice(0, hash);
-    const path = nodeId.slice(hash + 1);
+    const path = nodeRef.slice(hash + 1);
+    const head = nodeRef.slice(0, hash);
     const index = this.relationIndex();
     for (const { result } of this.packages) {
-      if (result.manifest.id !== pkgId) continue;
+      const { id, version } = result.manifest;
+      if (head !== id && head !== `${id}@${version}`) continue;
       const node = result.nodes.find((n) => n.path === path);
       if (!node) continue;
       const rep = pickRepresentation(node, locale);

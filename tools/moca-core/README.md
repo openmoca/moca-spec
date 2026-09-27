@@ -32,7 +32,7 @@ library.get('https://example.com/moca/support-kb#refund-window.md', { locale: 'f
 | `Library` | Holds verified packages (and their sidecar `chunks` and `index`); `citations()`, `get()`, and `search()` as a synchronous lexical shortcut; applies relations. Takes a `clock` for testing. |
 | `Search` | One entry point over a backend: `search(query, { limit, includeAll, locale, concepts })`. Re-checks every hit against the default retrieval policy and the host's `audiences` ([Reader contract §9](../../spec/moca-reader-contract.md#9-search)). |
 | `LexicalBackend`, `DenseBackend`, `MemoryStoreBackend` | Backends: BM25 over package text or sidecar chunks; sidecar vectors with a host embedder (`S006` on a model mismatch); a reference in-memory store. |
-| `selectorMatches(selector, text)` | The evidence check behind `evidence[].verified` and `C011`. |
+| `selectorMatches(selector, text)` | The evidence check behind `evidence[].matched` and `C011`. |
 | `bindSidecar(target, pkg)` | Check a sidecar against a package and return usable chunks. |
 | `directoryResolver(dirs)` | A simple member resolver over folders. |
 | `hostSource`, `archiveSource`, `directorySource` | Package sources. |

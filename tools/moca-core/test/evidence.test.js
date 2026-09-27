@@ -43,7 +43,7 @@ test('quote and position selectors are checked exactly against the text', () => 
   assert.equal(selectorMatches({ type: 'FragmentSelector', value: 'page=2' }, TERMS), undefined);
 });
 
-test('matched evidence is verified and the package is self-contained', async () => {
+test('evidence that matches its source is marked matched, and the package is self-contained', async () => {
   const dir = makePackage({
     'sources/terms.txt': TERMS,
     'content/refunds.md': node([{ id: 'terms', resource: '../sources/terms.txt' }], [
@@ -55,11 +55,11 @@ test('matched evidence is verified and the package is self-contained', async () 
   assert.deepEqual(codes(pkg), []);
   assert.deepEqual(pkg.capabilities, ['core', 'located-evidence', 'self-contained-evidence']);
   const [record] = new Library().add(pkg).citations();
-  assert.deepEqual(record.evidence.map((e) => e.verified), [true, true]);
+  assert.deepEqual(record.evidence.map((e) => e.matched), [true, true]);
   assert.deepEqual(validateAgainst('citationRecord', record), []);
 });
 
-test('a quote that is not in the source is C011 and verified false, but still self-contained', async () => {
+test('a quote that is not in the source is C011 and matched false, but still self-contained', async () => {
   const dir = makePackage({
     'sources/terms.txt': TERMS,
     'content/refunds.md': node([{ id: 'terms', resource: '../sources/terms.txt' }], [
@@ -70,12 +70,12 @@ test('a quote that is not in the source is C011 and verified false, but still se
   assert.deepEqual(codes(pkg), ['C011_EVIDENCE_SELECTOR_UNMATCHED']);
   assert.equal(pkg.valid, true);
   assert.ok(pkg.capabilities.includes('self-contained-evidence'));
-  assert.equal(new Library().add(pkg).citations()[0].evidence[0].verified, false);
+  assert.equal(new Library().add(pkg).citations()[0].evidence[0].matched, false);
   const strict = await readPackage(dir, { strict: true });
   assert.equal(strict.diagnostics[0].severity, 'error');
 });
 
-test('an external or non-text source is not verified; an external one is not self-contained', async () => {
+test('an external or non-text source is not checked; an external one is not self-contained', async () => {
   const dir = makePackage({
     'media/deck.pdf': '%PDF-1.7\n',
     'content/refunds.md': node([
@@ -89,7 +89,7 @@ test('an external or non-text source is not verified; an external one is not sel
   const pkg = await readPackage(dir);
   assert.deepEqual(codes(pkg), []);
   assert.deepEqual(pkg.capabilities, ['core', 'located-evidence']);
-  assert.deepEqual(new Library().add(pkg).citations()[0].evidence.map((e) => e.verified), [undefined, undefined]);
+  assert.deepEqual(new Library().add(pkg).citations()[0].evidence.map((e) => e.matched), [undefined, undefined]);
 });
 
 test('a source outside sources/ and media/ does not count as self-contained', async () => {

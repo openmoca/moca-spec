@@ -24,7 +24,7 @@ const CHECKABLE_TEXT = /\.(txt|text|md|markdown)$/i;
  *
  * @typedef {object} EvidenceCheck
  * @property {boolean} local       the source is a file under sources/ or media/ in the package
- * @property {boolean} [verified]  set only when the selector was checked against that file
+ * @property {boolean} [matched]  set only when the selector was checked against that file
  *
  * @typedef {object} ContentNode
  * @property {string} path  node path relative to content/ (the default-language file name)
@@ -38,9 +38,11 @@ const CHECKABLE_TEXT = /\.(txt|text|md|markdown)$/i;
  * @param {Map<string, Buffer>} p.bytes      NFC path -> bytes
  * @param {Map<string, string>} p.fileDigests NFC path -> hex
  * @param {import('./diagnostics.js').Diagnostics} p.diagnostics
+ * @param {typeof import('./source.js').DEFAULT_LIMITS} p.limits
  * @returns {ContentNode[]}
  */
-export function readContent({ manifest, files, bytes, fileDigests, diagnostics }) {
+export function readContent({ manifest, files, bytes, fileDigests, diagnostics, limits }) {
+  const sourceText = new Map();
   const locales = new Map((manifest.locales ?? []).map((l) => [l.toLowerCase(), l]));
   const byKey = new Map();
   const mdFiles = [...files.keys()].filter((p) => p.startsWith(`${CONTENT_DIR}/`) && p.toLowerCase().endsWith('.md')).sort();
@@ -56,7 +58,7 @@ export function readContent({ manifest, files, bytes, fileDigests, diagnostics }
     }
 
     const { key, locale } = localeOf(rel, locales);
-    const split = splitFrontmatter(text);
+    const split = splitFrontmatter(text, { maxBytes: limits.maxFrontmatterBytes });
     if (!split.present) {
       diagnostics.add('C001_FRONTMATTER_MISSING', 'concept documents must open with a YAML frontmatter block', { file });
       continue;
@@ -76,7 +78,7 @@ export function readContent({ manifest, files, bytes, fileDigests, diagnostics }
     checkEvidence(file, fm, diagnostics);
     checkWindow(file, fm, diagnostics);
     checkPaths(file, fm, split.body, files, diagnostics);
-    const evidenceChecks = verifyEvidence(file, fm, files, bytes, diagnostics);
+    const evidenceChecks = verifyEvidence(file, fm, files, bytes, diagnostics, limits, sourceText);
 
     const rep = { locale, file, frontmatter: fm, body: split.body, bodyOffset: split.bodyOffset, sha256: fileDigests.get(file), evidenceChecks };
     if (!byKey.has(key)) byKey.set(key, { path: key, representations: [] });
@@ -141,21 +143,23 @@ function checkEvidence(file, fm, diagnostics) {
  * file's UTF-8 text, no folding; positions count Unicode code points.
  * @returns {EvidenceCheck[]}
  */
-function verifyEvidence(file, fm, files, bytes, diagnostics) {
+function verifyEvidence(file, fm, files, bytes, diagnostics, limits, sourceText) {
   const evidence = fm.moca?.evidence;
   if (!Array.isArray(evidence)) return [];
   const sources = new Map((Array.isArray(fm.sources) ? fm.sources : []).filter((s) => s?.id).map((s) => [s.id, s]));
-  return evidence.map((e) => {
+  return evidence.map((e, i) => {
     const resource = sources.get(e?.source)?.resource;
     if (typeof resource !== 'string' || !PATH_REF.test(resource)) return { local: false };
     const { path, escapes } = resolveReference(file, resource);
     if (escapes || !path || !files.has(path) || !EVIDENCE_DIRS.some((d) => path.startsWith(d))) return { local: false };
     if (!CHECKABLE_TEXT.test(path) || !e.selector || typeof e.selector !== 'object') return { local: true };
-    const verified = selectorMatches(e.selector, bytes.get(path).toString('utf8'));
-    if (verified === false) {
+    if (i >= limits.maxEvidencePerNode || bytes.get(path).length > limits.maxSourceBytesChecked) return { local: true };
+    if (!sourceText.has(path)) sourceText.set(path, bytes.get(path).toString('utf8'));
+    const matched = selectorMatches(e.selector, sourceText.get(path));
+    if (matched === false) {
       diagnostics.add('C011_EVIDENCE_SELECTOR_UNMATCHED', `evidence ${e.selector.type} for source "${e.source}" does not match ${path}`, { file });
     }
-    return verified === undefined ? { local: true } : { local: true, verified };
+    return matched === undefined ? { local: true } : { local: true, matched };
   });
 }
 

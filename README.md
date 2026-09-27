@@ -93,7 +93,7 @@ Customers may request a full refund within **30 days of delivery**.
 
 A Reader turns every node into a **citation record**: the text, plus package
 id, version and digest, who signed it, declared and attested reviews,
-freshness, validity, supersession, and evidence marked `verified` when the
+freshness, validity, supersession, and evidence marked `matched` when the
 quote was found in the source inside the package.
 
 ## Get started

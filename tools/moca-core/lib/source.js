@@ -12,7 +12,15 @@ import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from 'node
 import { join } from 'node:path';
 import AdmZip from 'adm-zip';
 
-export const DEFAULT_LIMITS = Object.freeze({ maxEntries: 20_000, maxBytes: 512 * 1024 * 1024 });
+export const DEFAULT_LIMITS = Object.freeze({
+  maxEntries: 20_000,
+  maxBytes: 512 * 1024 * 1024,
+  maxFrontmatterBytes: 64 * 1024,
+  maxStructureBytes: 4 * 1024 * 1024,
+  maxTriples: 100_000,
+  maxEvidencePerNode: 256,
+  maxSourceBytesChecked: 8 * 1024 * 1024,
+});
 
 /**
  * @typedef {object} SourceEntry
