@@ -14,3 +14,19 @@ This repository's `moca-lint` validates MOCA Core conformance only. It does not
 validate a profile's `profileData` against that profile's schema. A profile MAY
 ship or link to separate linting or validation tooling when its owner wants
 that; such tooling is out of scope for `moca-spec`.
+
+## Profiles in this repository
+
+| Profile | URI |
+|---|---|
+| [EU AI Act](eu-ai-act/moca-eu-ai-act-profile.md) | `https://openmoca.org/profiles/eu-ai-act/v1` |
+
+## Graduated profiles
+
+These profiles have moved to their own repositories under
+[Profile Graduation](../GOVERNANCE.md#profile-graduation). Their URIs are
+unchanged, so packages that declare them need no change.
+
+| Profile | URI | Repository |
+|---|---|---|
+| Education | `https://openmoca.org/profiles/education/v1` | `openmoca/moca-profile-education` |

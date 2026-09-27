@@ -1,7 +1,7 @@
 {
-  "name": "valid-composition-members/module-2",
-  "fixture": "fixtures/valid-composition-members/module-2",
-  "description": "A second member of the same composed course.",
+  "name": "valid-composition-members/chapter-2",
+  "fixture": "fixtures/valid-composition-members/chapter-2",
+  "description": "A second member of the same composed handbook.",
   "trustRoot": null,
   "capabilities": [
     "content",

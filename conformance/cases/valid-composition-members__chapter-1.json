@@ -1,10 +1,9 @@
 {
-  "name": "valid-composition-members/course",
-  "fixture": "fixtures/valid-composition-members/course",
-  "description": "A composition-only package: valid with no content/ directory at all (contract \u00a78).",
+  "name": "valid-composition-members/chapter-1",
+  "fixture": "fixtures/valid-composition-members/chapter-1",
+  "description": "A member package that does not know which aggregates include it.",
   "trustRoot": null,
   "capabilities": [
-    "composition",
     "content",
     "diagnostics",
     "integrity",

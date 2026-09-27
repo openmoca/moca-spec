@@ -1,9 +1,10 @@
 {
-  "name": "valid-composition-members/module-1",
-  "fixture": "fixtures/valid-composition-members/module-1",
-  "description": "A member package that does not know which aggregates include it.",
+  "name": "valid-composition-members/handbook",
+  "fixture": "fixtures/valid-composition-members/handbook",
+  "description": "A composition-only package: valid with no content/ directory at all (contract \u00a78).",
   "trustRoot": null,
   "capabilities": [
+    "composition",
     "content",
     "diagnostics",
     "integrity",

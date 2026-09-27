@@ -146,7 +146,7 @@ a signature that doesn't verify.
 ## Profile support
 
 [core §11](../../spec/moca-core-spec.md#11-profiles) lets a package declare zero
-or more **profiles** (e.g. `"profile": ["https://openmoca.org/profiles/education/v1"]`)
+or more **profiles** (e.g. `"profile": ["https://openmoca.org/profiles/eu-ai-act/v1"]`)
 that additively extend core vocabulary. moca-lint handles profiles as follows:
 
 - **Generic, works for any profile automatically:** namespace/CURIE
@@ -241,7 +241,7 @@ npm test              # node --test test/*.test.js
 
 Tests assert zero error-severity findings against every package under
 [`examples/`](../../examples) (with `--strict` fixtures covering the known,
-documented gaps in `level-3-extended` and `education-profile`), plus a few
+documented gap in `level-3-extended`), plus a few
 deliberately-broken fixtures under [test/fixtures/](test/fixtures).
 
 The fixtures under [test/fixtures/](test/fixtures) double as this

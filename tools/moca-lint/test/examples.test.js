@@ -17,13 +17,11 @@ const CLEAN_EXAMPLES = [
   ['level-1-minimal', join(examplesDir, 'level-1-minimal')],
   ['level-2-semantic', join(examplesDir, 'level-2-semantic')],
   ['level-3-extended', join(examplesDir, 'level-3-extended'), EXAMPLE_TRUST_ROOT],
-  ['education-profile', join(repoRoot, 'profiles/education/examples/education-profile'), EXAMPLE_TRUST_ROOT],
   ['augmentation-generic', join(examplesDir, 'augmentation-generic')],
-  ['augmentation-scorm2004', join(examplesDir, 'augmentation-scorm2004')],
   ['eu-ai-act-profile', join(repoRoot, 'profiles/eu-ai-act/examples/eu-ai-act-profile'), EXAMPLE_TRUST_ROOT],
-  ['composition-members/course', join(examplesDir, 'composition-members/course')],
-  ['composition-members/module-1', join(examplesDir, 'composition-members/module-1')],
-  ['composition-members/module-2', join(examplesDir, 'composition-members/module-2')],
+  ['composition-members/handbook', join(examplesDir, 'composition-members/handbook')],
+  ['composition-members/chapter-1', join(examplesDir, 'composition-members/chapter-1')],
+  ['composition-members/chapter-2', join(examplesDir, 'composition-members/chapter-2')],
   ['composition-relates/document-current', join(examplesDir, 'composition-relates/document-current')],
   ['composition-relates/document-prior', join(examplesDir, 'composition-relates/document-prior')],
 ];
@@ -44,16 +42,6 @@ test('level-3-extended: --strict escalates the known dangling evidence source to
   });
   const codes = findings.filter((f) => f.severity === 'error').map((f) => f.code);
   assert.ok(codes.includes('E203_DANGLING_EVIDENCE_SOURCE'));
-});
-
-test('education-profile: --strict escalates the known undefined-concept gap to an error', async () => {
-  const { findings } = await lintPackage({
-    rootDir: join(repoRoot, 'profiles/education/examples/education-profile'),
-    trustRoot: EXAMPLE_TRUST_ROOT,
-    strict: true,
-  });
-  const codes = findings.filter((f) => f.severity === 'error').map((f) => f.code);
-  assert.ok(codes.includes('E304_UNDEFINED_CONCEPT'));
 });
 
 test('missing moca.json reports E101 and stops further passes', async () => {

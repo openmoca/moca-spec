@@ -4,7 +4,6 @@
 Ed25519 keypair (see [spec/moca-trust-model.md](../../spec/moca-trust-model.md) §3.2)
 used **only** to sign this repository's own skill-bearing example packages
 (`examples/level-3-extended`,
-`profiles/education/examples/education-profile`,
 `profiles/eu-ai-act/examples/eu-ai-act-profile`) so they carry real,
 verifiable signatures instead of the placeholder string previously used.
 

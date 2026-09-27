@@ -48,6 +48,5 @@ export function runSkillsPass({ rootDir, manifest, referencedConcepts, findings 
 
     const metadata = data.metadata ?? {};
     checkConceptRef(metadata.concepts, relPath, manifest, findings, referencedConcepts);
-    checkConceptRef(metadata['education:competencies'], relPath, manifest, findings, referencedConcepts);
   }
 }

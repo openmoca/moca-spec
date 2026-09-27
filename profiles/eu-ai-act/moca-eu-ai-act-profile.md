@@ -106,7 +106,7 @@ Core §11.3:
 | `dataGovernance.dataCutoff` | String (date, ISO-8601) | Most recent date of data collection or update (e.g. `"2024-06-30"`). Helps auditors understand temporal scope. |
 | `humanOversight` | Object | Human oversight and escalation procedures. |
 | `humanOversight.level` | String | Oversight model. Examples: `"human_in_the_loop"` (human reviews every decision), `"human_on_the_loop"` (human available for monitoring/override), `"human_in_command"` (human retains final authority). Open vocabulary; variations are allowed. |
-| `humanOversight.overrideNode` | String (URN) | Reference to a content node (same URN pattern as education's `assessment.linkedNodes`) documenting the human override or escalation procedure. Example: `"urn:node:override-procedure"`. |
+| `humanOversight.overrideNode` | String (URN) | Reference to a content node (by node `id`, in the `urn:node:` pattern core §7.1 uses) documenting the human override or escalation procedure. Example: `"urn:node:override-procedure"`. |
 | `humanOversight.requiredRole` | String | Role or team responsible for oversight (e.g. `"compliance-officer"`, `"ethics-review-board"`). |
 
 All fields MUST be strings or objects as shown. Classification fields (riskTier,

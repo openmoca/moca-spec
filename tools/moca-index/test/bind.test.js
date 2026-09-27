@@ -9,7 +9,7 @@ import { UsageError } from '../lib/target.js';
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const fixturesDir = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 const level1MinimalDir = join(repoRoot, 'examples', 'level-1-minimal');
-const composedCourseDir = join(repoRoot, 'examples', 'composition-members', 'course');
+const composedHandbookDir = join(repoRoot, 'examples', 'composition-members', 'handbook');
 const unboundPackageDir = join(fixturesDir, 'unbound-package');
 
 test('a target with a canonicalDigest produces a matching sha256:-prefixed target_package_hash', () => {
@@ -32,7 +32,7 @@ test('a target with no canonicalDigest proceeds, unbound, with --allow-unbound',
 
 test('a composed target (composition.members present) is refused, even with --allow-unbound', () => {
   assert.throws(
-    () => buildSidecar({ targetDir: composedCourseDir, options: { allowUnbound: true } }),
+    () => buildSidecar({ targetDir: composedHandbookDir, options: { allowUnbound: true } }),
     UsageError
   );
 });

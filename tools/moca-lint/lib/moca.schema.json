@@ -156,7 +156,7 @@
         "target": { "type": "string" },
         "targetType": {
           "type": "string",
-          "description": "Open string naming the target content format (e.g. generic-archive, scorm-2004)."
+          "description": "Open string naming the target content format (e.g. generic-archive, pdf-bundle)."
         },
         "relationship": { "type": "string" }
       }
