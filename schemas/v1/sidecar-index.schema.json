@@ -92,6 +92,29 @@
         "file": {
           "type": "string",
           "minLength": 1
+        },
+        "vectors": {
+          "type": "object",
+          "description": "Vectors in a binary file: little-endian float32, row-major, one row per payload item in items order.",
+          "required": [
+            "file",
+            "dtype",
+            "dimensions"
+          ],
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dtype": {
+              "const": "float32"
+            },
+            "dimensions": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

@@ -11,12 +11,7 @@
   },
   "storage": {
     "format": "moca-jsonl-v1",
-    "file": "payload/items.jsonl",
-    "vectors": {
-      "file": "payload/vectors.f32",
-      "dtype": "float32",
-      "dimensions": 2
-    }
+    "file": "payload/items.jsonl"
   },
   "createdBy": "moca-index",
   "model": {

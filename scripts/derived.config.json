@@ -31,7 +31,9 @@
       "format-unknown": "format",
       "target-mismatch": "target",
       "invalid": "schema",
-      "dense": "dense"
+      "dense": "dense",
+      "dense-json": "dense-json",
+      "vectors-length": "vectors-length"
     } }
   ],
   "archives": [

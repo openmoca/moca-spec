@@ -86,12 +86,21 @@ function writeVariant(validDir, outDir, kind) {
   if (kind === 'format') index.storage.format = 'lance';
   if (kind === 'target') index.target.id = 'https://example.com/conformance/another-package';
   if (kind === 'schema') index.indexType = 'dense';
-  if (kind === 'dense') {
+  if (kind === 'dense' || kind === 'dense-json' || kind === 'vectors-length') {
     // Vectors from the conformance embedder, which maps every text to [1, 0].
     index.indexType = 'hybrid';
     index.model = { name: 'conformance-embedder', version: '1', dimensions: 2 };
-    const items = readFileSync(payloadPath, 'utf8').trim().split('\n').map((l) => ({ ...JSON.parse(l), vector: [1, 0] }));
-    writeFileSync(payloadPath, `${items.map((i) => JSON.stringify(i)).join('\n')}\n`);
+    const items = readFileSync(payloadPath, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+    if (kind === 'dense-json') {
+      // The deprecated form: a JSON vector on each item.
+      writeFileSync(payloadPath, `${items.map((i) => JSON.stringify({ ...i, vector: [1, 0] })).join('\n')}\n`);
+    } else {
+      const rows = kind === 'vectors-length' ? items.length - 1 : items.length;
+      const buf = Buffer.alloc(Math.max(rows, 0) * 2 * 4);
+      for (let i = 0; i < rows; i++) buf.writeFloatLE(1, i * 8);
+      writeFileSync(join(outDir, 'payload', 'vectors.f32'), buf);
+      index.storage.vectors = { file: 'payload/vectors.f32', dtype: 'float32', dimensions: 2 };
+    }
   }
   if (kind === 'item') {
     const items = readFileSync(payloadPath, 'utf8').trim().split('\n').map((l) => JSON.parse(l));

@@ -768,6 +768,24 @@
       }
     },
     {
+      "id": "sidecar-vectors-length",
+      "description": "storage.vectors holds fewer float32 rows than there are payload items: the sidecar is not usable.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/vectors-length"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S004_SIDECAR_ITEM_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
       "id": "search-default-policy",
       "kind": "search",
       "description": "The default retrieval policy: superseded, out-of-force and deprecated content is never returned; stale content is returned.",
@@ -945,6 +963,33 @@
         "now": "2026-09-27T00:00:00Z",
         "backend": "dense",
         "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-legacy-json",
+      "kind": "search",
+      "description": "Dense search over the deprecated form, a JSON vector on each payload item: Readers still accept it.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense-json",
         "embedder": {
           "name": "conformance-embedder",
           "version": "1",
