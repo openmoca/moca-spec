@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/moca/profiles/ontology/v1/profile.schema.json",
+  "title": "MOCA ontology profile data",
+  "description": "Package-level data under profiles[\"https://w3id.org/moca/profiles/ontology/v1\"]. Normative: profiles/ontology/moca-ontology-profile.md.",
+  "type": "object",
+  "required": [
+    "files"
+  ],
+  "properties": {
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "role"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "enum": [
+              "domain",
+              "governance",
+              "shapes",
+              "extension"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entryConcepts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/iri"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "iri": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$"
+    },
+    "nodeData": {
+      "description": "Node-level data under moca.profiles[\"https://w3id.org/moca/profiles/ontology/v1\"].",
+      "type": "object",
+      "properties": {
+        "concepts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "iri"
+            ],
+            "properties": {
+              "iri": {
+                "$ref": "#/$defs/iri"
+              },
+              "role": {
+                "enum": [
+                  "primary",
+                  "supporting"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  }
+}

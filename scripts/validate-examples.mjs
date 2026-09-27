@@ -14,7 +14,7 @@ const trustRoot = join(repo, 'fixtures/signing-keys/trust-root.json');
 
 const EXAMPLES = [
   { dir: 'examples/minimal', capabilities: ['core'] },
-  { dir: 'examples/support-kb', capabilities: ['core', 'located-evidence', 'localized', 'reviewed', 'signed'], sidecar: 'examples/sidecars/support-kb.moca.idx' },
+  { dir: 'examples/support-kb', capabilities: ['core', 'located-evidence', 'localized', 'reviewed', 'self-contained-evidence', 'signed'], sidecar: 'examples/sidecars/support-kb.moca.idx' },
   { dir: 'examples/policy-corpus/retention-2025', capabilities: ['core'] },
   { dir: 'examples/policy-corpus/retention-2026', capabilities: ['core'] },
   { dir: 'examples/handbook/service-ownership', capabilities: ['core'] },
@@ -25,6 +25,11 @@ const EXAMPLES = [
     dir: 'profiles/eu-ai-act/examples/support-kb-governance',
     capabilities: ['core'],
     profile: { uri: 'https://w3id.org/moca/profiles/eu-ai-act/v1', schema: 'profiles/eu-ai-act/profile.schema.json' },
+  },
+  {
+    dir: 'profiles/ontology/examples/service-catalogue',
+    capabilities: ['core', 'ontology'],
+    profile: { uri: 'https://w3id.org/moca/profiles/ontology/v1', schema: 'profiles/ontology/profile.schema.json' },
   },
 ];
 

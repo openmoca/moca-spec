@@ -39,6 +39,7 @@ export const CODES = Object.freeze({
   C008_UNSAFE_PATH: { severity: E, summary: 'A package-relative path is absolute or escapes the package root.' },
   C009_LOCALE_ORPHAN: { severity: W, summary: 'A locale variant has no default-language file.' },
   C010_VALIDITY_WINDOW_INVALID: { severity: W, summary: 'moca.valid_until is not later than moca.valid_from.' },
+  C011_EVIDENCE_SELECTOR_UNMATCHED: { severity: W, summary: 'An evidence selector does not match the text source file it cites inside the package.' },
 
   // Attestations
   A001_ATTESTATION_MALFORMED: { severity: E, summary: 'An attestation file is not a parseable envelope and statement.' },
@@ -58,6 +59,9 @@ export const CODES = Object.freeze({
 
   // Skills (agent-skills profile)
   K001_SKILL_INVALID: { severity: W, summary: 'A skill does not conform to the Agent Skills specification.' },
+  O001_ONTOLOGY_UNPARSEABLE: { severity: W, summary: 'An ontology file listed by the ontology profile is missing or is not parseable Turtle.' },
+  O002_CONCEPT_UNDECLARED: { severity: W, summary: 'A node is bound to a concept IRI that no ontology file in the package declares.' },
+  O003_REMOTE_REFERENCE: { severity: W, summary: 'An ontology file or concept binding relies on something a Reader would have to fetch or resolve.' },
 
   // Sidecar indexes
   S001_SIDECAR_INVALID: { severity: E, summary: 'index.json does not validate against the sidecar schema.' },
@@ -65,6 +69,7 @@ export const CODES = Object.freeze({
   S003_SIDECAR_STALE: { severity: W, summary: 'The sidecar digest does not match the package; the sidecar is ignored.' },
   S004_SIDECAR_ITEM_INVALID: { severity: E, summary: 'A payload item breaks the addressing rules.' },
   S005_SIDECAR_FORMAT_UNKNOWN: { severity: I, summary: 'The payload format is not recognised; the sidecar is ignored.' },
+  S006_MODEL_MISMATCH: { severity: W, summary: "The host's embedder does not match the index's model; dense search is refused." },
 });
 
 /** @param {string} code */

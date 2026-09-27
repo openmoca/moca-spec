@@ -1,0 +1,16 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.3",
+  "id": "https://example.com/moca/service-catalogue",
+  "version": "1.0.0",
+  "title": "Service catalogue",
+  "language": "en",
+  "profiles": {
+    "https://w3id.org/moca/profiles/ontology/v1": {
+      "files": [
+        { "path": "ontologies/services.ttl", "role": "domain" }
+      ],
+      "entryConcepts": ["https://example.org/services#ServiceBoundary"]
+    }
+  }
+}

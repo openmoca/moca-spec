@@ -82,6 +82,13 @@ function writeVariant(validDir, outDir, kind) {
   if (kind === 'format') index.storage.format = 'lance';
   if (kind === 'target') index.target.id = 'https://example.com/conformance/another-package';
   if (kind === 'schema') index.indexType = 'dense';
+  if (kind === 'dense') {
+    // Vectors from the conformance embedder, which maps every text to [1, 0].
+    index.indexType = 'hybrid';
+    index.model = { name: 'conformance-embedder', version: '1', dimensions: 2 };
+    const items = readFileSync(payloadPath, 'utf8').trim().split('\n').map((l) => ({ ...JSON.parse(l), vector: [1, 0] }));
+    writeFileSync(payloadPath, `${items.map((i) => JSON.stringify(i)).join('\n')}\n`);
+  }
   if (kind === 'item') {
     const items = readFileSync(payloadPath, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
     items[0].chunkIndex = items[0].chunkCount;

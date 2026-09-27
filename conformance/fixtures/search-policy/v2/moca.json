@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/search-policy",
+  "version": "2.0.0",
+  "title": "Search policy fixture",
+  "language": "en",
+  "relations": [
+    { "type": "supersedes", "target": "https://example.com/conformance/search-policy", "version": "1.0.0" }
+  ]
+}

@@ -1,7 +1,7 @@
 # MOCA Agent Skills profile
 
 Profile URI: `https://w3id.org/moca/profiles/agent-skills/v1`
-Status: Draft, `0.2.0-alpha.1`
+Status: Draft, `0.3.0-alpha.1`
 
 ## 1. Purpose
 

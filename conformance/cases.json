@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "0.2.0-alpha.1",
+  "corpusVersion": "0.3.0-alpha.1",
   "cases": [
     {
       "id": "valid-minimal",
@@ -65,7 +65,59 @@
           "core",
           "located-evidence"
         ],
-        "digest": "sha256:28e33ca55345b0ce041e8068d4a21ba40ea6c48d9e57c04387eaa62cd10ef3df"
+        "digest": "sha256:28e33ca55345b0ce041e8068d4a21ba40ea6c48d9e57c04387eaa62cd10ef3df",
+        "evidenceVerified": {
+          "refunds.md": [
+            true,
+            true,
+            null
+          ]
+        }
+      }
+    },
+    {
+      "id": "self-contained-evidence",
+      "description": "Every evidence source is a text file under sources/, and every quote and position selector matches it.",
+      "target": "fixtures/self-contained-evidence",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:3ca15773ee36f0ae5e59b7ff4b3f7542c2799c59e51fe1d2bb4c6ed7b4eddabb",
+        "evidenceVerified": {
+          "refunds.md": [
+            true,
+            true,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "id": "evidence-selector-unmatched",
+      "description": "A quote that is not in the cited file, and a position past its end: warnings, verified false, still self-contained.",
+      "target": "fixtures/evidence-selector-unmatched",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:52978aa457e0855db2b29b6ee30cf4631f0a3ecf7111a288193e4939d3459595",
+        "evidenceVerified": {
+          "refunds.md": [
+            false,
+            false
+          ]
+        }
       }
     },
     {
@@ -462,6 +514,63 @@
       }
     },
     {
+      "id": "ontology-valid",
+      "description": "Ontology profile: a local Turtle concept scheme and a node bound to a declared concept.",
+      "target": "fixtures/ontology-valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "ontology"
+        ],
+        "digest": "sha256:49d64c2f6fad7437cfcd55747a038af0a089d32e875749c42ef9d461e43aaed3"
+      }
+    },
+    {
+      "id": "ontology-unparseable",
+      "description": "Ontology profile: the listed file is not Turtle, so nothing is declared. Warnings only; the ontology capability is withheld.",
+      "target": "fixtures/ontology-unparseable",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O001_ONTOLOGY_UNPARSEABLE",
+          "O002_CONCEPT_UNDECLARED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "ontology-concept-undeclared",
+      "description": "Ontology profile: a node binds to a concept no ontology file declares.",
+      "target": "fixtures/ontology-concept-undeclared",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O002_CONCEPT_UNDECLARED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "ontology-remote-reference",
+      "description": "Ontology profile: owl:imports would make a Reader fetch; it is reported, never followed.",
+      "target": "fixtures/ontology-remote-reference",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O003_REMOTE_REFERENCE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
       "id": "composed-members",
       "description": "A composition-only package whose members resolve and match their pinned digests.",
       "target": "fixtures/composed-members/book",
@@ -658,6 +767,226 @@
           "core"
         ],
         "sidecarUsable": false
+      }
+    },
+    {
+      "id": "search-default-policy",
+      "kind": "search",
+      "description": "The default retrieval policy: superseded, out-of-force and deprecated content is never returned; stale content is returned.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ]
+      }
+    },
+    {
+      "id": "search-include-all",
+      "kind": "search",
+      "description": "With the host's opt-in, excluded content is returned, flagged.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "retention period",
+        "includeAll": true
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ]
+      }
+    },
+    {
+      "id": "search-audience",
+      "kind": "search",
+      "description": "Records outside the host's audience set are removed even when the caller includes everything.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "retention period",
+        "includeAll": true
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@2.0.0#internal.md"
+        ]
+      }
+    },
+    {
+      "id": "search-recheck",
+      "kind": "search",
+      "description": "A backend that ignores every filter and returns every node, plus a hit from a package that is not loaded. Search still applies the policy and drops the unknown hit.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ]
+      }
+    },
+    {
+      "id": "search-locale",
+      "kind": "search",
+      "description": "A requested locale returns that locale's representation, or the default one for a node without it.",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md",
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/locales@1.0.0#intro.md": "fr",
+          "https://example.com/conformance/locales@1.0.0#v1.2.md": "en"
+        }
+      }
+    },
+    {
+      "id": "search-concepts",
+      "kind": "search",
+      "description": "Ontology profile: a concept filter keeps only records bound to one of the concepts.",
+      "packages": [
+        "fixtures/ontology-valid",
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "concepts": [
+          "https://example.org/conformance#ServiceBoundary"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/ontology-valid@1.0.0#boundaries.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense",
+      "kind": "search",
+      "description": "Dense search over sidecar vectors with the conformance embedder, whose identity matches the sidecar's model.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-model-mismatch",
+      "kind": "search",
+      "description": "The host embedder is a different model from the sidecar's: S006, and no dense search.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "another-embedder",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [
+          "S006_MODEL_MISMATCH"
+        ],
+        "count": 0
       }
     }
   ]

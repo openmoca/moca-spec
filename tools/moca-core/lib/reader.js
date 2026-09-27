@@ -15,7 +15,8 @@ import {
   loadTrustRoot, parseAttestation, verifySignature, checkPackageStatement, checkReviewStatement,
   PREDICATE_PACKAGE, PREDICATE_REVIEW,
 } from './attestations.js';
-import { KNOWN_PROFILES } from './profiles.js';
+import { KNOWN_PROFILES, PROFILE_ONTOLOGY } from './profiles.js';
+import { readOntology } from './ontology.js';
 
 const INVALIDATING = /^(T|P|M|C)\d/;
 
@@ -56,6 +57,7 @@ async function readInternal(target, options, stack) {
     diagnostics: diagnostics.items,
     valid: false,
     capabilities: [],
+    ontology: null,
     source: null,
   };
 
@@ -107,6 +109,10 @@ async function readInternal(target, options, stack) {
   }
 
   result.nodes = readContent({ manifest, files, bytes, fileDigests: result.fileDigests, diagnostics });
+  const knownProfiles = [...(options.knownProfiles ?? KNOWN_PROFILES)];
+  if (result.profiles.includes(PROFILE_ONTOLOGY) && knownProfiles.includes(PROFILE_ONTOLOGY)) {
+    result.ontology = readOntology({ manifest, bytes, nodes: result.nodes, diagnostics });
+  }
   const members = Array.isArray(manifest?.members) ? manifest.members : [];
   if (result.nodes.length === 0 && members.length === 0) {
     diagnostics.add('M003_NO_CONTENT', 'a package needs at least one content node under content/ or at least one member');
@@ -238,13 +244,17 @@ function finish(result, diagnostics) {
   result.valid = !diagnostics.items.some((d) => d.severity === 'error' && INVALIDATING.test(d.code));
   if (!result.valid) return result;
   const caps = new Set(['core']);
+  let allEvidenceLocal = true;
   for (const node of result.nodes) {
     for (const rep of node.representations) {
       if (Array.isArray(rep.frontmatter.moca?.evidence) && rep.frontmatter.moca.evidence.length > 0) caps.add('located-evidence');
+      if (rep.evidenceChecks?.some((c) => !c.local)) allEvidenceLocal = false;
       if (rep.locale) caps.add('localized');
       if (result.reviewsByFile.has(rep.file)) caps.add('reviewed');
     }
   }
+  if (caps.has('located-evidence') && allEvidenceLocal) caps.add('self-contained-evidence');
+  if (result.ontology?.ok) caps.add('ontology');
   if (result.members.length > 0) caps.add('composed');
   if (result.signers.length > 0) caps.add('signed');
   if (result.skills.exposed) caps.add('skills');

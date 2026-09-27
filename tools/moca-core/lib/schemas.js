@@ -13,6 +13,7 @@ export const SCHEMAS = Object.freeze({
   sidecarIndex: load('sidecar-index'),
   reviewPredicate: load('review-predicate'),
   trustRoot: load('trust-root'),
+  searchHit: load('search-hit'),
 });
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });

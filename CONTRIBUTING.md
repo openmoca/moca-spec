@@ -39,7 +39,7 @@ change in its own right and needs its own issue.
 
 Codes are the contract between implementations. Add a code to
 `tools/moca-core/lib/codes.js` and to the table in
-[Reader contract §9](spec/moca-reader-contract.md#9-diagnostics) in the same
+[Reader contract §10](spec/moca-reader-contract.md#10-diagnostics) in the same
 pull request, with at least one conformance case that produces it. Never
 change what an existing code means; add a new one.
 

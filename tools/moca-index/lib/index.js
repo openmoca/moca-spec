@@ -1,7 +1,7 @@
 // @openmoca/moca-index: builds moca-jsonl-v1 sidecar indexes
-// (spec/moca-sidecar-index-spec.md). This builder makes lexical sidecars:
-// chunks with byte offsets and text, no vectors. Dense sidecars use the same
-// format with a `vector` per item and a `model` in index.json.
+// (spec/moca-sidecar-index-spec.md): chunks with byte offsets and text, and,
+// when the host supplies an embedder, a `vector` per item and the embedder's
+// `model` in index.json (a hybrid sidecar).
 import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import AdmZip from 'adm-zip';
@@ -45,8 +45,9 @@ export function chunkRepresentation(rep, chunker) {
  * @param {boolean} [p.zip]
  * @param {'node'|'headings'} [p.chunker]
  * @param {boolean} [p.force]
+ * @param {{ name: string, version?: string, dimensions: number, embed: (texts: string[]) => number[][]|Promise<number[][]> }} [p.embedder]
  */
-export async function buildSidecar({ pkg, out, zip = false, chunker = 'node', force = false }) {
+export async function buildSidecar({ pkg, out, zip = false, chunker = 'node', force = false, embedder }) {
   if (!CHUNKERS.includes(chunker)) throw new IndexError(`unknown chunker "${chunker}"; use ${CHUNKERS.join(' or ')}`);
   const result = await readPackage(pkg);
   if (!result.valid) {
@@ -72,10 +73,18 @@ export async function buildSidecar({ pkg, out, zip = false, chunker = 'node', fo
       });
     }
   }
+  if (embedder) {
+    const vectors = await embedder.embed(items.map((i) => i.text));
+    if (!Array.isArray(vectors) || vectors.length !== items.length || vectors.some((v) => !Array.isArray(v) || v.length !== embedder.dimensions)) {
+      throw new IndexError(`the embedder must return one ${embedder.dimensions}-dimension vector per chunk`);
+    }
+    items.forEach((item, i) => { item.vector = vectors[i]; });
+  }
   const index = {
     indexVersion: 1,
     target: { id: result.manifest.id, version: result.manifest.version, digest: result.digest },
-    indexType: 'lexical',
+    indexType: embedder ? 'hybrid' : 'lexical',
+    ...(embedder ? { model: { name: embedder.name, ...(embedder.version ? { version: embedder.version } : {}), dimensions: embedder.dimensions } } : {}),
     chunking: { strategy: chunker === 'node' ? 'whole-node' : 'headings-h1-h3' },
     storage: { format: PORTABLE_FORMAT, file: 'payload/items.jsonl' },
     createdBy: 'moca-index',

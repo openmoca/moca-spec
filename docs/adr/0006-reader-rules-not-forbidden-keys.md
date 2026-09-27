@@ -23,7 +23,7 @@ content is a larger attack surface than its metadata.
   ([Reader contract §4](../../spec/moca-reader-contract.md#4-what-a-reader-must-never-do)).
 - State plainly that content is untrusted model input, and require Readers and
   servers to hand it to models as cited data, never as instructions
-  ([Reader contract §10](../../spec/moca-reader-contract.md#10-handing-content-to-a-model)).
+  ([Reader contract §11](../../spec/moca-reader-contract.md#11-handing-content-to-a-model)).
 - Recommend signing any package that crosses an organisational boundary, not
   only packages with skills.
 
