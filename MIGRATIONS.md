@@ -12,6 +12,69 @@ This project is in **Beta `0.1.0-beta.1`** status; see
 [docs/versioning-and-release.md](docs/versioning-and-release.md) for what
 compatibility means during the `0.x` line.
 
+## SDK contract split into Reader and Producer classes
+
+**What changed:** [spec/moca-sdk-contract.md](spec/moca-sdk-contract.md) now
+defines two conformance classes (§1.2). The eight existing capabilities are
+the **Reader** class. Manifest creation (§4.3) is no longer required of every
+SDK; it moves to the **Producer** class, together with integrity production and
+archive writing (§2.2), and optional signing (§7.4) and sidecar building
+(§10.1). A conformance claim must now name its class (§14).
+
+**Why this is listed here:** contract §13 treats any change to *required* SDK
+behaviour as breaking for implementers.
+
+**What you should do:**
+
+- If you implement the contract, state whether you are a Reader or a Producer.
+  A Knowledge Harness is a Reader.
+- If you are a Reader, you may drop manifest creation. Nothing else changes:
+  every existing conformance case is Reader-class.
+- If you are a Producer, check the new §2.2, §7.4, and §10.1 requirements,
+  which describe what the reference CLIs already do.
+
+## Education profile moved out of this repository
+
+**What changed:** `profiles/education/` graduated to
+`openmoca/moca-profile-education`, and `examples/augmentation-scorm2004/` was
+removed. The profile URI `https://openmoca.org/profiles/education/v1` is
+unchanged.
+
+**What you should do:**
+
+- Nothing, if your package only *declares* the profile. Declarations are by
+  URI, not repository path, and core §11.2 already requires a consumer to
+  process an unrecognised profile's package as valid core.
+- Update links to `profiles/education/…` to point at the new repository.
+
+## `moca-lint` no longer checks `education:competencies` in skill metadata
+
+**What changed:** `moca-lint`'s skills pass used to resolve CURIEs in a
+`SKILL.md`'s `metadata.education:competencies` field against the package's
+`@context` and ontologies, reporting `E202` or `E304` when they did not
+resolve. It no longer inspects that field. `metadata.concepts` is still
+checked.
+
+**Why:** it was profile-specific linting in a core-only linter, which
+[profiles/README.md](profiles/README.md) rules out.
+
+**What you should do:** a package that failed only because of an unresolved
+competency CURIE now passes. If you relied on the check, validate profile
+metadata with the profile's own tooling.
+
+## Composition example and conformance cases renamed
+
+**What changed:** `examples/composition-members/` and
+`conformance/fixtures/valid-composition-members/` are now a handbook with two
+chapters: `course/` → `handbook/`, `module-1/` → `chapter-1/`, and
+`module-2/` → `chapter-2/`, with new package IDs and content. The conformance
+cases were renamed to match (`valid-composition-members__handbook.json`,
+`__chapter-1.json`, `__chapter-2.json`), and the `opaque-profile-data` fixture
+now carries EU AI Act data. Expected codes and outcomes are unchanged.
+
+**What you should do:** if your conformance runner pins case names, update the
+three names. Runners that read every `cases/*.json` need no change.
+
 ## Specification documents moved to `spec/`, schemas to `schemas/v1/`
 
 **What changed:** The three normative documents moved out of the repository

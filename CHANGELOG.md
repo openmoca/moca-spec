@@ -11,6 +11,41 @@ and compatibility policy.
 
 ### Changed
 
+- **Adopted the three-pillar architecture**
+  ([ADR-0002](docs/adr/0002-three-pillar-architecture.md)). The former
+  host / AI Harness / package model becomes MOCA Package → Knowledge Harness →
+  AI Harness, with the host above. The Knowledge Harness is a separate,
+  open-source engine that owns loading, validation, verification, and search;
+  the AI Harness is the use-case product built on it. Core §1.1 is rewritten,
+  and every normative "a harness MUST" in the core specification, trust model,
+  and sidecar index specification now names the layer it binds (Knowledge
+  Harness, AI Harness, or any consumer). Core §8.2 adds that an AI Harness MUST
+  NOT execute skills a Knowledge Harness has withheld. No package validity
+  changes.
+- **Split the SDK contract into Reader and Producer conformance classes**
+  ([ADR-0003](docs/adr/0003-knowledge-harness-implementations.md)). Every
+  Knowledge Harness implements the Reader class; manifest creation, integrity
+  production, and archive writing move to the Producer class, with optional
+  signing and sidecar building. A conformance claim must name its class. See
+  [MIGRATIONS.md](MIGRATIONS.md).
+- **Knowledge Harness implementations replace the in-repository SDK plan.**
+  They live in their own repositories — .NET first, then Python, then
+  TypeScript — and consume the conformance corpus from here. `ROADMAP.md`
+  items 7–10, `GOVERNANCE.md`'s repository layout, the README, and the
+  release and versioning docs are updated accordingly.
+- **Graduated the education profile** to `openmoca/moca-profile-education`
+  under the existing Profile Graduation rules. Its URI is unchanged. This
+  repository is now domain-neutral apart from the EU AI Act compliance profile.
+- Replaced learning-domain examples throughout: the `composition-members`
+  example and conformance fixture are now a platform-engineering handbook with
+  two chapters (conformance cases renamed to `valid-composition-members__handbook`
+  / `__chapter-1` / `__chapter-2`); the `opaque-profile-data` fixtures use EU AI
+  Act data; core-spec, guide, and schema examples use neutral domains. The
+  courseware use case is replaced by field service.
+- Rewrote [plan 04](docs/plans/04-reference-consumer-core-audit.md) as a
+  domain-neutral audit: a reference AI Harness on the .NET Knowledge Harness,
+  with field-access instrumentation in the Knowledge Harness.
+
 - **Relicensed the project from MIT to Apache License 2.0**, covering both the
   specification prose and the reference tooling. The Apache §3 patent grant is
   the reason: MOCA is a format intended for independent implementation, and
@@ -83,6 +118,15 @@ and compatibility policy.
 
 ### Added
 
+- [docs/architecture.md](docs/architecture.md) — the three pillars, the
+  Knowledge Harness's search modes (lexical, sidecar index, enterprise, with
+  ontology ingress and egress), tooling status, and common questions.
+- [ADR-0002](docs/adr/0002-three-pillar-architecture.md) and
+  [ADR-0003](docs/adr/0003-knowledge-harness-implementations.md).
+- A "Search modes in the Knowledge Harness" section in
+  [docs/guides/search-and-indexes.md](docs/guides/search-and-indexes.md).
+- A spec change proposal draft for the architecture and contract changes,
+  [docs/plans/issues/spec-three-pillar-architecture.md](docs/plans/issues/spec-three-pillar-architecture.md).
 - `scripts/validate-links.mjs` and `npm run validate:links`: verifies every
   relative Markdown link in a tracked `.md` file resolves on disk, and that
   `#fragment` anchors match a real heading in the target. Added ahead of the
@@ -175,6 +219,14 @@ and compatibility policy.
   the sign/verify commands to run next. A `dsse` signature with no trust root
   is reported as `E406` rather than silently accepted, so a freshly signed
   package was unlintable until its author hand-wrote a trust-root file.
+
+### Removed
+
+- `profiles/education/` (graduated; see Changed) and
+  `examples/augmentation-scorm2004/`.
+- `moca-lint`'s check of `education:competencies` CURIEs in `SKILL.md`
+  metadata — profile-specific linting that contradicted the repository's
+  core-only linting boundary. See [MIGRATIONS.md](MIGRATIONS.md).
 
 ### Fixed
 
