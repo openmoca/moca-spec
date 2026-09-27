@@ -17,6 +17,7 @@ program
   .option('--trust-root <file>', 'trust root for verifying package and review attestations')
   .option('--members <dirs...>', 'directories to search for member packages')
   .option('--audience <list>', 'comma-separated audiences this host may serve (default: no filter)')
+  .option('--overlay <layer=file...>', 'structure overlays the host loads over the packages: application=<file.ttl> or organisation=<file.ttl>')
   .option('--embedder <module>', 'experimental: a module whose default export is an embedder { name, version?, dimensions, embed(texts) }; search then uses sidecar vectors')
   .action(async (packages, opts) => {
     const log = (line) => process.stderr.write(`moca-mcp: ${line}\n`);
@@ -24,7 +25,13 @@ program
       const i = p.indexOf('=');
       return i > 0 ? { package: p.slice(0, i), sidecar: p.slice(i + 1) } : { package: p };
     });
-    const library = await loadLibrary({ packages: entries, trustRoot: opts.trustRoot, memberDirs: opts.members, log });
+    const overlays = (opts.overlay ?? []).map((o, i) => {
+      const at = o.indexOf('=');
+      const layer = at > 0 ? o.slice(0, at) : '';
+      if (!['application', 'organisation'].includes(layer)) throw new Error(`--overlay must be application=<file> or organisation=<file>, not "${o}"`);
+      return { id: `${layer}-${i + 1}`, layer, path: o.slice(at + 1) };
+    });
+    const library = await loadLibrary({ packages: entries, trustRoot: opts.trustRoot, memberDirs: opts.members, overlays, log });
     if (library.packages.length === 0) {
       log('no valid packages to serve');
       process.exit(1);
