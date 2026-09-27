@@ -2,8 +2,8 @@
 
 MOCA aims to make portable, grounded knowledge easy to create, validate, and
 consume. The roadmap prioritises a low-barrier core format first, then adds
-compliance, tooling, SDKs, search, and runtime integrations as opt-in
-capabilities.
+compliance, tooling, Knowledge Harness implementations, search, and runtime
+integrations as opt-in capabilities.
 
 This file describes **direction**. What actually shipped, and when, is recorded
 in [CHANGELOG.md](CHANGELOG.md); this document does not duplicate it.
@@ -39,6 +39,8 @@ adoption more than any missing feature does.
   resolving content and locales, following `composition.members`, deciding
   whether to trust `skills/`. This is the half developers need to build with
   MOCA, and it is the direct input to the SDK contract below.
+- An architecture overview of the three pillars — package, Knowledge Harness,
+  AI Harness — so adopters can see where retrieval and product behaviour live.
 - Use-case-shaped examples. Examples are currently named by conformance level,
   which is a specification author's taxonomy rather than a reader's.
 
@@ -52,9 +54,9 @@ it. The working conclusion is that MOCA's content model was never its
 differentiator — package and container semantics are — and the specification
 should say so by conceding the content model rather than competing on it.
 
-This sits ahead of the SDK work deliberately. Three SDKs implemented against a
-core that is about to lose several §7 fields is wasted implementation effort,
-tripled.
+This sits ahead of the Knowledge Harness work deliberately. Three
+implementations written against a core that is about to lose several §7 fields
+is wasted implementation effort, tripled.
 
 - `content/` becomes a **required** conformant OKF v0.2 bundle, enforced in CI,
   and the node frontmatter fields OKF already defines are deprecated in favour
@@ -72,73 +74,93 @@ considerably.
 
 ### SDK contract and conformance suite
 
-Both are prerequisites for item 7, not part of it. Three SDKs written against
-an 888-line prose specification with no shared contract and no shared test
-corpus will diverge, and the divergence will not surface until late.
+First versions of both have shipped:
+[spec/moca-sdk-contract.md](spec/moca-sdk-contract.md) and a 25-case
+[`conformance/`](conformance/README.md) corpus. They are what keeps item 7's
+implementations consistent across languages and repositories, so the
+remaining work sits ahead of item 7:
 
-- A language-neutral SDK contract document covering manifest parsing and
-  creation, package reading/writing and archive handling, content traversal,
-  profile and extension discovery, validation and structured diagnostics,
-  identity and integrity, and optional index discovery.
-- A declarative `conformance/` corpus — fixture packages paired with expected
-  results and diagnostics, plus a documented runner contract — so each SDK's
-  test suite is a thin adapter rather than a reimplementation.
+- The contract's **Reader / Producer split**
+  ([ADR-0003](docs/adr/0003-knowledge-harness-implementations.md)). The Reader
+  class is what every Knowledge Harness implements: open, validate, traverse,
+  diagnose, verify, resolve composition, discover profiles, bind an index.
+  The Producer class adds manifest creation, integrity production, archive
+  writing, signing, and index building, which is authoring tooling. A consumer
+  that only reads and searches never takes on authoring dependencies.
+- The corpus's known gaps: locale-resolution fallback, composition cycle
+  detection, archive-extraction hardening, and sidecar binding.
 
 ## Next
 
-### 7. Core SDKs across languages
+### 7. Knowledge Harness implementations
 
-TypeScript first, then Python, then .NET. TypeScript leads because the existing
-toolchain is already JavaScript: `tools/moca-lint/lib/` already implements most
-of the SDK surface (manifest parsing, package walking, path-boundary safety,
-integrity and signature verification, structured diagnostics), and the other
-CLIs already consume it. Extracting a real core library and refactoring the four
-CLIs onto it validates the contract against four real consumers immediately.
+The Knowledge Harness is the second of MOCA's
+[three pillars](docs/architecture.md): an open-source engine that gives any AI
+Harness one interface to MOCA knowledge, wherever that knowledge is stored.
+Each implementation is a Reader-class SDK plus retrieval, in its own
+repository, in this order:
 
-Additional languages should be prioritised by adopter demand and ecosystem fit.
+1. **.NET** — `openmoca/moca-knowledge-harness-dotnet`
+2. **Python** — `openmoca/moca-knowledge-harness-python`
+3. **TypeScript** — `openmoca/moca-knowledge-harness-typescript`
 
-### 8. Generic AI harness
+.NET leads because it is what the first AI Harness hosts use, and an
+implementation with a real consumer is the one that tests the specification.
+Each implementation offers the same three search modes behind one interface —
+lexical search over the package, a `.moca.idx` sidecar, and an enterprise
+vector database — with ontology-aware query expansion and result traversal
+when a package carries ontologies. See
+[search and indexes](docs/guides/search-and-indexes.md#search-modes-in-the-knowledge-harness).
 
-A reference consumer demonstrating that MOCA can be used without coupling the
-format to a model provider or agent framework: loading a Level 1 package with no
-index, discovering optional semantic data and skills, attaching an index when
-search is wanted, grounding responses in content and evidence locators, and
-degrading gracefully when optional capabilities are absent.
+The TypeScript library inside `tools/moca-lint/lib/` stays the reference
+Producer implementation and an internal library of the CLIs. It is not
+extracted into a published SDK ahead of the TypeScript Knowledge Harness.
 
-It also carries a second job. The harness **instruments every manifest and
-frontmatter field it reads at runtime** and emits a coverage report. Any field
-never touched after a full run against a real package is a concrete
-deletion-or-demotion candidate, which turns the core-boundary question from an
-argument into a measurement. The report distinguishes "not read, but the code
-path ran" from "no code path exercised this capability" — only the first is
-evidence.
+Specification findings from each implementation come back to this
+repository as issues.
+
+### 8. Reference AI Harness
+
+A minimal, domain-neutral AI Harness built on the .NET Knowledge Harness. It
+shows that MOCA can be used without coupling the format to a model provider or
+agent framework: loading a Level 1 package with no index, discovering optional
+semantic data and skills, attaching an index when search is wanted, grounding
+answers in content and evidence locators, applying a policy to `verified`,
+`disputed`, and stale content, and degrading gracefully when optional
+capabilities are absent.
+
+It also carries a second job. The Knowledge Harness **instruments every
+manifest and frontmatter field it reads at runtime** and emits a coverage
+report. Any field never touched after a full run against a real package is a
+concrete deletion-or-demotion candidate, which turns the core-boundary
+question from an argument into a measurement. The report distinguishes "not
+read, but the code path ran" from "no code path exercised this capability" —
+only the first is evidence.
 
 This runs alongside item 9, which supplies its input.
 
-### 9. Courseware converter and the core boundary audit
+### 9. Core boundary audit
 
-`SCORM/cmi5 → MOCA Education → AI tutor harness → xAPI`, built end to end
-against one real published course rather than a fixture.
-
-Generic courseware import tooling produces one package per module plus a
-composing package via
+The reference AI Harness from item 8, run end to end against real, openly
+licensed, multi-part content rather than fixtures: a documentation corpus
+converted with `moca-convert` and composed with
 [`composition.members`](spec/moca-core-spec.md#101-compositionmembers--containment-part-of),
-superseding the per-module sidecar-augmentation workaround in
-[moca-education-profile.md §5](profiles/education/moca-education-profile.md#5-sidecar-augmentation-for-courseware)
-and forcing the education-profile redesign listed under item 12. The chain is
-also the first end-to-end proof MOCA has, and it exercises the multi-package
-canonical digest path for the first time against generated content.
+plus a versioned policy set that exercises `composition.relates` and
+`supersedes`. It is also the first end-to-end proof MOCA has, and it exercises
+the multi-package canonical digest path against generated content for the
+first time.
 
-Its output feeds item 8's instrumentation, and the untouched-field report
-becomes spec change proposals. Plan:
-[docs/plans/04-converter-first-core-audit.md](docs/plans/04-converter-first-core-audit.md).
+The untouched-field report becomes spec change proposals. Plan:
+[docs/plans/04-reference-consumer-core-audit.md](docs/plans/04-reference-consumer-core-audit.md).
 
 ## Later
 
 ### 10. Framework and enterprise integration
 
-LangChain and LlamaIndex adapters, an MCP server, Microsoft Agent Framework
-support, and search-provider abstractions. **These live in their own
+The **MOCA MCP server**, which loads packages through the Knowledge Harness so
+developers can search, inspect, and validate them from any MCP client, locally.
+LangChain, LlamaIndex, and Microsoft Agent Framework adapters, and enterprise
+vector-store backends for the Knowledge Harness. **These live in their own
 repositories** (see "Where this work lives" below).
 
 This is also the point at which `moca-lint`'s known single-target-directory
@@ -148,62 +170,61 @@ should be closed with at least a minimal multi-package check.
 ### 11. Full end-to-end reference example
 
 One authoritative demonstration connecting source material → validated package →
-optional index → harness retrieval → framework-integrated consumption, with a
+optional index → Knowledge Harness retrieval → AI Harness answer, with a
 documented path proving the package still works when the index is removed. Its
 own repository.
 
 A reduced form of this — a single "load a package, answer a question with
 evidence" walkthrough — is pulled forward into the documentation work under
-"Now", because it is worth more for adoption than the third SDK.
+"Now", because it is worth more for adoption than any single implementation.
 
 ### 12. Compliance and standards profiles
 
-- A consistent profile registration and versioning model.
+- A consistent profile registration and versioning model, covering profiles
+  in this repository and graduated ones (the education profile now lives in
+  `openmoca/moca-profile-education`).
 - Candidate profiles for NIST AI RMF, ISO/IEC 42001, ISO/IEC 23894, and OECD AI
   Principles, per [core §11.5](spec/moca-core-spec.md#115-compliance--standards-profiles).
 - The `agent-skills` and `mif` profiles, which are not compliance profiles but
   share the same registration and versioning question.
-- Redesign the education profile's `Course`/`Module` shape around
-  `composition.members`, replacing the flat `prerequisites` URN-array approach
-  in [moca-education-profile.md §4](profiles/education/moca-education-profile.md).
-  Item 9 forces this rather than waiting for it.
 
 ### 13. Website
 
-A public site for the project, specification, profiles, SDKs, tools, and
-examples. The in-repository documentation under "Now" is the prerequisite and
-does not wait for this.
+A public site for the project, specification, profiles, Knowledge Harness
+implementations, tools, and examples. The in-repository documentation under
+"Now" is the prerequisite and does not wait for this.
 
 ### 14. Path to 1.0.0
 
 Operationalises the stability commitments in
 [docs/versioning-and-release.md](docs/versioning-and-release.md): an explicit
-stability review of the specification, schemas, conformance levels, SDK
-contracts, CLI behaviour, profiles, and trust model; published versioned
-normative schemas; and a documented migration policy for breaking changes,
-deprecations, and validation changes.
+stability review of the specification, schemas, conformance levels, the SDK
+contract's two classes, CLI behaviour, profiles, and trust model; published
+versioned normative schemas; and a documented migration policy for breaking
+changes, deprecations, and validation changes.
 
 ## Where this work lives
 
-MOCA is developed as a single repository through `1.0.0`. The specification,
-schemas, profiles, CLI tools, conformance corpus, and SDKs share one review
-cycle and one CI run, because the SDKs are expected to *change the
-specification* — [docs/versioning-and-release.md](docs/versioning-and-release.md)
-says so explicitly — and splitting early turns each such finding into a
-multi-repository coordination problem.
+The specification, schemas, in-repository profiles, Producer-class CLI tools,
+and the conformance corpus share one repository, one review cycle, and one CI
+run through `1.0.0`.
 
 Components graduate to their own repositories on the same triggers already
 defined for profiles in
 [GOVERNANCE.md](GOVERNANCE.md#profile-graduation): an independent maintainer
 group, a genuinely independent release cadence, or sheer size making the core
-hard to navigate.
+hard to navigate. The education profile has graduated on those terms.
 
-Two categories are **out of this repository from the start**, because they carry
-third-party dependency surfaces and release cadences the specification should
-not inherit: framework integrations (item 10) and the end-to-end demonstration
-(item 11). The tutor harness and xAPI emitter built for item 9 fall under the
-same rule; only the instrumentation report and the spec change proposals it
-produces come back into this repository.
+Three categories are **out of this repository from the start**, because they
+carry third-party dependency surfaces and release cadences the specification
+should not inherit:
+
+- **Knowledge Harness implementations** (item 7), one repository per language.
+  They consume the conformance corpus from here and never vendor it.
+- **Framework integrations and the MCP server** (item 10).
+- **The reference AI Harness and the end-to-end demonstration** (items 8 and
+  11). Only the instrumentation report and the spec change proposals it
+  produces come back into this repository.
 
 ## Cross-cutting principles
 
@@ -213,14 +234,18 @@ produces come back into this repository.
 - **Core/profile boundary:** profile-specific linting is out of scope for this
   repository's `moca-lint`; profile owners may ship separate tooling.
 - **Portable core:** the format stays storage-, model-, and framework-neutral.
+- **Retrieval outside the format:** search belongs to the Knowledge Harness;
+  the specification defines no retrieval engine.
 - **Integrity by design:** derived indexes must identify and bind to their
   source package.
 - **Graceful degradation:** consumers retain useful behaviour when optional
   metadata, profiles, indexes, or integrations are unavailable.
-- **Open implementation:** specifications, SDKs, tooling, examples, and tests
-  are developed in the open with reproducible validation.
-- **Cross-language consistency:** SDKs share conformance fixtures and
-  behavioural expectations while remaining idiomatic in each language.
+- **Open implementation:** specifications, Knowledge Harness implementations,
+  tooling, examples, and tests are developed in the open with reproducible
+  validation.
+- **Cross-language consistency:** Knowledge Harness implementations share
+  conformance fixtures and behavioural expectations while remaining idiomatic
+  in each language.
 
 ## Open decisions
 
@@ -234,9 +259,12 @@ produces come back into this repository.
   [§10.2](spec/moca-core-spec.md#102-compositionrelates--loose-reference-relates-to).
 - Whether MOCA continues to define a content model at all once item 9's
   instrumentation reports which fields a real consumer reads.
-- First supported embedding and storage backends for `.moca.idx` payloads.
-- Release model and ownership for each SDK once more than one person maintains
-  them.
+- First supported embedding models and storage backends for `.moca.idx`
+  payloads and for the Knowledge Harness's enterprise search mode.
+- Whether and when the .NET repository adds Producer-class packages alongside
+  its Reader.
+- Release model and ownership for each Knowledge Harness implementation once
+  more than one person maintains them.
 - Scope of the first Microsoft Agent Framework integration.
 - Which compliance profiles to prioritise after the profile registration model
   is defined.

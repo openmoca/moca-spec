@@ -23,13 +23,15 @@ epistemic status, integrity digests, composition between packages, and a
 cryptographic trust boundary around executable content.
 
 MOCA Core is domain-agnostic — a customer-support knowledge base, a legal
-research corpus, an internal engineering wiki, and an educational course are
-all equally valid uses. Domain-specific vocabulary lives in **profiles**
+research corpus, an internal engineering wiki, and a library of field-service
+manuals are all equally valid uses. Domain-specific vocabulary lives in **profiles**
 layered on top of core.
 
-MOCA is **not** a retrieval engine, a runtime, an agent framework, or a
-database. A package cannot configure your system: `endpoints`, `settings`,
-`credentials`, and `apiKeys` are forbidden in a manifest, at every level.
+The specification is **not** a retrieval engine, a runtime, an agent
+framework, or a database. A package cannot configure your system: `endpoints`,
+`settings`, `credentials`, and `apiKeys` are forbidden in a manifest, at every
+level. Retrieval lives in the **Knowledge Harness**, a separate open-source
+project built on this specification (see below).
 
 → [Why MOCA?](docs/why-moca.md) for the longer argument, including why not to
 just use a folder of Markdown or a vector database.
@@ -58,15 +60,15 @@ lastReviewed: "2026-08-14T00:00:00Z"
 Customers may request a full refund within 30 days of delivery.
 ```
 
-A harness reading this knows the answer was human-verified, when it was last
-checked, and which package and version it came from — none of which survives
-ingestion from an ordinary wiki.
+An AI reading this through a Knowledge Harness knows the answer was
+human-verified, when it was last checked, and which package and version it
+came from — none of which survives ingestion from an ordinary wiki.
 
 ## Status
 
 **Beta `0.1.0-beta.1` — pre-`1.0.0`, experimental.** The specification,
-schemas, and examples here are subject to change as the SDKs exercise the
-format. There is no stable release or compatibility guarantee yet. See
+schemas, and examples here are subject to change as the Knowledge Harness
+implementations exercise the format. There is no stable release or compatibility guarantee yet. See
 [Versioning and Release](docs/versioning-and-release.md).
 
 > **Note on `openmoca.org` URIs:** Schema, profile, and vocabulary URIs used
@@ -74,38 +76,46 @@ format. There is no stable release or compatibility guarantee yet. See
 > identifiers, not necessarily live, resolvable network locations at this
 > stage — the domain is in the process of being acquired.
 
-## The 3-Layer System Architecture
+## The three pillars
 
-MOCA enforces a strict separation of concerns across three layers:
+MOCA splits an AI knowledge system into three layers, each open in a
+different way. Any layer can be replaced without touching the others.
 
 ```text
 ┌──────────────────────────────────────────────────────────┐
-│               1. Application / Host Layer                │
-│ PII Redaction · Security Policy · Identity · Enterprise  │
-└────────────────────────────┬───────────────────────────-─┘
-                              │
-                              ▼
+│  Host application                                        │
+│  identity · tenancy · PII redaction · access control     │
+└────────────────────────────┬─────────────────────────────┘
+                             ▼
 ┌──────────────────────────────────────────────────────────┐
-│                   2. AI Harness Layer                    │
-│ Retrieval (GraphRAG/Vector) · Agent Routing · Tools      │
-│ Reasoning · Context Assembly · Memory & Session State    │
-└────────────────────────────┬────────────────────────────-┘
-                              │
-                      consumes / interprets
-                              │
-                              ▼
+│  3. AI Harness — the product, one per use case           │
+│  agents · prompts · workflow · trust-signal policy       │
+└────────────────────────────┬─────────────────────────────┘
+                             │  asks for knowledge
+                             ▼
 ┌──────────────────────────────────────────────────────────┐
-│               3. MOCA Knowledge Package                  │
-│ Concepts · Ontologies · Grounded Nodes · Claims          │
-│ Evidence & Locators · Provenance · Inert Content         │
-└────────────────────────────────────────────────────────-─┘
+│  2. Knowledge Harness — open source, shared              │
+│  open · validate · verify · resolve · search · cite      │
+└────────────────────────────┬─────────────────────────────┘
+                             │  reads
+                             ▼
+┌──────────────────────────────────────────────────────────┐
+│  1. MOCA Package — open standard, inert data             │
+│  manifest · content · evidence · provenance · trust      │
+└──────────────────────────────────────────────────────────┘
 ```
 
-MOCA packages are inert data consumed by an AI Harness layer (retrieval,
-reasoning, tool execution) that in turn sits underneath an Application/Host
-layer (security policy, identity, tenancy). See
-[moca-core-spec.md §1](spec/moca-core-spec.md#1-scope-philosophy--architecture-model)
-for the full model.
+| Pillar | What it owns | Openness |
+|---|---|---|
+| **1. MOCA Package** | Content, identity, provenance, trust metadata | Open standard — this repository |
+| **2. Knowledge Harness** | One interface for loading, validating, and searching packages, whether they sit in files, a `.moca.idx` sidecar, or an enterprise vector database | Open source, one repository per language |
+| **3. AI Harness** | Agents, prompts, workflow, and experience for one use case | Your product |
+
+This repository defines the package and the contract a Knowledge Harness
+implements. See [Architecture](docs/architecture.md) for the full model,
+[core §1.1](spec/moca-core-spec.md#11-the-three-pillar-architecture) for the
+normative layer definitions, and
+[ADR-0002](docs/adr/0002-three-pillar-architecture.md) for why.
 
 ## Conformance Levels
 
@@ -123,13 +133,16 @@ details.
 The normative documents all live under [spec/](spec):
 
 - [MOCA Core Package Specification](spec/moca-core-spec.md)
+- [MOCA SDK Contract](spec/moca-sdk-contract.md) — the Reader class every
+  Knowledge Harness implements, and the Producer class for authoring tooling
 - [MOCA Sidecar Index Specification](spec/moca-sidecar-index-spec.md)
 - [MOCA Trust Model](spec/moca-trust-model.md)
 
 Profile specifications live with their schema and examples:
 
-- [MOCA Education Profile](profiles/education/moca-education-profile.md)
 - [MOCA EU AI Act Profile](profiles/eu-ai-act/moca-eu-ai-act-profile.md)
+
+Other profiles live in their own repositories; see [profiles/](profiles/README.md).
 
 ## Repository Layout
 
@@ -137,13 +150,14 @@ Profile specifications live with their schema and examples:
 moca-spec/
 ├── spec/                   # Normative specifications
 │   ├── moca-core-spec.md
+│   ├── moca-sdk-contract.md
 │   ├── moca-sidecar-index-spec.md
 │   └── moca-trust-model.md
 ├── schemas/                # JSON Schema + JSON-LD context definitions
 ├── profiles/               # Self-contained, independently extractable profile bundles
-│   ├── education/          # Spec, schema, and examples
-│   └── eu-ai-act/
+│   └── eu-ai-act/          # Spec, schema, and examples
 ├── examples/               # Runnable fixture packages
+├── conformance/            # Language-neutral test corpus for SDKs
 │   └── sidecars/           # Example .moca.idx sidecars
 ├── fixtures/               # Test material that is not an example package
 │   └── signing-keys/       # Non-production example signing key
@@ -162,18 +176,20 @@ Full index: [docs/](docs/README.md).
 | | |
 |---|---|
 | [Why MOCA?](docs/why-moca.md) | The problem, the non-goals, and why not to just use a folder of Markdown |
-| [Use cases](docs/use-cases.md) | Concrete shapes, and how MOCA relates to RO-Crate, DITA, SCORM, MCP |
+| [Architecture](docs/architecture.md) | The three pillars: package, Knowledge Harness, AI Harness |
+| [Use cases](docs/use-cases.md) | Concrete shapes, and how MOCA relates to RO-Crate, DITA, MCP |
 | [Quickstart](docs/quickstart.md) | A valid package in five minutes |
 | [End-to-end walkthrough](docs/walkthrough.md) | convert → sign → index → pack → grounded answer |
 | [Choosing a level](docs/guides/choosing-a-level.md) | Which conformance level you actually need |
 | [Authoring](docs/guides/authoring.md) | Grounding, lifecycle, integrity, composition |
-| [Consuming a package](docs/guides/consuming.md) | Building the harness side |
+| [Consuming a package](docs/guides/consuming.md) | What a Knowledge Harness does when it reads a package |
 | [Signing and trust](docs/guides/signing-and-trust.md) | Signing, verification, the `skills/` boundary |
 | [Search and indexes](docs/guides/search-and-indexes.md) | Optional `.moca.idx` sidecars |
 
 ## Tooling
 
-Four reference CLIs, each an independently versioned workspace package:
+Four reference CLIs — the Producer-class authoring tooling — each an
+independently versioned workspace package:
 
 | Tool | Purpose |
 |---|---|
@@ -186,6 +202,19 @@ Four reference CLIs, each an independently versioned workspace package:
 npm install
 npm test        # all validators + all four tool suites
 ```
+
+## Related projects
+
+Built on this specification, each in its own repository
+([ADR-0003](docs/adr/0003-knowledge-harness-implementations.md)):
+
+| Project | Repository | Status |
+|---|---|---|
+| Knowledge Harness for .NET | `openmoca/moca-knowledge-harness-dotnet` | Planned — first |
+| Knowledge Harness for Python | `openmoca/moca-knowledge-harness-python` | Planned — second |
+| Knowledge Harness for TypeScript | `openmoca/moca-knowledge-harness-typescript` | Planned — third |
+| MOCA MCP server | `openmoca/moca-integrations-mcp` | Planned — search and inspect packages from any MCP client, through the Knowledge Harness |
+| Education profile | `openmoca/moca-profile-education` | Graduated from this repository |
 
 ## Contributing
 

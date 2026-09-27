@@ -72,32 +72,36 @@ Through `1.0.0`, MOCA is developed as a **single repository**,
 | Schemas | JSON Schemas and JSON-LD contexts under `schemas/` |
 | Profiles | Self-contained profile bundles under `profiles/` (see Profile Graduation above) |
 | Examples | Static fixture packages under `examples/` |
-| Tools | The reference CLIs under `tools/` — `moca-lint`, `moca-convert`, `moca-index`, `moca-sign` |
-| Conformance | The shared, language-neutral test corpus SDKs validate against |
-| SDKs | TypeScript, Python, and .NET libraries (not yet built) |
+| Tools | The reference CLIs under `tools/` — `moca-lint`, `moca-convert`, `moca-index`, `moca-sign` — which are the Producer-class authoring tooling ([SDK contract §1.2](spec/moca-sdk-contract.md#12-conformance-classes)) |
+| Conformance | The shared, language-neutral test corpus every SDK and Knowledge Harness validates against |
 
-This is deliberate rather than incidental. The SDKs are expected to *change the
-specification* — [docs/versioning-and-release.md](docs/versioning-and-release.md)
-states that findings from the first SDK implementations should become
-specification changes before `1.0.0`. Splitting the repository early would turn
-each such finding into a multi-repository coordination problem for a
-solo-maintained project, and would make a cross-language conformance suite —
-the mechanism that actually keeps three SDKs consistent — a cross-repository
-dependency.
+This is deliberate rather than incidental. The specification, its schemas, and
+the conformance corpus must change together, and splitting them would turn
+every specification change into a multi-repository coordination problem for a
+solo-maintained project. The conformance corpus is what keeps implementations
+in different languages consistent, so it lives with the specification it
+tests.
 
 Components graduate to their own repositories on the same triggers described
 under [Profile Graduation](#profile-graduation): an independent maintainer
 group, a genuinely independent release cadence, or size that makes the core hard
 to navigate.
 
-Two categories live outside this repository from the start, because they carry
-third-party dependency surfaces and release cadences the specification should
-not inherit:
+Several categories live outside this repository from the start, because they
+carry third-party dependency surfaces and release cadences the specification
+should not inherit
+([ADR-0003](docs/adr/0003-knowledge-harness-implementations.md)):
 
 | Repo | Purpose |
 |---|---|
-| `openmoca/moca-integrations-*` | Framework adapters — LangChain, LlamaIndex, MCP server, Microsoft Agent Framework |
-| `openmoca/moca-example-end-to-end` | The full end-to-end demonstration application |
+| `openmoca/moca-knowledge-harness-dotnet` | The Knowledge Harness for .NET — first implementation |
+| `openmoca/moca-knowledge-harness-python` | The Knowledge Harness for Python — second |
+| `openmoca/moca-knowledge-harness-typescript` | The Knowledge Harness for TypeScript — third |
+| `openmoca/moca-integrations-*` | Framework adapters and the MOCA MCP server — LangChain, LlamaIndex, MCP, Microsoft Agent Framework |
+| `openmoca/moca-example-end-to-end` | The reference AI Harness and full end-to-end demonstration |
+| `openmoca/moca-profile-education` | The education profile, graduated from `profiles/education/` |
 
-Neither exists yet. Conformance fixtures are never vendored into a dependent
-repository; they are consumed from this one.
+None of these is published yet. Conformance fixtures are never vendored into a
+dependent repository; they are consumed from this one, pinned to a released
+version. Specification findings from an implementation are filed as issues
+here.

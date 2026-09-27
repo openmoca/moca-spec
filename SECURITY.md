@@ -32,19 +32,21 @@ That said, security issues are still in scope:
 ## Security Model for Implementers
 
 MOCA Core packages are intended to be **inert data**. The one area with
-direct security implications for anyone building a harness against this spec
-is the `skills/` + `signature` model in
+direct security implications for anyone building a Knowledge Harness or an
+AI Harness against this spec is the `skills/` + `signature` model in
 [core §8.2](spec/moca-core-spec.md#82-security--trust-boundary-rule):
 
 - Loading a MOCA package MUST NOT automatically execute code.
 - Any package containing `skills/` MUST include a valid `signature` object,
   regardless of declared conformance level.
-- A harness MUST refuse to load `skills/` content from an unsigned or
-  signature-invalid package, MUST sandbox `allowed-tools` against host
-  policy, and MUST NOT treat the rest of a package as untrustworthy just
-  because its `skills/` are rejected (or vice versa).
+- A Knowledge Harness MUST refuse to load `skills/` content from an unsigned
+  or signature-invalid package, and MUST NOT treat the rest of a package as
+  untrustworthy just because its `skills/` are rejected (or vice versa).
+- An AI Harness MUST sandbox `allowed-tools` against host policy before
+  executing a skill, and MUST NOT execute skills a Knowledge Harness has
+  withheld.
 
-Harness implementers should treat any package's `skills/` directory as
+Implementers of either should treat any package's `skills/` directory as
 untrusted, attacker-controlled input until signature verification succeeds.
 
 ## Reporting a Vulnerability

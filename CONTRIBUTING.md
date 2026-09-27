@@ -51,7 +51,7 @@ Profiles are additive extensions to MOCA Core (see
 3. Once agreed, the profile is authored at
    `profiles/<profile-name>/moca-<profile-name>-profile.md`, alongside its
    own `profile.schema.json` and `examples/`, following the structure of
-   [moca-education-profile.md](profiles/education/moca-education-profile.md).
+   [moca-eu-ai-act-profile.md](profiles/eu-ai-act/moca-eu-ai-act-profile.md).
 
 Profile-specific linting is the profile owner's responsibility and is not part
 of this repository's `moca-lint`.
