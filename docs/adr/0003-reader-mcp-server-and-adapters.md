@@ -1,6 +1,6 @@
 # 0003 — One Reader, an MCP server and framework adapters, not a harness per language
 
-- **Status:** Accepted
+- **Status:** Superseded by [0007](0007-reader-interface-and-per-language-readers.md)
 - **Date:** 2026-09-27
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 
