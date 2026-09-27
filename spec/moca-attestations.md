@@ -1,6 +1,6 @@
 # MOCA Attestations
 
-Specification version: `0.2.0-alpha.1`
+Specification version: `0.3.0-alpha.1`
 Status: Alpha. Expect changes before `1.0.0`.
 License: [Apache License 2.0](../LICENSE)
 

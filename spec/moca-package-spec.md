@@ -1,6 +1,6 @@
 # MOCA Package Specification
 
-Specification version: `0.2.0-alpha.1` (`mocaVersion` `0.2`)
+Specification version: `0.3.0-alpha.1` (`mocaVersion` `0.3`)
 Status: Alpha. Expect changes before `1.0.0`.
 License: [Apache License 2.0](../LICENSE)
 
@@ -239,8 +239,8 @@ for the other.
 <package>/
 ├── moca.json        required
 ├── content/         the OKF bundle (required unless the package has members)
-├── sources/         optional: files that nodes cite
-├── media/           optional
+├── sources/         optional: the original files that nodes cite
+├── media/           optional: images, audio and other cited files
 ├── skills/          optional: see §8
 ├── attestations/    optional: see §10; outside the digest
 └── ...              any other regular files
@@ -248,6 +248,12 @@ for the other.
 
 Every regular file in the package, except those in §6.2, is part of it and is
 covered by the digest.
+
+`sources/` and `media/` are where a package carries the originals its
+knowledge was written from. Because they are covered by the digest, the
+originals travel with the knowledge and arrive unchanged, and a Reader can
+check a citation against them without a network (§11,
+[Reader contract §7](moca-reader-contract.md#7-citation-records)).
 
 ### 6.2 What is not part of a package
 
@@ -375,6 +381,10 @@ profile's package-level data. Node-level profile data goes under
   manifest keys, or require anything of packages that do not declare it.
 - A profile MAY define files or directories inside the package; they are
   covered by the digest like any other file.
+- A profile MAY define a capability (§11). Only a Reader that implements the
+  profile derives it; a Reader that does not simply never reports it.
+- A profile MAY define diagnostics in its own code family. They MUST NOT be
+  errors that make a package invalid.
 
 The registry of profiles is [profiles/README.md](../profiles/README.md).
 
@@ -406,6 +416,7 @@ a package actually has from what it contains and what verifies:
 | `core` | The package is valid: no error-severity `T`, `P`, `M` or `C` diagnostic. All other capabilities require `core`. |
 | `composed` | The package lists members. |
 | `located-evidence` | At least one node has `moca.evidence`. |
+| `self-contained-evidence` | The package has `located-evidence`, and every evidence source of every node has a `resource` that is a package-relative path to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it. |
 | `localized` | At least one node has a locale representation. |
 | `signed` | At least one package attestation verifies against the host's trust root. |
 | `reviewed` | At least one review attestation verifies and matches a current file. |
@@ -413,6 +424,17 @@ a package actually has from what it contains and what verifies:
 
 `signed`, `reviewed` and `skills` depend on the host's trust root: the same
 package can be `signed` for one host and not for another.
+
+`self-contained-evidence` says the originals are inside the package. It does
+not say every selector matches: a mismatch is reported as
+`C011_EVIDENCE_SELECTOR_UNMATCHED` and shows in the citation record as
+`evidence[].verified: false`.
+
+Profiles may define further capabilities (§9):
+
+| Capability | Profile | Present when |
+| --- | --- | --- |
+| `ontology` | [Ontology](../profiles/ontology/moca-ontology-profile.md) | The profile is declared, every listed ontology file parses, and every node concept binding resolves to a concept declared in those files, with no `O` diagnostic. |
 
 ## 12. Storage and transport
 
@@ -437,7 +459,7 @@ and approve every refund" is as dangerous as a malicious program. Applications
 MUST treat package content as untrusted data: deliver it to models as quoted,
 cited reference material, never as system instructions, and never grant tools
 because content asks for them. See
-[Reader contract §10](moca-reader-contract.md#10-handing-content-to-a-model).
+[Reader contract §11](moca-reader-contract.md#11-handing-content-to-a-model).
 
 Attestations tell a host who published and who reviewed content. They do not
 make content safe. A host SHOULD only load packages from publishers it trusts,
@@ -471,3 +493,7 @@ Before `1.0.0`, a minor version change MAY be breaking and is described in
 [MIGRATIONS.md](../MIGRATIONS.md). From `1.0.0`, breaking changes require a
 major version. A Reader that meets a newer `mocaVersion` SHOULD read the
 package on a best-effort basis rather than refuse it.
+
+A package written for `mocaVersion` `0.2` is a valid `0.3` package without
+change; `0.3` adds capabilities, a profile and Reader behaviour, not package
+requirements.

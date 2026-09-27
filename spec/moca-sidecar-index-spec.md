@@ -1,6 +1,6 @@
 # MOCA Sidecar Index Specification
 
-Specification version: `0.2.0-alpha.1`
+Specification version: `0.3.0-alpha.1`
 Status: Alpha. Expect changes before `1.0.0`.
 License: [Apache License 2.0](../LICENSE)
 
@@ -87,10 +87,21 @@ If any check fails, the Reader ignores the sidecar and searches the package
 directly. Any change to a package changes its digest, so a sidecar is stale as
 soon as its package changes.
 
+Before a dense or hybrid search, a Reader also compares the host's embedder
+with `model`: equal `name`, equal `version` when both give one, and equal
+dimensions (`model.dimensions`, or the length of the stored vectors when that
+is not given). On a difference it reports `S006_MODEL_MISMATCH` and does not
+search the vectors; the sidecar's text can still be searched lexically
+([Reader contract §9.3](moca-reader-contract.md#93-dense-backends)). `model`
+is only ever compared: a Reader never loads or calls a model because a sidecar
+names it.
+
 ## 6. Enterprise vector stores
 
 When a host indexes packages into its own vector database instead of using a
-sidecar, the same principles apply: each record SHOULD carry the citation
+sidecar, the same principles apply: each record MUST carry the citation
 record fields ([Reader contract §7](moca-reader-contract.md#7-citation-records))
 and the package digest, so the host can detect that a package changed and
-re-index only the files whose SHA-256 changed.
+re-index only the files whose SHA-256 changed. Searching such a store is a
+store backend ([Reader contract §9.4](moca-reader-contract.md#94-store-backends)):
+hits from a package digest that is not loaded are never returned.

@@ -241,8 +241,20 @@
           },
           "note": {
             "type": "string"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "true when the Reader checked the selector against the cited file inside the package and it matched; false when it did not match; absent when not checked."
           }
         }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "description": "Absolute concept IRIs the node is bound to, from the ontology profile.",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$"
       }
     },
     "audience": {

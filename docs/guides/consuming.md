@@ -17,7 +17,7 @@ pkg.signers;       // ['Acme publishing key']
 ```
 
 `readPackage` never throws for a bad package: problems are diagnostics with
-stable codes ([Reader contract §9](../../spec/moca-reader-contract.md#9-diagnostics)).
+stable codes ([Reader contract §10](../../spec/moca-reader-contract.md#10-diagnostics)).
 A package is usable when `valid` is true; attestation, member and sidecar
 problems only disable the feature concerned.
 
@@ -76,4 +76,4 @@ audience filter cannot be widened by the caller.
 
 Package text is untrusted. Put it in the model's context as quoted, cited
 reference material, never as instructions, and never grant tools because
-content asks ([Reader contract §10](../../spec/moca-reader-contract.md#10-handing-content-to-a-model)).
+content asks ([Reader contract §11](../../spec/moca-reader-contract.md#11-handing-content-to-a-model)).

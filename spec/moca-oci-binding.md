@@ -1,6 +1,6 @@
 # MOCA OCI Binding
 
-Specification version: `0.2.0-alpha.1`
+Specification version: `0.3.0-alpha.1`
 Status: Alpha, draft binding. No reference tooling yet.
 License: [Apache License 2.0](../LICENSE)
 

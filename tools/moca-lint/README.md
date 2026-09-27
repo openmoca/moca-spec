@@ -12,7 +12,7 @@ moca-lint extract <archive> -o <dir>
 ```
 
 - `lint` exits 1 when there is any error-severity diagnostic, 0 otherwise.
-  Codes are listed in [Reader contract §9](../../spec/moca-reader-contract.md#9-diagnostics).
+  Codes are listed in [Reader contract §10](../../spec/moca-reader-contract.md#10-diagnostics).
 - `digest` prints the canonical digest; it is the same for a folder and its
   archive.
 - `pack` writes nothing if lint fails. The archive contains the package's

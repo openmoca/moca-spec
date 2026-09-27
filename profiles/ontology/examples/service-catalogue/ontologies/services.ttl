@@ -1,0 +1,24 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix svc: <https://example.org/services#> .
+
+svc:Services a skos:ConceptScheme ;
+  skos:prefLabel "Services"@en .
+
+svc:ServiceBoundary a skos:Concept ;
+  skos:inScheme svc:Services ;
+  skos:prefLabel "Service boundary"@en ;
+  skos:definition "The ownership and data-isolation perimeter of a service."@en .
+
+svc:Microservice a skos:Concept ;
+  skos:inScheme svc:Services ;
+  skos:prefLabel "Microservice"@en ;
+  skos:related svc:ServiceBoundary .
+
+svc:OrderService a skos:Concept ;
+  skos:inScheme svc:Services ;
+  skos:prefLabel "Order service"@en ;
+  skos:broader svc:Microservice .
+
+svc:OrderDatabase a skos:Concept ;
+  skos:inScheme svc:Services ;
+  skos:prefLabel "Order database"@en .
