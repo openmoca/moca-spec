@@ -2,6 +2,30 @@
 
 How to move packages and Readers between versions of the specification.
 
+## From 0.2.0-alpha.1 to 0.3.0-alpha.1
+
+**Packages: nothing to do.** A `0.2` package is a valid `0.3` package. To use
+what `0.3` adds:
+
+- Put the files your nodes cite under `sources/` or `media/`, and point
+  `sources[].resource` at them by package path. The package then has
+  `self-contained-evidence`, and Readers check each quote against the file.
+  Fix any `C011_EVIDENCE_SELECTOR_UNMATCHED` warning by correcting the quote.
+- To bind nodes to a vocabulary, declare the
+  [ontology profile](profiles/ontology/moca-ontology-profile.md).
+
+**Readers and applications:**
+
+| 0.2 | 0.3 | What to do |
+| --- | --- | --- |
+| `Library.search()` was the only search | `Search` over a backend; `Library.search()` remains as a synchronous lexical shortcut | Use `new Search(library, { backend, audiences })` for sidecar vectors or a store. |
+| Search over sidecar chunks ignored `locale` | The requested locale is honoured | Expect only the requested locale's chunks, or the default for nodes without it. |
+| Evidence copied through unchecked | `evidence[].verified` on citation records | Show whether a citation was verified against its original. |
+| Enterprise vector stores: guidance only | Store backends; Search re-checks every hit | Wrap your store as a backend so the default policy applies to it. |
+| Capabilities: 7 | Also `self-contained-evidence`, and `ontology` from the profile | Update any exact-match checks on capability lists. |
+| New codes | `C011`, `S006`, `O001`-`O003` | Hosts that treat warnings as errors (strict mode) will see them. |
+| [ADR-0003](docs/adr/0003-reader-mcp-server-and-adapters.md) | Superseded by [ADR-0007](docs/adr/0007-reader-interface-and-per-language-readers.md) | Readers in other languages follow the [Reader interface](spec/moca-reader-interface.md) and the corpus runner protocol. |
+
 ## From the 0.1.0-beta.1 draft to 0.2.0-alpha.1
 
 The 0.1 draft was never published to a registry, but packages may exist
@@ -12,7 +36,7 @@ locally. Every change below is breaking.
 | 0.1 draft | 0.2 | What to do |
 | --- | --- | --- |
 | `id: "urn:moca:..."` | Absolute URI; registered URN namespaces or `https:`/`tag:` URIs | Rename, for example to `https://<your-domain>/moca/<name>`. |
-| `@context`, `ontologies`, `entryConcepts` | Removed from core | Move RDF material to the [claims profile](profiles/claims/moca-claims-profile.md), or drop it. |
+| `@context`, `ontologies`, `entryConcepts` | Removed from core | From 0.3, move ontologies and `entryConcepts` to the [ontology profile](profiles/ontology/moca-ontology-profile.md), as Turtle with absolute IRIs; `@context` has no successor. Move claims to the [claims profile](profiles/claims/moca-claims-profile.md). |
 | `integrity` | Removed | Nothing to do: Readers compute per-file digests. |
 | `canonicalDigest` | Removed: the digest is computed, never declared | Delete. Run `moca-lint digest` to see the digest. |
 | `signature` | Detached attestation under `attestations/` | Delete, then run `moca-sign sign`. |
@@ -34,7 +58,8 @@ locally. Every change below is breaking.
 | `epistemicStatus` | OKF `generated`, `verified`, `status`; `moca.contested_by` | `generated` becomes `generated: {by, at}`; `verified` becomes a `verified` entry; `deprecated` becomes `status: deprecated`; `disputed` becomes `moca.contested_by`. |
 | `lastReviewed`, `validFrom` | OKF `stale_after`; `moca.valid_from`, `moca.valid_until` | Set `stale_after` to the next review date. |
 | `evidence[].source` path + `locator` | OKF `sources[]` with `id` + `moca.evidence[]` with a W3C selector | Add a `sources` entry per document; point evidence at its `id`. A `page` locator becomes `FragmentSelector` `page=N` (RFC 3778). |
-| `concepts`, `claims` | Claims profile | Move to nanopublications, or drop. |
+| `concepts` | Ontology profile (0.3) | Move to `moca.profiles["https://w3id.org/moca/profiles/ontology/v1"].concepts`, each as `{ iri, role }` with an absolute IRI. |
+| `claims` | Claims profile | Move to nanopublications, or drop. |
 
 ### Skills
 

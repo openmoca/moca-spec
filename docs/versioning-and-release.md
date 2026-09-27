@@ -4,7 +4,7 @@ Three things carry versions, independently.
 
 | What | Version | Where |
 | --- | --- | --- |
-| The specification | `0.2.0-alpha.1`; packages name it as `mocaVersion` `0.2` | `spec/`, `schemas/v1/`, `conformance/cases.json` (`corpusVersion`) |
+| The specification | `0.3.0-alpha.1`; packages name it as `mocaVersion` `0.3` | `spec/`, `schemas/v1/`, `conformance/cases.json` (`corpusVersion`) |
 | Each tool | Its own semver | `tools/*/package.json` |
 | Each package's content | The package's `version` | `moca.json` ([package spec §4.3](../spec/moca-package-spec.md#43-content-versions)) |
 
