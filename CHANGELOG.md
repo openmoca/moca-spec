@@ -28,6 +28,15 @@ and compatibility policy.
   production, and archive writing move to the Producer class, with optional
   signing and sidecar building. A conformance claim must name its class. See
   [MIGRATIONS.md](MIGRATIONS.md).
+- **Clarified the SDK contract's network rule and added host-supplied package
+  sources.** §2.1 previously read as "MUST NOT perform network I/O", which
+  seemed to forbid a Knowledge Harness from querying a vector store or loading
+  from remote storage. It now says an SDK must not initiate network I/O of its
+  own: every access goes through something the host supplied and enabled, and
+  nothing in a package can cause I/O. §1.2 states that retrieval backends are
+  host-configured and outside the contract. New §3.1 lets a host hand a
+  package over as a source (memory, blob storage, a database), making core
+  §4.1's storage independence usable. See [MIGRATIONS.md](MIGRATIONS.md).
 - **Knowledge Harness implementations replace the in-repository SDK plan.**
   They live in their own repositories — .NET first, then Python, then
   TypeScript — and consume the conformance corpus from here. `ROADMAP.md`

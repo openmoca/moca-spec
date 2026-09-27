@@ -57,6 +57,12 @@ Retrieval — lexical search, sidecar-index search, enterprise vector stores,
 ontology-aware query expansion — is **not** part of either class. This
 contract, like the core specification, defines no retrieval engine.
 
+A Knowledge Harness's retrieval backends are configured by the host. Their
+I/O, including network access to a vector or hybrid search store, is outside
+this contract and is not restricted by §2.1. Configuration for a backend
+MUST NOT be taken from package contents; a package cannot name an endpoint
+([core §5.3](moca-core-spec.md#53-excluded-properties)).
+
 ## 2. Capability surface
 
 Every SDK, of either class, MUST provide these eight Reader capabilities. It
@@ -64,7 +70,7 @@ MAY provide more.
 
 | # | Capability | Summary |
 |---|---|---|
-| 1 | **Target resolution** | Open a package from a directory or archive |
+| 1 | **Target resolution** | Open a package from a directory, an archive, or a host-supplied source |
 | 2 | **Manifest access** | Parse and validate a manifest |
 | 3 | **Content traversal** | Enumerate content nodes with identity and metadata |
 | 4 | **Diagnostics** | Report structured findings with stable codes |
@@ -81,9 +87,12 @@ These prohibitions apply to both classes.
 
 - **MUST NOT execute anything found in a package.** No evaluation, no dynamic
   import, no subprocess, for any package content including `skills/`.
-- **MUST NOT perform network I/O** as part of loading, parsing, or validating
-  a package. Composition resolution and online signature verification are the
-  only permitted exceptions, and both MUST be explicitly requested by the host.
+- **MUST NOT initiate network I/O of its own** while loading, parsing, or
+  validating a package. Every access beyond a local directory or archive goes
+  through something the host supplied and explicitly enabled: a package
+  source (§3.1), a composition resolver (§8), or online signature
+  verification (§7.3). Nothing in a package can cause an SDK to perform I/O,
+  and a package can never supply the location to contact.
 - **MUST NOT read or write outside the package root** while resolving
   package-relative paths.
 - **MUST NOT require a model, vector database, or agent framework.**
@@ -105,7 +114,9 @@ would reject with an error-severity diagnostic.
 ## 3. Target resolution
 
 An SDK MUST accept a **directory** containing `moca.json` at its root, and
-SHOULD accept a **Zip archive** (`.moca`) containing the same.
+SHOULD accept a **Zip archive** (`.moca`) containing the same, whether given as
+a file path or as bytes or a stream supplied by the host. It SHOULD also accept
+a **host-supplied package source** (§3.1).
 
 When an SDK opens archives it MUST, before extracting any entry, reject:
 
@@ -118,6 +129,31 @@ implementation defaults to 20,000 entries and 512 MiB.
 
 An SDK MUST report a distinct diagnostic for "target does not exist" versus
 "target exists but has no `moca.json`".
+
+### 3.1 Host-supplied package sources
+
+Core §4.1 allows a package to be stored anywhere — on disk, in an archive, or
+as records in a database or object store — with the host responsible for
+ingestion ([core §4.1](moca-core-spec.md#41-storage--transport-independence)).
+A host-supplied package source is how that reaches an SDK: an object the host
+implements that lists a package's files by package-relative path and returns
+the bytes of any one of them. It lets a host keep packages in memory, in blob
+storage, or in a database without first copying them to disk.
+
+An SDK accepting package sources MUST:
+
+- treat a source exactly as it treats a directory, so the same package yields
+  the same nodes, diagnostics, derived level, and `canonicalDigest` whatever
+  its storage;
+- apply §4.1's path-containment rule to every path it requests, and never
+  request a path the source did not list;
+- apply the archive limits above to the number of files a source lists and
+  their total size;
+- report a source that fails to return a listed file as a diagnostic, not an
+  exception.
+
+How a source fetches its bytes — including over a network — is the host's
+concern. The SDK only ever asks the source for package-relative paths.
 
 ## 4. Manifest access
 

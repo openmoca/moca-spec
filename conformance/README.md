@@ -134,6 +134,8 @@ composition members and relates; a composition-only package with no content;
 and Level 2 and Level 3 packages.
 
 Known gaps, to add as SDKs surface them: locale-resolution fallback,
-composition cycle detection, archive-extraction hardening, and sidecar
-binding. These are specified in the contract (§5.2, §8, §3, §10) but not yet
-represented as fixtures.
+composition cycle detection, archive-extraction hardening, host-supplied
+package sources, and sidecar binding. These are specified in the contract
+(§5.2, §8, §3, §3.1, §10) but not yet represented as fixtures. A
+host-supplied source case would reuse existing fixtures and assert that the
+outcome matches loading the same fixture from a directory.

@@ -29,6 +29,15 @@ A package is a directory containing `moca.json` at its root, or a Zip archive
 a directory on disk, an archive, or records shredded into a database or object
 store.
 
+For the third shape, and for packages the application already holds in memory
+or in blob storage, the host supplies a **package source**: an object that
+lists the package's files by relative path and returns their bytes
+([SDK contract §3.1](../../spec/moca-sdk-contract.md#31-host-supplied-package-sources)).
+The reader treats it exactly like a directory, so storage never changes what a
+package means. Whatever the source does to fetch bytes, including network
+calls, is the host's business; the reader itself never reaches out on its own,
+and a package can never tell it where to go.
+
 If you accept archives, you are accepting untrusted input, so apply the usual
 protections before extracting: reject entry names containing `..` or absolute
 paths, cap the entry count, and cap total uncompressed size. `moca-lint`'s

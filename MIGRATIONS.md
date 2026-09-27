@@ -33,6 +33,31 @@ behaviour as breaking for implementers.
 - If you are a Producer, check the new §2.2, §7.4, and §10.1 requirements,
   which describe what the reference CLIs already do.
 
+## SDK contract: network rule clarified, host-supplied sources added
+
+**What changed:** [SDK contract §2.1](spec/moca-sdk-contract.md#21-what-an-sdk-must-not-do)
+no longer says an SDK "MUST NOT perform network I/O". It says an SDK MUST NOT
+initiate network I/O of its own while loading, parsing, or validating a
+package, and that all other access goes through a host-supplied package
+source, composition resolver, or online signature verification.
+[§1.2](spec/moca-sdk-contract.md#12-conformance-classes) states that a
+Knowledge Harness's retrieval backends are host-configured and outside the
+rule. New [§3.1](spec/moca-sdk-contract.md#31-host-supplied-package-sources)
+adds host-supplied package sources as a SHOULD.
+
+**Why this is listed here:** it changes what implementers are permitted and
+expected to do (contract §13).
+
+**What you should do:**
+
+- Nothing, if your SDK only reads local directories and archives: every
+  existing behaviour stays conformant.
+- If you implement a Knowledge Harness, you may add package sources (§3.1).
+  If you do, the same package must produce identical results whether it comes
+  from a source or a directory.
+- Never derive a search backend's configuration, or any location to contact,
+  from package contents.
+
 ## Education profile moved out of this repository
 
 **What changed:** `profiles/education/` graduated to
