@@ -18,8 +18,8 @@ behavior belong in profiles layered on top of core (see §11), not in core
 itself."
 
 By that test, `SKILL.md`'s frontmatter shape, `allowed-tools`, and
-`metadata.concepts` do not belong in Core for the same reason
-`education:competencies` does not.
+`metadata.concepts` do not belong in Core for the same reason a domain
+profile's own skill metadata would not.
 
 **A correction to how this is usually framed:** the domain-independence
 argument comes from §1, not from
@@ -38,7 +38,7 @@ about domain scope. It is a good rule and `skills/` does not violate it.
 | [§3.1](../../spec/moca-core-spec.md#31-level-requirement-clarification)'s Level 3 signature clarification | `SKILL.md` frontmatter shape, `name`, `description` |
 | [§5.1](../../spec/moca-core-spec.md#51-manifest-properties)'s `signature` "Required if `skills/` present" | `allowed-tools` semantics and host-policy filtering |
 | [§4](../../spec/moca-core-spec.md#4-logical-package-structure)'s layout entry for `skills/` | `metadata.concepts` binding to package concepts |
-| Inertness ([§1.1](../../spec/moca-core-spec.md#11-the-3-layer-system-architecture), §8.2's first bullets) | Skill discovery and invocation conventions |
+| Inertness ([§1.1](../../spec/moca-core-spec.md#11-the-three-pillar-architecture), §8.2's first bullets) | Skill discovery and invocation conventions |
 
 Core keeps a directory-name reservation and a signing obligation. Both are
 domain-independent, both are package-container concerns, and the container is
@@ -50,8 +50,8 @@ The Core rule is restated without reference to Agent Skills:
 
 > Any package containing a `skills/` directory MUST include a valid `signature`
 > object in `moca.json`, regardless of the package's declared conformance
-> level. A harness MUST refuse to load `skills/` content from an unsigned or
-> signature-invalid package, even if it is willing to load the rest of the
+> level. A Knowledge Harness MUST refuse to load `skills/` content from an
+> unsigned or signature-invalid package, even if it is willing to load the rest of the
 > package's content. Core does not define the format or semantics of skill
 > content; see the Agent Skills profile.
 
@@ -71,13 +71,13 @@ required for a subset that opted in.
 ## The real blocker is §11.2
 
 [§11.2](../../spec/moca-core-spec.md#112-graceful-degradation) requires that a
-harness not recognising a profile URI "MUST still process the package as valid
+consumer not recognising a profile URI "MUST still process the package as valid
 MOCA Core," and that profiles "MUST NOT require behavior that would make a
 package invalid or unusable to a core-only consumer."
 
 If §8.2 moves out of Core entirely, then:
 
-> A core-only harness encountering a package that declares
+> A core-only Knowledge Harness encountering a package that declares
 > `profiles/agent-skills/v1` and ships unsigned `skills/` is *required by
 > §11.2* to process it as valid — and, with the boundary rule gone from Core,
 > has no rule telling it to refuse the skills.
@@ -97,20 +97,16 @@ split is smaller than proposed, and it is the only version that survives §11.2.
 
 ## What breaks
 
-**Two real packages ship `skills/`:**
+**One real package ships `skills/`:**
 
-- [`examples/level-3-extended`](../../examples/level-3-extended)
-- [`profiles/education/examples/education-profile`](../../profiles/education/examples/education-profile)
+- [`examples/level-3-extended`](../../examples/level-3-extended), and its
+  conformance copy `valid-level-3-extended`
 
-Both add `"https://openmoca.org/profiles/agent-skills/v1"` to their `profile`
+It adds `"https://openmoca.org/profiles/agent-skills/v1"` to its `profile`
 array. Editing a manifest invalidates `canonicalDigest` and therefore the
 signature — `npm run refresh:derived` is mandatory and cascades transitively
 through composed members, per
 [CONTRIBUTING.md](../../CONTRIBUTING.md#after-editing-an-example-package).
-
-The education example then declares **two** profiles, which is explicitly
-supported ([§11.1](../../spec/moca-core-spec.md#111-profile-declaration)) and
-worth keeping as the repository's first multi-profile package.
 
 **Six conformance fixtures** carry `skills/`:
 `signature-{valid,missing,tampered,placeholder,wrong-signer}` and
@@ -187,7 +183,7 @@ tooling question — see below.
 | 2 | Fix the `vocab.js` profile-recognition bug, with a regression test | 0.5 d |
 | 3 | Author `profiles/agent-skills/` | 1 d |
 | 4 | Spec PR: §8 split, §3.1, §4, §5.1, §11.5 table | 1 d |
-| 5 | Update two example manifests; `npm run refresh:derived` | 0.5 d |
+| 5 | Update the example manifest; `npm run refresh:derived` | 0.5 d |
 | 6 | Update six fixtures plus twins; regenerate conformance cases | 1 d |
 | 7 | [docs/guides/signing-and-trust.md](../guides/signing-and-trust.md), CHANGELOG, MIGRATIONS | 0.5 d |
 
@@ -205,15 +201,15 @@ disjoint specification sections — except that both edit the
    **Leaning keep, with a comment naming the inconsistency** — a security-
    adjacent check is a defensible exception to a boundary that exists for
    maintenance reasons.
-2. **Does the profile URI version as `v1`** given Core is `0.x`? The education
-   and EU AI Act profiles both use `v1` at `0.1.0-beta.1`, so precedent says
-   yes.
+2. **Does the profile URI version as `v1`** given Core is `0.x`? The EU AI Act
+   profile uses `v1` at `0.1.0-beta.1`, and so do graduated profiles, so
+   precedent says yes.
 3. **Should `skills/` stay in the [§4](../../spec/moca-core-spec.md#4-logical-package-structure)
    layout diagram** once Core no longer defines its contents? **Yes** — Core
    reserves the directory name and attaches a signing obligation to it, so it
    must appear, annotated as profile-defined.
-4. **Does the education profile's [§6 skill convention](../../profiles/education/moca-education-profile.md#6-skill-convention-tutoring-skills)
-   now depend on the agent-skills profile?** If so, that is profile-to-profile
+4. **Does a domain profile that layers its own skill convention on top of
+   skills now depend on the agent-skills profile?** If so, that is profile-to-profile
    dependency, which
    [§11.5](../../spec/moca-core-spec.md#115-compliance--standards-profiles)
    discourages ("no profile-of-profile inheritance"). Likely resolved by having

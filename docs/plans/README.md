@@ -41,10 +41,10 @@ Open Knowledge Format already occupies it with Google behind it.
 | [01](01-okf-v0.2-conformance.md) | OKF v0.2 conformance as a Level 1 MUST, and deprecation of the node fields OKF already owns | 8–12 d |
 | [02](02-skills-to-agent-skills-profile.md) | Move the Agent Skills vocabulary out of Core into a profile, keeping the security boundary in Core | 3–5 d |
 | [03](03-mif-interoperability.md) | A MIF interoperability profile and a bidirectional `moca-convert` adapter | 6–9 d |
-| [04](04-converter-first-core-audit.md) | Build the SCORM → MOCA → harness → xAPI chain first, and use its instrumentation to decide what Core keeps | 15–25 d |
+| [04](04-reference-consumer-core-audit.md) | Run a reference AI Harness on the .NET Knowledge Harness against real content, and use the Knowledge Harness's field instrumentation to decide what Core keeps | 13–21 d |
 
 Sequencing, dependencies, and the gating ADR are in
-[04-converter-first-core-audit.md](04-converter-first-core-audit.md#sequencing-across-all-four-plans).
+[04-reference-consumer-core-audit.md](04-reference-consumer-core-audit.md#sequencing-across-all-four-plans).
 
 ## The gate
 

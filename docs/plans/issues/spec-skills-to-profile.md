@@ -27,8 +27,8 @@ domain-agnostic" and that "domain-specific vocabulary and behavior belong in
 profiles layered on top of core (see §11), not in core itself."
 
 By that test, `SKILL.md`'s frontmatter shape, `allowed-tools`, and
-`metadata.concepts` do not belong in Core, for the same reason
-`education:competencies` does not. Core currently describes *what a skill is*,
+`metadata.concepts` do not belong in Core, for the same reason a domain
+profile's own skill metadata would not. Core currently describes *what a skill is*,
 which is a domain modelling decision, not a package-container one.
 
 To be precise about which rule is in play: this argument comes from §1, not
@@ -52,8 +52,8 @@ Stays in Core, restated without reference to Agent Skills:
 
 > Any package containing a `skills/` directory MUST include a valid `signature`
 > object in `moca.json`, regardless of the package's declared conformance
-> level. A harness MUST refuse to load `skills/` content from an unsigned or
-> signature-invalid package, even if it is willing to load the rest of the
+> level. A Knowledge Harness MUST refuse to load `skills/` content from an
+> unsigned or signature-invalid package, even if it is willing to load the rest of the
 > package's content. Core does not define the format or semantics of skill
 > content; see the Agent Skills profile.
 
@@ -73,10 +73,10 @@ before is required to be signed after.
 Moving §8.2 into the profile as well was considered first and does not survive
 §11.2.
 
-§11.2 requires that a harness not recognising a profile URI "MUST still process
+§11.2 requires that a consumer not recognising a profile URI "MUST still process
 the package as valid MOCA Core," and that profiles "MUST NOT require behavior
 that would make a package invalid or unusable to a core-only consumer." So a
-core-only harness encountering a package that declares
+core-only Knowledge Harness encountering a package that declares
 `profiles/agent-skills/v1` and ships unsigned `skills/` would be *required by
 §11.2* to process it as valid — and, with the boundary rule gone from Core,
 would have no rule telling it to refuse the skills. Graceful degradation would
@@ -104,26 +104,23 @@ constraint, not §11.4.
 signing obligation is preserved in effect and scope. Existing signed packages
 remain valid.
 
-**Two packages ship `skills/` and must declare the new profile:**
+**One package ships `skills/` and must declare the new profile:**
+`examples/level-3-extended`, with its conformance copy
+`valid-level-3-extended`.
 
-- `examples/level-3-extended`
-- `profiles/education/examples/education-profile`
-
-Editing either manifest invalidates `canonicalDigest` and therefore the
-signature; `npm run refresh:derived` is required and cascades transitively. The
-education example then declares two profiles, which §11.1 explicitly supports
-and which is worth keeping as the repository's first multi-profile example.
+Editing the manifest invalidates `canonicalDigest` and therefore the
+signature; `npm run refresh:derived` is required and cascades transitively.
 
 **Six conformance fixtures** carry `skills/`
 (`signature-{valid,missing,tampered,placeholder,wrong-signer}` and
 `skill-frontmatter-invalid`), plus their `tools/moca-lint/test/fixtures/`
 twins, since fixtures are copies rather than symlinks.
 
-**Education profile §6** defines a tutoring-skill convention that now sits atop
-the Agent Skills profile. §11.5 discourages profile-of-profile inheritance, so
-this should be resolved by having packages declare both profiles independently
-rather than by making education depend on agent-skills. Worth confirming during
-review.
+**Domain profiles** may define their own skill conventions on top of the Agent
+Skills profile. §11.5 discourages profile-of-profile inheritance, so this
+should be resolved by having packages declare both profiles independently
+rather than by making a domain profile depend on agent-skills. Worth confirming
+during review.
 
 **A latent `moca-lint` bug this change trips.**
 `tools/moca-lint/lib/vocab.js`'s `allowedEpistemicStatusValues()` sets

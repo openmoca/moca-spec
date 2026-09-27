@@ -99,9 +99,10 @@ change lives in the companion OKF conformance issue.
   the source carrier moves.
 - **Level 3:** Web Annotation selectors are explicitly retained, so the Level 3
   definition is unchanged.
-- **Education profile:** extends the epistemic-status vocabulary with
-  `authoritative` and `peer-reviewed`. **Directly affected if §7.2 is deleted
-  outright**, unaffected if §7.2 is narrowed. This is the strongest practical
+- **Profiles extending the vocabulary:** §7.2 invites profiles to add values
+  such as `authoritative` and `peer-reviewed`, and at least one graduated
+  profile does. **Directly affected if §7.2 is deleted outright**, unaffected if
+  §7.2 is narrowed. This is the strongest practical
   argument for narrowing.
 - **EU AI Act profile:** no node-level frontmatter dependency. Unaffected.
 - **Packages in the wild:** any package using `summary`, `epistemicStatus:
@@ -123,12 +124,12 @@ authoring surface, and the "must agree" rule is a validation burden that exists
 only because of the duplication.
 
 **2. Delete §7.2 entirely.** Sharpest expression of "MOCA does not define a
-content model." Rejected for now: it breaks the education profile's vocabulary
-extension, and `disputed` has no OKF equivalent while being depended on by
-§10.2. Reconsider after the `docs/plans/04-converter-first-core-audit.md`
+content model." Rejected for now: it breaks profile vocabulary extensions,
+and `disputed` has no OKF equivalent while being depended on by
+§10.2. Reconsider after the `docs/plans/04-reference-consumer-core-audit.md`
 instrumentation shows whether any consumer reads it.
 
-**3. Defer the whole decision to the harness instrumentation** in plan 04.
+**3. Defer the whole decision to the Knowledge Harness instrumentation** in plan 04.
 Evidence-driven and appealing. Rejected as sequencing: the duplication would
 ship in `0.2.0-beta.1` alongside OKF conformance and then be removed a release
 later, meaning two migrations for authors instead of one. The retained fields

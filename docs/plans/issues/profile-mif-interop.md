@@ -28,9 +28,9 @@ paragraph.
 
 ## Why existing profiles don't cover this
 
-Neither shipped profile is about format interoperability — education is a
-learning-content domain profile, EU AI Act is a compliance classification
-profile. Nothing in the repository addresses carrying another format's model.
+No existing profile is about format interoperability — EU AI Act, the one in
+this repository, is a compliance classification profile, and graduated
+profiles cover subject-domain vocabulary. Nothing in the repository addresses carrying another format's model.
 
 MOCA Core cannot express three of MIF's constructs on its own:
 

@@ -92,7 +92,7 @@ MIF's `temporal` records two — when a fact was recorded, and when it was true.
 There is no lossless core mapping, and `profileData.mif.temporal` is the
 correct home rather than a workaround.
 
-Worth noting for [plan 04](04-converter-first-core-audit.md): if bi-temporal
+Worth noting for [plan 04](04-reference-consumer-core-audit.md): if bi-temporal
 validity turns out to matter to real consumers, that is a candidate Core
 addition rather than a permanent profile field. Do not decide it here.
 

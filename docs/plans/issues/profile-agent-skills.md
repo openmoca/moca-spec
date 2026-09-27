@@ -25,12 +25,12 @@ Nothing covers it today — it is in Core, which is the problem. §1 states that
 "MOCA Core is domain-agnostic" and that domain-specific vocabulary belongs in
 profiles. `SKILL.md`'s frontmatter shape, `allowed-tools`, and
 `metadata.concepts` are one external ecosystem's vocabulary and fail that test
-for the same reason `education:competencies` does.
+for the same reason a domain profile's own skill metadata would.
 
-The education profile has an adjacent §6 tutoring-skill convention, but it is
-domain-specific (tutoring) and layered on Core's general skills mechanism. It
-cannot absorb the general mechanism without making every skills-using package
-an education package.
+A domain profile could define its own skill convention layered on Core's
+general skills mechanism, but no domain profile can absorb the general
+mechanism without making every skills-using package a package of that
+domain.
 
 ## Proposed additions
 
@@ -72,7 +72,7 @@ Purely additive, and specifically:
 
 **On the §11.2 interaction, stated explicitly because it drove the design.**
 An earlier version of this proposal moved Core's §8.2 security boundary into
-the profile. That fails §11.2: a core-only harness must process an unrecognised
+the profile. That fails §11.2: a core-only Knowledge Harness must process an unrecognised
 profile's package as valid Core, so with the rule inside the profile it would
 have no basis for refusing unsigned `skills/`. Keeping the rule in Core, bound
 to the directory's existence rather than to a profile declaration, is what
@@ -87,14 +87,12 @@ would make a package unusable to a core-only consumer.
 }
 ```
 
-A package may declare it alongside others — `profiles/education/examples/education-profile`
-will declare both this and the education profile, becoming the repository's
-first multi-profile example:
+A package may declare it alongside others, such as a compliance profile:
 
 ```json
 {
   "profile": [
-    "https://openmoca.org/profiles/education/v1",
+    "https://openmoca.org/profiles/eu-ai-act/v1",
     "https://openmoca.org/profiles/agent-skills/v1"
   ]
 }
@@ -109,6 +107,6 @@ first multi-profile example:
   responsibility. Recommendation is to keep the check as a documented
   exception, on the grounds that it is security-adjacent — but it is a real
   inconsistency and should be decided rather than inherited.
-- Education profile §6's tutoring-skill convention now sits atop this profile.
+- A domain profile with its own skill convention would sit atop this profile.
   §11.5 discourages profile-of-profile inheritance, so packages should declare
-  both independently rather than education depending on this one.
+  both independently rather than the domain profile depending on this one.
