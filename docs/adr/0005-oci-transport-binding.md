@@ -1,6 +1,6 @@
 # 0005 — OCI registries as an optional transport binding
 
-- **Status:** Accepted
+- **Status:** Superseded by [0015](0015-park-unconsumed-features.md)
 - **Date:** 2026-09-27
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 

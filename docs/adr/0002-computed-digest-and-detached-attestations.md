@@ -1,6 +1,6 @@
 # 0002 — The digest is computed, never declared; attestations are detached
 
-- **Status:** Accepted
+- **Status:** Superseded by [0014](0014-digest-v2-bagit-manifest.md)
 - **Date:** 2026-09-27
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 
