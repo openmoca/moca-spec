@@ -1,7 +1,11 @@
 # MOCA conformance suite
 
-A language-neutral corpus that every MOCA SDK is tested against, so a
-TypeScript, Python, and .NET implementation agree on what a package means.
+A language-neutral corpus that every MOCA SDK is tested against, so
+implementations in different languages agree on what a package means. The
+first consumers are the Knowledge Harness implementations — .NET, then
+Python, then TypeScript — each in its own repository
+([ADR-0003](../docs/adr/0003-knowledge-harness-implementations.md)). They
+consume this corpus from here and never vendor a copy.
 
 The behavioural contract these cases pin down is
 [spec/moca-sdk-contract.md](../spec/moca-sdk-contract.md).
@@ -15,7 +19,7 @@ conformance/
 
 ## Why this exists
 
-Three SDKs written against a 900-line prose specification, with no shared test
+Implementations written against a 900-line prose specification, with no shared test
 corpus, will diverge — and the divergence will not surface until something
 built on one of them behaves differently on another. Sharing fixtures and
 expected outcomes makes each SDK's test suite a thin adapter over this corpus
@@ -86,6 +90,10 @@ An SDK that does not implement signature verification skips the `signatures`
 cases and says so. Claiming conformance requires publishing which optional
 capabilities are unimplemented (contract §14) — silently skipping is not
 conformance.
+
+Every current case exercises Reader-class behaviour (contract §1.2), so
+Readers and Producers run the same corpus. There are no Producer-only cases
+yet.
 
 ## Regenerating
 

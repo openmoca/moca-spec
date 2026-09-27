@@ -6,7 +6,7 @@
 [core §3.1](moca-core-spec.md#31-level-requirement-clarification) require
 any package containing `skills/` to carry a valid `signature` object in
 `moca.json`, regardless of the package's declared conformance level, and
-require a harness to refuse to load `skills/` content when that signature is
+require a Knowledge Harness to refuse to load `skills/` content when that signature is
 missing or does not verify. Core deliberately leaves the operational
 detail — what a `signature` object contains, which keys or identities are
 trusted, and how verification is performed offline versus online — to this
@@ -41,7 +41,7 @@ The signed payload is an
   "_type": "https://in-toto.io/Statement/v1",
   "subject": [
     {
-      "name": "urn:moca:example:course@2.0.0",
+      "name": "urn:moca:example:handbook@2.0.0",
       "digest": { "sha256": "b17ef6d19c7a5b1ee83b907c595526dcb1eb06db8227d650d5dda0a9f4ce8dc" }
     }
   ],
@@ -128,8 +128,8 @@ use, and its trust value is exactly as strong as the host's key custody.
 ## 4. Trust roots and identity constraints
 
 Core does not mandate either mode's trust-root contents; that is Application
-/ Host-layer security policy, consistent with the layered architecture in
-[core §1.1](moca-core-spec.md#11-the-3-layer-system-architecture) —
+/ Host-layer security policy, consistent with the three-pillar architecture in
+[core §1.1](moca-core-spec.md#11-the-three-pillar-architecture) —
 the package format and its signature stay portable, but *whom to trust* is
 always a host decision.
 
@@ -199,7 +199,7 @@ Verification of a `signature` object produces exactly one of:
 | **Invalid** | Envelope parses but verification fails: bad signature bytes, a subject digest that does not match `canonicalDigest.value`, an expired/untrusted key or certificate, or a signer identity outside the host's configured constraints. |
 | **Indeterminate** | `--online-verify` was requested but the live check could not complete, and `--allow-offline-fallback` was not passed. |
 
-A harness or `moca-lint` MUST treat every outcome other than **Valid** as
+A Knowledge Harness or `moca-lint` MUST treat every outcome other than **Valid** as
 "refuse to load `skills/`," per core §8.2 — Malformed, Invalid, and
 Indeterminate are not distinguished by trust level, only by diagnostic
 message.

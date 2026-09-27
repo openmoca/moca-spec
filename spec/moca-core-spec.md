@@ -15,46 +15,66 @@ AI consumption.
 
 MOCA Core is domain-agnostic. It makes no assumptions about what the content
 is *for* — a customer-support knowledge base, a legal research corpus, an
-internal engineering wiki, and an educational course are all equally valid
+internal engineering wiki, and a library of field-service manuals are all equally valid
 uses of a MOCA package. Domain-specific vocabulary and behavior belong in
 **profiles** layered on top of core (see §11), not in core itself.
 
-### 1.1 The 3-Layer System Architecture
+### 1.1 The Three-Pillar Architecture
 
-MOCA enforces a strict separation of concerns across three distinct layers:
+MOCA separates an AI knowledge system into three pillars, with a host
+application above them. Each pillar can be replaced without touching the
+others. The rationale is recorded in
+[ADR-0002](../docs/adr/0002-three-pillar-architecture.md).
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│               1. Application / Host Layer                │
-│ PII Redaction · Security Policy · Identity · Enterprise  │
-└────────────────────────────┬───────────────────────────-─┘
-                              │
-                              ▼
+│                    Host Application                      │
+│ Identity · Tenancy · PII Redaction · Access Control      │
+└────────────────────────────┬─────────────────────────────┘
+                             ▼
 ┌──────────────────────────────────────────────────────────┐
-│                   2. AI Harness Layer                    │
-│ Retrieval (GraphRAG/Vector) · Agent Routing · Tools      │
-│ Reasoning · Context Assembly · Memory & Session State    │
-└────────────────────────────┬────────────────────────────-┘
-                              │
-                      consumes / interprets
-                              │
-                              ▼
+│                     3. AI Harness                        │
+│ Agents · Prompts · Workflow · Trust-Signal Policy        │
+│ Skill Execution · Session Memory                         │
+└────────────────────────────┬─────────────────────────────┘
+                             │  asks for knowledge
+                             ▼
 ┌──────────────────────────────────────────────────────────┐
-│               3. MOCA Knowledge Package                  │
+│                  2. Knowledge Harness                    │
+│ Open · Validate · Verify · Resolve Composition           │
+│ Bind Index · Search (Lexical / Sidecar / Enterprise)     │
+└────────────────────────────┬─────────────────────────────┘
+                             │  reads
+                             ▼
+┌──────────────────────────────────────────────────────────┐
+│                  1. MOCA Knowledge Package               │
 │ Concepts · Ontologies · Grounded Nodes · Claims          │
 │ Evidence & Locators · Provenance · Inert Content         │
-└────────────────────────────────────────────────────────-─┘
+└──────────────────────────────────────────────────────────┘
 ```
 
-- **Application / Host Layer**: Controls enterprise security policies, tenant
-  isolation, PII redaction, identity management, billing, and regulatory
-  compliance.
-- **AI Harness Layer**: Controls retrieval strategy (vector search, SPARQL,
-  GraphRAG), prompt assembly, agent routing, tool execution (e.g. MCP), and
-  session memory.
-- **MOCA Knowledge Package Layer**: A portable, storage-agnostic, and inert
+- **Host Application**: Controls enterprise security policies, tenant
+  isolation, PII redaction, identity management, authorization, billing, and
+  regulatory compliance. Supplies the composition resolver (§10.4).
+- **AI Harness**: Built for one use case. Controls agents, prompt assembly,
+  workflow, tool execution (e.g. MCP), and session memory. Decides what to do
+  with the trust signals a package carries — `epistemicStatus`, lifecycle
+  dates, `conflictsWith` — and executes skills subject to host policy.
+- **Knowledge Harness**: Gives any AI Harness one interface to MOCA
+  knowledge, wherever it is stored. Opens and validates packages, resolves
+  locales, identity, and composition, verifies integrity and signatures,
+  binds sidecar indexes, and performs retrieval (lexical, sidecar-index, or
+  enterprise vector store, optionally ontology-aware). Implements the Reader
+  class of the [SDK contract](moca-sdk-contract.md). This specification does
+  not define a retrieval engine; how a Knowledge Harness searches is outside
+  its scope.
+- **MOCA Knowledge Package**: A portable, storage-agnostic, and inert
   semantic knowledge package. MOCA packages MUST NOT encode runtime execution
   parameters, model configurations, or security credentials.
+
+Where this specification assigns a requirement to "a Knowledge Harness" or
+"an AI Harness", it binds that layer. Where it says "a consumer", it binds
+any software reading a package, including validators and converters.
 
 ---
 
@@ -180,7 +200,7 @@ content/01-introduction.fr.md     # French
 content/01-introduction.pt-BR.md  # Brazilian Portuguese
 ```
 
-A harness resolving content for a given locale MUST fall back to the
+A Knowledge Harness resolving content for a given locale MUST fall back to the
 unsuffixed file if no locale-specific variant exists.
 Filename-based locale matching and fallback work identically whether a node
 declares a frontmatter `id` or derives its identity from its relative path
@@ -242,7 +262,7 @@ locale codes to localized strings:
 }
 ```
 
-When an object is used, a harness resolving a display value for a given
+When an object is used, a consumer resolving a display value for a given
 locale MUST fall back to the `language` manifest property, and then to any
 single key present, if no exact or partial (e.g. `pt` for `pt-BR`) locale
 match exists.
@@ -392,15 +412,15 @@ with prefix and term mappings.
 - `extension`: Supplemental domain ontology extensions.
 
 Profiles MAY define additional roles. Profile-defined roles MUST be
-namespaced (e.g. `education:competencies`) to avoid colliding with future
+namespaced (e.g. `legal:jurisdictions`) to avoid colliding with future
 core roles.
 
 ### 6.3 Multi-Package Concept Collisions
 
-When a harness loads more than one MOCA package, concept URIs MAY collide
+When a Knowledge Harness loads more than one MOCA package, concept URIs MAY collide
 across packages (two packages independently defining `ex:ServiceBoundary`
 with different meanings). MOCA does not resolve this at the spec level —
-disambiguation is a harness responsibility, typically via package-scoped
+disambiguation is a Knowledge Harness responsibility, typically via package-scoped
 graph namespacing at load time. Packages SHOULD use fully-qualified,
 globally-unique IRIs (not bare CURIEs) for any concept intended to be
 referenced across package boundaries.
@@ -410,7 +430,7 @@ referenced across package boundaries.
 A concept MAY be marked deprecated or superseded via its ontology definition
 (e.g. `owl:deprecated` / `skos:historyNote` / a `skos:related` /
 `dcterms:isReplacedBy` pointer to the successor concept). Core does not
-mandate a specific vocabulary for this but requires that harnesses
+mandate a specific vocabulary for this but requires that Knowledge Harnesses
 encountering a deprecated concept reference SHOULD surface the successor if
 one is declared, rather than silently treating the reference as broken.
 
@@ -423,7 +443,7 @@ one is declared, rather than silently treating the reference as broken.
 Knowledge nodes are CommonMark documents under `content/`. At Level 1, YAML
 frontmatter is OPTIONAL. The `id`, `title`, `concepts`, `epistemicStatus`,
 `summary`, `evidence`, and `claims` fields are each OPTIONAL, additive
-enrichment. When `id` is absent, a harness MUST derive the node's identity
+enrichment. When `id` is absent, a consumer MUST derive the node's identity
 from its file path relative to `content/`.
 
 The following enriched node uses frontmatter to provide an explicit identity,
@@ -472,9 +492,9 @@ Profiles MAY extend this vocabulary with additional, more specific values
 `peer-reviewed`), but MUST NOT redefine the meaning of a core value.
 
 **Conflict resolution**: MOCA does not arbitrate `epistemicStatus` conflicts
-between two nodes claiming the same concept — this is left to the harness.
+between two nodes claiming the same concept — this is left to the AI Harness.
 This is a deliberate trade-off in favor of package portability over
-cross-package consistency guarantees; harnesses combining multiple packages
+cross-package consistency guarantees; AI Harnesses combining multiple packages
 SHOULD implement their own precedence policy (e.g. prefer `verified` over
 `sourced`, most-recently-`modified` wins on ties).
 
@@ -571,11 +591,11 @@ lastReviewed: 2026-07-15T00:00:00Z
 
 `validFrom` records when the node's content became authoritative,
 `lastReviewed` records when it was last confirmed accurate, and `supersedes`
-names the package or node `id`(s) it replaces. A harness MUST treat these
-fields as informational metadata only — Core does not mandate that a
-harness exclude, downrank, or otherwise change how it treats content based
+names the package or node `id`(s) it replaces. A consumer MUST treat these
+fields as informational metadata only — Core does not mandate that an
+AI Harness exclude, downrank, or otherwise change how it treats content based
 on their presence or age. This mirrors the existing `epistemicStatus`
-conflict-resolution stance (§7.2): MOCA surfaces the signal, harnesses
+conflict-resolution stance (§7.2): MOCA surfaces the signal, AI Harnesses
 decide what to do with it.
 
 Manifest-level `supersedes` and a `composition.relates[]` entry with
@@ -622,9 +642,10 @@ MOCA Knowledge Assets are strictly inert data.
   scripts.
 - Any package containing `skills/` MUST include a valid `signature` object
   in `moca.json`, regardless of the package's declared conformance level
-  (see §3.1). A harness MUST refuse to load `skills/` content from an
+  (see §3.1). A Knowledge Harness MUST refuse to load `skills/` content from an
   unsigned or signature-invalid package, even if it is willing to load the
-  rest of the package's content.
+  rest of the package's content. An AI Harness MUST NOT execute skills a
+  Knowledge Harness has withheld.
 
 This section states the normative rule only. What `signature` contains,
 which keys/certificates/identities a host trusts, and how offline versus
@@ -639,7 +660,7 @@ online verification and revocation are handled are defined in
 
 MOCA packages can act as semantic sidecars, augmenting external content of
 any kind — a document repository, a video archive, a wiki export, a
-courseware package, a support-ticket corpus — without modifying the original
+vendor PDF bundle, a support-ticket corpus — without modifying the original
 source material.
 
 ```json
@@ -656,7 +677,7 @@ source material.
 ```
 
 `targetType` is an open string, not a closed enum — it names whatever format
-the target content is in (`"scorm-2004"`, `"confluence-export"`,
+the target content is in (`"pdf-bundle"`, `"confluence-export"`,
 `"video-playlist"`, `"generic-archive"`, etc.). Core does not maintain a
 canonical list; profiles MAY define expected `targetType` values for their
 domain (see §11).
@@ -666,8 +687,8 @@ sidecar-augmenting multiple external targets should be split into multiple
 MOCA packages, or use a single target that is itself a container (e.g. a
 directory or archive) referencing multiple underlying resources.
 
-The AI Harness uses the MOCA sidecar to ground conversational AI and
-GraphRAG against the external content seamlessly, without that content
+A Knowledge Harness uses the MOCA sidecar to ground AI Harnesses — for
+example through GraphRAG — against the external content, without that content
 needing to natively support MOCA's data model.
 
 ---
@@ -687,14 +708,14 @@ multiple aggregates without circular coupling.
 
 ```json
 {
-  "id": "urn:moca:course:intro-to-bayesian-stats",
+  "id": "urn:moca:handbook:platform-engineering",
   "version": "1.0.0",
-  "title": "Introduction to Bayesian Statistics",
+  "title": "Platform Engineering Handbook",
   "composition": {
     "members": [
-      { "id": "urn:moca:module:probability-basics",  "version": "^1.0.0", "order": 1 },
-      { "id": "urn:moca:module:bayes-theorem",        "version": "^1.0.0", "order": 2 },
-      { "id": "urn:moca:module:priors-and-posteriors","version": "^1.0.0", "order": 3 }
+      { "id": "urn:moca:chapter:service-ownership",  "version": "^1.0.0", "order": 1 },
+      { "id": "urn:moca:chapter:incident-response",  "version": "^1.0.0", "order": 2 },
+      { "id": "urn:moca:chapter:on-call-practices",  "version": "^1.0.0", "order": 3 }
     ]
   }
 }
@@ -725,21 +746,21 @@ but does not mandate initial values: `partOf`, `crossReferences`,
 
 `conflictsWith` is a legitimate, informative relationship value, not an
 error state to be resolved by the schema. As with `epistemicStatus` conflicts
-(§7.2), MOCA surfaces the tension; arbitrating it is a harness
+(§7.2), MOCA surfaces the tension; arbitrating it is an AI Harness
 responsibility.
 
 ### 10.3 A package MAY be composition-only
 
 A package MAY declare `composition` with no content of its own beyond the
 required manifest fields — the intended shape for a pure "joining" package
-(e.g. the course above, if it contributes no content beyond structure).
+(e.g. the handbook above, if it contributes no content beyond structure).
 This satisfies the Level 1 floor (§3), which requires either at least one
 CommonMark file under `content/` or a `composition` block referencing at
 least one other package.
 
 ### 10.4 What Core does not specify
 
-- **Resolution mechanism.** How a harness locates the package behind a
+- **Resolution mechanism.** How a Knowledge Harness locates the package behind a
   referenced `id` (local file, registry lookup, database record) is
   explicitly out of scope, mirroring `augmentation.target`'s existing
   treatment (§9). This preserves runtime neutrality (§1) and the
@@ -751,7 +772,7 @@ least one other package.
   behavior.
 - **Domain-specific relationship semantics.** Whether `partOf` implies
   sequencing, whether `conflictsWith` needs jurisdiction/date scoping — these
-  are profile or harness concerns, layered on top of the generic Core
+  are profile or AI Harness concerns, layered on top of the generic Core
   primitive via `profileData.<profile-name>` or a profile-defined ontology
   role, not additions to the `composition` shape itself.
 
@@ -774,7 +795,7 @@ A package declares conformance to zero or more profiles via the manifest's
 
 ```json
 {
-  "profile": ["https://openmoca.org/profiles/education/v1"]
+  "profile": ["https://openmoca.org/profiles/eu-ai-act/v1"]
 }
 ```
 
@@ -783,7 +804,7 @@ modeled as profiles, see §11.5.
 
 ### 11.2 Graceful Degradation
 
-A harness that does not recognize a declared profile URI MUST still process
+A consumer that does not recognize a declared profile URI MUST still process
 the package as valid MOCA Core, ignoring profile-specific semantics it
  doesn't understand (per §5.6). A package MUST remain fully valid and useful
 under MOCA Core alone, with the profile strictly additive. Profiles MUST NOT
@@ -798,8 +819,8 @@ by profile name, never added as top-level manifest properties:
 ```json
 {
   "profileData": {
-    "education": {
-      "competencies": { "...": "..." }
+    "euAiAct": {
+      "riskTier": "high_risk"
     }
   }
 }

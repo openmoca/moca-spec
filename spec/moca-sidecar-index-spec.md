@@ -96,12 +96,16 @@ because MOCA node IDs are optional.
 `content_path` MUST resolve beneath the target package's `content/` directory
 and MUST NOT be absolute or use parent-directory traversal.
 
-## 6. Harness Consumption
+## 6. Knowledge Harness Consumption
 
 Sidecars are optional performance artifacts. A target `.moca` package remains
-complete and usable without one. A harness MUST NOT infer package integrity,
-trust, conformance, credentials, model configuration, or execution policy from
-a sidecar.
+complete and usable without one. Binding and searching a sidecar is the job of
+the Knowledge Harness
+([core §1.1](moca-core-spec.md#11-the-three-pillar-architecture)). A Knowledge
+Harness with no usable sidecar SHOULD fall back to searching the package
+content directly. A Knowledge Harness MUST NOT infer package integrity, trust,
+conformance, credentials, model configuration, or execution policy from a
+sidecar.
 
 Format-specific auxiliary metadata may live in the payload or in
 vendor-namespaced extension files. It is not a second portable MOCA manifest

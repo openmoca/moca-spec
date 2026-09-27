@@ -9,8 +9,8 @@ License: [Apache License 2.0](../LICENSE)
 ## 1. Scope
 
 This document defines the language-neutral behavioural contract every MOCA SDK
-implements, so that a TypeScript, Python, and .NET SDK agree on what a package
-means. It is normative for SDK implementers. It is **not** a second
+implements, so that implementations in any language — .NET, Python,
+TypeScript, or another — agree on what a package means. It is normative for SDK implementers. It is **not** a second
 specification of the package format — where this document and
 [the core specification](moca-core-spec.md) appear to disagree, core wins and
 this document has a bug.
@@ -28,18 +28,44 @@ implementation.
 
 RFC 2119 keywords (`MUST`, `SHOULD`, `MAY`) carry their standard meanings.
 
-- **SDK** — a library implementing this contract.
+- **SDK** — a library implementing this contract, in either class (§1.2).
 - **Host** — the application embedding an SDK.
 - **Diagnostic** — a structured finding an SDK reports about a package.
+- **Knowledge Harness** — the open-source engine that gives any AI Harness one
+  interface to MOCA knowledge
+  ([core §1.1](moca-core-spec.md#11-the-three-pillar-architecture)). A
+  Knowledge Harness is a Reader-class SDK plus retrieval.
+
+### 1.2 Conformance classes
+
+An SDK conforms as one of two classes. Every conformance claim MUST name the
+class (§14).
+
+| Class | Scope | Typical implementation |
+|---|---|---|
+| **Reader** | Open, validate, and read a package: the eight capabilities in §2 | A Knowledge Harness, which adds retrieval on top |
+| **Producer** | Everything a Reader does, plus writing packages: the capabilities in §2.2 | Authoring tooling — converters, packers, signers, index builders |
+
+The split exists so that software that only reads and searches packages —
+often at runtime, on a device, or offline — never has to carry authoring
+dependencies. Where one language offers both, the Producer capabilities
+SHOULD ship separately from the Reader, so a Reader-only consumer can depend on
+the Reader alone. The rationale is recorded in
+[ADR-0003](../docs/adr/0003-knowledge-harness-implementations.md).
+
+Retrieval — lexical search, sidecar-index search, enterprise vector stores,
+ontology-aware query expansion — is **not** part of either class. This
+contract, like the core specification, defines no retrieval engine.
 
 ## 2. Capability surface
 
-An SDK MUST provide these eight capabilities. It MAY provide more.
+Every SDK, of either class, MUST provide these eight Reader capabilities. It
+MAY provide more.
 
 | # | Capability | Summary |
 |---|---|---|
 | 1 | **Target resolution** | Open a package from a directory or archive |
-| 2 | **Manifest access** | Parse, validate, and create a manifest |
+| 2 | **Manifest access** | Parse and validate a manifest |
 | 3 | **Content traversal** | Enumerate content nodes with identity and metadata |
 | 4 | **Diagnostics** | Report structured findings with stable codes |
 | 5 | **Identity & integrity** | Verify digests; compute `canonicalDigest` |
@@ -47,9 +73,11 @@ An SDK MUST provide these eight capabilities. It MAY provide more.
 | 7 | **Profile discovery** | Surface declared profiles without interpreting them |
 | 8 | **Index discovery** | Detect and bind an optional sidecar |
 
-Signing and verification MAY be a separate package; when offered, §7 applies.
+Signature verification MAY be a separate package; when offered, §7 applies.
 
 ### 2.1 What an SDK MUST NOT do
+
+These prohibitions apply to both classes.
 
 - **MUST NOT execute anything found in a package.** No evaluation, no dynamic
   import, no subprocess, for any package content including `skills/`.
@@ -59,6 +87,20 @@ Signing and verification MAY be a separate package; when offered, §7 applies.
 - **MUST NOT read or write outside the package root** while resolving
   package-relative paths.
 - **MUST NOT require a model, vector database, or agent framework.**
+
+### 2.2 Producer capabilities
+
+A Producer-class SDK MUST additionally provide:
+
+| # | Capability | Summary |
+|---|---|---|
+| P1 | **Manifest creation** | Produce a manifest that validates (§4.3) |
+| P2 | **Integrity production** | Write per-file `integrity` digests and a `canonicalDigest` computed per §7.2 |
+| P3 | **Archive writing** | Write a `.moca` archive that a Reader accepts under §3 |
+
+and MAY additionally provide signing (§7.4) and sidecar building (§10.1). A
+Producer MUST NOT write any artifact that a Reader of the same contract version
+would reject with an error-severity diagnostic.
 
 ## 3. Target resolution
 
@@ -108,9 +150,9 @@ order ([core §5.2](moca-core-spec.md#52-localized-string-values)):
 3. the manifest's `language`;
 4. any single key present.
 
-### 4.3 Creation
+### 4.3 Creation (Producer)
 
-An SDK MUST be able to produce a manifest that validates. A created manifest
+A Producer MUST be able to produce a manifest that validates. A created manifest
 MUST NOT contain excluded properties even if the caller supplies them: an SDK
 MUST reject such input rather than writing it.
 
@@ -223,6 +265,13 @@ An SDK offering verification MUST:
 
 See [the trust model](moca-trust-model.md).
 
+### 7.4 Signing (Producer)
+
+A Producer offering signing MUST sign the recomputed `canonicalDigest`, never a
+declared value it has not verified, and MUST produce a `signature` that a
+Reader offering verification reports as valid given the matching trust root.
+It MUST NOT embed private key material in the package.
+
 ## 8. Composition
 
 An SDK MUST expose `composition.members` (ordered, versioned containment) and
@@ -268,6 +317,13 @@ MUST:
 An SDK MUST NOT derive package integrity, conformance, trust, credentials, or
 execution policy from a sidecar.
 
+### 10.1 Sidecar building (Producer)
+
+A Producer offering sidecar building MUST write only sidecars that pass the
+checks above against their target, and SHOULD bind them by
+`target_package_hash` using the target's `canonicalDigest`
+([sidecar spec](moca-sidecar-index-spec.md)).
+
 ## 11. Graceful degradation
 
 The behaviour that most distinguishes conformant SDKs. Every row is testable
@@ -281,7 +337,7 @@ and appears in `conformance/`:
 | Unknown `epistemicStatus` | At most `warning`. |
 | Unknown `x-*` vendor key | Ignored, preserved. |
 | No `ontologies/` | Level 1. Concepts are opaque strings. |
-| No sidecar | Full functionality minus search. |
+| No sidecar | Full functionality. A Knowledge Harness falls back to searching content directly. |
 | Unknown `storage.format` | Sidecar ignored, package unaffected. |
 | Unresolvable composition member | Diagnostic; other members still usable. |
 | `skills/` unsigned or invalid | Skills refused; **rest of package still usable**. |
@@ -303,13 +359,14 @@ reported as Level 3 conformant.
 ## 13. Versioning
 
 SDKs version independently of each other and of this contract, and MUST
-document which contract version they implement. A change to *required*
+document which contract version and which class (§1.2) they implement. A change to *required*
 behaviour here is a breaking change for every SDK and MUST be recorded in
 [MIGRATIONS.md](../MIGRATIONS.md).
 
 ## 14. Demonstrating conformance
 
-An SDK claiming conformance MUST pass every case in
+An SDK claiming conformance MUST name its class (Reader or Producer) and MUST
+pass every case in
 [`conformance/`](../conformance/README.md) whose `capabilities` it declares
 support for, and MUST publish which optional capabilities it does not
 implement. Passing means producing the expected diagnostic **codes** and

@@ -21,7 +21,7 @@ labels: spec-change
 ## Impact on existing conformance levels / profiles
 
 <!-- Does this change break Level 1/2/3 packages that are otherwise valid
-     today? Does it affect the education profile or any other profile? -->
+     today? Does it affect any profile, in this repository or graduated? -->
 
 ## Alternatives considered
 
