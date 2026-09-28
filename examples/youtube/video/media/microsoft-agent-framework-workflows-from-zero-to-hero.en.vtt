@@ -1,0 +1,4695 @@
+WEBVTT
+
+NOTE Automatic captions for https://www.youtube.com/watch?v=nENs3UndI2o, from YouTube.
+
+1
+00:00:00.640 --> 00:00:03.040
+I hope with this session here you're
+
+2
+00:00:03.040 --> 00:00:05.120
+excited. We're going to have concepts.
+
+3
+00:00:05.120 --> 00:00:07.440
+We're going to have codes. Uh my
+
+4
+00:00:07.440 --> 00:00:10.800
+intention is to go through the concepts
+
+5
+00:00:10.800 --> 00:00:14.880
+first and then exploring on codes. So if
+
+6
+00:00:14.880 --> 00:00:16.640
+you have like any questions raise that
+
+7
+00:00:16.640 --> 00:00:21.600
+up. Uh probably going to rely on on
+
+8
+00:00:21.600 --> 00:00:24.800
+reactor to facilitate that. But bring
+
+9
+00:00:24.800 --> 00:00:27.279
+your questions perhaps if I don't get to
+
+10
+00:00:27.279 --> 00:00:30.960
+answer them as they they come uh through
+
+11
+00:00:30.960 --> 00:00:33.760
+coding. We're going to be uh exploring
+
+12
+00:00:33.760 --> 00:00:37.920
+that in details. So let's start in here
+
+13
+00:00:37.920 --> 00:00:42.079
+with AI agents and workflows. Um we can
+
+14
+00:00:42.079 --> 00:00:44.160
+compare like them. Let's do like a
+
+15
+00:00:44.160 --> 00:00:47.280
+comparison. For example, with workflows,
+
+16
+00:00:47.280 --> 00:00:50.640
+it's always uh predictable, right? We
+
+17
+00:00:50.640 --> 00:00:54.000
+can't say and compare like a workflow
+
+18
+00:00:54.000 --> 00:00:57.520
+being a train on tracks. So it's never
+
+19
+00:00:57.520 --> 00:01:00.559
+going to derail you know that starts at
+
+20
+00:01:00.559 --> 00:01:03.120
+some point is going to finish at some
+
+21
+00:01:03.120 --> 00:01:08.799
+point and it goes as uh we can predict.
+
+22
+00:01:08.799 --> 00:01:11.680
+So there are we we say like in technical
+
+23
+00:01:11.680 --> 00:01:14.240
+terms that they are deterministic
+
+24
+00:01:14.240 --> 00:01:16.400
+because we know like we can predict we
+
+25
+00:01:16.400 --> 00:01:19.119
+we have a predefined path. It is
+
+26
+00:01:19.119 --> 00:01:22.159
+repeatable. So they can execute multiple
+
+27
+00:01:22.159 --> 00:01:25.759
+times and they don't change and you can
+
+28
+00:01:25.759 --> 00:01:28.960
+do it's auditable as well because you
+
+29
+00:01:28.960 --> 00:01:31.520
+have like traceability and you see
+
+30
+00:01:31.520 --> 00:01:33.920
+exactly what happened at that moment in
+
+31
+00:01:33.920 --> 00:01:37.759
+time. So that's like the characteristics
+
+32
+00:01:37.759 --> 00:01:40.479
+of like a workflow when we look like at
+
+33
+00:01:40.479 --> 00:01:44.400
+AI agents they are a little bit
+
+34
+00:01:44.400 --> 00:01:47.280
+different because they're very dynamic.
+
+35
+00:01:47.280 --> 00:01:49.759
+So we can compare them like a taxi
+
+36
+00:01:49.759 --> 00:01:53.840
+navigating traffic. So if you are
+
+37
+00:01:53.840 --> 00:01:56.240
+visualizing that like there's traffic in
+
+38
+00:01:56.240 --> 00:01:58.880
+the and things are just completely
+
+39
+00:01:58.880 --> 00:02:03.119
+stuck. Agents are going to find a way to
+
+40
+00:02:03.119 --> 00:02:05.759
+deviate or find alternatives, right?
+
+41
+00:02:05.759 --> 00:02:08.720
+Alternative routes. So we're looking
+
+42
+00:02:08.720 --> 00:02:11.760
+here. They're dynamic. They're adaptive.
+
+43
+00:02:11.760 --> 00:02:14.239
+They are made for open-ended problems
+
+44
+00:02:14.239 --> 00:02:19.120
+like ambiguous problems. So when we have
+
+45
+00:02:19.120 --> 00:02:22.640
+um Microsoft agent uh framework
+
+46
+00:02:22.640 --> 00:02:25.680
+workflows, we're basically combining
+
+47
+00:02:25.680 --> 00:02:27.840
+them together.
+
+48
+00:02:27.840 --> 00:02:29.520
+And so we're putting like so we have the
+
+49
+00:02:29.520 --> 00:02:32.160
+workflows for the rails and the agents
+
+50
+00:02:32.160 --> 00:02:34.560
+for the dynamic decisions that happen
+
+51
+00:02:34.560 --> 00:02:38.640
+inside the workflow. So regardless on
+
+52
+00:02:38.640 --> 00:02:43.360
+where the the uh uh the step of the
+
+53
+00:02:43.360 --> 00:02:46.800
+execution the AI agent is you know
+
+54
+00:02:46.800 --> 00:02:49.760
+that's going to have an input an action
+
+55
+00:02:49.760 --> 00:02:51.519
+is going to happen and there will be an
+
+56
+00:02:51.519 --> 00:02:54.640
+output right to then something else
+
+57
+00:02:54.640 --> 00:02:57.840
+occurs finalize or having like a
+
+58
+00:02:57.840 --> 00:03:01.840
+continuity of our execution but we bring
+
+59
+00:03:01.840 --> 00:03:06.400
+like agents to behave and combining with
+
+60
+00:03:06.400 --> 00:03:12.920
+uh uh uh a predictable uh pathway.
+
+61
+00:03:13.200 --> 00:03:16.080
+There are some building blocks on when
+
+62
+00:03:16.080 --> 00:03:19.840
+we look at the different piece of how
+
+63
+00:03:19.840 --> 00:03:22.480
+the the workflows
+
+64
+00:03:22.480 --> 00:03:25.200
+uh behave within the agent framework.
+
+65
+00:03:25.200 --> 00:03:26.879
+We're calling them like here like the
+
+66
+00:03:26.879 --> 00:03:29.519
+major ones that where we have our code
+
+67
+00:03:29.519 --> 00:03:32.959
+or logic the executors. So they're rack
+
+68
+00:03:32.959 --> 00:03:36.560
+logic uh any sort of logic but you
+
+69
+00:03:36.560 --> 00:03:40.400
+expect some sort of input and an output
+
+70
+00:03:40.400 --> 00:03:44.159
+and they should be typed so you you know
+
+71
+00:03:44.159 --> 00:03:46.560
+exactly what's coming in and exactly
+
+72
+00:03:46.560 --> 00:03:49.200
+what's going out.
+
+73
+00:03:49.200 --> 00:03:51.599
+And here we have like this example of
+
+74
+00:03:51.599 --> 00:03:54.480
+two executors and we have something here
+
+75
+00:03:54.480 --> 00:03:56.560
+in between connecting them. We call them
+
+76
+00:03:56.560 --> 00:04:00.319
+edges. And this is a direct connection
+
+77
+00:04:00.319 --> 00:04:04.400
+that allows us to uh take the outputs of
+
+78
+00:04:04.400 --> 00:04:07.840
+one executor and connecting to the input
+
+79
+00:04:07.840 --> 00:04:10.959
+uh to the next executor
+
+80
+00:04:10.959 --> 00:04:14.000
+and well there's like full type safety.
+
+81
+00:04:14.000 --> 00:04:17.040
+They get validated at compile time. So
+
+82
+00:04:17.040 --> 00:04:19.280
+which is one of the greatest things
+
+83
+00:04:19.280 --> 00:04:23.120
+about uh agent framework flows. And
+
+84
+00:04:23.120 --> 00:04:25.280
+there are like life cycle signals,
+
+85
+00:04:25.280 --> 00:04:28.240
+right? Those events that are triggered
+
+86
+00:04:28.240 --> 00:04:31.600
+when something happens. For example, our
+
+87
+00:04:31.600 --> 00:04:35.919
+executor that's been invoked or maybe
+
+88
+00:04:35.919 --> 00:04:37.840
+our executor has finished. So we have
+
+89
+00:04:37.840 --> 00:04:40.560
+this event of completed perhaps we're
+
+90
+00:04:40.560 --> 00:04:43.120
+looking like the whole workflow uh
+
+91
+00:04:43.120 --> 00:04:45.280
+process like where we have workflow
+
+92
+00:04:45.280 --> 00:04:48.160
+started, workflow output. So we have
+
+93
+00:04:48.160 --> 00:04:51.600
+like events where we can listen to and
+
+94
+00:04:51.600 --> 00:04:53.680
+depending on what you're implementing
+
+95
+00:04:53.680 --> 00:04:56.800
+you could have like any particular uh
+
+96
+00:04:56.800 --> 00:05:00.520
+action from it
+
+97
+00:05:01.440 --> 00:05:04.240
+and then we have those five
+
+98
+00:05:04.240 --> 00:05:07.520
+orchestration patterns. So those ones
+
+99
+00:05:07.520 --> 00:05:11.600
+are the foundations really for
+
+100
+00:05:11.600 --> 00:05:14.080
+uh the different sort of orchestrations
+
+101
+00:05:14.080 --> 00:05:17.840
+that you could combine or you could have
+
+102
+00:05:17.840 --> 00:05:21.840
+because they help us defining some sort
+
+103
+00:05:21.840 --> 00:05:24.800
+of behaviors and for example where have
+
+104
+00:05:24.800 --> 00:05:27.680
+like sequential pattern that you know
+
+105
+00:05:27.680 --> 00:05:29.199
+that the agents they're going to be
+
+106
+00:05:29.199 --> 00:05:32.960
+executing one thing one let's say one
+
+107
+00:05:32.960 --> 00:05:35.759
+task after the other.
+
+108
+00:05:35.759 --> 00:05:37.919
+We have the concurrence where the agents
+
+109
+00:05:37.919 --> 00:05:41.840
+can execute tasks in parallel. The
+
+110
+00:05:41.840 --> 00:05:45.600
+handoff, it's when we have an agent
+
+111
+00:05:45.600 --> 00:05:48.320
+that's more like a coordinator that
+
+112
+00:05:48.320 --> 00:05:53.120
+transfer control to another uh
+
+113
+00:05:53.120 --> 00:05:56.880
+agent. So just transferring context.
+
+114
+00:05:56.880 --> 00:05:59.440
+The beauty of the agent framework flow
+
+115
+00:05:59.440 --> 00:06:02.560
+is that the context it's all managed for
+
+116
+00:06:02.560 --> 00:06:04.319
+us. So we don't need to worry about
+
+117
+00:06:04.319 --> 00:06:08.160
+that. you just need to plug and play uh
+
+118
+00:06:08.160 --> 00:06:10.880
+the the workflows together.
+
+119
+00:06:10.880 --> 00:06:13.600
+We have the group chats where we allow
+
+120
+00:06:13.600 --> 00:06:16.479
+we have like these agents talking to
+
+121
+00:06:16.479 --> 00:06:20.960
+each other and they share a conversation
+
+122
+00:06:20.960 --> 00:06:23.759
+and the magentic one where it's a more
+
+123
+00:06:23.759 --> 00:06:25.280
+specialized
+
+124
+00:06:25.280 --> 00:06:27.840
+sort of orchestration where there's a
+
+125
+00:06:27.840 --> 00:06:31.280
+manager uh a sort of like an agent that
+
+126
+00:06:31.280 --> 00:06:34.000
+coordinates the actions that are going
+
+127
+00:06:34.000 --> 00:06:36.880
+to occur. But not only that, there's a
+
+128
+00:06:36.880 --> 00:06:40.240
+planning in that's executed by this
+
+129
+00:06:40.240 --> 00:06:44.160
+manager. The manager tells who exactly
+
+130
+00:06:44.160 --> 00:06:47.759
+needs to perform what. So this two here
+
+131
+00:06:47.759 --> 00:06:51.199
+are new ones. The hand off they're like
+
+132
+00:06:51.199 --> 00:06:53.520
+with all the integration
+
+133
+00:06:53.520 --> 00:06:57.600
+um mechanisms to do something like that.
+
+134
+00:06:57.600 --> 00:07:00.479
+But those are uh I would say are going
+
+135
+00:07:00.479 --> 00:07:03.599
+to become more popular with agentic AI
+
+136
+00:07:03.599 --> 00:07:05.840
+agentic workflows.
+
+137
+00:07:05.840 --> 00:07:09.840
+So and you can combine them. So they can
+
+138
+00:07:09.840 --> 00:07:12.319
+can be combined and should be combined
+
+139
+00:07:12.319 --> 00:07:15.680
+according to your requirements.
+
+140
+00:07:15.680 --> 00:07:18.800
+Uh before I jump to that one thing I I
+
+141
+00:07:18.800 --> 00:07:20.560
+want to mention is that this is part of
+
+142
+00:07:20.560 --> 00:07:25.280
+AI 500 uh certification. I just put a
+
+143
+00:07:25.280 --> 00:07:29.280
+label here because I was uh part of like
+
+144
+00:07:29.280 --> 00:07:32.319
+having like this exam and I noticed that
+
+145
+00:07:32.319 --> 00:07:36.479
+it's part of the the my studies. So
+
+146
+00:07:36.479 --> 00:07:38.800
+there's a particular
+
+147
+00:07:38.800 --> 00:07:42.080
+um topic where all of the orchestration
+
+148
+00:07:42.080 --> 00:07:44.160
+patterns are approached. So we are
+
+149
+00:07:44.160 --> 00:07:48.880
+covering here part of the exam as well.
+
+150
+00:07:48.880 --> 00:07:51.440
+And as I said that we can combine those
+
+151
+00:07:51.440 --> 00:07:54.879
+orchestration patterns here for example
+
+152
+00:07:54.879 --> 00:07:57.599
+where we have this input and the end the
+
+153
+00:07:57.599 --> 00:08:00.960
+output. But you can see that we have a
+
+154
+00:08:00.960 --> 00:08:03.199
+combination of sequential with
+
+155
+00:08:03.199 --> 00:08:06.879
+concurrent flows because as things
+
+156
+00:08:06.879 --> 00:08:08.319
+finish in here like the parallel
+
+157
+00:08:08.319 --> 00:08:11.759
+execution they are aggregated. We
+
+158
+00:08:11.759 --> 00:08:14.319
+basically have one two three steps in
+
+159
+00:08:14.319 --> 00:08:17.120
+here. This is a another well it's a
+
+160
+00:08:17.120 --> 00:08:21.440
+pattern called like uh fan out fan in
+
+161
+00:08:21.440 --> 00:08:23.440
+but they're basically composed by
+
+162
+00:08:23.440 --> 00:08:26.080
+sequential and concurrent
+
+163
+00:08:26.080 --> 00:08:29.440
+uh orchestration patterns basically have
+
+164
+00:08:29.440 --> 00:08:31.680
+like this entry agents parallel
+
+165
+00:08:31.680 --> 00:08:35.120
+specialists and this aggregator. So you
+
+166
+00:08:35.120 --> 00:08:36.959
+you're free to combine them just to
+
+167
+00:08:36.959 --> 00:08:41.159
+match like the your requirements.
+
+168
+00:08:41.440 --> 00:08:43.519
+One thing that's important for us as
+
+169
+00:08:43.519 --> 00:08:46.000
+developers is that
+
+170
+00:08:46.000 --> 00:08:48.000
+uh everything that I'm going to be
+
+171
+00:08:48.000 --> 00:08:50.160
+approaching here is from code. So I'm
+
+172
+00:08:50.160 --> 00:08:53.839
+we're going to be approaching .NET. So I
+
+173
+00:08:53.839 --> 00:08:57.120
+have a samples available. But when you
+
+174
+00:08:57.120 --> 00:08:59.440
+run those workflows, if you don't have a
+
+175
+00:08:59.440 --> 00:09:02.240
+visual way to see what's happening, you
+
+176
+00:09:02.240 --> 00:09:06.640
+simply don't know uh what happened.
+
+177
+00:09:06.640 --> 00:09:08.399
+you're only going to identify what
+
+178
+00:09:08.399 --> 00:09:11.519
+happened by looking at logs, right? Open
+
+179
+00:09:11.519 --> 00:09:13.839
+telemetry and see exactly like the
+
+180
+00:09:13.839 --> 00:09:17.360
+traces that happen. Um, some developers
+
+181
+00:09:17.360 --> 00:09:19.680
+might be okay with that. Others prefer
+
+182
+00:09:19.680 --> 00:09:22.240
+like a visual way. And then we have Dev
+
+183
+00:09:22.240 --> 00:09:25.600
+UI that's going to assist you to run and
+
+184
+00:09:25.600 --> 00:09:28.880
+debug like those workflows visually. So
+
+185
+00:09:28.880 --> 00:09:31.920
+we have a web front end that helps us
+
+186
+00:09:31.920 --> 00:09:34.480
+visualizing what's in there. So it's a
+
+187
+00:09:34.480 --> 00:09:38.560
+web UI where we can uh provide params
+
+188
+00:09:38.560 --> 00:09:41.279
+see exactly what's happening and the
+
+189
+00:09:41.279 --> 00:09:44.560
+beauty of it is that we have uh real
+
+190
+00:09:44.560 --> 00:09:48.720
+time um display of the actions so we see
+
+191
+00:09:48.720 --> 00:09:51.200
+exactly what's happening at the that
+
+192
+00:09:51.200 --> 00:09:53.839
+point in time.
+
+193
+00:09:53.839 --> 00:09:57.680
+uh the WY it has uh open AI compatible
+
+194
+00:09:57.680 --> 00:09:59.200
+API
+
+195
+00:09:59.200 --> 00:10:02.720
+specifically with the responses uh uh
+
+196
+00:10:02.720 --> 00:10:05.760
+protocol is that there's implementation
+
+197
+00:10:05.760 --> 00:10:09.680
+for that and it makes easier our from
+
+198
+00:10:09.680 --> 00:10:13.120
+our code to talk to devi right because
+
+199
+00:10:13.120 --> 00:10:14.959
+there are different ways for you to you
+
+200
+00:10:14.959 --> 00:10:17.040
+could have for example in net we have
+
+201
+00:10:17.040 --> 00:10:22.320
+console apps where you have just um um
+
+202
+00:10:22.320 --> 00:10:25.839
+prints on UI but what we can do we can
+
+203
+00:10:25.839 --> 00:10:29.600
+have APIs with donets and then having a
+
+204
+00:10:29.600 --> 00:10:33.200
+way to connect uh with dev UI through
+
+205
+00:10:33.200 --> 00:10:36.320
+endpoints that's exactly what DevUI
+
+206
+00:10:36.320 --> 00:10:39.440
+provides to us there is support for open
+
+207
+00:10:39.440 --> 00:10:42.720
+telemetry like trace or observability
+
+208
+00:10:42.720 --> 00:10:44.399
+which is good because then we see
+
+209
+00:10:44.399 --> 00:10:46.880
+exactly what happened.
+
+210
+00:10:46.880 --> 00:10:49.360
+Uh this is recommended for development
+
+211
+00:10:49.360 --> 00:10:53.120
+only and should not be productionized
+
+212
+00:10:53.120 --> 00:10:58.079
+even because this is at preview. Uh and
+
+213
+00:10:58.079 --> 00:11:01.920
+things are changed on this space. Uh for
+
+214
+00:11:01.920 --> 00:11:05.320
+now devi
+
+215
+00:11:06.160 --> 00:11:08.640
+but things could could change on this
+
+216
+00:11:08.640 --> 00:11:11.360
+field. One thing that I noticed is that
+
+217
+00:11:11.360 --> 00:11:14.240
+if you look at at the beginning of the
+
+218
+00:11:14.240 --> 00:11:18.000
+year, all of this was simply preview and
+
+219
+00:11:18.000 --> 00:11:21.760
+now we have agent framework on on G8
+
+220
+00:11:21.760 --> 00:11:23.760
+right the part of the library but that
+
+221
+00:11:23.760 --> 00:11:26.160
+UI is still preview things could change
+
+222
+00:11:26.160 --> 00:11:28.240
+so it's something that you should not
+
+223
+00:11:28.240 --> 00:11:30.959
+use for production at all only for
+
+224
+00:11:30.959 --> 00:11:34.440
+development purposes
+
+225
+00:11:35.200 --> 00:11:39.680
+just looking here uh at the chats so
+
+226
+00:11:39.680 --> 00:11:42.000
+to see like how if there are like any
+
+227
+00:11:42.000 --> 00:11:43.920
+sort of questions.
+
+228
+00:11:43.920 --> 00:11:45.760
+Let's see.
+
+229
+00:11:45.760 --> 00:11:48.320
+Okay,
+
+230
+00:11:48.320 --> 00:11:52.440
+just checking here.
+
+231
+00:11:54.640 --> 00:11:57.760
+Yeah, there's a question here from Edge
+
+232
+00:11:57.760 --> 00:12:00.320
+Pereira where I think like maybe later
+
+233
+00:12:00.320 --> 00:12:03.360
+like maybe this could be showed like to
+
+234
+00:12:03.360 --> 00:12:05.279
+to the public, but what decision
+
+235
+00:12:05.279 --> 00:12:08.959
+framework should an org uh here you go.
+
+236
+00:12:08.959 --> 00:12:10.880
+What decision framework should an org
+
+237
+00:12:10.880 --> 00:12:13.040
+use to determine whether a use case
+
+238
+00:12:13.040 --> 00:12:15.519
+needs a single agent deterministic
+
+239
+00:12:15.519 --> 00:12:18.959
+workflow or a multi- aent workflow?
+
+240
+00:12:18.959 --> 00:12:23.360
+uh this one uh in terms of decision
+
+241
+00:12:23.360 --> 00:12:25.519
+framework uh I think like there are
+
+242
+00:12:25.519 --> 00:12:28.480
+different methodologies like because
+
+243
+00:12:28.480 --> 00:12:30.480
+this is not you could like look at this
+
+244
+00:12:30.480 --> 00:12:32.320
+like from a technical perspective but
+
+245
+00:12:32.320 --> 00:12:35.360
+what you would do is that you would have
+
+246
+00:12:35.360 --> 00:12:37.680
+your business requirements like any sort
+
+247
+00:12:37.680 --> 00:12:41.600
+of uh business functions and the process
+
+248
+00:12:41.600 --> 00:12:44.800
+really that happens in an organization
+
+249
+00:12:44.800 --> 00:12:46.800
+and then from there like as you have
+
+250
+00:12:46.800 --> 00:12:49.360
+mapped what happens with those business
+
+251
+00:12:49.360 --> 00:12:52.639
+processes then you convert them onto a
+
+252
+00:12:52.639 --> 00:12:55.360
+particular workflow depending on the
+
+253
+00:12:55.360 --> 00:12:58.000
+tasks that need to be executed. They
+
+254
+00:12:58.000 --> 00:13:00.240
+could be agentic
+
+255
+00:13:00.240 --> 00:13:04.240
+uh where you're bringing LLMs right for
+
+256
+00:13:04.240 --> 00:13:06.480
+uh these sort of open-ended challenges
+
+257
+00:13:06.480 --> 00:13:09.200
+or they could be just procedural uh
+
+258
+00:13:09.200 --> 00:13:11.600
+executions where you could have simply
+
+259
+00:13:11.600 --> 00:13:15.120
+just logic right so I say that like an
+
+260
+00:13:15.120 --> 00:13:20.639
+agent uh it's a logic with a a brain LLM
+
+261
+00:13:20.639 --> 00:13:23.200
+it has like tools all of that but when
+
+262
+00:13:23.200 --> 00:13:25.200
+you don't have that brain it's simply a
+
+263
+00:13:25.200 --> 00:13:28.480
+job so that's going to help you define
+
+264
+00:13:28.480 --> 00:13:31.600
+whether you need like a single agents
+
+265
+00:13:31.600 --> 00:13:33.760
+perhaps you need to have multiple agents
+
+266
+00:13:33.760 --> 00:13:35.839
+or how you're going to coordinate them.
+
+267
+00:13:35.839 --> 00:13:40.240
+If I talk about like a single um let's
+
+268
+00:13:40.240 --> 00:13:42.160
+say like a sequential the sequential
+
+269
+00:13:42.160 --> 00:13:44.240
+pattern that I have my screen things
+
+270
+00:13:44.240 --> 00:13:47.200
+could take like longer for executing
+
+271
+00:13:47.200 --> 00:13:48.880
+perhaps if you want to look at
+
+272
+00:13:48.880 --> 00:13:51.440
+performance you could make things to
+
+273
+00:13:51.440 --> 00:13:55.519
+work in in parallel so but to start
+
+274
+00:13:55.519 --> 00:13:57.199
+right so I think the decision comes from
+
+275
+00:13:57.199 --> 00:14:00.160
+business processes and then you evaluate
+
+276
+00:14:00.160 --> 00:14:02.880
+each step of this process it's simply
+
+277
+00:14:02.880 --> 00:14:06.160
+like a job or you need an agent to do
+
+278
+00:14:06.160 --> 00:14:08.000
+that sort of work and then how you
+
+279
+00:14:08.000 --> 00:14:10.880
+organize looking at performance or even
+
+280
+00:14:10.880 --> 00:14:13.680
+like the behavior uh and the challenges
+
+281
+00:14:13.680 --> 00:14:16.320
+of those uh problems that's where we
+
+282
+00:14:16.320 --> 00:14:18.959
+have like the other patterns group chats
+
+283
+00:14:18.959 --> 00:14:21.440
+magentic they're more uh they're
+
+284
+00:14:21.440 --> 00:14:23.839
+different from what the market has been
+
+285
+00:14:23.839 --> 00:14:26.880
+using for a long time I hope I have
+
+286
+00:14:26.880 --> 00:14:30.720
+answered your question but yeah uh so
+
+287
+00:14:30.720 --> 00:14:32.880
+just bring like those on and then I'll
+
+288
+00:14:32.880 --> 00:14:36.160
+have a look at them just continue here.
+
+289
+00:14:36.160 --> 00:14:40.399
+Uh I want to jump to code and what I'm
+
+290
+00:14:40.399 --> 00:14:42.720
+going to do in here is just uh
+
+291
+00:14:42.720 --> 00:14:45.440
+intercolate and transition from slides
+
+292
+00:14:45.440 --> 00:14:49.519
+to code and then just to show like uh
+
+293
+00:14:49.519 --> 00:14:52.560
+just as a teaser for you to see how it
+
+294
+00:14:52.560 --> 00:14:54.959
+works and how the code is structured as
+
+295
+00:14:54.959 --> 00:14:58.079
+well. But on the sequential pattern we I
+
+296
+00:14:58.079 --> 00:15:01.839
+explained that the tasks happen in in
+
+297
+00:15:01.839 --> 00:15:03.920
+sequence, right?
+
+298
+00:15:03.920 --> 00:15:05.680
+I'm not going to jump in here like to
+
+299
+00:15:05.680 --> 00:15:07.600
+explain this particular use case. I'm
+
+300
+00:15:07.600 --> 00:15:09.760
+going to jump to the codes and then we
+
+301
+00:15:09.760 --> 00:15:13.680
+can see exactly what's in there.
+
+302
+00:15:13.680 --> 00:15:18.240
+I have my zoomit in here. But this is
+
+303
+00:15:18.240 --> 00:15:21.600
+the sample I'm making available. Right?
+
+304
+00:15:21.600 --> 00:15:25.120
+So it's a Microsoft agentworkflows.net.
+
+305
+00:15:25.120 --> 00:15:28.240
+I put this for demonstration purpose.
+
+306
+00:15:28.240 --> 00:15:31.680
+Microsoft agent framework has
+
+307
+00:15:31.680 --> 00:15:35.519
+um their own uh repository. I did this
+
+308
+00:15:35.519 --> 00:15:37.680
+because of the session, right? So, I
+
+309
+00:15:37.680 --> 00:15:40.399
+just putting things together that make
+
+310
+00:15:40.399 --> 00:15:43.519
+sense for this uh presentation. But what
+
+311
+00:15:43.519 --> 00:15:45.600
+you're going to notice in here is that
+
+312
+00:15:45.600 --> 00:15:49.360
+we have oops we have different parts of
+
+313
+00:15:49.360 --> 00:15:54.079
+the solution in here where
+
+314
+00:15:54.079 --> 00:15:57.199
+we have three parts. The first one is
+
+315
+00:15:57.199 --> 00:16:00.639
+the simple one where uh I have all the
+
+316
+00:16:00.639 --> 00:16:02.560
+workflows all together. So you could
+
+317
+00:16:02.560 --> 00:16:06.240
+just run this one and see what happens.
+
+318
+00:16:06.240 --> 00:16:08.880
+And then I have the different uh
+
+319
+00:16:08.880 --> 00:16:13.199
+orchestrations split into a console.
+
+320
+00:16:13.199 --> 00:16:20.320
+This is a console or um uh UI web UI. Uh
+
+321
+00:16:20.320 --> 00:16:23.279
+it's basically an API and I have like a
+
+322
+00:16:23.279 --> 00:16:26.320
+shared library where I'm sharing tools
+
+323
+00:16:26.320 --> 00:16:28.240
+and we're going to see like how it works
+
+324
+00:16:28.240 --> 00:16:31.680
+and here's the complex one where really
+
+325
+00:16:31.680 --> 00:16:36.079
+diving onto the executors right uh as
+
+326
+00:16:36.079 --> 00:16:38.079
+framework abstracts has different
+
+327
+00:16:38.079 --> 00:16:41.519
+abstractions in here it's very simple in
+
+328
+00:16:41.519 --> 00:16:44.399
+here we go a little bit deeper and here
+
+329
+00:16:44.399 --> 00:16:47.040
+we it's hands on like I'll say like it's
+
+330
+00:16:47.040 --> 00:16:48.480
+full
+
+331
+00:16:48.480 --> 00:16:49.759
+We're going to go hands- on and
+
+332
+00:16:49.759 --> 00:16:52.399
+everything, but this is very detailed,
+
+333
+00:16:52.399 --> 00:16:55.279
+right? So, uh, but that's the structure
+
+334
+00:16:55.279 --> 00:16:57.360
+of the project. Let's go like to the
+
+335
+00:16:57.360 --> 00:17:01.680
+sequential and just to show what I have.
+
+336
+00:17:01.680 --> 00:17:03.519
+So, let me see. I think I'm going to
+
+337
+00:17:03.519 --> 00:17:06.319
+pull like a little bit bigger. That
+
+338
+00:17:06.319 --> 00:17:09.039
+should be okay. But we have three parts
+
+339
+00:17:09.039 --> 00:17:11.439
+of the code. All right. And let me show
+
+340
+00:17:11.439 --> 00:17:15.520
+like the sequential here. is that what I
+
+341
+00:17:15.520 --> 00:17:18.959
+have is this package
+
+342
+00:17:18.959 --> 00:17:23.679
+where everything happens right agents AI
+
+343
+00:17:23.679 --> 00:17:25.919
+workflows I have some the extensions as
+
+344
+00:17:25.919 --> 00:17:31.440
+well and I this is I would say kind of
+
+345
+00:17:31.440 --> 00:17:33.280
+in all
+
+346
+00:17:33.280 --> 00:17:36.640
+agent if you're using leverage agents
+
+347
+00:17:36.640 --> 00:17:38.799
+this is kind of standard you need depend
+
+348
+00:17:38.799 --> 00:17:41.760
+on where you're using OpenAI Azure you
+
+349
+00:17:41.760 --> 00:17:44.320
+kind of mix Yeah, but for the workflows
+
+350
+00:17:44.320 --> 00:17:47.760
+you need this agent agents AI workflows
+
+351
+00:17:47.760 --> 00:17:50.240
+and extensions AI as well which is kind
+
+352
+00:17:50.240 --> 00:17:54.000
+of if you're doing chats or uh not
+
+353
+00:17:54.000 --> 00:17:56.000
+workflows you also like get to use that
+
+354
+00:17:56.000 --> 00:17:59.600
+but that's what we have in here.
+
+355
+00:17:59.600 --> 00:18:02.960
+uh in terms of the solution we have
+
+356
+00:18:02.960 --> 00:18:06.480
+variables open AI endpoints deployment
+
+357
+00:18:06.480 --> 00:18:08.960
+name API keys and then we have our
+
+358
+00:18:08.960 --> 00:18:11.440
+agents after we set up that which is
+
+359
+00:18:11.440 --> 00:18:15.120
+coming from user secrets okay so I'm not
+
+360
+00:18:15.120 --> 00:18:16.799
+going to share my secrets in here but
+
+361
+00:18:16.799 --> 00:18:19.840
+I'm using user secrets as you have those
+
+362
+00:18:19.840 --> 00:18:23.760
+params then we can have those executions
+
+363
+00:18:23.760 --> 00:18:26.799
+you're going to see that uh imagine that
+
+364
+00:18:26.799 --> 00:18:29.760
+if we had agents controlling
+
+365
+00:18:29.760 --> 00:18:32.400
+uh aircraft takeoffs.
+
+366
+00:18:32.400 --> 00:18:34.480
+What we have here is is that we have a
+
+367
+00:18:34.480 --> 00:18:38.320
+runway scan agent that looks at any sort
+
+368
+00:18:38.320 --> 00:18:41.440
+of impediment, right? It's just to get
+
+369
+00:18:41.440 --> 00:18:43.760
+the thumbs up if like the surface
+
+370
+00:18:43.760 --> 00:18:45.760
+conditions are all good before
+
+371
+00:18:45.760 --> 00:18:48.559
+departure. We have a air traffic control
+
+372
+00:18:48.559 --> 00:18:52.480
+agent that looks or checks the output
+
+373
+00:18:52.480 --> 00:18:56.880
+from the runway scan agent and it says
+
+374
+00:18:56.880 --> 00:19:00.640
+okay responsive cleared or hold right so
+
+375
+00:19:00.640 --> 00:19:03.200
+it's going to allow or forbid the
+
+376
+00:19:03.200 --> 00:19:06.000
+departure and we have the pilot agent
+
+377
+00:19:06.000 --> 00:19:11.440
+that's going to put like the the engines
+
+378
+00:19:11.440 --> 00:19:13.760
+on hold right or not or it's going to
+
+379
+00:19:13.760 --> 00:19:16.480
+departure we have tools
+
+380
+00:19:16.480 --> 00:19:20.480
+And the tools in here they are um well
+
+381
+00:19:20.480 --> 00:19:23.120
+if I am to bring them so they're part of
+
+382
+00:19:23.120 --> 00:19:26.240
+the shared library but they are bringing
+
+383
+00:19:26.240 --> 00:19:29.919
+random decisions right. So it's going to
+
+384
+00:19:29.919 --> 00:19:33.520
+pick randomly a particular decision. So
+
+385
+00:19:33.520 --> 00:19:34.799
+things are going to be completely
+
+386
+00:19:34.799 --> 00:19:36.480
+dynamic.
+
+387
+00:19:36.480 --> 00:19:40.080
+We could get like a clear runway takeoff
+
+388
+00:19:40.080 --> 00:19:43.200
+uh or maybe we would be blocked. What
+
+389
+00:19:43.200 --> 00:19:44.640
+I'm going to do, I'm going to run the
+
+390
+00:19:44.640 --> 00:19:48.480
+code and I have like a break point. One
+
+391
+00:19:48.480 --> 00:19:50.480
+of the things with the agent framework
+
+392
+00:19:50.480 --> 00:19:53.520
+is that we have those rappers.
+
+393
+00:19:53.520 --> 00:19:56.080
+I say this is a wrapper because the only
+
+394
+00:19:56.080 --> 00:19:57.360
+thing we're are passing here are just
+
+395
+00:19:57.360 --> 00:19:59.520
+the agents. Okay, there's another agents
+
+396
+00:19:59.520 --> 00:20:02.640
+in there, but it's so simple that we
+
+397
+00:20:02.640 --> 00:20:06.320
+have build sequential. That's it. That's
+
+398
+00:20:06.320 --> 00:20:08.000
+going to do the work for us. We don't
+
+399
+00:20:08.000 --> 00:20:12.799
+need to dive into an extra level. Uh it
+
+400
+00:20:12.799 --> 00:20:15.200
+just like depending on what you want to
+
+401
+00:20:15.200 --> 00:20:18.799
+do, this might be enough really for you
+
+402
+00:20:18.799 --> 00:20:20.960
+to get going. What I have in here is
+
+403
+00:20:20.960 --> 00:20:24.720
+just like some helpers don't uh not not
+
+404
+00:20:24.720 --> 00:20:26.400
+of a concern, but what they doing is
+
+405
+00:20:26.400 --> 00:20:29.360
+that they taking they're printing to the
+
+406
+00:20:29.360 --> 00:20:33.280
+Y and we have like this to be run as a
+
+407
+00:20:33.280 --> 00:20:37.760
+stream. Let me pull like this one as uh
+
+408
+00:20:37.760 --> 00:20:41.760
+as a startup. And I'm gonna run that.
+
+409
+00:20:41.760 --> 00:20:45.120
+And we should we should be able to see
+
+410
+00:20:45.120 --> 00:20:47.280
+the
+
+411
+00:20:47.280 --> 00:20:50.400
+let's see here the debug
+
+412
+00:20:50.400 --> 00:20:54.440
+should start to some points.
+
+413
+00:20:55.679 --> 00:20:58.000
+Okay.
+
+414
+00:20:58.000 --> 00:21:00.720
+Yeah. Came up [laughter] first run.
+
+415
+00:21:00.720 --> 00:21:03.520
+Anyways, but I'm going to run this. I
+
+416
+00:21:03.520 --> 00:21:05.440
+have my console. I'm going to bring the
+
+417
+00:21:05.440 --> 00:21:07.440
+console in here as well. But as soon as
+
+418
+00:21:07.440 --> 00:21:09.120
+I trigger that, we should see some
+
+419
+00:21:09.120 --> 00:21:12.080
+behavior in here. And the UI the console
+
+420
+00:21:12.080 --> 00:21:15.200
+should display that to us. So like
+
+421
+00:21:15.200 --> 00:21:19.280
+there's a sequential workflow the runway
+
+422
+00:21:19.280 --> 00:21:22.880
+uh scan agent is saying that low debris
+
+423
+00:21:22.880 --> 00:21:25.760
+is spotted. So it's f it's running. So
+
+424
+00:21:25.760 --> 00:21:28.320
+we found like a impediment but it's
+
+425
+00:21:28.320 --> 00:21:30.480
+running those sensors and as I said
+
+426
+00:21:30.480 --> 00:21:32.640
+they're random. So they're just making
+
+427
+00:21:32.640 --> 00:21:36.880
+it uh validating things as it happens.
+
+428
+00:21:36.880 --> 00:21:39.039
+But when you look like there are like
+
+429
+00:21:39.039 --> 00:21:41.679
+hazards have been identified then we
+
+430
+00:21:41.679 --> 00:21:45.760
+have the air traffic control agent doing
+
+431
+00:21:45.760 --> 00:21:48.799
+oh look hold. Okay. So he made a
+
+432
+00:21:48.799 --> 00:21:51.919
+decision that okay nope. Uh based on the
+
+433
+00:21:51.919 --> 00:21:54.000
+conditions this is going to be on hold
+
+434
+00:21:54.000 --> 00:21:57.600
+and then in the end we have in here that
+
+435
+00:21:57.600 --> 00:22:00.720
+engines have been cut by the the pilot.
+
+436
+00:22:00.720 --> 00:22:06.320
+Okay. So we see that well one
+
+437
+00:22:06.320 --> 00:22:09.840
+output from the runway scan agents
+
+438
+00:22:09.840 --> 00:22:12.480
+served as input for
+
+439
+00:22:12.480 --> 00:22:15.840
+uh the air traffic control and then for
+
+440
+00:22:15.840 --> 00:22:18.320
+the pilots. So this is the sequential
+
+441
+00:22:18.320 --> 00:22:21.120
+way. What I want to do is just to
+
+442
+00:22:21.120 --> 00:22:24.400
+continue exploring the other patterns.
+
+443
+00:22:24.400 --> 00:22:26.880
+Right
+
+444
+00:22:26.880 --> 00:22:30.000
+in here we have the the concurrent where
+
+445
+00:22:30.000 --> 00:22:32.559
+we have those parallel. Let's see if I
+
+446
+00:22:32.559 --> 00:22:35.280
+might ponder why is it here that's the
+
+447
+00:22:35.280 --> 00:22:38.320
+fan out fan in right. So we have like a
+
+448
+00:22:38.320 --> 00:22:42.320
+coordinator and then things they kind of
+
+449
+00:22:42.320 --> 00:22:44.880
+branch and we have multiple agents in
+
+450
+00:22:44.880 --> 00:22:46.720
+execution. In the end we have
+
+451
+00:22:46.720 --> 00:22:48.960
+aggregation. So we can run them
+
+452
+00:22:48.960 --> 00:22:50.880
+simultaneously. They can work in
+
+453
+00:22:50.880 --> 00:22:54.640
+parallel. So this is one of one of the
+
+454
+00:22:54.640 --> 00:22:58.240
+performance uh indicators or to help us
+
+455
+00:22:58.240 --> 00:23:00.400
+to define like the total time. Perhaps
+
+456
+00:23:00.400 --> 00:23:03.039
+if you had the sequential it would take
+
+457
+00:23:03.039 --> 00:23:05.520
+like a longer periods. If you are if you
+
+458
+00:23:05.520 --> 00:23:08.720
+can make them run in parallel then you
+
+459
+00:23:08.720 --> 00:23:12.720
+can save time but it depends on the use
+
+460
+00:23:12.720 --> 00:23:14.720
+case. There are case where even though
+
+461
+00:23:14.720 --> 00:23:18.960
+you have mo many uh agents they need to
+
+462
+00:23:18.960 --> 00:23:21.360
+run in sequence because you're depending
+
+463
+00:23:21.360 --> 00:23:24.720
+on the outputs of others. So in this
+
+464
+00:23:24.720 --> 00:23:28.159
+case here we are saving time and we
+
+465
+00:23:28.159 --> 00:23:31.200
+using like this uh fan out fan in
+
+466
+00:23:31.200 --> 00:23:35.919
+pattern in here with the concurrent uh u
+
+467
+00:23:35.919 --> 00:23:41.360
+flow. Let's see this one with devi. All
+
+468
+00:23:41.360 --> 00:23:45.120
+right. So the first one we explored
+
+469
+00:23:45.120 --> 00:23:48.880
+on console the this one what we're going
+
+470
+00:23:48.880 --> 00:23:54.080
+to do is to explore with the web dev UI
+
+471
+00:23:54.080 --> 00:23:55.600
+for that one is going to be the
+
+472
+00:23:55.600 --> 00:23:58.880
+concurrent I'm going to put this one on
+
+473
+00:23:58.880 --> 00:24:00.720
+my
+
+474
+00:24:00.720 --> 00:24:04.320
+to start in here let's look at the codes
+
+475
+00:24:04.320 --> 00:24:07.679
+actually before that on the project
+
+476
+00:24:07.679 --> 00:24:11.440
+uh you're going to notice that we have
+
+477
+00:24:11.440 --> 00:24:15.039
+this guy here. Okay, this one is my
+
+478
+00:24:15.039 --> 00:24:16.880
+version that's in preview, but that's
+
+479
+00:24:16.880 --> 00:24:19.440
+the dev UI. So, we're bringing a nougat
+
+480
+00:24:19.440 --> 00:24:22.880
+package for it.
+
+481
+00:24:22.880 --> 00:24:26.080
+Similar structure that we have, but what
+
+482
+00:24:26.080 --> 00:24:30.080
+we do have in here is that we are
+
+483
+00:24:30.080 --> 00:24:33.520
+bringing devi as part of the pipeline,
+
+484
+00:24:33.520 --> 00:24:36.080
+right? The donet pipeline using service
+
+485
+00:24:36.080 --> 00:24:38.000
+collection. Not sure if I'm familiar
+
+486
+00:24:38.000 --> 00:24:41.279
+with that, but that's how we inject
+
+487
+00:24:41.279 --> 00:24:45.440
+instances of uh objects onto the donet
+
+488
+00:24:45.440 --> 00:24:51.279
+pipeline in here uh with the web API. Uh
+
+489
+00:24:51.279 --> 00:24:53.600
+same different parts, same as I said
+
+490
+00:24:53.600 --> 00:24:56.480
+like user secrets, variables, but then
+
+491
+00:24:56.480 --> 00:25:00.159
+we start uh hooking things onto the
+
+492
+00:25:00.159 --> 00:25:02.640
+service collection, right? So adding the
+
+493
+00:25:02.640 --> 00:25:05.279
+chat client and then we're adding those
+
+494
+00:25:05.279 --> 00:25:08.640
+agents and we have like similar behavior
+
+495
+00:25:08.640 --> 00:25:11.440
+like with similar structure with the
+
+496
+00:25:11.440 --> 00:25:15.279
+system message with tools right then the
+
+497
+00:25:15.279 --> 00:25:20.159
+same here. One interesting point is that
+
+498
+00:25:20.159 --> 00:25:23.360
+uh during the football world cup we were
+
+499
+00:25:23.360 --> 00:25:24.960
+doing
+
+500
+00:25:24.960 --> 00:25:26.799
+um
+
+501
+00:25:26.799 --> 00:25:29.039
+well that's when I produced like this
+
+502
+00:25:29.039 --> 00:25:31.279
+this demo and then what I put in here
+
+503
+00:25:31.279 --> 00:25:36.480
+it's a concurrent uh flow where
+
+504
+00:25:36.480 --> 00:25:40.080
+before like the sessions or the matches
+
+505
+00:25:40.080 --> 00:25:42.240
+can happen there are a lot of things
+
+506
+00:25:42.240 --> 00:25:45.440
+that could go wrong. All right. So with
+
+507
+00:25:45.440 --> 00:25:48.159
+power like safety if like there are like
+
+508
+00:25:48.159 --> 00:25:52.080
+any sort of hazards the stadium capacity
+
+509
+00:25:52.080 --> 00:25:54.240
+if things are anything that could go
+
+510
+00:25:54.240 --> 00:25:57.039
+wrong in here. What I I I did is just
+
+511
+00:25:57.039 --> 00:26:00.000
+putting putting all of those checks to
+
+512
+00:26:00.000 --> 00:26:03.840
+be executed right and to be validated.
+
+513
+00:26:03.840 --> 00:26:05.679
+So we have like a fields operations
+
+514
+00:26:05.679 --> 00:26:07.919
+agent that's going to check for stadium
+
+515
+00:26:07.919 --> 00:26:11.520
+lighting uh go structures everything
+
+516
+00:26:11.520 --> 00:26:15.279
+that related to the structure of the
+
+517
+00:26:15.279 --> 00:26:19.120
+field operations stadium safety agents
+
+518
+00:26:19.120 --> 00:26:21.679
+it's going to look emergency exits fire
+
+519
+00:26:21.679 --> 00:26:25.200
+suppression systems all of that medical
+
+520
+00:26:25.200 --> 00:26:27.520
+readiness agent so it's going to
+
+521
+00:26:27.520 --> 00:26:31.520
+validate their paramedics ambulance all
+
+522
+00:26:31.520 --> 00:26:34.320
+of that power systems agents. It's going
+
+523
+00:26:34.320 --> 00:26:37.279
+to check like power backup generators,
+
+524
+00:26:37.279 --> 00:26:40.400
+power supply, and we have the broadcast
+
+525
+00:26:40.400 --> 00:26:43.760
+systems as well. Verify if the broad the
+
+526
+00:26:43.760 --> 00:26:45.919
+cameras are all good. There's network
+
+527
+00:26:45.919 --> 00:26:47.679
+connectivity.
+
+528
+00:26:47.679 --> 00:26:50.240
+There are lots in here, right? So, but
+
+529
+00:26:50.240 --> 00:26:52.640
+what's important is that we're going to
+
+530
+00:26:52.640 --> 00:26:55.919
+get a validation whether it's ready or
+
+531
+00:26:55.919 --> 00:26:58.000
+if it's blocked, right? So, the match
+
+532
+00:26:58.000 --> 00:27:01.440
+can happen or not. I reckon like if that
+
+533
+00:27:01.440 --> 00:27:04.400
+was really to be the thing imagine if
+
+534
+00:27:04.400 --> 00:27:07.919
+they were to cancel a match that would
+
+535
+00:27:07.919 --> 00:27:08.880
+be [laughter]
+
+536
+00:27:08.880 --> 00:27:11.760
+that would be catastrophic right so but
+
+537
+00:27:11.760 --> 00:27:13.919
+in here we're trying to simulate what
+
+538
+00:27:13.919 --> 00:27:15.840
+could go wrong and because it's all
+
+539
+00:27:15.840 --> 00:27:18.880
+random things could go wrong in here uh
+
+540
+00:27:18.880 --> 00:27:20.960
+when we look at service collection now
+
+541
+00:27:20.960 --> 00:27:23.919
+is the important part with devi we're
+
+542
+00:27:23.919 --> 00:27:25.440
+hooking
+
+543
+00:27:25.440 --> 00:27:28.960
+okay all of that in here like devi even
+
+544
+00:27:28.960 --> 00:27:32.080
+the responses in here conversations they
+
+545
+00:27:32.080 --> 00:27:37.120
+belong to WUI. So we are WI has its own
+
+546
+00:27:37.120 --> 00:27:38.880
+abstraction that's going to take the
+
+547
+00:27:38.880 --> 00:27:40.400
+outputs
+
+548
+00:27:40.400 --> 00:27:44.240
+and display on on the UI for us. But
+
+549
+00:27:44.240 --> 00:27:47.919
+more importantly, we have the
+
+550
+00:27:47.919 --> 00:27:50.559
+well agent framework doing the heavy
+
+551
+00:27:50.559 --> 00:27:54.799
+lift. And when you look in here,
+
+552
+00:27:54.799 --> 00:27:57.679
+we have this I built concurrent. That's
+
+553
+00:27:57.679 --> 00:28:00.080
+a pretty good like abstraction.
+
+554
+00:28:00.080 --> 00:28:02.159
+That's where we're passing the different
+
+555
+00:28:02.159 --> 00:28:04.320
+agents, right? So you can see we have
+
+556
+00:28:04.320 --> 00:28:07.440
+those agents, all of them in here, but
+
+557
+00:28:07.440 --> 00:28:11.120
+they are passed in here. Okay. So, it's
+
+558
+00:28:11.120 --> 00:28:13.440
+Yeah, we're adding them onto the
+
+559
+00:28:13.440 --> 00:28:16.720
+pipeline. Let's run that and then we can
+
+560
+00:28:16.720 --> 00:28:19.520
+see what happens. I think I put this one
+
+561
+00:28:19.520 --> 00:28:23.120
+on my startup. Let me just run that.
+
+562
+00:28:23.120 --> 00:28:26.080
+That should open. Uh, let's see. That
+
+563
+00:28:26.080 --> 00:28:28.640
+should bring me.
+
+564
+00:28:28.640 --> 00:28:32.760
+Oops. When it does,
+
+565
+00:28:34.799 --> 00:28:37.919
+it's coming. Let me bring my console.
+
+566
+00:28:37.919 --> 00:28:42.320
+So, there is an endpoint here. 7,05.
+
+567
+00:28:42.320 --> 00:28:44.960
+I'm I'm on work. I'm working on let's
+
+568
+00:28:44.960 --> 00:28:47.520
+see on Chrome.
+
+569
+00:28:47.520 --> 00:28:52.159
+Uh should be this one. Cool. Uh
+
+570
+00:28:52.159 --> 00:28:55.440
+yeah, by the way, we have URLs and the
+
+571
+00:28:55.440 --> 00:29:00.480
+URLs are the ones where all of these oh
+
+572
+00:29:00.480 --> 00:29:03.760
+the contents that came like um that
+
+573
+00:29:03.760 --> 00:29:06.080
+helped me creating this session with
+
+574
+00:29:06.080 --> 00:29:08.480
+like Microsoft agent work framework
+
+575
+00:29:08.480 --> 00:29:11.120
+flows come from Microsoft learn and we
+
+576
+00:29:11.120 --> 00:29:13.279
+have the workflow orchestrations right
+
+577
+00:29:13.279 --> 00:29:15.600
+the ones I mentioned
+
+578
+00:29:15.600 --> 00:29:19.039
+and devi uh it's interesting on this
+
+579
+00:29:19.039 --> 00:29:22.159
+case. We're going to see
+
+580
+00:29:22.159 --> 00:29:24.880
+what it what it is the details in there.
+
+581
+00:29:24.880 --> 00:29:29.039
+But the C one there's there news in here
+
+582
+00:29:29.039 --> 00:29:31.520
+and that's something we can see that's
+
+583
+00:29:31.520 --> 00:29:33.840
+going to it's going to go to Aspire.
+
+584
+00:29:33.840 --> 00:29:37.039
+Okay. So there are things happening and
+
+585
+00:29:37.039 --> 00:29:39.440
+currently I don't have Aspire in here
+
+586
+00:29:39.440 --> 00:29:43.279
+but I can see that there will be updates
+
+587
+00:29:43.279 --> 00:29:45.840
+in here like soon for us.
+
+588
+00:29:45.840 --> 00:29:47.840
+What I need to do is that I need to
+
+589
+00:29:47.840 --> 00:29:51.200
+bring my URL and then I need to include
+
+590
+00:29:51.200 --> 00:29:54.799
+that. Oops. I need to include dev UI. If
+
+591
+00:29:54.799 --> 00:29:57.520
+I don't do that, nothing happens.
+
+592
+00:29:57.520 --> 00:30:01.360
+So, let me bring it.
+
+593
+00:30:01.360 --> 00:30:05.840
+Cool. So, that should be loaded. Yep.
+
+594
+00:30:05.840 --> 00:30:07.679
+And it's interesting that we have like
+
+595
+00:30:07.679 --> 00:30:09.760
+this UI where we can visualize the
+
+596
+00:30:09.760 --> 00:30:12.080
+different agents. So, I could talk to
+
+597
+00:30:12.080 --> 00:30:14.559
+those agents, right? and see like how
+
+598
+00:30:14.559 --> 00:30:17.200
+they what they're doing like what can
+
+599
+00:30:17.200 --> 00:30:19.360
+you do?
+
+600
+00:30:19.360 --> 00:30:22.480
+Uh this is for the broadcast systems
+
+601
+00:30:22.480 --> 00:30:25.840
+agent and I can talk to it. It's going
+
+602
+00:30:25.840 --> 00:30:28.080
+to say yeah I'm I'm just like the
+
+603
+00:30:28.080 --> 00:30:30.720
+broadcast systems agent for the workup.
+
+604
+00:30:30.720 --> 00:30:32.799
+I verify all the broadcasting stadium
+
+605
+00:30:32.799 --> 00:30:34.720
+communications. So you have those
+
+606
+00:30:34.720 --> 00:30:36.720
+details in here and there are different
+
+607
+00:30:36.720 --> 00:30:39.440
+parts like what you can see. So I just
+
+608
+00:30:39.440 --> 00:30:42.000
+click on this on this bubble. I can see
+
+609
+00:30:42.000 --> 00:30:45.520
+that I'm using GPT41 for it. Everything
+
+610
+00:30:45.520 --> 00:30:48.720
+it's in memory. I have my system prompt
+
+611
+00:30:48.720 --> 00:30:51.679
+remember like the ones or like on code
+
+612
+00:30:51.679 --> 00:30:53.360
+they're here. They're being displayed
+
+613
+00:30:53.360 --> 00:30:55.200
+and I have different tools. All right.
+
+614
+00:30:55.200 --> 00:30:57.279
+So all of those tools are the ones that
+
+615
+00:30:57.279 --> 00:30:58.960
+are randomly
+
+616
+00:30:58.960 --> 00:31:02.159
+being triggered and they provide
+
+617
+00:31:02.159 --> 00:31:04.159
+different sites.
+
+618
+00:31:04.159 --> 00:31:06.799
+We have uh well that's the conversation.
+
+619
+00:31:06.799 --> 00:31:08.720
+I can see the number of tokens. I think
+
+620
+00:31:08.720 --> 00:31:11.360
+I I can delete the current conversation,
+
+621
+00:31:11.360 --> 00:31:14.880
+start new ones. Uh I have the events in
+
+622
+00:31:14.880 --> 00:31:18.240
+here. I sent this message. There were
+
+623
+00:31:18.240 --> 00:31:21.039
+events that were triggered. Uh we don't
+
+624
+00:31:21.039 --> 00:31:23.120
+have like it's kind of limited. We don't
+
+625
+00:31:23.120 --> 00:31:25.120
+have like ways of sorting, ascending,
+
+626
+00:31:25.120 --> 00:31:27.360
+descending. But what you can see is that
+
+627
+00:31:27.360 --> 00:31:29.440
+it's descending. So we are having the
+
+628
+00:31:29.440 --> 00:31:33.120
+latest on top and we see what happened.
+
+629
+00:31:33.120 --> 00:31:36.559
+Right. So exactly traces and tools.
+
+630
+00:31:36.559 --> 00:31:39.600
+Okay. What I want to do is to trigger
+
+631
+00:31:39.600 --> 00:31:41.679
+the workflow. So, we have the workflow
+
+632
+00:31:41.679 --> 00:31:43.519
+in here.
+
+633
+00:31:43.519 --> 00:31:46.559
+Yeah, look at that. Well, I think if I
+
+634
+00:31:46.559 --> 00:31:50.480
+zoom in, I didn't create well, we all
+
+635
+00:31:50.480 --> 00:31:53.760
+connected with the build concurrent, but
+
+636
+00:31:53.760 --> 00:31:57.200
+agents framework created this and look
+
+637
+00:31:57.200 --> 00:32:01.679
+at that. If you look, we have executors.
+
+638
+00:32:01.679 --> 00:32:04.880
+So, remember the the building blocks. So
+
+639
+00:32:04.880 --> 00:32:07.360
+they are execute there are executors
+
+640
+00:32:07.360 --> 00:32:10.080
+doing the work for us. All right. So but
+
+641
+00:32:10.080 --> 00:32:12.720
+we didn't jump to it. So agent framework
+
+642
+00:32:12.720 --> 00:32:15.519
+has this abstraction and it can it is
+
+643
+00:32:15.519 --> 00:32:18.559
+doing that for us which is cool. Uh so
+
+644
+00:32:18.559 --> 00:32:24.720
+we don't need really to uh uh um
+
+645
+00:32:24.720 --> 00:32:27.279
+manipulate those executors.
+
+646
+00:32:27.279 --> 00:32:29.760
+um if you don't have like any
+
+647
+00:32:29.760 --> 00:32:32.159
+requirements to
+
+648
+00:32:32.159 --> 00:32:34.000
+I'm going to say like for example you
+
+649
+00:32:34.000 --> 00:32:37.440
+could do create the executors and
+
+650
+00:32:37.440 --> 00:32:39.440
+manipulate them if you really want to
+
+651
+00:32:39.440 --> 00:32:43.279
+have fine grain control okay uh I'm
+
+652
+00:32:43.279 --> 00:32:45.760
+going to show here on the complex um
+
+653
+00:32:45.760 --> 00:32:50.159
+soon uh the complex examples but yeah if
+
+654
+00:32:50.159 --> 00:32:52.559
+you want fine grain control then you use
+
+655
+00:32:52.559 --> 00:32:55.919
+executors but it adds additional degree
+
+656
+00:32:55.919 --> 00:33:00.320
+of complex XY but you can do that in in
+
+657
+00:33:00.320 --> 00:33:04.320
+have better control of what happens. Uh
+
+658
+00:33:04.320 --> 00:33:06.880
+what I want to do I want to copy the
+
+659
+00:33:06.880 --> 00:33:08.399
+prompt.
+
+660
+00:33:08.399 --> 00:33:13.279
+Uh I had opened the UI but my prompt is
+
+661
+00:33:13.279 --> 00:33:15.200
+on the console. I'm going to copy this
+
+662
+00:33:15.200 --> 00:33:18.320
+and then we can look together. So let me
+
+663
+00:33:18.320 --> 00:33:22.080
+just bring the UI again.
+
+664
+00:33:22.080 --> 00:33:24.320
+Here we go. And we're going to put like
+
+665
+00:33:24.320 --> 00:33:27.120
+this input in here. And that's like I'm
+
+666
+00:33:27.120 --> 00:33:29.039
+saying assess all the field operations,
+
+667
+00:33:29.039 --> 00:33:30.880
+stadium safety, medical readiness.
+
+668
+00:33:30.880 --> 00:33:33.440
+That's my prompt. That's my user prompt.
+
+669
+00:33:33.440 --> 00:33:35.200
+And when we trigger that, we're going to
+
+670
+00:33:35.200 --> 00:33:36.720
+see things happening. We're going to see
+
+671
+00:33:36.720 --> 00:33:39.120
+colors, right? Meaning that the agents
+
+672
+00:33:39.120 --> 00:33:41.919
+are in execution. When it gets green, it
+
+673
+00:33:41.919 --> 00:33:44.080
+means that the agents have finalized.
+
+674
+00:33:44.080 --> 00:33:46.960
+Let's trigger that. So we can see that
+
+675
+00:33:46.960 --> 00:33:49.440
+the agents are running or in parallel.
+
+676
+00:33:49.440 --> 00:33:50.960
+They are performing different actions.
+
+677
+00:33:50.960 --> 00:33:52.240
+We can see the events are being
+
+678
+00:33:52.240 --> 00:33:54.559
+triggered. They're growing. We can see
+
+679
+00:33:54.559 --> 00:33:57.279
+the colors that have been are being f or
+
+680
+00:33:57.279 --> 00:34:00.320
+are being they're being modified and
+
+681
+00:34:00.320 --> 00:34:01.840
+then all of a sudden we have everything
+
+682
+00:34:01.840 --> 00:34:04.480
+that happening here right
+
+683
+00:34:04.480 --> 00:34:08.159
+uh by looking here I would need to dig
+
+684
+00:34:08.159 --> 00:34:11.040
+and see exactly what happened at some
+
+685
+00:34:11.040 --> 00:34:14.000
+stage we should be able to see
+
+686
+00:34:14.000 --> 00:34:17.280
+uh one of the decisions we could see I
+
+687
+00:34:17.280 --> 00:34:20.480
+think this one is just here online fire
+
+688
+00:34:20.480 --> 00:34:24.639
+suppression online safe clearance denied
+
+689
+00:34:24.639 --> 00:34:26.639
+So I can see that things in here didn't
+
+690
+00:34:26.639 --> 00:34:30.399
+go like stage is not is not safe unsafe
+
+691
+00:34:30.399 --> 00:34:33.359
+and then okay yeah you have a way of
+
+692
+00:34:33.359 --> 00:34:36.480
+visualizing that under like the events
+
+693
+00:34:36.480 --> 00:34:39.119
+right at the same time because I had my
+
+694
+00:34:39.119 --> 00:34:41.679
+console you can see the colors in here
+
+695
+00:34:41.679 --> 00:34:45.040
+but every single color represents what
+
+696
+00:34:45.040 --> 00:34:46.720
+one agent is doing. So there was a
+
+697
+00:34:46.720 --> 00:34:50.639
+medical broadcast power uh system down
+
+698
+00:34:50.639 --> 00:34:53.280
+here, right? So yeah, you would say like
+
+699
+00:34:53.280 --> 00:34:56.639
+what what happened? So the broadcast PA
+
+700
+00:34:56.639 --> 00:34:59.839
+system is is down. So so what happens is
+
+701
+00:34:59.839 --> 00:35:03.680
+that uh no the match has been cancelled,
+
+702
+00:35:03.680 --> 00:35:07.599
+right? So that's not happening at all,
+
+703
+00:35:07.599 --> 00:35:11.440
+which is not good.
+
+704
+00:35:11.440 --> 00:35:14.720
+Uh but that's part of the fun.
+
+705
+00:35:14.720 --> 00:35:18.079
+uh and then we have the handoff
+
+706
+00:35:18.079 --> 00:35:21.359
+uh in here like on these three patterns
+
+707
+00:35:21.359 --> 00:35:24.000
+I'm going to explore on codes one of
+
+708
+00:35:24.000 --> 00:35:26.000
+them is just because it can be time
+
+709
+00:35:26.000 --> 00:35:29.520
+consuming but let's see all of the
+
+710
+00:35:29.520 --> 00:35:32.560
+concepts in here how they work and then
+
+711
+00:35:32.560 --> 00:35:36.160
+we jump to a a single case uh for the
+
+712
+00:35:36.160 --> 00:35:40.000
+case I think like the magentic one shows
+
+713
+00:35:40.000 --> 00:35:41.760
+um
+
+714
+00:35:41.760 --> 00:35:45.599
+um how the Handoff pattern is kind of in
+
+715
+00:35:45.599 --> 00:35:48.960
+there, right? Let's explore first the
+
+716
+00:35:48.960 --> 00:35:50.720
+the orchestrations.
+
+717
+00:35:50.720 --> 00:35:55.200
+And then we have the handoff. Where's my
+
+718
+00:35:55.200 --> 00:35:58.400
+laser point? And with the handoff
+
+719
+00:35:58.400 --> 00:36:00.640
+pattern, what happens is that we have
+
+720
+00:36:00.640 --> 00:36:02.720
+this conditional
+
+721
+00:36:02.720 --> 00:36:06.240
+uh routing by between specialists.
+
+722
+00:36:06.240 --> 00:36:09.280
+So what happens like for example this
+
+723
+00:36:09.280 --> 00:36:13.760
+triage agent? So imagine that we have a
+
+724
+00:36:13.760 --> 00:36:17.040
+customer service and we're talking to
+
+725
+00:36:17.040 --> 00:36:19.839
+their supports. We could have like a
+
+726
+00:36:19.839 --> 00:36:23.200
+distriage agent that verifies
+
+727
+00:36:23.200 --> 00:36:27.119
+the request and if the person is saying
+
+728
+00:36:27.119 --> 00:36:31.280
+that for example that being built twice
+
+729
+00:36:31.280 --> 00:36:34.480
+for a particular service the agent would
+
+730
+00:36:34.480 --> 00:36:38.640
+have the would be smart enough because
+
+731
+00:36:38.640 --> 00:36:42.880
+it has prompt to decides whether to uh
+
+732
+00:36:42.880 --> 00:36:45.680
+hand it over to a billing fraud or the
+
+733
+00:36:45.680 --> 00:36:48.800
+technical team because like let's Say if
+
+734
+00:36:48.800 --> 00:36:50.880
+you're if you have a subscription but
+
+735
+00:36:50.880 --> 00:36:53.760
+you have been build twice you wouldn't
+
+736
+00:36:53.760 --> 00:36:55.200
+be fraud. It wouldn't be a technical
+
+737
+00:36:55.200 --> 00:36:57.359
+issue would be like a billing concern an
+
+738
+00:36:57.359 --> 00:37:00.720
+issue. So the triage assist agent would
+
+739
+00:37:00.720 --> 00:37:03.839
+hand it over to a billing agent to sort
+
+740
+00:37:03.839 --> 00:37:08.160
+things do a refund of the the
+
+741
+00:37:08.160 --> 00:37:11.599
+duplication or the payment that was made
+
+742
+00:37:11.599 --> 00:37:14.640
+like in duplication. If there was
+
+743
+00:37:14.640 --> 00:37:16.720
+something suspicious, something could be
+
+744
+00:37:16.720 --> 00:37:19.680
+fraudulent, the agents could would hand
+
+745
+00:37:19.680 --> 00:37:22.320
+it over to the fraud agent. If the
+
+746
+00:37:22.320 --> 00:37:24.079
+person is saying that's trying to submit
+
+747
+00:37:24.079 --> 00:37:26.800
+something on the the website, e-commerce
+
+748
+00:37:26.800 --> 00:37:29.520
+for example, there's an error on the
+
+749
+00:37:29.520 --> 00:37:32.480
+page or so that would be more like a
+
+750
+00:37:32.480 --> 00:37:34.720
+technical issue. So the agents could
+
+751
+00:37:34.720 --> 00:37:37.520
+triage another agent. But what it does
+
+752
+00:37:37.520 --> 00:37:41.200
+that this coordinator has the knowledge
+
+753
+00:37:41.200 --> 00:37:45.119
+to hand it over to specialists right and
+
+754
+00:37:45.119 --> 00:37:48.160
+with that all of the context is managed
+
+755
+00:37:48.160 --> 00:37:51.520
+by agent framework so we don't need to
+
+756
+00:37:51.520 --> 00:37:53.920
+manage that agent framework does that
+
+757
+00:37:53.920 --> 00:37:56.640
+for us but it it says here the context
+
+758
+00:37:56.640 --> 00:37:59.440
+passed selectively to the next agent
+
+759
+00:37:59.440 --> 00:38:01.119
+right so it's not going to be passed to
+
+760
+00:38:01.119 --> 00:38:04.320
+the agents that don't have any concern
+
+761
+00:38:04.320 --> 00:38:07.200
+about that issue
+
+762
+00:38:08.000 --> 00:38:10.480
+Then we have the group chats, right? So
+
+763
+00:38:10.480 --> 00:38:13.680
+that's another orchestration pattern
+
+764
+00:38:13.680 --> 00:38:16.720
+where the agents collaborate in a shared
+
+765
+00:38:16.720 --> 00:38:18.400
+conversation.
+
+766
+00:38:18.400 --> 00:38:20.400
+Right? So when it says in here a shared
+
+767
+00:38:20.400 --> 00:38:22.640
+conversation is that they're going to
+
+768
+00:38:22.640 --> 00:38:26.240
+take turns and there is a coordinator
+
+769
+00:38:26.240 --> 00:38:29.520
+that tells look it's your time to say
+
+770
+00:38:29.520 --> 00:38:33.760
+something and depending what he does the
+
+771
+00:38:33.760 --> 00:38:36.000
+coordinator would just pass to the other
+
+772
+00:38:36.000 --> 00:38:38.640
+agents right in general like you have
+
+773
+00:38:38.640 --> 00:38:41.119
+there are different ways routing in
+
+774
+00:38:41.119 --> 00:38:44.400
+general like that every single agent has
+
+775
+00:38:44.400 --> 00:38:46.480
+uh
+
+776
+00:38:46.480 --> 00:38:50.160
+a particular time or a particular turn
+
+777
+00:38:50.160 --> 00:38:53.599
+to come and provide some input or just
+
+778
+00:38:53.599 --> 00:38:57.599
+pass the turn for another agent if what
+
+779
+00:38:57.599 --> 00:39:00.320
+was discussed was not of the concern of
+
+780
+00:39:00.320 --> 00:39:02.000
+the agent.
+
+781
+00:39:02.000 --> 00:39:04.960
+But for example in here that there's uh
+
+782
+00:39:04.960 --> 00:39:07.359
+as if you were to have you're creating
+
+783
+00:39:07.359 --> 00:39:11.119
+like a paper uh a university paper for
+
+784
+00:39:11.119 --> 00:39:13.040
+example and then like we're calling this
+
+785
+00:39:13.040 --> 00:39:15.760
+like a builder but would be the students
+
+786
+00:39:15.760 --> 00:39:19.359
+but the students trigger this this
+
+787
+00:39:19.359 --> 00:39:23.119
+workflow to create a paper for and then
+
+788
+00:39:23.119 --> 00:39:24.560
+we have like this builder that would
+
+789
+00:39:24.560 --> 00:39:27.599
+take the inputs from a user for example
+
+790
+00:39:27.599 --> 00:39:29.359
+the user would submit to a coordinator
+
+791
+00:39:29.359 --> 00:39:31.599
+the coordinator would say look this is
+
+792
+00:39:31.599 --> 00:39:33.440
+the context. This is what was being
+
+793
+00:39:33.440 --> 00:39:35.599
+provided by the user. The builder would
+
+794
+00:39:35.599 --> 00:39:38.160
+start creating like a paper. Then the
+
+795
+00:39:38.160 --> 00:39:41.200
+builder finishes. Then coordinator pass
+
+796
+00:39:41.200 --> 00:39:44.800
+to the the next one in line rounding for
+
+797
+00:39:44.800 --> 00:39:47.839
+example where there's a critic that
+
+798
+00:39:47.839 --> 00:39:51.680
+would provide some out um feedback and
+
+799
+00:39:51.680 --> 00:39:54.880
+then with the feedback there could be
+
+800
+00:39:54.880 --> 00:39:57.599
+like it could ask for uh input from
+
+801
+00:39:57.599 --> 00:40:00.960
+researcher. So this one it wouldn't be a
+
+802
+00:40:00.960 --> 00:40:02.560
+concern of the reviewer. The reviewer
+
+803
+00:40:02.560 --> 00:40:04.720
+would just be passing to the researcher
+
+804
+00:40:04.720 --> 00:40:07.760
+and the would be cycles of this running.
+
+805
+00:40:07.760 --> 00:40:10.720
+Okay. So this could run like it just
+
+806
+00:40:10.720 --> 00:40:13.920
+depends on how you have defined the
+
+807
+00:40:13.920 --> 00:40:16.960
+could be random could be round robbing.
+
+808
+00:40:16.960 --> 00:40:19.040
+But what's important here is that
+
+809
+00:40:19.040 --> 00:40:21.359
+they're taking turns all the
+
+810
+00:40:21.359 --> 00:40:24.400
+participants in here. What's important
+
+811
+00:40:24.400 --> 00:40:26.480
+is that you need to have termination
+
+812
+00:40:26.480 --> 00:40:28.560
+rules in here.
+
+813
+00:40:28.560 --> 00:40:32.560
+Um termination rules could be something
+
+814
+00:40:32.560 --> 00:40:34.720
+uh that would be the language like
+
+815
+00:40:34.720 --> 00:40:39.440
+natural language where depending on what
+
+816
+00:40:39.440 --> 00:40:43.359
+let's say the reviewer the final
+
+817
+00:40:43.359 --> 00:40:46.079
+reviewer could say that yeah this is
+
+818
+00:40:46.079 --> 00:40:48.720
+looks great it's approved right or for
+
+819
+00:40:48.720 --> 00:40:52.320
+for me the terminology approve could be
+
+820
+00:40:52.320 --> 00:40:55.040
+the natural language that would be
+
+821
+00:40:55.040 --> 00:40:56.560
+passed to the coordinator and the
+
+822
+00:40:56.560 --> 00:40:58.640
+coordinator would have a prompt to
+
+823
+00:40:58.640 --> 00:41:01.920
+identify has been approved. Yes. Finish.
+
+824
+00:41:01.920 --> 00:41:04.560
+Terminate the flow. Uh there are cases
+
+825
+00:41:04.560 --> 00:41:09.119
+for those open-ended problems where the
+
+826
+00:41:09.119 --> 00:41:12.240
+you could define iterations, right? And
+
+827
+00:41:12.240 --> 00:41:15.119
+they would spin until you get uh they
+
+828
+00:41:15.119 --> 00:41:18.240
+get to resolve the issue or not, right?
+
+829
+00:41:18.240 --> 00:41:21.280
+So it's a a new pattern. So but you have
+
+830
+00:41:21.280 --> 00:41:23.359
+like you need to specify termination
+
+831
+00:41:23.359 --> 00:41:25.839
+rules
+
+832
+00:41:25.839 --> 00:41:28.800
+otherwise you might incur in burning
+
+833
+00:41:28.800 --> 00:41:31.680
+tokens
+
+834
+00:41:31.680 --> 00:41:34.640
+and then you pay the price. So and this
+
+835
+00:41:34.640 --> 00:41:37.680
+is the magentic pattern where
+
+836
+00:41:37.680 --> 00:41:41.040
+it's a if you look in here
+
+837
+00:41:41.040 --> 00:41:44.400
+it kind of resembles like the handoff
+
+838
+00:41:44.400 --> 00:41:47.920
+pattern but a little bit smarter. Uh I
+
+839
+00:41:47.920 --> 00:41:51.200
+would say it's just like that the hundi
+
+840
+00:41:51.200 --> 00:41:53.520
+is great. It's just like doesn't have
+
+841
+00:41:53.520 --> 00:41:56.160
+that sort of complexity uh embedded
+
+842
+00:41:56.160 --> 00:41:59.119
+because uh you don't need like that sort
+
+843
+00:41:59.119 --> 00:42:01.680
+of decision uh that's made with this
+
+844
+00:42:01.680 --> 00:42:04.000
+manager. But what happens is that this
+
+845
+00:42:04.000 --> 00:42:09.839
+manager he defines a plan dispatch for
+
+846
+00:42:09.839 --> 00:42:11.599
+the specialists
+
+847
+00:42:11.599 --> 00:42:14.800
+and based on the outputs of these
+
+848
+00:42:14.800 --> 00:42:18.240
+specialists it adapts and evolves the
+
+849
+00:42:18.240 --> 00:42:22.079
+plan. Okay. So this is more like a um
+
+850
+00:42:22.079 --> 00:42:23.839
+yeah
+
+851
+00:42:23.839 --> 00:42:26.000
+this is to be used like for complex
+
+852
+00:42:26.000 --> 00:42:29.200
+problems and where you need really to
+
+853
+00:42:29.200 --> 00:42:32.880
+evolve based on what you got is that you
+
+854
+00:42:32.880 --> 00:42:36.400
+review the the plan that needs to be uh
+
+855
+00:42:36.400 --> 00:42:38.560
+modified and then you have like another
+
+856
+00:42:38.560 --> 00:42:40.720
+action and everything here we call like
+
+857
+00:42:40.720 --> 00:42:43.280
+the task ledger where the history really
+
+858
+00:42:43.280 --> 00:42:45.359
+makes like a a difference on the
+
+859
+00:42:45.359 --> 00:42:48.720
+decisions and you you see like the
+
+860
+00:42:48.720 --> 00:42:53.119
+manager can ask uh for like a human. So
+
+861
+00:42:53.119 --> 00:42:54.960
+there's a human in the loop. You could
+
+862
+00:42:54.960 --> 00:42:58.400
+just say that ah look uh the man manager
+
+863
+00:42:58.400 --> 00:43:00.720
+could say uh this here is the plan. Are
+
+864
+00:43:00.720 --> 00:43:02.640
+you fine with it? Do you want to
+
+865
+00:43:02.640 --> 00:43:04.960
+improve? So you could have like this
+
+866
+00:43:04.960 --> 00:43:06.880
+this human in the loop to validate the
+
+867
+00:43:06.880 --> 00:43:09.119
+plan and then approve and then the
+
+868
+00:43:09.119 --> 00:43:11.520
+manager would just dispatch to the
+
+869
+00:43:11.520 --> 00:43:13.839
+specialist, right? So it does that and
+
+870
+00:43:13.839 --> 00:43:17.680
+replans at each step. So the special is
+
+871
+00:43:17.680 --> 00:43:20.560
+report back to the manager and that can
+
+872
+00:43:20.560 --> 00:43:23.520
+it can adapt best for open-ended
+
+873
+00:43:23.520 --> 00:43:26.720
+multi-step problem solving. So this one
+
+874
+00:43:26.720 --> 00:43:31.280
+it's a uh it's um
+
+875
+00:43:31.280 --> 00:43:34.400
+I would say the magentic it's a combines
+
+876
+00:43:34.400 --> 00:43:38.800
+the sort of hand off with uh planning
+
+877
+00:43:38.800 --> 00:43:40.640
+and
+
+878
+00:43:40.640 --> 00:43:42.480
+this concept in here with the manager
+
+879
+00:43:42.480 --> 00:43:44.560
+right that's not only a coordinator it
+
+880
+00:43:44.560 --> 00:43:48.640
+really makes the decision and evolves u
+
+881
+00:43:48.640 --> 00:43:52.160
+uh the the flow based on on those
+
+882
+00:43:52.160 --> 00:43:54.400
+outputs from the different specialists.
+
+883
+00:43:54.400 --> 00:43:58.079
+Let's go to the code. Okay. And for this
+
+884
+00:43:58.079 --> 00:44:02.400
+one, uh, let's go with the magentic.
+
+885
+00:44:02.400 --> 00:44:07.040
+Let me close that. And that magentic.
+
+886
+00:44:07.040 --> 00:44:09.280
+I'm going to do the console. The console
+
+887
+00:44:09.280 --> 00:44:10.800
+is
+
+888
+00:44:10.800 --> 00:44:14.319
+complex enough to
+
+889
+00:44:14.319 --> 00:44:17.839
+to approach with the web UI. We don't we
+
+890
+00:44:17.839 --> 00:44:20.640
+don't see it, right? You need to dig
+
+891
+00:44:20.640 --> 00:44:24.000
+through the traces. So it helps assists
+
+892
+00:44:24.000 --> 00:44:26.240
+you visualizing what's going on during
+
+893
+00:44:26.240 --> 00:44:28.800
+development but when you need to dig
+
+894
+00:44:28.800 --> 00:44:31.520
+onto the telemetry open telemetry yeah
+
+895
+00:44:31.520 --> 00:44:34.400
+it can be too much okay but up to you
+
+896
+00:44:34.400 --> 00:44:38.880
+like I prefer combining both where I can
+
+897
+00:44:38.880 --> 00:44:42.880
+view or visualize what's happening and
+
+898
+00:44:42.880 --> 00:44:45.200
+with devi seeing like how things are
+
+899
+00:44:45.200 --> 00:44:47.359
+connecting then jumping back to a
+
+900
+00:44:47.359 --> 00:44:52.400
+console and seeing the outputs okay
+
+901
+00:44:52.400 --> 00:44:55.119
+But it's yeah it's just like a personal
+
+902
+00:44:55.119 --> 00:44:57.839
+preference. Everyone has a different
+
+903
+00:44:57.839 --> 00:45:00.880
+view on that. And with the magentic
+
+904
+00:45:00.880 --> 00:45:03.599
+right the programming here similar
+
+905
+00:45:03.599 --> 00:45:06.880
+structure variables and we're creating
+
+906
+00:45:06.880 --> 00:45:09.760
+agents. Okay. But then uh you're going
+
+907
+00:45:09.760 --> 00:45:12.560
+to see that's kind of complex because
+
+908
+00:45:12.560 --> 00:45:16.000
+imagine this uh as um a security
+
+909
+00:45:16.000 --> 00:45:19.520
+incident. Okay. So if a when a security
+
+910
+00:45:19.520 --> 00:45:21.440
+incident happens, we have this
+
+911
+00:45:21.440 --> 00:45:24.160
+commander. The commander's orchestrator
+
+912
+00:45:24.160 --> 00:45:26.880
+is the manager. So the the manager is
+
+913
+00:45:26.880 --> 00:45:28.400
+going to say, "Look, there there's been
+
+914
+00:45:28.400 --> 00:45:30.960
+a security incident. We're going to be
+
+915
+00:45:30.960 --> 00:45:34.480
+triggering uh some analysis, right? So I
+
+916
+00:45:34.480 --> 00:45:37.040
+have my commander and the prompts for
+
+917
+00:45:37.040 --> 00:45:38.560
+that.
+
+918
+00:45:38.560 --> 00:45:41.440
+But what he knows, he knows that we have
+
+919
+00:45:41.440 --> 00:45:43.119
+specialists. We have a identity
+
+920
+00:45:43.119 --> 00:45:45.760
+specialist, a network specialist,
+
+921
+00:45:45.760 --> 00:45:48.720
+endpoint analyst specialist, a threat
+
+922
+00:45:48.720 --> 00:45:52.400
+intelligence and a sock analyst. All of
+
+923
+00:45:52.400 --> 00:45:55.760
+them they have different concerns. Okay,
+
+924
+00:45:55.760 --> 00:45:57.599
+different tools in here. Remember all
+
+925
+00:45:57.599 --> 00:46:00.720
+the tools here are they generate random
+
+926
+00:46:00.720 --> 00:46:02.319
+output.
+
+927
+00:46:02.319 --> 00:46:04.560
+But we have different concerns in here,
+
+928
+00:46:04.560 --> 00:46:06.800
+different specialists.
+
+929
+00:46:06.800 --> 00:46:10.319
+What's nice is that well agent framework
+
+930
+00:46:10.319 --> 00:46:13.920
+is kind of bringing a way for us to hook
+
+931
+00:46:13.920 --> 00:46:15.839
+them
+
+932
+00:46:15.839 --> 00:46:18.880
+uh a little bit better if uh we're going
+
+933
+00:46:18.880 --> 00:46:21.040
+to jump straight away to the complex
+
+934
+00:46:21.040 --> 00:46:23.599
+scenario. But in here it starts getting
+
+935
+00:46:23.599 --> 00:46:25.839
+a little bit more complicated but we
+
+936
+00:46:25.839 --> 00:46:29.119
+have a wrapper the magentic workflow
+
+937
+00:46:29.119 --> 00:46:31.920
+builder and then we're passing the
+
+938
+00:46:31.920 --> 00:46:36.800
+agents. Oops here. Okay. And one thing
+
+939
+00:46:36.800 --> 00:46:40.960
+require plan sign off. True. So I am the
+
+940
+00:46:40.960 --> 00:46:43.040
+human in the loop. I will need to
+
+941
+00:46:43.040 --> 00:46:45.599
+approve this plan otherwise nothing
+
+942
+00:46:45.599 --> 00:46:49.359
+happens. Um you need to have some guard
+
+943
+00:46:49.359 --> 00:46:52.000
+rails like for example the number of
+
+944
+00:46:52.000 --> 00:46:55.520
+rounds things could spin out of control
+
+945
+00:46:55.520 --> 00:46:57.680
+if like for those open-ended problem. So
+
+946
+00:46:57.680 --> 00:47:00.240
+you need to have better control for like
+
+947
+00:47:00.240 --> 00:47:03.280
+finalize and terminate the the flow if
+
+948
+00:47:03.280 --> 00:47:06.640
+you needed if things get like for stalls
+
+949
+00:47:06.640 --> 00:47:09.119
+things don't happen if you need to reset
+
+950
+00:47:09.119 --> 00:47:11.520
+so there wasn't an agreement or things
+
+951
+00:47:11.520 --> 00:47:14.240
+evolved to the wrong direction but
+
+952
+00:47:14.240 --> 00:47:16.240
+things could happen right so you need to
+
+953
+00:47:16.240 --> 00:47:19.520
+have uh a plan for terminating when
+
+954
+00:47:19.520 --> 00:47:22.880
+things don't work as expected I put like
+
+955
+00:47:22.880 --> 00:47:26.560
+this one uh startup and I'm going to run
+
+956
+00:47:26.560 --> 00:47:28.480
+Okay, I don't have break points but
+
+957
+00:47:28.480 --> 00:47:30.560
+intent to trigger this and then we can
+
+958
+00:47:30.560 --> 00:47:34.000
+see that I'm the human in the loop and I
+
+959
+00:47:34.000 --> 00:47:36.079
+should be
+
+960
+00:47:36.079 --> 00:47:38.880
+open. Let me close that.
+
+961
+00:47:38.880 --> 00:47:42.000
+I should be able to approve that.
+
+962
+00:47:42.000 --> 00:47:45.119
+So I have this one. So there's a cyber
+
+963
+00:47:45.119 --> 00:47:47.520
+security incident. That's what's being
+
+964
+00:47:47.520 --> 00:47:50.400
+provided in here. And it say that each
+
+965
+00:47:50.400 --> 00:47:53.280
+agent specialist gets two terms. Okay.
+
+966
+00:47:53.280 --> 00:47:55.920
+first to surface raw findings. Second to
+
+967
+00:47:55.920 --> 00:47:59.280
+cross reference things. So here it has
+
+968
+00:47:59.280 --> 00:48:03.440
+the magentic plan. Okay, magentic plan.
+
+969
+00:48:03.440 --> 00:48:05.680
+So it's proposing a plan for me and then
+
+970
+00:48:05.680 --> 00:48:07.839
+okay yeah going to bring the identity
+
+971
+00:48:07.839 --> 00:48:10.240
+specialist going to do this network
+
+972
+00:48:10.240 --> 00:48:14.160
+agent endp point. Okay based like adjust
+
+973
+00:48:14.160 --> 00:48:16.960
+investigation as new evidence emerges.
+
+974
+00:48:16.960 --> 00:48:19.040
+Please enter to approve or type feedback
+
+975
+00:48:19.040 --> 00:48:22.000
+to request a revision. I could say look
+
+976
+00:48:22.000 --> 00:48:24.319
+include like more details about I don't
+
+977
+00:48:24.319 --> 00:48:26.800
+know fires look at these particular
+
+978
+00:48:26.800 --> 00:48:30.079
+instances but for the demo yeah I'm
+
+979
+00:48:30.079 --> 00:48:33.440
+going to approve I just entered and what
+
+980
+00:48:33.440 --> 00:48:35.760
+we should see here start seeing the
+
+981
+00:48:35.760 --> 00:48:38.160
+tools right the callers
+
+982
+00:48:38.160 --> 00:48:40.160
+being displayed because the agents are
+
+983
+00:48:40.160 --> 00:48:43.599
+working right
+
+984
+00:48:43.599 --> 00:48:48.319
+at some stage we should have uh uh
+
+985
+00:48:48.319 --> 00:48:51.040
+feedback or some sort of analysis a
+
+986
+00:48:51.040 --> 00:48:53.839
+reporting of what happened. So looking
+
+987
+00:48:53.839 --> 00:48:56.400
+here network IP reputation logically
+
+988
+00:48:56.400 --> 00:48:59.359
+residential data payload loaded to fish
+
+989
+00:48:59.359 --> 00:49:02.480
+proxy attacker second logging has no VPN
+
+990
+00:49:02.480 --> 00:49:04.960
+session look like fishing domain
+
+991
+00:49:04.960 --> 00:49:08.559
+resolved before incident so there like
+
+992
+00:49:08.559 --> 00:49:10.960
+some different tools being triggered
+
+993
+00:49:10.960 --> 00:49:13.520
+that's going to provide as inputs for
+
+994
+00:49:13.520 --> 00:49:16.079
+the decision making browser extension
+
+995
+00:49:16.079 --> 00:49:19.040
+suspicious extension installed minutes
+
+996
+00:49:19.040 --> 00:49:21.680
+before the incident so imagine like that
+
+997
+00:49:21.680 --> 00:49:25.119
+there was a cyber cured uh events like
+
+998
+00:49:25.119 --> 00:49:28.000
+in here it's saying that like
+
+999
+00:49:28.000 --> 00:49:30.480
+an extension a browser extension that
+
+1000
+00:49:30.480 --> 00:49:33.520
+has been compromised right so we have
+
+1001
+00:49:33.520 --> 00:49:38.240
+some flags happening here and what we
+
+1002
+00:49:38.240 --> 00:49:40.400
+should have is that a decision in the
+
+1003
+00:49:40.400 --> 00:49:43.119
+end okay I'm going to let this one
+
+1004
+00:49:43.119 --> 00:49:44.720
+running and then we should be able to
+
+1005
+00:49:44.720 --> 00:49:48.559
+see it I I still want to show the
+
+1006
+00:49:48.559 --> 00:49:54.240
+complex one let me just come back.
+
+1007
+00:49:54.240 --> 00:49:58.160
+Let's see this one. Okay.
+
+1008
+00:49:58.160 --> 00:50:00.960
+Uh because we have the executor. In the
+
+1009
+00:50:00.960 --> 00:50:03.680
+executor, we have a base class and
+
+1010
+00:50:03.680 --> 00:50:06.480
+that's where you have fine control.
+
+1011
+00:50:06.480 --> 00:50:08.319
+Okay. So, you could implement your own
+
+1012
+00:50:08.319 --> 00:50:12.000
+executors. They have like an infire.
+
+1013
+00:50:12.000 --> 00:50:15.839
+They are typed. Let me bring my laser
+
+1014
+00:50:15.839 --> 00:50:18.800
+point. The types you have a life cycle.
+
+1015
+00:50:18.800 --> 00:50:20.559
+When we look at them, there are many of
+
+1016
+00:50:20.559 --> 00:50:21.839
+them.
+
+1017
+00:50:21.839 --> 00:50:24.640
+uh I'm not going to jump onto the
+
+1018
+00:50:24.640 --> 00:50:27.520
+details but executors can have an input
+
+1019
+00:50:27.520 --> 00:50:31.440
+input output there can be reflection
+
+1020
+00:50:31.440 --> 00:50:33.680
+this one it's been deprecated but it's
+
+1021
+00:50:33.680 --> 00:50:38.720
+been there for evaluating uh dynamically
+
+1022
+00:50:38.720 --> 00:50:43.040
+like the um inputs output
+
+1023
+00:50:43.040 --> 00:50:44.880
+with states
+
+1024
+00:50:44.880 --> 00:50:48.400
+using like in chats okay uh I'm going to
+
+1025
+00:50:48.400 --> 00:50:51.440
+show the example
+
+1026
+00:50:51.440 --> 00:50:55.599
+in here is there of the complex
+
+1027
+00:50:55.599 --> 00:50:58.720
+uh here. Okay,
+
+1028
+00:50:58.720 --> 00:51:01.680
+remember like the stadium validation in
+
+1029
+00:51:01.680 --> 00:51:04.079
+the check, right? So the match can occur
+
+1030
+00:51:04.079 --> 00:51:07.040
+or not. We have those executors
+
+1031
+00:51:07.040 --> 00:51:11.440
+dispatchers dispatchers exe field. But
+
+1032
+00:51:11.440 --> 00:51:14.640
+let's look at here the create method.
+
+1033
+00:51:14.640 --> 00:51:19.040
+Well, it's a it has like implementation.
+
+1034
+00:51:19.040 --> 00:51:21.920
+It has the inputs, it has the outputs,
+
+1035
+00:51:21.920 --> 00:51:23.920
+but I don't have we don't have the brain
+
+1036
+00:51:23.920 --> 00:51:26.400
+here. We don't have LLMs. So, it's just
+
+1037
+00:51:26.400 --> 00:51:28.880
+a wrap around logic where I'm validating
+
+1038
+00:51:28.880 --> 00:51:31.839
+if it's a user or not depending on the
+
+1039
+00:51:31.839 --> 00:51:35.440
+role. But it's just a job, right? So, an
+
+1040
+00:51:35.440 --> 00:51:38.319
+executor here perform a job for me, but
+
+1041
+00:51:38.319 --> 00:51:40.800
+has nothing to do with AI. But this one,
+
+1042
+00:51:40.800 --> 00:51:43.359
+the medical, it does. Can you see? Like
+
+1043
+00:51:43.359 --> 00:51:45.920
+we have a chat client. So, when I jump
+
+1044
+00:51:45.920 --> 00:51:48.800
+to that, they're exactly the same. But
+
+1045
+00:51:48.800 --> 00:51:52.960
+in here we have look at here the handle
+
+1046
+00:51:52.960 --> 00:51:55.215
+we have the eye agents okay
+
+1047
+00:51:55.215 --> 00:51:55.760
+[clears throat]
+
+1048
+00:51:55.760 --> 00:51:58.400
+I have my prompts I have my tools I have
+
+1049
+00:51:58.400 --> 00:52:00.960
+my session
+
+1050
+00:52:00.960 --> 00:52:03.599
+I'm controlling this the executor is
+
+1051
+00:52:03.599 --> 00:52:06.400
+basically a wrapper okay is a so you
+
+1052
+00:52:06.400 --> 00:52:09.599
+could do you have full control you could
+
+1053
+00:52:09.599 --> 00:52:12.720
+uh inject logging put like other sort of
+
+1054
+00:52:12.720 --> 00:52:15.839
+validations logic in here okay so it
+
+1055
+00:52:15.839 --> 00:52:18.400
+gives you flexibility right so It's
+
+1056
+00:52:18.400 --> 00:52:21.920
+interesting that it's something that for
+
+1057
+00:52:21.920 --> 00:52:24.640
+production workloads you might end up
+
+1058
+00:52:24.640 --> 00:52:26.960
+getting to this because it gives you
+
+1059
+00:52:26.960 --> 00:52:30.640
+flexibility to modify the logic for it.
+
+1060
+00:52:30.640 --> 00:52:32.640
+Okay. So that's something it's more like
+
+1061
+00:52:32.640 --> 00:52:35.359
+for your your awareness knowing that's
+
+1062
+00:52:35.359 --> 00:52:38.400
+in there and then you can explore.
+
+1063
+00:52:38.400 --> 00:52:42.559
+Let's see if like the prompt or the
+
+1064
+00:52:42.559 --> 00:52:46.640
+agent finalize. It did. It did finish
+
+1065
+00:52:46.640 --> 00:52:49.359
+incident report reports. Okay. So, we
+
+1066
+00:52:49.359 --> 00:52:51.280
+have that
+
+1067
+00:52:51.280 --> 00:52:53.760
+start confirmed there. There's been like
+
+1068
+00:52:53.760 --> 00:52:57.520
+impact session hijacking. So, it has
+
+1069
+00:52:57.520 --> 00:53:01.040
+after all of what happened
+
+1070
+00:53:01.040 --> 00:53:03.599
+based on the tools that we had
+
+1071
+00:53:03.599 --> 00:53:06.400
+identified there was a session hijacking
+
+1072
+00:53:06.400 --> 00:53:08.880
+and it's bringing all of the reporting
+
+1073
+00:53:08.880 --> 00:53:11.920
+for that. Okay. Evidence. you grab like
+
+1074
+00:53:11.920 --> 00:53:13.280
+the outputs from the different
+
+1075
+00:53:13.280 --> 00:53:16.559
+specialists recommended immediate uh
+
+1076
+00:53:16.559 --> 00:53:19.520
+actions. So I have like everything here
+
+1077
+00:53:19.520 --> 00:53:22.240
+like to provide a report and the
+
+1078
+00:53:22.240 --> 00:53:25.040
+magentic workflow is just matched like
+
+1079
+00:53:25.040 --> 00:53:27.359
+my requirements in here which is good
+
+1080
+00:53:27.359 --> 00:53:29.920
+because uh that that was a complex
+
+1081
+00:53:29.920 --> 00:53:33.119
+problem that need like insights and a
+
+1082
+00:53:33.119 --> 00:53:35.839
+dynamic view of okay the different
+
+1083
+00:53:35.839 --> 00:53:39.200
+variables that was just thrown along the
+
+1084
+00:53:39.200 --> 00:53:43.359
+way to the manager
+
+1085
+00:53:43.359 --> 00:53:47.119
+with that. Uh that's like the key
+
+1086
+00:53:47.119 --> 00:53:49.599
+takeaways that you pick like the shape
+
+1087
+00:53:49.599 --> 00:53:52.160
+that fits your workloads. You can
+
+1088
+00:53:52.160 --> 00:53:54.960
+combine them and build like your
+
+1089
+00:53:54.960 --> 00:53:57.599
+workflows, your orchestrations
+
+1090
+00:53:57.599 --> 00:53:59.920
+composing like those patterns. If you
+
+1091
+00:53:59.920 --> 00:54:02.079
+know like the executors, you have better
+
+1092
+00:54:02.079 --> 00:54:04.880
+control, fine grain control on your
+
+1093
+00:54:04.880 --> 00:54:08.240
+logic. One of the things in here is that
+
+1094
+00:54:08.240 --> 00:54:11.599
+this is the QR codes for the repository.
+
+1095
+00:54:11.599 --> 00:54:14.079
+I invite you to jump in there. If you're
+
+1096
+00:54:14.079 --> 00:54:17.040
+using GitHub, just leave a star. I
+
+1097
+00:54:17.040 --> 00:54:20.319
+appreciate. Yeah. And
+
+1098
+00:54:20.319 --> 00:54:22.160
+I think with that, I'm just finishing
+
+1099
+00:54:22.160 --> 00:54:24.800
+the the session. And just if you have
+
+1100
+00:54:24.800 --> 00:54:28.487
+questions, we can look at them.
+
+1101
+00:54:28.487 --> 00:54:30.507
+[snorts]
+
+1102
+00:54:31.040 --> 00:54:34.280
+Let's see.
+
+1103
+00:54:35.200 --> 00:54:39.280
+Okay. Let's see. Thank you. Um
+
+1104
+00:54:39.280 --> 00:54:40.880
+save
+
+1105
+00:54:40.880 --> 00:54:43.359
+edge how is accountability there's a
+
+1106
+00:54:43.359 --> 00:54:47.200
+message from edge uh edge bera uh how's
+
+1107
+00:54:47.200 --> 00:54:49.200
+account accountability maintained when
+
+1108
+00:54:49.200 --> 00:54:52.640
+several agents collectively produce one
+
+1109
+00:54:52.640 --> 00:54:55.440
+outcome any practice recommendations we
+
+1110
+00:54:55.440 --> 00:54:58.559
+should start using
+
+1111
+00:54:58.559 --> 00:55:04.079
+yeah on this one I think like there's as
+
+1112
+00:55:04.079 --> 00:55:06.559
+part of your development you should
+
+1113
+00:55:06.559 --> 00:55:08.079
+evaluate
+
+1114
+00:55:08.079 --> 00:55:10.000
+the prompts
+
+1115
+00:55:10.000 --> 00:55:13.599
+uh is just because you want to have some
+
+1116
+00:55:13.599 --> 00:55:15.599
+guard rails
+
+1117
+00:55:15.599 --> 00:55:18.559
+to check like if the answer that's been
+
+1118
+00:55:18.559 --> 00:55:20.800
+produced matches
+
+1119
+00:55:20.800 --> 00:55:25.280
+the intent the initial intent we didn't
+
+1120
+00:55:25.280 --> 00:55:27.680
+explore in here but there are like ways
+
+1121
+00:55:27.680 --> 00:55:29.839
+for you to evaluate
+
+1122
+00:55:29.839 --> 00:55:33.520
+prompts different techniques even in the
+
+1123
+00:55:33.520 --> 00:55:35.119
+net space there are like libraries to
+
+1124
+00:55:35.119 --> 00:55:37.440
+help with that in general you
+
+1125
+00:55:37.440 --> 00:55:40.720
+lot of them in Python. But as part of
+
+1126
+00:55:40.720 --> 00:55:43.200
+your practice before like launching
+
+1127
+00:55:43.200 --> 00:55:46.160
+bring those agents, you should have some
+
+1128
+00:55:46.160 --> 00:55:48.960
+uh validation and have like valuations
+
+1129
+00:55:48.960 --> 00:55:50.960
+to check whether you're getting the
+
+1130
+00:55:50.960 --> 00:55:54.079
+outputs if they match your original
+
+1131
+00:55:54.079 --> 00:55:58.480
+intent. Right? I think that hopefully
+
+1132
+00:55:58.480 --> 00:56:01.839
+that's helped with some answers. Uh
+
+1133
+00:56:01.839 --> 00:56:06.000
+Edge, let's see.
+
+1134
+00:56:06.000 --> 00:56:08.640
+Uh let's say we build workflows like
+
+1135
+00:56:08.640 --> 00:56:11.359
+this to a legal office. How can
+
+1136
+00:56:11.359 --> 00:56:14.960
+sensitive data be prevented from flowing
+
+1137
+00:56:14.960 --> 00:56:17.599
+to an agent that does not need it? Is it
+
+1138
+00:56:17.599 --> 00:56:21.599
+possible? So there's a library now that
+
+1139
+00:56:21.599 --> 00:56:25.040
+with the donet uh it's usually like for
+
+1140
+00:56:25.040 --> 00:56:27.760
+harness and what happens is that there
+
+1141
+00:56:27.760 --> 00:56:30.400
+are different guard rails in there where
+
+1142
+00:56:30.400 --> 00:56:33.280
+you can even control if PII information
+
+1143
+00:56:33.280 --> 00:56:35.680
+should be passed as part of the context
+
+1144
+00:56:35.680 --> 00:56:39.920
+or not. So you just control through
+
+1145
+00:56:39.920 --> 00:56:42.240
+parameters and then you need to specify
+
+1146
+00:56:42.240 --> 00:56:46.079
+look PII information should be ignored
+
+1147
+00:56:46.079 --> 00:56:47.839
+completely. Right? So that's how you do
+
+1148
+00:56:47.839 --> 00:56:50.319
+it. in net there's a library I think
+
+1149
+00:56:50.319 --> 00:56:53.200
+it's harness.ai AI following exactly the
+
+1150
+00:56:53.200 --> 00:56:56.000
+same path but you you you can just find
+
+1151
+00:56:56.000 --> 00:56:58.640
+that in Google. Uh so that's something
+
+1152
+00:56:58.640 --> 00:57:01.599
+that I think the the Microsoft agent
+
+1153
+00:57:01.599 --> 00:57:04.079
+framework team has been working on.
+
+1154
+00:57:04.079 --> 00:57:05.520
+There are additional libraries for that.
+
+1155
+00:57:05.520 --> 00:57:08.160
+I didn't put on this this example but
+
+1156
+00:57:08.160 --> 00:57:12.359
+it's available for you to use.
+
+1157
+00:57:15.280 --> 00:57:19.839
+I think with that all the questions
+
+1158
+00:57:19.839 --> 00:57:23.960
+have been uh validated.
+
+1159
+00:57:28.480 --> 00:57:31.040
+I'm not sure if Isabelle if you're
+
+1160
+00:57:31.040 --> 00:57:34.559
+coming to the session or not but just in
+
+1161
+00:57:34.559 --> 00:57:38.160
+case if the the reactor team doesn't
+
+1162
+00:57:38.160 --> 00:57:41.280
+come like to thank you uh for being part
+
+1163
+00:57:41.280 --> 00:57:44.319
+of the session and be in touch. I share
+
+1164
+00:57:44.319 --> 00:57:46.079
+like all of the details at the beginning
+
+1165
+00:57:46.079 --> 00:57:49.359
+of the session and yeah uh very happy to
+
+1166
+00:57:49.359 --> 00:57:51.839
+know like what you've been doing and
+
+1167
+00:57:51.839 --> 00:57:54.960
+understand like your challenges. So I
+
+1168
+00:57:54.960 --> 00:57:57.520
+perhaps you help me preparing some use
+
+1169
+00:57:57.520 --> 00:57:59.599
+cases where I can approach with the
+
+1170
+00:57:59.599 --> 00:58:01.839
+technical community or even if you are
+
+1171
+00:58:01.839 --> 00:58:04.160
+interested we can chat and then we can
+
+1172
+00:58:04.160 --> 00:58:07.839
+align a session with you as well on my
+
+1173
+00:58:07.839 --> 00:58:13.240
+uh the user group uh I lead. Yeah.

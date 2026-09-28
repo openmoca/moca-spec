@@ -81,3 +81,19 @@ test('a valid draft with --force replaces a pre-existing non-empty output direct
     rmSync(outDir, { recursive: true, force: true });
   }
 });
+
+test('an adapter may add files under sources/ and media/, and structure.ttl, and nothing else', async () => {
+  for (const path of ['moca.json', 'content/x.md', 'attestations/a.json', 'sources/../moca.json', '/etc/passwd', 'media/./a.vtt', 'structure.json']) {
+    const outDir = join(tempDir(), 'pkg');
+    await assert.rejects(writeDraft({ draft: { ...VALID_DRAFT, files: [{ path, body: 'x' }] }, outDir }), UsageError, path);
+    assert.equal(existsSync(outDir), false);
+  }
+  const outDir = join(tempDir(), 'pkg');
+  try {
+    const files = [{ path: 'sources/a/b.txt', body: 'b' }, { path: 'media/c.vtt', body: 'WEBVTT\n' }];
+    await writeDraft({ draft: { ...VALID_DRAFT, files }, outDir });
+    assert.equal(readFileSync(join(outDir, 'sources', 'a', 'b.txt'), 'utf8'), 'b');
+  } finally {
+    rmSync(outDir, { recursive: true, force: true });
+  }
+});

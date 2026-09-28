@@ -21,6 +21,8 @@ const EXAMPLES = [
   { dir: 'examples/handbook/incident-response', capabilities: ['core', 'structured'] },
   { dir: 'examples/handbook/handbook', capabilities: ['core', 'composed'], members: ['examples/handbook'] },
   { dir: 'examples/service-catalogue', capabilities: ['core', 'structured'] },
+  { dir: 'examples/youtube/video', capabilities: ['core', 'located-evidence', 'self-contained-evidence'] },
+  { dir: 'examples/youtube/playlist', capabilities: ['core', 'located-evidence', 'self-contained-evidence', 'structured'] },
 ];
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });

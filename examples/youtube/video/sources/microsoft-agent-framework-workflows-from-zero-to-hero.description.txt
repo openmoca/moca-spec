@@ -1,0 +1,23 @@
+Microsoft Agent Framework Workflows: From Zero to Hero is a practical developer session that turns familiar workflow patterns into powerful orchestration using Executors, Edges, and Events. From core workflow patterns to advanced agent orchestration. 
+
+We'll cover: 
+🔹 Sequential and parallel workflows 
+🔹 Fan-out / Fan-in orchestration 
+🔹 Handoffs and intelligent routing 
+🔹 Multi-agent collaboration 
+🔹 Executors, Edges & Events 
+🔹 Real-world workflow patterns you can apply immediately
+
+0:37 Introduction to AI Agents vs. Workflows
+ 3:13 Workflow Building Blocks (Executors, Edges, Events)
+ 5:01 Five Orchestration Patterns Overview
+ 9:17 DevUI - Run & Debug Visually
+ 15:03 Sequential Pattern in Code
+ 22:26 Concurrent Pattern in Code
+ 35:18 Handoff Pattern Concept
+ 38:08 Group Chat Pattern Concept
+ 43:31 Agentic (Manager) Pattern in Code
+ 49:57 Executors and Fine-Grained Control
+ 54:40 Q&A and Best Practices
+
+[eventID: 27462]

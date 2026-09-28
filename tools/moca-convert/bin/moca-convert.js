@@ -30,7 +30,7 @@ const { version } = JSON.parse(
 const program = new Command();
 program
   .name('moca-convert')
-  .description('Create a MOCA package, with an OKF content bundle, from a directory, Markdown files, an Obsidian vault, or a suitable OpenAPI document.')
+  .description('Create a MOCA package, with an OKF content bundle, from a directory, Markdown files, an Obsidian vault, a suitable OpenAPI document, or a YouTube capture folder.')
   // `--version <semver>` already sets the *generated package's* version, so the
   // CLI's own version is exposed as --cli-version rather than redefining it.
   .version(version, '-V, --cli-version', "output moca-convert's own version")
@@ -42,7 +42,7 @@ program
   .option('--type <type>', 'OKF type for nodes that lack one (default per adapter: Document, Note, API Operation)')
   .option('--language <bcp47>', 'default content language, e.g. en')
   .option('--license <spdx>', 'SPDX license expression for the package')
-  .option('--from <format>', 'source format: directory|markdown|obsidian|openapi (auto-detected if omitted)')
+  .option('--from <format>', 'source format: directory|markdown|obsidian|openapi|youtube (auto-detected if omitted)')
   .option('--exclude <glob...>', 'obsidian only: note paths to exclude from conversion (still indexed for wikilink resolution)')
   .option('--min-description-ratio <ratio>', 'openapi only: minimum fraction of operations needing a summary/description, 0-1 (default 0.5)', parseRatio)
   .option('--chunker <mode>', 'openapi only: operation|tag content-node grouping (default operation)')

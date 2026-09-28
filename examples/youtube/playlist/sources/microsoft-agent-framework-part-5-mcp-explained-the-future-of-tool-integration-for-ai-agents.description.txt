@@ -1,0 +1,8 @@
+In this video, we take a deep dive into Model Context Protocol (MCP) — a universal, task-oriented tooling standard for AI agents.
+
+LLMs cannot perform real-world actions without tools. The problem?
+A tool built for GPT doesn’t automatically work for Gemini, DeepSeek, or other models.
+
+MCP solves this problem by acting as a universal adapter, allowing you to build tools once and use them with any LLM—without rewriting integrations.
+
+#azureai #agentframework #aiagents #workflow #microsoftai

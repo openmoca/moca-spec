@@ -1,0 +1,9 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.4",
+  "id": "https://example.com/moca/youtube/agent-framework-playlist",
+  "version": "1.0.0",
+  "title": "Microsoft Agent Framework",
+  "description": "Microsoft Agent Framework is an open source framework for building AI agents. Not chatbots. Real agents that can code, make decisions, and complete tasks autonomously using Microsoft Agent Framework.",
+  "language": "en"
+}

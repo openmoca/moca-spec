@@ -40,6 +40,10 @@ export function resolveAdapterName(target, explicitFrom) {
 }
 
 function detectDirectory(inputPath) {
+  if (getAdapter('youtube').detect(inputPath)) {
+    return 'youtube';
+  }
+
   if (getAdapter('obsidian').detect(inputPath)) {
     return 'obsidian';
   }

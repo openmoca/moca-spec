@@ -4,6 +4,23 @@ All notable changes to the MOCA specification, schemas, conformance corpus and
 reference tools. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [the versioning policy](docs/versioning-and-release.md).
 
+## [Unreleased]
+
+### Tools
+
+- `moca-convert`: a `youtube` adapter that converts a YouTube capture folder
+  (one node per video, with its description under `sources/`, WebVTT
+  captions under `media/`, chapter time-range evidence, and a
+  `structure.ttl` in playlist order for a playlist), and a `moca-youtube`
+  command that captures a video or playlist with yt-dlp and runs the
+  conversion. Adapters can now add files under `sources/` and `media/`, and
+  `structure.ttl`. Converted packages declare `mocaVersion` 0.4.
+
+### Examples
+
+- `examples/youtube`: a single video and a playlist, generated with
+  `moca-youtube`.
+
 ## [0.4.0-alpha.1] - 2026-09-27
 
 MOCA as three pillars: an open package with an optional structure layer, an

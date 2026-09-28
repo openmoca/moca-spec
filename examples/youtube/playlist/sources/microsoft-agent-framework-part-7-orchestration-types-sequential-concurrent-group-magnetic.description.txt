@@ -1,0 +1,5 @@
+In this video, we implement all major orchestration types supported by Azure AI Agent Framework using real, executable code examples.
+
+This is a hands-on continuation of the previous theory-focused video, where we now move into practical workflows—from simple sequential pipelines to advanced handoff, group chat, and magnetic orchestration patterns.
+
+#azureai #agentframework #aiagents #workflow #microsoftai

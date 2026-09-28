@@ -1,0 +1,3 @@
+In this in-depth tutorial, we explore how to use tools inside the Azure Agent Framework to build smarter and more dynamic AI agents. You’ll learn how the agent automatically invokes tools to fetch real-time data, process user queries, and interact with external systems.
+
+#azureai #agentframework #aiagents #workflow #microsoftai

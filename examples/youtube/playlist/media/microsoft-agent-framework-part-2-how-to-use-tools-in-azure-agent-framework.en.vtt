@@ -1,0 +1,1495 @@
+WEBVTT
+
+NOTE Automatic captions for https://www.youtube.com/watch?v=-xpcW3dfN7w, from YouTube.
+
+1
+00:00:00.240 --> 00:00:02.639
+Welcome to this video. In this video we
+
+2
+00:00:02.639 --> 00:00:04.720
+will be discussing about how do we use
+
+3
+00:00:04.720 --> 00:00:07.839
+tools in the agent framework. So
+
+4
+00:00:07.839 --> 00:00:11.120
+basically the agent will automatically
+
+5
+00:00:11.120 --> 00:00:13.120
+call the tool when a conversation
+
+6
+00:00:13.120 --> 00:00:15.120
+requests it. For in this particular
+
+7
+00:00:15.120 --> 00:00:17.199
+program the user is asking hey what is
+
+8
+00:00:17.199 --> 00:00:19.600
+the weather like in Portland? It cannot
+
+9
+00:00:19.600 --> 00:00:21.680
+use the historical data rather like it
+
+10
+00:00:21.680 --> 00:00:24.000
+has to get the real-time data. In order
+
+11
+00:00:24.000 --> 00:00:26.160
+to do that it it needs to make a call to
+
+12
+00:00:26.160 --> 00:00:28.480
+the tool. the tool will get the you know
+
+13
+00:00:28.480 --> 00:00:31.359
+current data and pass it to the agent.
+
+14
+00:00:31.359 --> 00:00:33.680
+So in this two-step process one we have
+
+15
+00:00:33.680 --> 00:00:35.920
+to define our tool. So in this case I
+
+16
+00:00:35.920 --> 00:00:38.160
+have defined a function called get
+
+17
+00:00:38.160 --> 00:00:40.879
+weather. It takes a location as input
+
+18
+00:00:40.879 --> 00:00:43.280
+and right now like it you know it uses
+
+19
+00:00:43.280 --> 00:00:46.079
+the hardcoded values here but in a
+
+20
+00:00:46.079 --> 00:00:47.920
+production environment rather like you
+
+21
+00:00:47.920 --> 00:00:50.239
+will be getting the input from the LLM
+
+22
+00:00:50.239 --> 00:00:51.600
+and like make a call to the
+
+23
+00:00:51.600 --> 00:00:53.360
+corresponding API get the results back
+
+24
+00:00:53.360 --> 00:00:55.680
+and pass it to the LLM. Now we have
+
+25
+00:00:55.680 --> 00:00:57.600
+defined the tool here and we need to
+
+26
+00:00:57.600 --> 00:00:59.760
+register the tool. So when we create the
+
+27
+00:00:59.760 --> 00:01:01.520
+agent, we have to pass the tool
+
+28
+00:01:01.520 --> 00:01:03.680
+information to the agent. So the agent
+
+29
+00:01:03.680 --> 00:01:06.640
+can use that. Right? So now let go to
+
+30
+00:01:06.640 --> 00:01:09.360
+the visual studio and execute the code.
+
+31
+00:01:09.360 --> 00:01:11.360
+This is the typical code that we always
+
+32
+00:01:11.360 --> 00:01:14.720
+uses except the tool definition and it's
+
+33
+00:01:14.720 --> 00:01:17.759
+a registration. So we go in a loop, get
+
+34
+00:01:17.759 --> 00:01:20.000
+the input from the user, pass it to the
+
+35
+00:01:20.000 --> 00:01:23.200
+llm and print the value. So now let me
+
+36
+00:01:23.200 --> 00:01:25.680
+go ahead and run the program. So this is
+
+37
+00:01:25.680 --> 00:01:28.720
+going to be my ninth program. Let's run
+
+38
+00:01:28.720 --> 00:01:30.720
+it. Let's pass the input. What is the
+
+39
+00:01:30.720 --> 00:01:33.200
+weather like in Portland? So what it
+
+40
+00:01:33.200 --> 00:01:35.200
+what the agent it's going to do is that
+
+41
+00:01:35.200 --> 00:01:37.439
+it will extract the city name and pass
+
+42
+00:01:37.439 --> 00:01:40.320
+it to the tool here the weather tool and
+
+43
+00:01:40.320 --> 00:01:42.560
+it will print the result in a moment. It
+
+44
+00:01:42.560 --> 00:01:44.960
+will respond back to us. So it will be
+
+45
+00:01:44.960 --> 00:01:46.960
+in this particular format. Right? So the
+
+46
+00:01:46.960 --> 00:01:48.720
+weather in this particular location it's
+
+47
+00:01:48.720 --> 00:01:50.479
+whatever is that some random value that
+
+48
+00:01:50.479 --> 00:01:52.960
+we are printing it. Right. So now if I
+
+49
+00:01:52.960 --> 00:01:54.240
+say like what is the weather like in
+
+50
+00:01:54.240 --> 00:01:56.399
+London? This is not a realtime data
+
+51
+00:01:56.399 --> 00:01:59.360
+rather like it just uses the hardcoded
+
+52
+00:01:59.360 --> 00:02:01.200
+value that we have. Right. Just to
+
+53
+00:02:01.200 --> 00:02:04.159
+demonstrate like how do we use the tool.
+
+54
+00:02:04.159 --> 00:02:07.040
+So if you in a real world so you will
+
+55
+00:02:07.040 --> 00:02:09.840
+you know make a change here. You will
+
+56
+00:02:09.840 --> 00:02:12.319
+make a call to the weather API pass the
+
+57
+00:02:12.319 --> 00:02:14.160
+information that you received and get
+
+58
+00:02:14.160 --> 00:02:16.080
+the results back. That's how it works.
+
+59
+00:02:16.080 --> 00:02:18.560
+Right now let me quit this program. Let
+
+60
+00:02:18.560 --> 00:02:20.959
+me clear the console. Now in this
+
+61
+00:02:20.959 --> 00:02:22.959
+program like we are using the Azure A
+
+62
+00:02:22.959 --> 00:02:24.560
+agent client and pass the tool
+
+63
+00:02:24.560 --> 00:02:26.720
+information. So this is a temporary
+
+64
+00:02:26.720 --> 00:02:28.959
+agent right now let's see like how do we
+
+65
+00:02:28.959 --> 00:02:30.720
+create the permanent agent and use the
+
+66
+00:02:30.720 --> 00:02:32.640
+tool. So program we will be using the
+
+67
+00:02:32.640 --> 00:02:34.720
+project client to create the agent.
+
+68
+00:02:34.720 --> 00:02:36.560
+However like we have not passed the tool
+
+69
+00:02:36.560 --> 00:02:38.400
+information you could technically pass
+
+70
+00:02:38.400 --> 00:02:40.560
+the tool information rather I wanted to
+
+71
+00:02:40.560 --> 00:02:43.040
+showcase how do we use the chart agent
+
+72
+00:02:43.040 --> 00:02:45.280
+and pass the tool information here. So
+
+73
+00:02:45.280 --> 00:02:47.840
+we created a agent and we created the
+
+74
+00:02:47.840 --> 00:02:50.959
+instance of the Azure Agent client and
+
+75
+00:02:50.959 --> 00:02:53.920
+pass that instance to the chart agent
+
+76
+00:02:53.920 --> 00:02:56.319
+here and pass the tool information. So
+
+77
+00:02:56.319 --> 00:02:58.800
+in our previous video we have used the
+
+78
+00:02:58.800 --> 00:03:01.519
+tool information uh in like when we
+
+79
+00:03:01.519 --> 00:03:03.280
+create the agent we have passed the tool
+
+80
+00:03:03.280 --> 00:03:05.280
+information but this time around we are
+
+81
+00:03:05.280 --> 00:03:06.959
+passing it to the chart agent. Both are
+
+82
+00:03:06.959 --> 00:03:09.840
+same. So whenever you have a Python tool
+
+83
+00:03:09.840 --> 00:03:11.760
+you can very well pass it to the chart
+
+84
+00:03:11.760 --> 00:03:14.640
+agent. Rest of the program will be same.
+
+85
+00:03:14.640 --> 00:03:16.480
+So we'll be going in a loop asking the
+
+86
+00:03:16.480 --> 00:03:18.400
+input from the user and pass it to the
+
+87
+00:03:18.400 --> 00:03:21.040
+agent. Now let me go ahead and run the
+
+88
+00:03:21.040 --> 00:03:23.040
+program. So this is going to be the 10th
+
+89
+00:03:23.040 --> 00:03:25.920
+program. Now let me ask the same
+
+90
+00:03:25.920 --> 00:03:27.680
+question here. So we are creating a
+
+91
+00:03:27.680 --> 00:03:29.680
+permanent agent. Now let me ask the
+
+92
+00:03:29.680 --> 00:03:32.879
+agent. What is the weather like in port
+
+93
+00:03:32.879 --> 00:03:34.879
+Portland? Again the process is going to
+
+94
+00:03:34.879 --> 00:03:37.120
+be the same, right? So it is going to
+
+95
+00:03:37.120 --> 00:03:39.200
+return the same result or the similar
+
+96
+00:03:39.200 --> 00:03:41.200
+result. Now let me ask the other
+
+97
+00:03:41.200 --> 00:03:43.920
+question as well. So it is again going
+
+98
+00:03:43.920 --> 00:03:46.879
+to be u making a call to the tool and
+
+99
+00:03:46.879 --> 00:03:49.280
+responding back to us right. So now let
+
+100
+00:03:49.280 --> 00:03:51.920
+me quit. Uh intentionally I deleted the
+
+101
+00:03:51.920 --> 00:03:53.840
+agent. I don't want to keep any agent
+
+102
+00:03:53.840 --> 00:03:56.560
+running. Now let's move forward. So so
+
+103
+00:03:56.560 --> 00:03:58.560
+far like we have discussed how do we use
+
+104
+00:03:58.560 --> 00:04:00.799
+a single tool. But what happens like
+
+105
+00:04:00.799 --> 00:04:02.560
+when you wanted to use a multiple tool,
+
+106
+00:04:02.560 --> 00:04:04.480
+right? So here like this program we will
+
+107
+00:04:04.480 --> 00:04:06.319
+be using three different tools. The
+
+108
+00:04:06.319 --> 00:04:08.799
+weather tool, calculate tool and there
+
+109
+00:04:08.799 --> 00:04:11.280
+is also going to be a time tool. So the
+
+110
+00:04:11.280 --> 00:04:13.439
+registration it is going to be same. So
+
+111
+00:04:13.439 --> 00:04:15.599
+when when you create a you know instance
+
+112
+00:04:15.599 --> 00:04:17.759
+of the chart agent you pass all the
+
+113
+00:04:17.759 --> 00:04:20.560
+tools that you wanted the agent to use
+
+114
+00:04:20.560 --> 00:04:23.040
+it right. So let's register the tool.
+
+115
+00:04:23.040 --> 00:04:27.240
+Let me go ahead and run the program
+
+116
+00:04:27.280 --> 00:04:30.800
+and uh let me ask the questions.
+
+117
+00:04:30.800 --> 00:04:33.360
+So first we will be checking the weather
+
+118
+00:04:33.360 --> 00:04:35.840
+tool. So what is the weather in New
+
+119
+00:04:35.840 --> 00:04:38.720
+York? Then we will be making a [snorts]
+
+120
+00:04:38.720 --> 00:04:42.320
+call to the call plate tool.
+
+121
+00:04:42.320 --> 00:04:45.120
+Then finally we will also test the time
+
+122
+00:04:45.120 --> 00:04:48.120
+to
+
+123
+00:04:48.720 --> 00:04:52.240
+let it respond back. Now let me also
+
+124
+00:04:52.240 --> 00:04:56.160
+pass the time specific information.
+
+125
+00:04:56.160 --> 00:04:59.360
+So now as you see here it doesn't have
+
+126
+00:04:59.360 --> 00:05:01.280
+to be a single tool rather like you can
+
+127
+00:05:01.280 --> 00:05:04.000
+have multiple tools associated with the
+
+128
+00:05:04.000 --> 00:05:06.880
+agent. Now let's see like how do we use
+
+129
+00:05:06.880 --> 00:05:09.759
+the open API specification. So now let's
+
+130
+00:05:09.759 --> 00:05:12.639
+assume that there is a open API you know
+
+131
+00:05:12.639 --> 00:05:14.560
+published somewhere and you want the
+
+132
+00:05:14.560 --> 00:05:17.520
+agent to use that right now we will see
+
+133
+00:05:17.520 --> 00:05:20.080
+how do we use that to do that we need to
+
+134
+00:05:20.080 --> 00:05:23.120
+use something called open API tool here
+
+135
+00:05:23.120 --> 00:05:25.520
+so now if you see here the process again
+
+136
+00:05:25.520 --> 00:05:28.320
+going to be the same here so first you
+
+137
+00:05:28.320 --> 00:05:31.360
+have to create a open API tool and pass
+
+138
+00:05:31.360 --> 00:05:33.680
+the name under the specification. So
+
+139
+00:05:33.680 --> 00:05:35.440
+specification if you see here we are
+
+140
+00:05:35.440 --> 00:05:38.000
+loading the specification. So from this
+
+141
+00:05:38.000 --> 00:05:39.840
+particular JSON file. So if you see here
+
+142
+00:05:39.840 --> 00:05:42.240
+I downloaded the open APA specification
+
+143
+00:05:42.240 --> 00:05:44.880
+I kept it in this particular folder.
+
+144
+00:05:44.880 --> 00:05:47.039
+This is my open APA specification. So
+
+145
+00:05:47.039 --> 00:05:49.039
+whenever we make a like these are all
+
+146
+00:05:49.039 --> 00:05:52.320
+the functions it does support right. So
+
+147
+00:05:52.320 --> 00:05:53.919
+there are quite a few functions it does
+
+148
+00:05:53.919 --> 00:05:56.000
+support. So the currency and the name
+
+149
+00:05:56.000 --> 00:05:58.639
+information it does support. So now if I
+
+150
+00:05:58.639 --> 00:06:00.400
+just go back to the open API
+
+151
+00:06:00.400 --> 00:06:02.560
+specification, I just load that
+
+152
+00:06:02.560 --> 00:06:04.400
+specification
+
+153
+00:06:04.400 --> 00:06:06.400
+uh into this particular object and pass
+
+154
+00:06:06.400 --> 00:06:09.520
+it to the open API tool. Now I have this
+
+155
+00:06:09.520 --> 00:06:12.400
+tool with me ready. So authentication if
+
+156
+00:06:12.400 --> 00:06:14.880
+a open API needs any authentication, you
+
+157
+00:06:14.880 --> 00:06:17.039
+can variable pass the authentication.
+
+158
+00:06:17.039 --> 00:06:19.360
+But in this case, this particular open
+
+159
+00:06:19.360 --> 00:06:21.680
+API specification or a rest endpoint
+
+160
+00:06:21.680 --> 00:06:23.600
+doesn't need any authentication. So I'm
+
+161
+00:06:23.600 --> 00:06:25.440
+just using the anonymous authentication
+
+162
+00:06:25.440 --> 00:06:28.720
+here. Now we have this open API tool.
+
+163
+00:06:28.720 --> 00:06:30.960
+It's just we just need to register with
+
+164
+00:06:30.960 --> 00:06:33.840
+the agent. So if I just come over here,
+
+165
+00:06:33.840 --> 00:06:36.000
+this is how you will register your open
+
+166
+00:06:36.000 --> 00:06:39.680
+API tools here. So now let's go ahead
+
+167
+00:06:39.680 --> 00:06:41.680
+and run the program. Let me create the
+
+168
+00:06:41.680 --> 00:06:45.080
+console here.
+
+169
+00:06:47.919 --> 00:06:50.479
+Let me ask what is the name of name and
+
+170
+00:06:50.479 --> 00:06:52.960
+the population of a country that uses
+
+171
+00:06:52.960 --> 00:06:56.639
+the currency observation INR. So now
+
+172
+00:06:56.639 --> 00:06:58.560
+what it is going to do is that it is
+
+173
+00:06:58.560 --> 00:07:02.800
+going to use the tool the open API tool
+
+174
+00:07:02.800 --> 00:07:05.199
+and it is going to return the result. So
+
+175
+00:07:05.199 --> 00:07:08.960
+as you see here it just returned India
+
+176
+00:07:08.960 --> 00:07:11.919
+boot on with all the information. So
+
+177
+00:07:11.919 --> 00:07:15.360
+this is how you can use open API as a
+
+178
+00:07:15.360 --> 00:07:18.560
+tool in the agent.
+
+179
+00:07:18.560 --> 00:07:20.960
+Now let's move forward and discuss about
+
+180
+00:07:20.960 --> 00:07:23.919
+the vector store. I want to do is that I
+
+181
+00:07:23.919 --> 00:07:26.639
+want to build a agent use my own
+
+182
+00:07:26.639 --> 00:07:28.639
+document to respond back to the user
+
+183
+00:07:28.639 --> 00:07:31.280
+queries. So if you see here I have a
+
+184
+00:07:31.280 --> 00:07:34.800
+document about the London travel. So
+
+185
+00:07:34.800 --> 00:07:36.800
+what I want to do is that I want to
+
+186
+00:07:36.800 --> 00:07:39.599
+upload this document uh to the Azure
+
+187
+00:07:39.599 --> 00:07:42.639
+Aoundary and then like my agent should
+
+188
+00:07:42.639 --> 00:07:45.039
+uh use this document to respond back to
+
+189
+00:07:45.039 --> 00:07:47.440
+the user queries. So let's see how do we
+
+190
+00:07:47.440 --> 00:07:49.759
+do that. So before I do that let me quit
+
+191
+00:07:49.759 --> 00:07:52.160
+this existing program. Let me clear the
+
+192
+00:07:52.160 --> 00:07:54.960
+console as well.
+
+193
+00:07:54.960 --> 00:07:57.120
+First we need to create a vector store.
+
+194
+00:07:57.120 --> 00:07:59.280
+So if you see here, I'm reading this
+
+195
+00:07:59.280 --> 00:08:02.240
+file information and creating a data set
+
+196
+00:08:02.240 --> 00:08:04.720
+here. And then like once the data set is
+
+197
+00:08:04.720 --> 00:08:06.400
+created, then I will be creating a
+
+198
+00:08:06.400 --> 00:08:08.160
+vector store. Let's go to the portal and
+
+199
+00:08:08.160 --> 00:08:11.199
+see how do we do that.
+
+200
+00:08:11.199 --> 00:08:13.440
+So if you come over to the portal under
+
+201
+00:08:13.440 --> 00:08:15.360
+the data section data and index section,
+
+202
+00:08:15.360 --> 00:08:16.800
+this is where we will be uploading a
+
+203
+00:08:16.800 --> 00:08:19.360
+data set. Once the data set is created
+
+204
+00:08:19.360 --> 00:08:21.120
+then we will be creating a vector store
+
+205
+00:08:21.120 --> 00:08:22.879
+that will internally will create a index
+
+206
+00:08:22.879 --> 00:08:25.199
+for us. So again like we will be using
+
+207
+00:08:25.199 --> 00:08:27.680
+the project client to upload the file
+
+208
+00:08:27.680 --> 00:08:29.280
+basically like that will add the file
+
+209
+00:08:29.280 --> 00:08:31.360
+into the data set and based on which we
+
+210
+00:08:31.360 --> 00:08:33.680
+will be creating a vector store. Now
+
+211
+00:08:33.680 --> 00:08:35.919
+when we have the vector store then we
+
+212
+00:08:35.919 --> 00:08:39.039
+will be using a tool called hosted file
+
+213
+00:08:39.039 --> 00:08:42.959
+search tool right. So uh that takes the
+
+214
+00:08:42.959 --> 00:08:44.880
+vector store ID. So if you see here
+
+215
+00:08:44.880 --> 00:08:46.959
+first I'm creating a vector store. Now I
+
+216
+00:08:46.959 --> 00:08:49.680
+have the vector store id that I will be
+
+217
+00:08:49.680 --> 00:08:51.760
+passing it to this particular tool. The
+
+218
+00:08:51.760 --> 00:08:53.760
+tool again it's associated with the
+
+219
+00:08:53.760 --> 00:08:55.920
+chart client agent. So in rest of the
+
+220
+00:08:55.920 --> 00:08:57.839
+program we'll be seeing. So if you just
+
+221
+00:08:57.839 --> 00:08:59.360
+come over here we are just going through
+
+222
+00:08:59.360 --> 00:09:01.279
+the loop and we will be asking some
+
+223
+00:09:01.279 --> 00:09:02.880
+questions to the agent. With that let
+
+224
+00:09:02.880 --> 00:09:04.560
+let me go ahead and run the program. So
+
+225
+00:09:04.560 --> 00:09:07.120
+this is going to be the 30th program.
+
+226
+00:09:07.120 --> 00:09:09.839
+Now I will be asking can you provide the
+
+227
+00:09:09.839 --> 00:09:11.680
+recommendation right? So can you provide
+
+228
+00:09:11.680 --> 00:09:14.560
+the recommendation? So let me copy that.
+
+229
+00:09:14.560 --> 00:09:16.399
+Let me paste it here.
+
+230
+00:09:16.399 --> 00:09:19.360
+Now let me enter that information here.
+
+231
+00:09:19.360 --> 00:09:22.080
+Let me maximize this. So if you see here
+
+232
+00:09:22.080 --> 00:09:24.240
+first what we have done we uploaded the
+
+233
+00:09:24.240 --> 00:09:27.200
+file. We uploaded the file and like we
+
+234
+00:09:27.200 --> 00:09:30.320
+received the uh uh ID and based on which
+
+235
+00:09:30.320 --> 00:09:32.800
+we created a vector store. Now the
+
+236
+00:09:32.800 --> 00:09:34.160
+information like the vector store
+
+237
+00:09:34.160 --> 00:09:36.160
+information it's passed to the agent and
+
+238
+00:09:36.160 --> 00:09:38.800
+the agent will be using the same. So if
+
+239
+00:09:38.800 --> 00:09:40.720
+I just come over here this is giving me
+
+240
+00:09:40.720 --> 00:09:43.279
+some uh places to visit, accommodation,
+
+241
+00:09:43.279 --> 00:09:45.760
+transport information. So if you just
+
+242
+00:09:45.760 --> 00:09:47.920
+come over here you will see the exact
+
+243
+00:09:47.920 --> 00:09:50.000
+information here. So all of if you go to
+
+244
+00:09:50.000 --> 00:09:52.160
+the portal you will see the index
+
+245
+00:09:52.160 --> 00:09:53.760
+information here. If you click on that
+
+246
+00:09:53.760 --> 00:09:56.160
+you will see the file name here. So this
+
+247
+00:09:56.160 --> 00:09:59.360
+is associated with this London PDF. And
+
+248
+00:09:59.360 --> 00:10:01.600
+if you just go back and look at the
+
+249
+00:10:01.600 --> 00:10:03.760
+vector store you will see the vector
+
+250
+00:10:03.760 --> 00:10:05.680
+store information here. It will populate
+
+251
+00:10:05.680 --> 00:10:07.760
+in a moment. So if you see here you will
+
+252
+00:10:07.760 --> 00:10:09.839
+see this information here. Right? Again
+
+253
+00:10:09.839 --> 00:10:11.519
+like this is also associated with the
+
+254
+00:10:11.519 --> 00:10:13.920
+same f. And if you go to the agents, the
+
+255
+00:10:13.920 --> 00:10:16.079
+agents that we created file search
+
+256
+00:10:16.079 --> 00:10:18.160
+agent. If you click on that, you will
+
+257
+00:10:18.160 --> 00:10:19.760
+see the file that we upload and it's
+
+258
+00:10:19.760 --> 00:10:21.600
+called the travel guide. Now let's go to
+
+259
+00:10:21.600 --> 00:10:23.839
+the visual studio again. If you just how
+
+260
+00:10:23.839 --> 00:10:26.079
+you can use your own file with the
+
+261
+00:10:26.079 --> 00:10:29.360
+agent. Now let me quit this program. Now
+
+262
+00:10:29.360 --> 00:10:31.519
+let's move forward and discuss how do we
+
+263
+00:10:31.519 --> 00:10:34.959
+use something called Azure search. So
+
+264
+00:10:34.959 --> 00:10:36.880
+basically like it's this is going to be
+
+265
+00:10:36.880 --> 00:10:39.279
+pretty similar, right? So, so in this
+
+266
+00:10:39.279 --> 00:10:40.800
+project what we have done we have
+
+267
+00:10:40.800 --> 00:10:43.680
+uploaded a file into the agent. This is
+
+268
+00:10:43.680 --> 00:10:46.079
+working but then like at enterprise
+
+269
+00:10:46.079 --> 00:10:49.279
+level you want to use Azure search
+
+270
+00:10:49.279 --> 00:10:51.040
+basically like you will be creating your
+
+271
+00:10:51.040 --> 00:10:53.920
+own index for your own project and then
+
+272
+00:10:53.920 --> 00:10:55.680
+like upload all the relevant content
+
+273
+00:10:55.680 --> 00:10:58.880
+into that particular uh index right so
+
+274
+00:10:58.880 --> 00:11:00.640
+in that purpose you basically will be
+
+275
+00:11:00.640 --> 00:11:03.279
+using Azure search rather than directly
+
+276
+00:11:03.279 --> 00:11:06.000
+uploading your file into the agent. So
+
+277
+00:11:06.000 --> 00:11:08.000
+now let's see like how do we do that. So
+
+278
+00:11:08.000 --> 00:11:09.839
+before I do that let me go to the portal
+
+279
+00:11:09.839 --> 00:11:12.320
+again. So the management center this is
+
+280
+00:11:12.320 --> 00:11:14.720
+the like we have connected our Azure a
+
+281
+00:11:14.720 --> 00:11:16.720
+search. So this is the name of the
+
+282
+00:11:16.720 --> 00:11:18.959
+search. So if I go to the search go to
+
+283
+00:11:18.959 --> 00:11:21.279
+the search explorer I will be using this
+
+284
+00:11:21.279 --> 00:11:23.600
+index and if I look for a city something
+
+285
+00:11:23.600 --> 00:11:25.600
+like Paris then it is going to give me
+
+286
+00:11:25.600 --> 00:11:27.760
+some information. So this is what I want
+
+287
+00:11:27.760 --> 00:11:30.880
+to use in my agent. So now let's go
+
+288
+00:11:30.880 --> 00:11:33.600
+back. So if we just come over here what
+
+289
+00:11:33.600 --> 00:11:35.200
+we are doing here is that we are using a
+
+290
+00:11:35.200 --> 00:11:38.079
+project client get all the connections
+
+291
+00:11:38.079 --> 00:11:41.519
+and like we will find or filter the
+
+292
+00:11:41.519 --> 00:11:44.000
+connection by type jurya search get the
+
+293
+00:11:44.000 --> 00:11:46.240
+connection ID. Now we will have a
+
+294
+00:11:46.240 --> 00:11:48.000
+connection ID and we will be using that
+
+295
+00:11:48.000 --> 00:11:50.079
+connection ID to create a tool. So there
+
+296
+00:11:50.079 --> 00:11:52.640
+is a tool type called jury search that
+
+297
+00:11:52.640 --> 00:11:55.279
+takes the uh search connection ID and
+
+298
+00:11:55.279 --> 00:11:57.600
+the index name. If I just go back here.
+
+299
+00:11:57.600 --> 00:11:59.279
+So this is the index name that we are
+
+300
+00:11:59.279 --> 00:12:01.040
+using it here. query type when you
+
+301
+00:12:01.040 --> 00:12:02.640
+create a index you will be choosing the
+
+302
+00:12:02.640 --> 00:12:05.200
+query type. Now let's go ahead and
+
+303
+00:12:05.200 --> 00:12:07.680
+create the chart agent. So we just
+
+304
+00:12:07.680 --> 00:12:09.839
+created a chart agent passing the agent
+
+305
+00:12:09.839 --> 00:12:12.800
+information here. Now we have predefined
+
+306
+00:12:12.800 --> 00:12:14.880
+the user input. We are not going to ask
+
+307
+00:12:14.880 --> 00:12:16.800
+for input rather like we have predefined
+
+308
+00:12:16.800 --> 00:12:19.839
+input. So it says that find the detailed
+
+309
+00:12:19.839 --> 00:12:22.399
+information about London like I think I
+
+310
+00:12:22.399 --> 00:12:24.560
+have uploaded five different cities in
+
+311
+00:12:24.560 --> 00:12:27.440
+my previous video. So like cell London
+
+312
+00:12:27.440 --> 00:12:29.680
+it's one of the city uh that is uploaded
+
+313
+00:12:29.680 --> 00:12:33.680
+into the a search. Now on top of the
+
+314
+00:12:33.680 --> 00:12:36.240
+regular uh response I'm also trying to
+
+315
+00:12:36.240 --> 00:12:39.120
+get the citation. So that means that we
+
+316
+00:12:39.120 --> 00:12:41.200
+will show like which document this is
+
+317
+00:12:41.200 --> 00:12:43.360
+coming from right. So we will also try
+
+318
+00:12:43.360 --> 00:12:45.120
+to display that information. Finally we
+
+319
+00:12:45.120 --> 00:12:47.360
+will see this is completed. Let me clear
+
+320
+00:12:47.360 --> 00:12:49.760
+the console. Now let me go ahead and run
+
+321
+00:12:49.760 --> 00:12:52.720
+the program again.
+
+322
+00:12:52.720 --> 00:12:54.399
+Now this is not going to ask the user
+
+323
+00:12:54.399 --> 00:12:56.160
+input. The reason is that as said like
+
+324
+00:12:56.160 --> 00:12:58.240
+the user input it's already hardcoded
+
+325
+00:12:58.240 --> 00:13:00.240
+here. So find the detailed information
+
+326
+00:13:00.240 --> 00:13:02.800
+about London. So this this will get
+
+327
+00:13:02.800 --> 00:13:05.279
+printed here. Right? So this is how you
+
+328
+00:13:05.279 --> 00:13:08.320
+can use Azure AE search with your agent
+
+329
+00:13:08.320 --> 00:13:11.120
+framework. We have this code interpreter
+
+330
+00:13:11.120 --> 00:13:12.880
+tool. Whenever you wanted to write and
+
+331
+00:13:12.880 --> 00:13:14.959
+execute a Python code, you can use this
+
+332
+00:13:14.959 --> 00:13:17.279
+particular tool. So let me clear the
+
+333
+00:13:17.279 --> 00:13:19.760
+console here. So if you see here there
+
+334
+00:13:19.760 --> 00:13:22.000
+is a tool definition called code
+
+335
+00:13:22.000 --> 00:13:23.839
+interpreter tool that is part of this
+
+336
+00:13:23.839 --> 00:13:27.200
+particular package we can import and
+
+337
+00:13:27.200 --> 00:13:30.079
+like when we define the agent all we
+
+338
+00:13:30.079 --> 00:13:32.320
+need to do is that we have to say to
+
+339
+00:13:32.320 --> 00:13:35.040
+code interpreter definition. So which
+
+340
+00:13:35.040 --> 00:13:37.600
+means that the tool will be associated
+
+341
+00:13:37.600 --> 00:13:40.320
+with this particular agent and go and
+
+342
+00:13:40.320 --> 00:13:42.560
+ask the agent to write a Python program.
+
+343
+00:13:42.560 --> 00:13:43.839
+If you see here like we have a
+
+344
+00:13:43.839 --> 00:13:46.399
+predefined user input saying like write
+
+345
+00:13:46.399 --> 00:13:49.279
+a fibon series up to n and like we are
+
+346
+00:13:49.279 --> 00:13:52.639
+passing n as a 10 right now with that
+
+347
+00:13:52.639 --> 00:13:55.839
+let me go ahead and run the program 15.
+
+348
+00:13:55.839 --> 00:13:57.680
+So it is just going to take the user
+
+349
+00:13:57.680 --> 00:14:00.000
+input and pass it to the agent. Agent
+
+350
+00:14:00.000 --> 00:14:02.240
+will write and execute the python and
+
+351
+00:14:02.240 --> 00:14:05.839
+will return the result. So now as you
+
+352
+00:14:05.839 --> 00:14:09.120
+see here it does return the fibon series
+
+353
+00:14:09.120 --> 00:14:12.560
+for us. So now in this video we
+
+354
+00:14:12.560 --> 00:14:14.720
+discussed a lot about tools. How do we
+
+355
+00:14:14.720 --> 00:14:16.639
+define the tools? How do we associate
+
+356
+00:14:16.639 --> 00:14:19.120
+the tools? And how do we use the tools
+
+357
+00:14:19.120 --> 00:14:21.440
+with your to know more about tools? You
+
+358
+00:14:21.440 --> 00:14:23.440
+can refer the Microsoft agent framework
+
+359
+00:14:23.440 --> 00:14:26.000
+documentation. Not only for tools but
+
+360
+00:14:26.000 --> 00:14:28.000
+any any specific topic you are
+
+361
+00:14:28.000 --> 00:14:29.600
+interested in, you can always refer back
+
+362
+00:14:29.600 --> 00:14:32.800
+to this particular documentation. And uh
+
+363
+00:14:32.800 --> 00:14:34.880
+you can also look into the samples
+
+364
+00:14:34.880 --> 00:14:37.440
+provided here by Microsoft. time to time
+
+365
+00:14:37.440 --> 00:14:39.680
+they will add or you know update the
+
+366
+00:14:39.680 --> 00:14:42.000
+existing samples. So you can always
+
+367
+00:14:42.000 --> 00:14:44.800
+refer back to this particular repo for
+
+368
+00:14:44.800 --> 00:14:47.760
+any code samples like most of my samples
+
+369
+00:14:47.760 --> 00:14:49.279
+are coming from this particular
+
+370
+00:14:49.279 --> 00:14:51.440
+repository only.
+
+371
+00:14:51.440 --> 00:14:53.519
+Upcoming video we will discuss about
+
+372
+00:14:53.519 --> 00:14:55.839
+thread and state management. Thank you
+
+373
+00:14:55.839 --> 00:14:59.040
+for watching this video.

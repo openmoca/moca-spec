@@ -16,20 +16,24 @@
 // @typedef {object} PackageDraft
 // @property {object} manifest
 // @property {ContentNode[]} contentNodes
+// @property {{ path: string, body: string }[]} [files] - other package files:
+//   under sources/ or media/, or structure.ttl
 // @property {ConversionWarning[]} warnings
 import { UsageError } from '../target.js';
 import * as directory from './directory.js';
 import * as markdown from './markdown.js';
 import * as obsidian from './obsidian.js';
 import * as openapi from './openapi.js';
+import * as youtube from './youtube.js';
 
-export const ADAPTER_NAMES = ['directory', 'markdown', 'obsidian', 'openapi'];
+export const ADAPTER_NAMES = ['directory', 'markdown', 'obsidian', 'openapi', 'youtube'];
 
 const IMPLEMENTED = {
   directory,
   markdown,
   obsidian,
   openapi,
+  youtube,
 };
 
 /**

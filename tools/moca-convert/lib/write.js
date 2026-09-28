@@ -19,6 +19,7 @@ export { UsageError };
  * @returns {Promise<{ findings: object[], digest: string }>}
  */
 export async function writeDraft({ draft, outDir, force = false, strict = false, onLog = () => {} }) {
+  checkFiles(draft);
   const outDirExists = existsSync(outDir);
   const outDirNonEmpty = outDirExists && readdirSync(outDir).length > 0;
 
@@ -66,10 +67,22 @@ function stageDraft(draft, stageDir) {
   mkdirSync(stageDir, { recursive: true });
   writeFileSync(join(stageDir, 'moca.json'), `${JSON.stringify(draft.manifest, null, 2)}\n`);
 
-  for (const node of draft.contentNodes) {
+  for (const node of [...draft.contentNodes, ...(draft.files ?? [])]) {
     const absPath = join(stageDir, node.path);
     mkdirSync(dirname(absPath), { recursive: true });
     writeFileSync(absPath, node.body);
+  }
+}
+
+// Adapters may add the evidence layer and the structure layer beside
+// content/, and nothing else.
+const OTHER_FILE = /^(?:(?:sources|media)\/(?:[^/]+\/)*[^/]+|structure\.ttl)$/;
+
+function checkFiles(draft) {
+  for (const file of draft.files ?? []) {
+    if (!OTHER_FILE.test(file.path) || file.path.split('/').some((seg) => seg === '..' || seg === '.')) {
+      throw new UsageError(`An adapter may only add files under sources/ or media/, or structure.ttl; refusing "${file.path}".`);
+    }
   }
 }
 

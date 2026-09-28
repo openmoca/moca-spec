@@ -1,0 +1,3131 @@
+WEBVTT
+
+NOTE Automatic captions for https://www.youtube.com/watch?v=fDDabiixHrs, from YouTube.
+
+1
+00:00:00.000 --> 00:00:02.040
+Hello everyone, welcome to this video.
+
+2
+00:00:02.040 --> 00:00:03.200
+In this video we will be discussing
+
+3
+00:00:03.200 --> 00:00:05.520
+about Azure AI search.
+
+4
+00:00:05.520 --> 00:00:08.440
+Azure AI search, it's a search engine.
+
+5
+00:00:08.440 --> 00:00:10.640
+We all know what does the search engine
+
+6
+00:00:10.640 --> 00:00:11.560
+do.
+
+7
+00:00:11.560 --> 00:00:13.520
+So, you will have enterprise data, you
+
+8
+00:00:13.520 --> 00:00:15.880
+pass the data to the search engine,
+
+9
+00:00:15.880 --> 00:00:18.000
+search engine will create an index, and
+
+10
+00:00:18.000 --> 00:00:19.520
+then like using the search method you
+
+11
+00:00:19.520 --> 00:00:21.680
+can retrieve the data and use it in your
+
+12
+00:00:21.680 --> 00:00:24.360
+application. Azure AI search provides
+
+13
+00:00:24.360 --> 00:00:27.040
+the traditional search experience
+
+14
+00:00:27.040 --> 00:00:29.720
+where like you can do a filter, scoring,
+
+15
+00:00:29.720 --> 00:00:31.640
+you know, synonyms or whatever is that.
+
+16
+00:00:31.640 --> 00:00:34.240
+And on top of that it also provides AI
+
+17
+00:00:34.240 --> 00:00:36.160
+based retrieval. Say like you have a,
+
+18
+00:00:36.160 --> 00:00:38.680
+you know, embedding, using the hybrid,
+
+19
+00:00:38.680 --> 00:00:39.920
+you can use the
+
+20
+00:00:39.920 --> 00:00:41.640
+keyword based search as well as the
+
+21
+00:00:41.640 --> 00:00:44.400
+embedding search, combine it together.
+
+22
+00:00:44.400 --> 00:00:46.240
+And then you can send the top results to
+
+23
+00:00:46.240 --> 00:00:48.680
+the LLM and generate the final result
+
+24
+00:00:48.680 --> 00:00:51.120
+instead of just having the chunks. So,
+
+25
+00:00:51.120 --> 00:00:52.760
+before we move forward, we will try to
+
+26
+00:00:52.760 --> 00:00:54.760
+understand the difference between
+
+27
+00:00:54.760 --> 00:00:57.120
+the traditional keyword based search and
+
+28
+00:00:57.120 --> 00:01:00.280
+the advanced embedding based search. So,
+
+29
+00:01:00.280 --> 00:01:01.680
+let me navigate to this particular
+
+30
+00:01:01.680 --> 00:01:04.480
+portal. Let me search for the keyword
+
+31
+00:01:04.480 --> 00:01:06.560
+"Zat eye ear". So, basically like I'm
+
+32
+00:01:06.560 --> 00:01:08.760
+looking for a eye drop.
+
+33
+00:01:08.760 --> 00:01:10.360
+However, like if you see here this
+
+34
+00:01:10.360 --> 00:01:11.560
+particular
+
+35
+00:01:11.560 --> 00:01:13.640
+e-commerce portal does not have this
+
+36
+00:01:13.640 --> 00:01:16.520
+particular product. As it uses the
+
+37
+00:01:16.520 --> 00:01:18.760
+keyword based search, it is not
+
+38
+00:01:18.760 --> 00:01:21.160
+returning any values because like there
+
+39
+00:01:21.160 --> 00:01:23.480
+is nothing they have it with the given
+
+40
+00:01:23.480 --> 00:01:24.640
+name.
+
+41
+00:01:24.640 --> 00:01:27.600
+But if you see that if if they don't
+
+42
+00:01:27.600 --> 00:01:29.480
+have this particular product, they
+
+43
+00:01:29.480 --> 00:01:31.800
+should identify that this is the eye
+
+44
+00:01:31.800 --> 00:01:33.920
+drop and then like they should display
+
+45
+00:01:33.920 --> 00:01:36.920
+all the relevant eye drops. So, now let
+
+46
+00:01:36.920 --> 00:01:40.040
+me navigate to the another portal here.
+
+47
+00:01:40.040 --> 00:01:42.240
+If you see this particular portal, I
+
+48
+00:01:42.240 --> 00:01:44.200
+just say like the same keyword. However,
+
+49
+00:01:44.200 --> 00:01:46.720
+like even this e-commerce portal they do
+
+50
+00:01:46.720 --> 00:01:48.280
+not have the
+
+51
+00:01:48.280 --> 00:01:50.640
+products. However, like
+
+52
+00:01:50.640 --> 00:01:53.240
+they recognize that this is the eye drop
+
+53
+00:01:53.240 --> 00:01:55.440
+and then like they showcase all the
+
+54
+00:01:55.440 --> 00:01:57.240
+alternative.
+
+55
+00:01:57.240 --> 00:01:59.640
+So, if you see here, this e-commerce
+
+56
+00:01:59.640 --> 00:02:02.160
+portal uses the advanced search, where
+
+57
+00:02:02.160 --> 00:02:03.880
+in this particular portal uses the
+
+58
+00:02:03.880 --> 00:02:06.000
+keyword search. So, the main difference
+
+59
+00:02:06.000 --> 00:02:08.679
+is that keyword search will look for the
+
+60
+00:02:08.679 --> 00:02:11.520
+given keyword. Wherein like the
+
+61
+00:02:11.520 --> 00:02:14.360
+uh embedding or the you know rag based
+
+62
+00:02:14.360 --> 00:02:15.600
+search
+
+63
+00:02:15.600 --> 00:02:17.920
+will not only look for the keyword, but
+
+64
+00:02:17.920 --> 00:02:20.200
+then like it will also look for the
+
+65
+00:02:20.200 --> 00:02:21.840
+synonyms.
+
+66
+00:02:21.840 --> 00:02:23.760
+Now, with that understanding, let's go
+
+67
+00:02:23.760 --> 00:02:25.680
+to this uh documentation and try to
+
+68
+00:02:25.680 --> 00:02:27.480
+understand. Now, we will try to
+
+69
+00:02:27.480 --> 00:02:29.360
+understand the pipeline here. If you see
+
+70
+00:02:29.360 --> 00:02:30.840
+here, firstly we will have a data
+
+71
+00:02:30.840 --> 00:02:33.360
+source. Sometimes uh it may be a storage
+
+72
+00:02:33.360 --> 00:02:34.920
+account, sometimes it may be a SQL
+
+73
+00:02:34.920 --> 00:02:37.320
+Server, Cosmos DB, or anything
+
+74
+00:02:37.320 --> 00:02:39.040
+for that matter, right? And then like we
+
+75
+00:02:39.040 --> 00:02:41.360
+will have a indexer. Indexer it's a
+
+76
+00:02:41.360 --> 00:02:42.959
+Think of this way, it's a scheduled
+
+77
+00:02:42.959 --> 00:02:45.360
+automation. So, that will go to the data
+
+78
+00:02:45.360 --> 00:02:47.680
+source and read all the you know latest
+
+79
+00:02:47.680 --> 00:02:49.560
+and greatest information,
+
+80
+00:02:49.560 --> 00:02:51.520
+and it will create an index.
+
+81
+00:02:51.520 --> 00:02:53.880
+So, indexer will be using skill set. For
+
+82
+00:02:53.880 --> 00:02:55.520
+instance, like let's say like you have a
+
+83
+00:02:55.520 --> 00:02:58.560
+video file or audio or a PDF file or a
+
+84
+00:02:58.560 --> 00:03:00.959
+Word document. So, the indexer should be
+
+85
+00:03:00.959 --> 00:03:04.040
+able to extract the data out of all of
+
+86
+00:03:04.040 --> 00:03:06.680
+these. So, for each of these content,
+
+87
+00:03:06.680 --> 00:03:09.239
+you will be using a specific skill set.
+
+88
+00:03:09.239 --> 00:03:11.480
+Say like there will be a one skill set
+
+89
+00:03:11.480 --> 00:03:14.320
+that will let you read the image. There
+
+90
+00:03:14.320 --> 00:03:17.360
+will be another uh skill set that will
+
+91
+00:03:17.360 --> 00:03:19.400
+you know convert the data into the
+
+92
+00:03:19.400 --> 00:03:22.080
+embedding uh embedding data, right? So,
+
+93
+00:03:22.080 --> 00:03:24.000
+the indexer will be using n number of
+
+94
+00:03:24.000 --> 00:03:26.800
+skill set uh to create the index, and
+
+95
+00:03:26.800 --> 00:03:28.720
+then like finally it will commit that uh
+
+96
+00:03:28.720 --> 00:03:31.560
+data into the index table.
+
+97
+00:03:31.560 --> 00:03:34.600
+Now, let's also talk about the uh types
+
+98
+00:03:34.600 --> 00:03:35.840
+of search.
+
+99
+00:03:35.840 --> 00:03:37.320
+I already mentioned that there is a
+
+100
+00:03:37.320 --> 00:03:39.600
+keyword search or a simple search. And
+
+101
+00:03:39.600 --> 00:03:41.400
+then like we also have a vector search.
+
+102
+00:03:41.400 --> 00:03:42.840
+I showed you like what is the difference
+
+103
+00:03:42.840 --> 00:03:44.360
+between all of these.
+
+104
+00:03:44.360 --> 00:03:45.880
+And then like there is also a third
+
+105
+00:03:45.880 --> 00:03:48.400
+category called a hybrid search. So,
+
+106
+00:03:48.400 --> 00:03:50.720
+hybrid search basically it does both the
+
+107
+00:03:50.720 --> 00:03:52.880
+keyword search, the embedding search,
+
+108
+00:03:52.880 --> 00:03:55.480
+and then like it combines the uh result
+
+109
+00:03:55.480 --> 00:03:58.320
+to produce the final result.
+
+110
+00:03:58.320 --> 00:04:00.720
+And then like we also have a hybrid plus
+
+111
+00:04:00.720 --> 00:04:03.760
+semantic ranker. So, if you if you think
+
+112
+00:04:03.760 --> 00:04:05.440
+of this way like
+
+113
+00:04:05.440 --> 00:04:07.640
+you know, it's kind of Lego pieces, so
+
+114
+00:04:07.640 --> 00:04:09.920
+you can stack them you know, on top of
+
+115
+00:04:09.920 --> 00:04:11.080
+each other.
+
+116
+00:04:11.080 --> 00:04:14.000
+So, first we will have a keyword search
+
+117
+00:04:14.000 --> 00:04:16.640
+and vector search. Both are you know,
+
+118
+00:04:16.640 --> 00:04:19.519
+sits at the same level. And then like
+
+119
+00:04:19.519 --> 00:04:22.120
+hybrid search, if you think like there
+
+120
+00:04:22.120 --> 00:04:24.800
+is going to be a Lego that connects both
+
+121
+00:04:24.800 --> 00:04:26.240
+of the keyword search and the vector
+
+122
+00:04:26.240 --> 00:04:28.600
+search. And then like on top of that
+
+123
+00:04:28.600 --> 00:04:30.760
+hybrid search, we have this semantic
+
+124
+00:04:30.760 --> 00:04:31.960
+ranker.
+
+125
+00:04:31.960 --> 00:04:33.960
+So, the semantic ranker will take the
+
+126
+00:04:33.960 --> 00:04:36.120
+result from the hybrid search and then
+
+127
+00:04:36.120 --> 00:04:39.120
+like it will apply its own formula to
+
+128
+00:04:39.120 --> 00:04:41.320
+optimize the search result.
+
+129
+00:04:41.320 --> 00:04:43.120
+The order of the search results will be
+
+130
+00:04:43.120 --> 00:04:46.480
+optimized using the semantic ranker.
+
+131
+00:04:46.480 --> 00:04:49.960
+Then finally, all of these are uses the
+
+132
+00:04:49.960 --> 00:04:52.640
+algorithms. A simple uh search, vector,
+
+133
+00:04:52.640 --> 00:04:55.040
+hybrid, and then like semantic ranker.
+
+134
+00:04:55.040 --> 00:04:57.640
+All of these uses algorithms. And the
+
+135
+00:04:57.640 --> 00:04:59.120
+fifth one that we are going to talk
+
+136
+00:04:59.120 --> 00:05:01.480
+about, it's the knowledge base. This is
+
+137
+00:05:01.480 --> 00:05:03.240
+not necessarily the algorithm, but
+
+138
+00:05:03.240 --> 00:05:05.360
+rather like this is a pattern.
+
+139
+00:05:05.360 --> 00:05:07.320
+So, until this point in time like what
+
+140
+00:05:07.320 --> 00:05:10.160
+we will be sending back to the caller,
+
+141
+00:05:10.160 --> 00:05:13.120
+it's kind of a chunk, right? So, in this
+
+142
+00:05:13.120 --> 00:05:15.440
+case like in the knowledge base, what it
+
+143
+00:05:15.440 --> 00:05:17.240
+will do is that it will take the chunk
+
+144
+00:05:17.240 --> 00:05:19.160
+out of this semantic
+
+145
+00:05:19.160 --> 00:05:21.040
+semantic search. And then like it will
+
+146
+00:05:21.040 --> 00:05:24.120
+use the LLM to convert that chunk into
+
+147
+00:05:24.120 --> 00:05:26.760
+the final result. So, that the end
+
+148
+00:05:26.760 --> 00:05:29.800
+application will not be receiving the
+
+149
+00:05:29.800 --> 00:05:32.040
+chunk, rather like it will be receiving
+
+150
+00:05:32.040 --> 00:05:35.200
+the processed final result.
+
+151
+00:05:35.200 --> 00:05:37.160
+So, if at all you wanted to showcase,
+
+152
+00:05:37.160 --> 00:05:39.360
+you know, top three, five results, then
+
+153
+00:05:39.360 --> 00:05:40.919
+you will be using
+
+154
+00:05:40.919 --> 00:05:42.960
+these you know, any of these
+
+155
+00:05:42.960 --> 00:05:45.240
+search type, keyword, vector, hybrid,
+
+156
+00:05:45.240 --> 00:05:47.240
+semantic, any of these. Whenever you
+
+157
+00:05:47.240 --> 00:05:49.240
+wanted to showcase here like you you
+
+158
+00:05:49.240 --> 00:05:51.760
+were searching for this particular item.
+
+159
+00:05:51.760 --> 00:05:54.000
+So in this case I say like we are you
+
+160
+00:05:54.000 --> 00:05:56.720
+know looking for this
+
+161
+00:05:56.720 --> 00:05:59.360
+Z editor product. And then like
+
+162
+00:05:59.360 --> 00:06:01.400
+there is there is no final result here
+
+163
+00:06:01.400 --> 00:06:04.320
+rather like we were wanted to showcase
+
+164
+00:06:04.320 --> 00:06:06.880
+the relevant product, right? So in this
+
+165
+00:06:06.880 --> 00:06:08.920
+case like it makes sense to use you know
+
+166
+00:06:08.920 --> 00:06:10.760
+any of these
+
+167
+00:06:10.760 --> 00:06:13.880
+types. Most likely it will be the hybrid
+
+168
+00:06:13.880 --> 00:06:15.880
+plus semantic search.
+
+169
+00:06:15.880 --> 00:06:18.200
+But then like in in case of a you know
+
+170
+00:06:18.200 --> 00:06:20.280
+chat application, you don't want to have
+
+171
+00:06:20.280 --> 00:06:21.960
+end number of result rather like you
+
+172
+00:06:21.960 --> 00:06:24.720
+wanted to have the final result. So at
+
+173
+00:06:24.720 --> 00:06:27.080
+that point in time you wanted to use the
+
+174
+00:06:27.080 --> 00:06:29.520
+knowledge bases. So again, the knowledge
+
+175
+00:06:29.520 --> 00:06:31.640
+base it's not necessarily the algorithm
+
+176
+00:06:31.640 --> 00:06:34.520
+rather like it is all built on top of
+
+177
+00:06:34.520 --> 00:06:35.880
+the semantic
+
+178
+00:06:35.880 --> 00:06:39.200
+ranker you that uses the LLM to you know
+
+179
+00:06:39.200 --> 00:06:42.320
+process the received number of result to
+
+180
+00:06:42.320 --> 00:06:44.440
+produce the final outcome. Now let's
+
+181
+00:06:44.440 --> 00:06:46.480
+assume that we have the uh movie
+
+182
+00:06:46.480 --> 00:06:48.919
+database and see like how does the
+
+183
+00:06:48.919 --> 00:06:50.120
+search
+
+184
+00:06:50.120 --> 00:06:52.760
+types will produce the search results.
+
+185
+00:06:52.760 --> 00:06:54.919
+So let's say like you're looking for a
+
+186
+00:06:54.919 --> 00:06:57.560
+keyword called Cyborg.
+
+187
+00:06:57.560 --> 00:06:59.560
+Uh which technically means that you're
+
+188
+00:06:59.560 --> 00:07:02.080
+looking for a robot kind of a thing.
+
+189
+00:07:02.080 --> 00:07:03.720
+Uh but then like with the keyword
+
+190
+00:07:03.720 --> 00:07:06.080
+search, it will exactly look for the
+
+191
+00:07:06.080 --> 00:07:08.160
+exact keyword Cyborg. It will look for
+
+192
+00:07:08.160 --> 00:07:10.120
+the exact keyword and wherever it
+
+193
+00:07:10.120 --> 00:07:12.720
+matches, it just returns those
+
+194
+00:07:12.720 --> 00:07:14.160
+film name.
+
+195
+00:07:14.160 --> 00:07:16.320
+But uh with the uh vector search, it
+
+196
+00:07:16.320 --> 00:07:18.520
+will not only look for the keyword but
+
+197
+00:07:18.520 --> 00:07:20.720
+rather like it will look for the
+
+198
+00:07:20.720 --> 00:07:22.800
+semantic match. In this case, it will
+
+199
+00:07:22.800 --> 00:07:23.919
+match
+
+200
+00:07:23.919 --> 00:07:26.520
+the robot uh you know you know uh
+
+201
+00:07:26.520 --> 00:07:28.240
+machine and all those things and it will
+
+202
+00:07:28.240 --> 00:07:30.840
+produce the result. And hybrid search,
+
+203
+00:07:30.840 --> 00:07:32.919
+it will take both the keyword search and
+
+204
+00:07:32.919 --> 00:07:34.640
+the vector search and it will combine
+
+205
+00:07:34.640 --> 00:07:35.640
+that
+
+206
+00:07:35.640 --> 00:07:37.919
+to produce the final outcome. And then
+
+207
+00:07:37.919 --> 00:07:40.440
+like finally we have this uh semantic
+
+208
+00:07:40.440 --> 00:07:42.440
+ranker. What it will do is that it will
+
+209
+00:07:42.440 --> 00:07:45.200
+take the hybrid output and then like
+
+210
+00:07:45.200 --> 00:07:46.520
+apply the
+
+211
+00:07:46.520 --> 00:07:49.520
+semantic on top of the hybrid result.
+
+212
+00:07:49.520 --> 00:07:50.880
+So, basically like
+
+213
+00:07:50.880 --> 00:07:52.440
+it will think that hey, like the user is
+
+214
+00:07:52.440 --> 00:07:55.040
+looking for this keyword, what exactly
+
+215
+00:07:55.040 --> 00:07:56.040
+will
+
+216
+00:07:56.040 --> 00:07:58.760
+satisfy the user? All right, so from the
+
+217
+00:07:58.760 --> 00:08:01.200
+user context it will
+
+218
+00:08:01.200 --> 00:08:04.160
+you know, reorder the result.
+
+219
+00:08:04.160 --> 00:08:06.440
+Now, as you realize that the search
+
+220
+00:08:06.440 --> 00:08:08.840
+results are getting better and better
+
+221
+00:08:08.840 --> 00:08:11.200
+from keyword to vector to hybrid to
+
+222
+00:08:11.200 --> 00:08:14.480
+semantic, the cost and time both will
+
+223
+00:08:14.480 --> 00:08:15.800
+increase.
+
+224
+00:08:15.800 --> 00:08:18.240
+So, now let's do the comparison here.
+
+225
+00:08:18.240 --> 00:08:20.280
+So, if you see here the cost pyramid,
+
+226
+00:08:20.280 --> 00:08:22.800
+the simplest one or the cheapest one is
+
+227
+00:08:22.800 --> 00:08:25.120
+the keyword search and then like when
+
+228
+00:08:25.120 --> 00:08:27.720
+you go up to the leader, the cost will
+
+229
+00:08:27.720 --> 00:08:29.400
+keep on increasing because you will be
+
+230
+00:08:29.400 --> 00:08:31.960
+doing multiple process.
+
+231
+00:08:31.960 --> 00:08:34.039
+Same thing for the time pyramid also, if
+
+232
+00:08:34.039 --> 00:08:36.840
+you see here the simple one, it's at the
+
+233
+00:08:36.840 --> 00:08:38.840
+bottom and then like when you go level
+
+234
+00:08:38.840 --> 00:08:41.680
+above, the time will get increased too.
+
+235
+00:08:41.680 --> 00:08:43.240
+So, you have to consider both at the
+
+236
+00:08:43.240 --> 00:08:46.400
+cost and time when you think about the
+
+237
+00:08:46.400 --> 00:08:48.640
+search type that you wanted to use. It
+
+238
+00:08:48.640 --> 00:08:50.200
+would be our strategy to select the
+
+239
+00:08:50.200 --> 00:08:52.000
+search model here.
+
+240
+00:08:52.000 --> 00:08:53.400
+So, this is the assumption that we are
+
+241
+00:08:53.400 --> 00:08:55.720
+using for this our calculation. So, if
+
+242
+00:08:55.720 --> 00:08:57.400
+you see here like we are talking about
+
+243
+00:08:57.400 --> 00:09:00.240
+100 GB of data in index size and then
+
+244
+00:09:00.240 --> 00:09:03.440
+like data refresh it's like 10% of that
+
+245
+00:09:03.440 --> 00:09:05.440
+which is like 10 GB.
+
+246
+00:09:05.440 --> 00:09:07.120
+And then we will be using the standard
+
+247
+00:09:07.120 --> 00:09:08.040
+tier
+
+248
+00:09:08.040 --> 00:09:11.040
+capacity. We will cover like 40 capacity
+
+249
+00:09:11.040 --> 00:09:12.839
+and monthly traffic like we are looking
+
+250
+00:09:12.839 --> 00:09:15.360
+at 1 million queries every month and we
+
+251
+00:09:15.360 --> 00:09:18.120
+will be using the small vector based
+
+252
+00:09:18.120 --> 00:09:19.800
+dimension here.
+
+253
+00:09:19.800 --> 00:09:22.600
+And we are talking about the regular
+
+254
+00:09:22.600 --> 00:09:24.800
+documents without any images, without
+
+255
+00:09:24.800 --> 00:09:27.240
+you know, a lot of OCR needed. And this
+
+256
+00:09:27.240 --> 00:09:30.440
+pricing it's as per May 2026. Now, with
+
+257
+00:09:30.440 --> 00:09:33.000
+that assumption let's compare all four
+
+258
+00:09:33.000 --> 00:09:34.839
+search model here. First we will start
+
+259
+00:09:34.839 --> 00:09:37.440
+with the keyword search. Cost efficiency
+
+260
+00:09:37.440 --> 00:09:39.000
+it's excellent.
+
+261
+00:09:39.000 --> 00:09:41.000
+So, again, like you need to understand
+
+262
+00:09:41.000 --> 00:09:41.920
+that
+
+263
+00:09:41.920 --> 00:09:43.800
+uh these search model, it's kind of a
+
+264
+00:09:43.800 --> 00:09:46.000
+Lego pieces are stacked on top of each
+
+265
+00:09:46.000 --> 00:09:46.880
+other.
+
+266
+00:09:46.880 --> 00:09:49.680
+Which means that there is no one set of
+
+267
+00:09:49.680 --> 00:09:51.960
+pricing. There will be a foundational
+
+268
+00:09:51.960 --> 00:09:54.120
+pricing, but the like as you add the
+
+269
+00:09:54.120 --> 00:09:57.240
+features, each feature will add you the
+
+270
+00:09:57.240 --> 00:09:58.400
+cost.
+
+271
+00:09:58.400 --> 00:10:00.320
+So, the keyword search will cost you
+
+272
+00:10:00.320 --> 00:10:02.920
+about 600 to 750.
+
+273
+00:10:02.920 --> 00:10:04.760
+And the like a use case, let's assume
+
+274
+00:10:04.760 --> 00:10:07.360
+that you you are a specialty store. Say
+
+275
+00:10:07.360 --> 00:10:09.400
+like you will sell flower or you sell
+
+276
+00:10:09.400 --> 00:10:11.600
+auto part. In that sense, all you need
+
+277
+00:10:11.600 --> 00:10:14.240
+it's the deterministic filters. Let's
+
+278
+00:10:14.240 --> 00:10:16.040
+say somebody will come and look for the
+
+279
+00:10:16.040 --> 00:10:17.560
+sunflower or jasmine or whatever is
+
+280
+00:10:17.560 --> 00:10:19.400
+that, right? So, these standard
+
+281
+00:10:19.400 --> 00:10:21.600
+keywords, you can very well use it in
+
+282
+00:10:21.600 --> 00:10:24.400
+your use case. Then you can use the
+
+283
+00:10:24.400 --> 00:10:26.720
+keyword-based search.
+
+284
+00:10:26.720 --> 00:10:28.400
+And when you're
+
+285
+00:10:28.400 --> 00:10:30.720
+you know, comparing the hybrid one, it's
+
+286
+00:10:30.720 --> 00:10:33.280
+like a combination of keyword plus
+
+287
+00:10:33.280 --> 00:10:34.560
+vector.
+
+288
+00:10:34.560 --> 00:10:37.120
+And the like the cost will be about 700
+
+289
+00:10:37.120 --> 00:10:38.560
+to 950.
+
+290
+00:10:38.560 --> 00:10:40.040
+And the like the use case will be
+
+291
+00:10:40.040 --> 00:10:41.880
+e-commerce. I already showed you like
+
+292
+00:10:41.880 --> 00:10:43.080
+what is the difference between the
+
+293
+00:10:43.080 --> 00:10:45.880
+keyword and I know hybrid search.
+
+294
+00:10:45.880 --> 00:10:48.640
+Now, let's also talk about hybrid with
+
+295
+00:10:48.640 --> 00:10:51.600
+semantic ranker. The cost will be about
+
+296
+00:10:51.600 --> 00:10:53.960
+1,700 to 2,000.
+
+297
+00:10:53.960 --> 00:10:55.960
+This will be at enterprise level. It
+
+298
+00:10:55.960 --> 00:10:57.480
+will not be available for the public
+
+299
+00:10:57.480 --> 00:11:00.040
+usage because like the cost it's a
+
+300
+00:11:00.040 --> 00:11:01.640
+little bit high.
+
+301
+00:11:01.640 --> 00:11:03.560
+Right? So, say like your employee wanted
+
+302
+00:11:03.560 --> 00:11:05.600
+to look for a legal, you know,
+
+303
+00:11:05.600 --> 00:11:08.200
+complaints details or a policy details,
+
+304
+00:11:08.200 --> 00:11:10.760
+then you can very well use the semantic
+
+305
+00:11:10.760 --> 00:11:12.000
+ranker.
+
+306
+00:11:12.000 --> 00:11:14.480
+And the final one it's the
+
+307
+00:11:14.480 --> 00:11:16.160
+knowledge base.
+
+308
+00:11:16.160 --> 00:11:18.600
+So, basically it's a rag-based system.
+
+309
+00:11:18.600 --> 00:11:20.560
+So, the cost will be
+
+310
+00:11:20.560 --> 00:11:23.520
+3,600 to 13,000 dollars.
+
+311
+00:11:23.520 --> 00:11:26.320
+This is more mostly used for a chatbot
+
+312
+00:11:26.320 --> 00:11:28.800
+kind of application. Right?
+
+313
+00:11:28.800 --> 00:11:31.960
+So, now let's move forward.
+
+314
+00:11:31.960 --> 00:11:34.400
+Now, let's try to understand the pricing
+
+315
+00:11:34.400 --> 00:11:35.800
+tiers here.
+
+316
+00:11:35.800 --> 00:11:37.520
+So, before we talk about that, we need
+
+317
+00:11:37.520 --> 00:11:39.800
+to understand the search unit. So,
+
+318
+00:11:39.800 --> 00:11:41.600
+basically like let's say let's say like
+
+319
+00:11:41.600 --> 00:11:43.920
+you are creating an index.
+
+320
+00:11:43.920 --> 00:11:46.600
+So, the index will be your replica. So,
+
+321
+00:11:46.600 --> 00:11:48.160
+in order to do a highly high
+
+322
+00:11:48.160 --> 00:11:49.680
+availability, you will be having a
+
+323
+00:11:49.680 --> 00:11:51.720
+number of replicas.
+
+324
+00:11:51.720 --> 00:11:53.560
+Within that replica, you will be having
+
+325
+00:11:53.560 --> 00:11:55.480
+a number of partition.
+
+326
+00:11:55.480 --> 00:11:57.880
+So, say like your index size it's you
+
+327
+00:11:57.880 --> 00:12:00.960
+know 100 MB. Uh sorry, 100 GB. Then now
+
+328
+00:12:00.960 --> 00:12:02.440
+you don't want to keep it in a single
+
+329
+00:12:02.440 --> 00:12:04.000
+partition, rather like you wanted to
+
+330
+00:12:04.000 --> 00:12:06.040
+have a multiple partition.
+
+331
+00:12:06.040 --> 00:12:08.400
+Um why we want to do that? If you just
+
+332
+00:12:08.400 --> 00:12:09.840
+come over here,
+
+333
+00:12:09.840 --> 00:12:13.280
+based on the uh skew that you select, um
+
+334
+00:12:13.280 --> 00:12:16.200
+the size storage size that it falls. So,
+
+335
+00:12:16.200 --> 00:12:19.000
+you cannot exit. Say like I wanted to
+
+336
+00:12:19.000 --> 00:12:21.320
+I'm I'm I'm using S1 stand- standard
+
+337
+00:12:21.320 --> 00:12:22.360
+tier.
+
+338
+00:12:22.360 --> 00:12:25.280
+And the storage uh that max I can go
+
+339
+00:12:25.280 --> 00:12:27.160
+it's a 25 GB.
+
+340
+00:12:27.160 --> 00:12:29.560
+So, say like you have a 40 GB, then you
+
+341
+00:12:29.560 --> 00:12:31.560
+cannot have it in a single partition.
+
+342
+00:12:31.560 --> 00:12:32.800
+So, you have to create multiple
+
+343
+00:12:32.800 --> 00:12:34.160
+partition.
+
+344
+00:12:34.160 --> 00:12:36.800
+So, if you see here, uh replica it's uh
+
+345
+00:12:36.800 --> 00:12:38.839
+your full index and the like within that
+
+346
+00:12:38.839 --> 00:12:40.480
+full index, you will have a number of
+
+347
+00:12:40.480 --> 00:12:41.760
+partition.
+
+348
+00:12:41.760 --> 00:12:44.160
+Uh based on the skew that you're using.
+
+349
+00:12:44.160 --> 00:12:45.680
+Not only that, uh there is other
+
+350
+00:12:45.680 --> 00:12:47.800
+reasons, too. So, if you if you see
+
+351
+00:12:47.800 --> 00:12:49.720
+here, this is a search unit. It's the
+
+352
+00:12:49.720 --> 00:12:51.400
+combination of uh replica and the
+
+353
+00:12:51.400 --> 00:12:53.240
+partition. Say here like I have three
+
+354
+00:12:53.240 --> 00:12:55.320
+replicas, two partition, the search
+
+355
+00:12:55.320 --> 00:12:56.920
+units will be six.
+
+356
+00:12:56.920 --> 00:12:58.600
+And the like when to use uh this uh
+
+357
+00:12:58.600 --> 00:13:00.520
+scaling like we can very well increase
+
+358
+00:13:00.520 --> 00:13:02.720
+the replicas as well as the partition.
+
+359
+00:13:02.720 --> 00:13:04.200
+If you just come over here, we can very
+
+360
+00:13:04.200 --> 00:13:06.600
+well increase the replicas as well as
+
+361
+00:13:06.600 --> 00:13:09.600
+the partition. But, when do we do that?
+
+362
+00:13:09.600 --> 00:13:11.920
+So, say like you you have multiple users
+
+363
+00:13:11.920 --> 00:13:13.880
+like concurrent number of concurrent
+
+364
+00:13:13.880 --> 00:13:16.320
+users are keep on increasing, then you
+
+365
+00:13:16.320 --> 00:13:18.160
+wanted to have a multiple replicas so
+
+366
+00:13:18.160 --> 00:13:20.120
+that you're not everyone will be hitting
+
+367
+00:13:20.120 --> 00:13:21.680
+the same index.
+
+368
+00:13:21.680 --> 00:13:23.280
+Um but the like there will be a number
+
+369
+00:13:23.280 --> 00:13:25.440
+of copies, so they can you know go into
+
+370
+00:13:25.440 --> 00:13:28.880
+multiple nodes to get the result. Under
+
+371
+00:13:28.880 --> 00:13:30.960
+like the storage it's hitting your limit
+
+372
+00:13:30.960 --> 00:13:33.720
+and then you have to do a partition. And
+
+373
+00:13:33.720 --> 00:13:35.520
+this is where like this
+
+374
+00:13:35.520 --> 00:13:37.640
+skew comes into picture. So, if you just
+
+375
+00:13:37.640 --> 00:13:39.440
+come over here if you if you already see
+
+376
+00:13:39.440 --> 00:13:41.640
+here, so there are multiple offerings.
+
+377
+00:13:41.640 --> 00:13:43.680
+There is a free offering. So, you know,
+
+378
+00:13:43.680 --> 00:13:45.360
+if you're an individual and you want to
+
+379
+00:13:45.360 --> 00:13:47.000
+to understand the search capability then
+
+380
+00:13:47.000 --> 00:13:49.800
+you can use the free tier. But the like
+
+381
+00:13:49.800 --> 00:13:51.800
+basic tier it's for, you know, dev test
+
+382
+00:13:51.800 --> 00:13:54.000
+and the like a standard tier for the
+
+383
+00:13:54.000 --> 00:13:56.240
+enterprise grade. Within standard tier
+
+384
+00:13:56.240 --> 00:13:59.080
+like we have a S1, S2, S3. You see the
+
+385
+00:13:59.080 --> 00:14:00.840
+differences here like in terms of a
+
+386
+00:14:00.840 --> 00:14:02.960
+storage there is a difference, right?
+
+387
+00:14:02.960 --> 00:14:04.800
+Not only in that like number of indexes
+
+388
+00:14:04.800 --> 00:14:07.360
+in indexes everything changes.
+
+389
+00:14:07.360 --> 00:14:10.080
+Especially the storage how changes.
+
+390
+00:14:10.080 --> 00:14:11.720
+So, based on your needs you have to
+
+391
+00:14:11.720 --> 00:14:12.920
+choose
+
+392
+00:14:12.920 --> 00:14:15.040
+you know, either of these. And the other
+
+393
+00:14:15.040 --> 00:14:16.920
+option it's the storage optimized say
+
+394
+00:14:16.920 --> 00:14:19.240
+like you have a huge amount of data that
+
+395
+00:14:19.240 --> 00:14:21.600
+you want to put it into your search then
+
+396
+00:14:21.600 --> 00:14:24.200
+you will be using the storage optimized.
+
+397
+00:14:24.200 --> 00:14:27.160
+The cost will be totally depends on the
+
+398
+00:14:27.160 --> 00:14:29.600
+offering that you select. So, if you do
+
+399
+00:14:29.600 --> 00:14:31.839
+a simple calculation here the basic
+
+400
+00:14:31.839 --> 00:14:34.839
+search will be like about $75 and the
+
+401
+00:14:34.839 --> 00:14:37.680
+like the standard search will be $250.
+
+402
+00:14:37.680 --> 00:14:39.920
+And the like the storage optimized will
+
+403
+00:14:39.920 --> 00:14:44.000
+be $3,000 close to $3,000. Again like
+
+404
+00:14:44.000 --> 00:14:46.280
+this is this is just a you know, very
+
+405
+00:14:46.280 --> 00:14:48.920
+foundational price. It is not everything
+
+406
+00:14:48.920 --> 00:14:51.000
+like you have to add up everything to to
+
+407
+00:14:51.000 --> 00:14:52.760
+come up with a some
+
+408
+00:14:52.760 --> 00:14:55.360
+you know, calculated numbers. If I just
+
+409
+00:14:55.360 --> 00:14:57.160
+come over here you will we already
+
+410
+00:14:57.160 --> 00:14:59.320
+discussed that, right? So, the basic
+
+411
+00:14:59.320 --> 00:15:01.640
+search one the
+
+412
+00:15:01.640 --> 00:15:03.600
+skew itself it's not going to cost you
+
+413
+00:15:03.600 --> 00:15:05.240
+much but the like the additional things
+
+414
+00:15:05.240 --> 00:15:07.560
+that you add on top of that it's what
+
+415
+00:15:07.560 --> 00:15:10.760
+going to cost you the additional
+
+416
+00:15:10.760 --> 00:15:12.080
+money.
+
+417
+00:15:12.080 --> 00:15:15.200
+Now, is the Azure AI search expensive?
+
+418
+00:15:15.200 --> 00:15:17.120
+Of course it is expensive. But the
+
+419
+00:15:17.120 --> 00:15:18.880
+reason is that there are n number of
+
+420
+00:15:18.880 --> 00:15:20.960
+features that you can select, right? So,
+
+421
+00:15:20.960 --> 00:15:22.480
+depends on your needs you will be
+
+422
+00:15:22.480 --> 00:15:24.680
+choosing the features. For instance,
+
+423
+00:15:24.680 --> 00:15:27.240
+here I listed the top 10 features. So,
+
+424
+00:15:27.240 --> 00:15:28.840
+the keyword search, vector search,
+
+425
+00:15:28.840 --> 00:15:31.160
+hybrid search, semantic ranker,
+
+426
+00:15:31.160 --> 00:15:33.680
+multi-model search, and you know,
+
+427
+00:15:33.680 --> 00:15:36.160
+embedding all of these, right? So, when
+
+428
+00:15:36.160 --> 00:15:38.760
+you add each of these, then it is going
+
+429
+00:15:38.760 --> 00:15:41.040
+to introduce the additional cost. So,
+
+430
+00:15:41.040 --> 00:15:43.600
+not necessarily the Azure AI search
+
+431
+00:15:43.600 --> 00:15:45.920
+itself it's expensive, but because like
+
+432
+00:15:45.920 --> 00:15:48.480
+you opted to select the features that
+
+433
+00:15:48.480 --> 00:15:50.720
+will add the additional cost. So, do we
+
+434
+00:15:50.720 --> 00:15:52.760
+have any alternative for Azure AI
+
+435
+00:15:52.760 --> 00:15:54.200
+search? Of course, like we do have a lot
+
+436
+00:15:54.200 --> 00:15:55.680
+of alternatives.
+
+437
+00:15:55.680 --> 00:15:59.640
+So, depends on the need, you can choose
+
+438
+00:15:59.640 --> 00:16:01.480
+the alternative. For instance, a
+
+439
+00:16:01.480 --> 00:16:03.120
+PostgreSQL.
+
+440
+00:16:03.120 --> 00:16:05.760
+You have to understand that you when you
+
+441
+00:16:05.760 --> 00:16:07.920
+buy the Azure AI search, you're buying a
+
+442
+00:16:07.920 --> 00:16:09.760
+product. But when you're using the
+
+443
+00:16:09.760 --> 00:16:12.080
+alternative, it is not necessarily will
+
+444
+00:16:12.080 --> 00:16:14.000
+give you all the feature, rather like it
+
+445
+00:16:14.000 --> 00:16:16.080
+will give you a portion of that. And
+
+446
+00:16:16.080 --> 00:16:17.640
+then like you have to do the
+
+447
+00:16:17.640 --> 00:16:19.600
+configuration or do the additional
+
+448
+00:16:19.600 --> 00:16:21.400
+development. So, the additional
+
+449
+00:16:21.400 --> 00:16:22.960
+development will also come into the
+
+450
+00:16:22.960 --> 00:16:24.839
+picture that is going to add you the
+
+451
+00:16:24.839 --> 00:16:27.080
+cost. In general, like if you think that
+
+452
+00:16:27.080 --> 00:16:29.400
+you will be using at least the five
+
+453
+00:16:29.400 --> 00:16:30.640
+features
+
+454
+00:16:30.640 --> 00:16:33.040
+provided by Azure AI search, then I
+
+455
+00:16:33.040 --> 00:16:35.000
+would say like just go with Azure AI
+
+456
+00:16:35.000 --> 00:16:37.320
+search. Okay, so far we discussed a lot
+
+457
+00:16:37.320 --> 00:16:40.440
+about the various type of search and the
+
+458
+00:16:40.440 --> 00:16:44.200
+like of skills, use cases. Now, let's
+
+459
+00:16:44.200 --> 00:16:46.440
+try to implement that. So, before we do
+
+460
+00:16:46.440 --> 00:16:48.560
+that, let's try to understand the skill
+
+461
+00:16:48.560 --> 00:16:50.839
+set. I already told you that the indexer
+
+462
+00:16:50.839 --> 00:16:53.160
+will be using the skill set to perform a
+
+463
+00:16:53.160 --> 00:16:55.520
+specific action. So, if you see here
+
+464
+00:16:55.520 --> 00:16:57.480
+like this is how we can define the skill
+
+465
+00:16:57.480 --> 00:17:00.560
+set. If you see here like I'm creating a
+
+466
+00:17:00.560 --> 00:17:02.320
+a split skill. So, basically like what
+
+467
+00:17:02.320 --> 00:17:04.640
+it will do is that it is going to
+
+468
+00:17:04.640 --> 00:17:06.439
+split the pages. Say like you're
+
+469
+00:17:06.439 --> 00:17:09.520
+uploading a PDF file 100 pages. You
+
+470
+00:17:09.520 --> 00:17:11.920
+don't want to put everything into the
+
+471
+00:17:11.920 --> 00:17:14.000
+same chunk, rather like you wanted to
+
+472
+00:17:14.000 --> 00:17:17.400
+split the PDF into chunks, right? So,
+
+473
+00:17:17.400 --> 00:17:19.360
+that is why that is why like we will be
+
+474
+00:17:19.360 --> 00:17:21.600
+using the split skill. And if you see
+
+475
+00:17:21.600 --> 00:17:23.360
+here like maximum length, it's a two
+
+476
+00:17:23.360 --> 00:17:26.000
+2,000 and the like overlap will be
+
+477
+00:17:26.000 --> 00:17:28.439
+500 characters. And the like we will be
+
+478
+00:17:28.439 --> 00:17:29.720
+creating the
+
+479
+00:17:29.720 --> 00:17:31.360
+chunk out of that.
+
+480
+00:17:31.360 --> 00:17:33.640
+And the like the other same way like we
+
+481
+00:17:33.640 --> 00:17:36.360
+can also create the embedding skills.
+
+482
+00:17:36.360 --> 00:17:38.960
+So, that is going to take the you know
+
+483
+00:17:38.960 --> 00:17:41.960
+split content and convert that content
+
+484
+00:17:41.960 --> 00:17:44.080
+into the embedding.
+
+485
+00:17:44.080 --> 00:17:46.560
+And we can also use the entity
+
+486
+00:17:46.560 --> 00:17:49.080
+organization. So, you extract some data
+
+487
+00:17:49.080 --> 00:17:51.520
+from the data you wanted to extract the
+
+488
+00:17:51.520 --> 00:17:54.400
+person, you know, organization, or any
+
+489
+00:17:54.400 --> 00:17:56.320
+other information
+
+490
+00:17:56.320 --> 00:17:58.440
+or entity that you wanted to extract,
+
+491
+00:17:58.440 --> 00:18:00.200
+you can will extract.
+
+492
+00:18:00.200 --> 00:18:01.400
+And the like when we talk about the
+
+493
+00:18:01.400 --> 00:18:04.000
+pipeline, I already showed you like how
+
+494
+00:18:04.000 --> 00:18:06.560
+does the pipeline works. So, you will
+
+495
+00:18:06.560 --> 00:18:08.080
+have an indexer. Indexer it's a
+
+496
+00:18:08.080 --> 00:18:10.160
+scheduled indexer. It can be scheduled,
+
+497
+00:18:10.160 --> 00:18:13.880
+it it can be manual. So, indexer will
+
+498
+00:18:13.880 --> 00:18:15.840
+will, you know, talk to the data source
+
+499
+00:18:15.840 --> 00:18:18.400
+and it will extract the data and the
+
+500
+00:18:18.400 --> 00:18:20.920
+indexer will use the skill. It can use
+
+501
+00:18:20.920 --> 00:18:23.720
+multiple skills. Firstly, it can use the
+
+502
+00:18:23.720 --> 00:18:26.080
+split skill to split the document and
+
+503
+00:18:26.080 --> 00:18:27.840
+the like it can use embedding skill to
+
+504
+00:18:27.840 --> 00:18:29.280
+convert the
+
+505
+00:18:29.280 --> 00:18:32.200
+split data into the vector. And the like
+
+506
+00:18:32.200 --> 00:18:34.120
+finally, it will create the index and
+
+507
+00:18:34.120 --> 00:18:36.320
+commit the index so that the committed
+
+508
+00:18:36.320 --> 00:18:38.920
+data, the index will be available for
+
+509
+00:18:38.920 --> 00:18:41.360
+our consumption. So, now let's talk
+
+510
+00:18:41.360 --> 00:18:43.400
+about the chunking here.
+
+511
+00:18:43.400 --> 00:18:45.520
+So, let's say like I have a piece. So,
+
+512
+00:18:45.520 --> 00:18:47.320
+10 pages page, right? So, I don't want
+
+513
+00:18:47.320 --> 00:18:48.520
+to
+
+514
+00:18:48.520 --> 00:18:51.000
+save complete page into the vector. So,
+
+515
+00:18:51.000 --> 00:18:52.840
+usually like I we will be splitting that
+
+516
+00:18:52.840 --> 00:18:54.680
+into a number of pieces.
+
+517
+00:18:54.680 --> 00:18:56.880
+If you see here page one, page two, page
+
+518
+00:18:56.880 --> 00:18:58.960
+10, whatever is that, right? So, we will
+
+519
+00:18:58.960 --> 00:19:01.520
+split everything and the like create a
+
+520
+00:19:01.520 --> 00:19:04.520
+chunk of for that particular page.
+
+521
+00:19:04.520 --> 00:19:06.200
+And when we say like
+
+522
+00:19:06.200 --> 00:19:07.840
+we wanted to create a vector, like how
+
+523
+00:19:07.840 --> 00:19:09.120
+do we create a vector, right? So,
+
+524
+00:19:09.120 --> 00:19:11.320
+typically like we will be using
+
+525
+00:19:11.320 --> 00:19:14.400
+the uh embedding models or to create the
+
+526
+00:19:14.400 --> 00:19:16.720
+vector. So, you have to remember that
+
+527
+00:19:16.720 --> 00:19:19.120
+you are using a specific uh embedding
+
+528
+00:19:19.120 --> 00:19:21.280
+model to create your
+
+529
+00:19:21.280 --> 00:19:23.440
+uh vector. And when you do a search, you
+
+530
+00:19:23.440 --> 00:19:25.800
+have to use the same model to create the
+
+531
+00:19:25.800 --> 00:19:27.760
+vector uh so that you will get the
+
+532
+00:19:27.760 --> 00:19:29.120
+results back.
+
+533
+00:19:29.120 --> 00:19:30.800
+So, if you see here like there are two
+
+534
+00:19:30.800 --> 00:19:32.880
+different models available for us. Like
+
+535
+00:19:32.880 --> 00:19:34.600
+there are a plenty of available, but
+
+536
+00:19:34.600 --> 00:19:37.800
+then like these two are from uh GPT.
+
+537
+00:19:37.800 --> 00:19:39.640
+So, the small model and the large model.
+
+538
+00:19:39.640 --> 00:19:43.520
+The small model will be having 1,536
+
+539
+00:19:43.520 --> 00:19:45.200
+uh dimensions, where like the large
+
+540
+00:19:45.200 --> 00:19:46.800
+model will be having
+
+541
+00:19:46.800 --> 00:19:49.720
+uh 3,072 dimensions. The accuracy will
+
+542
+00:19:49.720 --> 00:19:52.280
+be uh 62.3%.
+
+543
+00:19:52.280 --> 00:19:55.640
+This accuracy will be 64.6%.
+
+544
+00:19:55.640 --> 00:19:57.120
+So, basically like when you wanted to
+
+545
+00:19:57.120 --> 00:20:01.320
+have the uh precise uh search results,
+
+546
+00:20:01.320 --> 00:20:03.480
+then you you need to use the large
+
+547
+00:20:03.480 --> 00:20:05.320
+model. But the cost will be very
+
+548
+00:20:05.320 --> 00:20:07.640
+expensive. So, if you see here,
+
+549
+00:20:07.640 --> 00:20:09.920
+this is uh 0.2
+
+550
+00:20:09.920 --> 00:20:12.240
+uh cents, where like this is 13 cents.
+
+551
+00:20:12.240 --> 00:20:15.040
+So, it's extremely high.
+
+552
+00:20:15.040 --> 00:20:17.040
+So, now let's move forward. Now, this
+
+553
+00:20:17.040 --> 00:20:19.000
+one explains how does these uh embedding
+
+554
+00:20:19.000 --> 00:20:20.440
+works. Now that we understood
+
+555
+00:20:20.440 --> 00:20:22.400
+everything, let's go ahead and uh set up
+
+556
+00:20:22.400 --> 00:20:24.080
+the search here.
+
+557
+00:20:24.080 --> 00:20:26.440
+So, first we will create the uh keyword
+
+558
+00:20:26.440 --> 00:20:28.480
+search. We'll have the data source uh
+
+559
+00:20:28.480 --> 00:20:29.920
+using the indexer. It will create a
+
+560
+00:20:29.920 --> 00:20:31.960
+index. Let's go to the Visual Studio
+
+561
+00:20:31.960 --> 00:20:34.960
+code. So, if I just come over here,
+
+562
+00:20:34.960 --> 00:20:37.360
+the way we implemented, it's like first
+
+563
+00:20:37.360 --> 00:20:39.320
+we create a data source.
+
+564
+00:20:39.320 --> 00:20:42.080
+Uh let me go here. So, it just creates
+
+565
+00:20:42.080 --> 00:20:43.920
+the data source here.
+
+566
+00:20:43.920 --> 00:20:46.400
+Uh once the data source is created, then
+
+567
+00:20:46.400 --> 00:20:48.960
+we will we can create a index.
+
+568
+00:20:48.960 --> 00:20:51.320
+So, basically index it's just a table,
+
+569
+00:20:51.320 --> 00:20:53.280
+right? And then like we will finally we
+
+570
+00:20:53.280 --> 00:20:55.280
+will have our indexer.
+
+571
+00:20:55.280 --> 00:20:58.280
+So, the indexer will populate the index
+
+572
+00:20:58.280 --> 00:20:59.200
+uh
+
+573
+00:20:59.200 --> 00:21:01.280
+And finally we can do a search here. So,
+
+574
+00:21:01.280 --> 00:21:04.640
+if I just come come to the search here.
+
+575
+00:21:04.640 --> 00:21:05.880
+So,
+
+576
+00:21:05.880 --> 00:21:08.680
+what I want to search, it's like the
+
+577
+00:21:08.680 --> 00:21:10.520
+cyborg kids what I want to search and I
+
+578
+00:21:10.520 --> 00:21:12.760
+wanted to print the results here. So, I
+
+579
+00:21:12.760 --> 00:21:15.040
+already executed here and if you see the
+
+580
+00:21:15.040 --> 00:21:18.120
+result, it is just giving me these two
+
+581
+00:21:18.120 --> 00:21:20.440
+because like it is explicitly mentioned
+
+582
+00:21:20.440 --> 00:21:22.440
+here in the search
+
+583
+00:21:22.440 --> 00:21:23.960
+in the description.
+
+584
+00:21:23.960 --> 00:21:26.480
+Uh here you you see cyborg and here also
+
+585
+00:21:26.480 --> 00:21:28.000
+you see cyborg.
+
+586
+00:21:28.000 --> 00:21:30.000
+That's how we implement the keyword
+
+587
+00:21:30.000 --> 00:21:32.400
+search and for the vector search, it is
+
+588
+00:21:32.400 --> 00:21:35.520
+almost similar except that if you just
+
+589
+00:21:35.520 --> 00:21:37.640
+come over here, we will create a data
+
+590
+00:21:37.640 --> 00:21:40.000
+source, we will create a index and then
+
+591
+00:21:40.000 --> 00:21:41.680
+like we will create a skill set. If you
+
+592
+00:21:41.680 --> 00:21:43.200
+just go to the
+
+593
+00:21:43.200 --> 00:21:46.520
+uh skill set, we are just uh using the
+
+594
+00:21:46.520 --> 00:21:49.080
+uh embedding skill set. So, instead of
+
+595
+00:21:49.080 --> 00:21:52.040
+just uh the keyword, we will be using
+
+596
+00:21:52.040 --> 00:21:53.560
+the embedding here.
+
+597
+00:21:53.560 --> 00:21:55.160
+And then like finally we will click uh
+
+598
+00:21:55.160 --> 00:21:57.400
+call the indexer to populate the index
+
+599
+00:21:57.400 --> 00:21:59.920
+and finally we will do the search here.
+
+600
+00:21:59.920 --> 00:22:01.800
+Exactly the same thing but this time
+
+601
+00:22:01.800 --> 00:22:04.760
+around uh we will be using the uh vector
+
+602
+00:22:04.760 --> 00:22:05.720
+search.
+
+603
+00:22:05.720 --> 00:22:08.360
+Right? So, we are using the vector query
+
+604
+00:22:08.360 --> 00:22:10.520
+and uh we we get the result. So, if I
+
+605
+00:22:10.520 --> 00:22:12.320
+just come over here,
+
+606
+00:22:12.320 --> 00:22:14.080
+so this time around if you see here, it
+
+607
+00:22:14.080 --> 00:22:16.520
+is returning uh slightly a different
+
+608
+00:22:16.520 --> 00:22:18.840
+result here. So, it is uh you know,
+
+609
+00:22:18.840 --> 00:22:21.600
+giving me the Terminator, I, Robot and
+
+610
+00:22:21.600 --> 00:22:24.160
+Terminator. Well, let's talk about the
+
+611
+00:22:24.160 --> 00:22:27.320
+hybrid search. Hybrid search uh in terms
+
+612
+00:22:27.320 --> 00:22:29.240
+of implementation is going to be the
+
+613
+00:22:29.240 --> 00:22:32.160
+same but if you just come to the search
+
+614
+00:22:32.160 --> 00:22:35.040
+side, what you will do is that uh here
+
+615
+00:22:35.040 --> 00:22:37.880
+where like uh you will be seeing the uh
+
+616
+00:22:37.880 --> 00:22:40.440
+high both uh you will be setting here.
+
+617
+00:22:40.440 --> 00:22:43.200
+Right? The search text as well as the
+
+618
+00:22:43.200 --> 00:22:44.720
+uh vector queries, both you will be
+
+619
+00:22:44.720 --> 00:22:47.440
+passing. If you just come to the uh
+
+620
+00:22:47.440 --> 00:22:49.360
+vector search, you will be just passing
+
+621
+00:22:49.360 --> 00:22:50.960
+the query
+
+622
+00:22:50.960 --> 00:22:53.160
+uh vector query but uh hybrid search,
+
+623
+00:22:53.160 --> 00:22:54.880
+you will be passing search text at the
+
+624
+00:22:54.880 --> 00:22:56.560
+vector query. Both you will be passing.
+
+625
+00:22:56.560 --> 00:22:59.120
+That is the only difference in terms of
+
+626
+00:22:59.120 --> 00:23:00.720
+uh implementation.
+
+627
+00:23:00.720 --> 00:23:02.800
+And the result, it is going to be almost
+
+628
+00:23:02.800 --> 00:23:05.960
+identical to the uh vector result here.
+
+629
+00:23:05.960 --> 00:23:08.840
+Now, let's also implement the hybrid uh
+
+630
+00:23:08.840 --> 00:23:10.800
+semantic search. It will be exactly the
+
+631
+00:23:10.800 --> 00:23:13.160
+same uh similar to the hybrid search
+
+632
+00:23:13.160 --> 00:23:15.840
+except that if you go to the index,
+
+633
+00:23:15.840 --> 00:23:18.440
+we will also have the semantic uh search
+
+634
+00:23:18.440 --> 00:23:20.160
+configuration here.
+
+635
+00:23:20.160 --> 00:23:21.640
+So, if you see here like uh this is the
+
+636
+00:23:21.640 --> 00:23:23.520
+semantic search configuration where like
+
+637
+00:23:23.520 --> 00:23:26.560
+we say like uh focus on these uh fields.
+
+638
+00:23:26.560 --> 00:23:28.320
+Uh remember like this database has a
+
+639
+00:23:28.320 --> 00:23:30.240
+number of field out of that like these
+
+640
+00:23:30.240 --> 00:23:31.640
+are all the field that we wanted to
+
+641
+00:23:31.640 --> 00:23:33.600
+focus on for the semantic search
+
+642
+00:23:33.600 --> 00:23:35.960
+configuration. So, give a lot of uh
+
+643
+00:23:35.960 --> 00:23:39.200
+priority to this uh field title field.
+
+644
+00:23:39.200 --> 00:23:41.920
+And then like uh you focus on this uh
+
+645
+00:23:41.920 --> 00:23:44.720
+film synopsis. Uh basically like uh
+
+646
+00:23:44.720 --> 00:23:46.640
+whatever the content field that we
+
+647
+00:23:46.640 --> 00:23:48.440
+configured here,
+
+648
+00:23:48.440 --> 00:23:51.320
+the LLM will read uh as a paragraph and
+
+649
+00:23:51.320 --> 00:23:54.200
+try to identify the uh information out
+
+650
+00:23:54.200 --> 00:23:56.560
+of this particular paragraph. And this
+
+651
+00:23:56.560 --> 00:23:58.800
+field uh it's what we wanted to focus on
+
+652
+00:23:58.800 --> 00:24:01.760
+for the keyword search.
+
+653
+00:24:01.760 --> 00:24:04.400
+So, now uh the results will be almost
+
+654
+00:24:04.400 --> 00:24:06.640
+identical. Uh maybe like the order will
+
+655
+00:24:06.640 --> 00:24:09.280
+be slightly adjusted. Now, we can go
+
+656
+00:24:09.280 --> 00:24:11.920
+back to the Azure portal and see all of
+
+657
+00:24:11.920 --> 00:24:13.640
+this.
+
+658
+00:24:13.640 --> 00:24:15.640
+So, if you see here like I have the SQL
+
+659
+00:24:15.640 --> 00:24:18.800
+database. So, this database it's what I
+
+660
+00:24:18.800 --> 00:24:21.400
+will be using for the search.
+
+661
+00:24:21.400 --> 00:24:24.320
+And if you see here like uh I using the
+
+662
+00:24:24.320 --> 00:24:26.240
+uh pricing tier basic
+
+663
+00:24:26.240 --> 00:24:28.440
+under uh replica one, partition one,
+
+664
+00:24:28.440 --> 00:24:30.240
+search unit one.
+
+665
+00:24:30.240 --> 00:24:32.000
+And then like uh from here only we can
+
+666
+00:24:32.000 --> 00:24:34.400
+do the import. Uh like whatever we have
+
+667
+00:24:34.400 --> 00:24:36.360
+done through the code that can also be
+
+668
+00:24:36.360 --> 00:24:39.080
+done from the portal. So, if you click
+
+669
+00:24:39.080 --> 00:24:41.640
+on this import, that will let you uh
+
+670
+00:24:41.640 --> 00:24:44.120
+choose the target. So, in this case this
+
+671
+00:24:44.120 --> 00:24:46.560
+is going to be SQL server. And then like
+
+672
+00:24:46.560 --> 00:24:48.600
+what kind of search you want to do. Here
+
+673
+00:24:48.600 --> 00:24:51.000
+like you can choose the database that
+
+674
+00:24:51.000 --> 00:24:52.600
+you are interested in and the table that
+
+675
+00:24:52.600 --> 00:24:54.040
+you are interested in. You can choose
+
+676
+00:24:54.040 --> 00:24:55.840
+all of these and then like you can
+
+677
+00:24:55.840 --> 00:24:57.880
+choose the authentication mechanism. I'm
+
+678
+00:24:57.880 --> 00:24:59.480
+not going to do that, but you can very
+
+679
+00:24:59.480 --> 00:25:01.200
+well do that here.
+
+680
+00:25:01.200 --> 00:25:03.920
+Uh and also you can also add a index and
+
+681
+00:25:03.920 --> 00:25:07.160
+search the uh existing index. So, now if
+
+682
+00:25:07.160 --> 00:25:09.400
+I just come over here, this is where
+
+683
+00:25:09.400 --> 00:25:11.880
+like you will see all the uh data source
+
+684
+00:25:11.880 --> 00:25:14.760
+that we added through the code. So, this
+
+685
+00:25:14.760 --> 00:25:16.520
+one for the keyword search, vector
+
+686
+00:25:16.520 --> 00:25:18.080
+search, hybrid search, and semantic
+
+687
+00:25:18.080 --> 00:25:20.640
+search. So, all of these are added and
+
+688
+00:25:20.640 --> 00:25:23.920
+we are focusing on the uh table frame.
+
+689
+00:25:23.920 --> 00:25:25.720
+And the like uh for some of these we
+
+690
+00:25:25.720 --> 00:25:28.080
+have created the skill set. Uh you can
+
+691
+00:25:28.080 --> 00:25:30.280
+find all the skill set here. So, the
+
+692
+00:25:30.280 --> 00:25:32.760
+thing is that uh you can also create uh
+
+693
+00:25:32.760 --> 00:25:35.200
+everything from here. Um it's a JSON
+
+694
+00:25:35.200 --> 00:25:37.440
+format. You can very well do that here.
+
+695
+00:25:37.440 --> 00:25:40.480
+So, let me open the uh vector definition
+
+696
+00:25:40.480 --> 00:25:42.040
+skill set here.
+
+697
+00:25:42.040 --> 00:25:44.440
+Uh so, this is how you create. So, just
+
+698
+00:25:44.440 --> 00:25:45.640
+give it a name, give it some
+
+699
+00:25:45.640 --> 00:25:47.280
+description. You can see like the
+
+700
+00:25:47.280 --> 00:25:49.560
+deployment ID and the like a dimension
+
+701
+00:25:49.560 --> 00:25:51.960
+model name, input and output. And this
+
+702
+00:25:51.960 --> 00:25:54.800
+is how you can create the skill set.
+
+703
+00:25:54.800 --> 00:25:56.960
+Once the skill set it's created, then
+
+704
+00:25:56.960 --> 00:26:00.000
+you can create the uh index.
+
+705
+00:26:00.000 --> 00:26:01.960
+So, you can very well create the index
+
+706
+00:26:01.960 --> 00:26:04.200
+here, too. So, let me open one of the
+
+707
+00:26:04.200 --> 00:26:06.280
+existing index. So, if you just come
+
+708
+00:26:06.280 --> 00:26:07.600
+over here,
+
+709
+00:26:07.600 --> 00:26:09.760
+uh field it's what uh we wanted to
+
+710
+00:26:09.760 --> 00:26:12.360
+define. So, if you see here like uh we
+
+711
+00:26:12.360 --> 00:26:14.520
+we have defined, I know, so many fields
+
+712
+00:26:14.520 --> 00:26:16.600
+you know, corresponding to the database
+
+713
+00:26:16.600 --> 00:26:19.200
+table that we have. And uh whether we
+
+714
+00:26:19.200 --> 00:26:22.240
+wanted to retrieve, this can be used for
+
+715
+00:26:22.240 --> 00:26:25.040
+uh filter, sortable, uh face table,
+
+716
+00:26:25.040 --> 00:26:27.160
+searchable, whatever it is that we can
+
+717
+00:26:27.160 --> 00:26:29.360
+we can choose all of these here.
+
+718
+00:26:29.360 --> 00:26:31.720
+And the like uh if you have the semantic
+
+719
+00:26:31.720 --> 00:26:33.200
+configuration, this is where you will
+
+720
+00:26:33.200 --> 00:26:35.400
+see or you can add it here. Vector
+
+721
+00:26:35.400 --> 00:26:37.640
+profile also like if you have one, that
+
+722
+00:26:37.640 --> 00:26:39.200
+will be displayed or you can add it
+
+723
+00:26:39.200 --> 00:26:40.560
+here.
+
+724
+00:26:40.560 --> 00:26:43.440
+Uh so, now let open one of these uh
+
+725
+00:26:43.440 --> 00:26:45.680
+uh maybe like the semantic one I open.
+
+726
+00:26:45.680 --> 00:26:47.000
+So, if you just come over here, the
+
+727
+00:26:47.000 --> 00:26:48.920
+field wise it will be the same field
+
+728
+00:26:48.920 --> 00:26:50.520
+except that we will be adding one
+
+729
+00:26:50.520 --> 00:26:53.080
+additional field to store the vector
+
+730
+00:26:53.080 --> 00:26:54.800
+information here.
+
+731
+00:26:54.800 --> 00:26:57.120
+And then like if you just come to the
+
+732
+00:26:57.120 --> 00:26:59.280
+semantic configuration, exactly the same
+
+733
+00:26:59.280 --> 00:27:01.920
+thing, right? So, the priority field it
+
+734
+00:27:01.920 --> 00:27:03.640
+is going to be this and the content will
+
+735
+00:27:03.640 --> 00:27:05.480
+be in this and the keyword search will
+
+736
+00:27:05.480 --> 00:27:06.880
+be using this
+
+737
+00:27:06.880 --> 00:27:09.520
+field. And the vector profile, you can
+
+738
+00:27:09.520 --> 00:27:10.880
+see it here.
+
+739
+00:27:10.880 --> 00:27:12.800
+So, this is how we create the index and
+
+740
+00:27:12.800 --> 00:27:14.680
+then like finally we will create an
+
+741
+00:27:14.680 --> 00:27:17.040
+indexer. When you create an indexer, it
+
+742
+00:27:17.040 --> 00:27:18.760
+is going like you can create the indexer
+
+743
+00:27:18.760 --> 00:27:20.920
+from here.
+
+744
+00:27:20.920 --> 00:27:23.360
+Or open the existing index. Let me open
+
+745
+00:27:23.360 --> 00:27:25.600
+the semantic indexer here. So, if you
+
+746
+00:27:25.600 --> 00:27:27.520
+see here like it is going to when you
+
+747
+00:27:27.520 --> 00:27:29.440
+create the index, you can edit the index
+
+748
+00:27:29.440 --> 00:27:30.520
+too.
+
+749
+00:27:30.520 --> 00:27:31.880
+These are all the information that you
+
+750
+00:27:31.880 --> 00:27:34.760
+wanted to have to create the index, uh
+
+751
+00:27:34.760 --> 00:27:36.560
+sorry, indexer. And then like you can
+
+752
+00:27:36.560 --> 00:27:38.640
+run the indexer from here.
+
+753
+00:27:38.640 --> 00:27:41.640
+So, it can be scheduled index or it
+
+754
+00:27:41.640 --> 00:27:43.720
+can be a manual run also.
+
+755
+00:27:43.720 --> 00:27:46.960
+So, now if I just come to the indexes,
+
+756
+00:27:46.960 --> 00:27:48.920
+now let me pick up you know any one of
+
+757
+00:27:48.920 --> 00:27:51.160
+these, maybe the keyword search. And if
+
+758
+00:27:51.160 --> 00:27:53.560
+you do the search here, maybe like I'm
+
+759
+00:27:53.560 --> 00:27:56.520
+looking for the keyword
+
+760
+00:27:56.520 --> 00:27:58.480
+cyborg.
+
+761
+00:27:58.480 --> 00:28:00.120
+So, it is going to give me the result
+
+762
+00:28:00.120 --> 00:28:02.680
+here. We can also work on the scaling.
+
+763
+00:28:02.680 --> 00:28:04.800
+So, if you just come to the scaling,
+
+764
+00:28:04.800 --> 00:28:06.560
+here well like you can configure your
+
+765
+00:28:06.560 --> 00:28:08.600
+number of replicas, you know,
+
+766
+00:28:08.600 --> 00:28:11.000
+partitions, and you can also choose the
+
+767
+00:28:11.000 --> 00:28:12.200
+various uh
+
+768
+00:28:12.200 --> 00:28:14.240
+uh pricing tier.
+
+769
+00:28:14.240 --> 00:28:15.800
+Uh and then like if you just come over
+
+770
+00:28:15.800 --> 00:28:19.800
+here, from here you can get the keys.
+
+771
+00:28:19.800 --> 00:28:22.240
+And uh if you come over to the premium
+
+772
+00:28:22.240 --> 00:28:24.240
+features, you can choose the premium
+
+773
+00:28:24.240 --> 00:28:26.440
+features. So, if you see here like right
+
+774
+00:28:26.440 --> 00:28:28.360
+now I'm using the free feature. So, when
+
+775
+00:28:28.360 --> 00:28:29.480
+like
+
+776
+00:28:29.480 --> 00:28:31.760
+uh 1,000 semantic ranker per month, it's
+
+777
+00:28:31.760 --> 00:28:32.680
+free.
+
+778
+00:28:32.680 --> 00:28:34.480
+Uh but then like if you go with the
+
+779
+00:28:34.480 --> 00:28:37.160
+standard one, then uh the price will be
+
+780
+00:28:37.160 --> 00:28:38.320
+added.
+
+781
+00:28:38.320 --> 00:28:40.760
+Right? This is how we can use the Azure
+
+782
+00:28:40.760 --> 00:28:44.840
+AI search. Thank you for watching.

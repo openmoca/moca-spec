@@ -68,6 +68,18 @@ A course has modules, a sequence and prerequisites.
 - An application's vocabulary, such as learning objectives, travels as an
   overlay or extra vocabulary, never as part of the standard.
 
+## Recorded talks and video series
+
+A talk or a series of videos is knowledge locked in speech.
+
+- Each video is a node holding its description and a transcript from its
+  captions; the video itself stays where it is published, as the node's
+  `resource`.
+- **Evidence** cites chapters as time ranges, and the WebVTT captions travel
+  under `media/`, so every range is checked without a network.
+- **Structure** keeps a series in order (`skos:OrderedCollection`).
+- See [`examples/youtube`](../examples/youtube), built with `moca-youtube`.
+
 ## Vendor documentation shipped to customers
 
 A software vendor publishes product knowledge that customers load into their
