@@ -1,6 +1,6 @@
 # MOCA Package Specification
 
-Specification version: `0.3.0-alpha.1` (`mocaVersion` `0.3`)
+Specification version: `0.4.0-alpha.1` (`mocaVersion` `0.4`)
 Status: Alpha. Expect changes before `1.0.0`.
 License: [Apache License 2.0](../LICENSE)
 
@@ -29,8 +29,7 @@ the system that reads it.
 This document defines the package format. Reader behaviour is in the
 [Reader contract](moca-reader-contract.md), attestations in
 [moca-attestations.md](moca-attestations.md), search indexes in the
-[sidecar index specification](moca-sidecar-index-spec.md), and registry
-transport in the [OCI binding](moca-oci-binding.md).
+[sidecar index specification](moca-sidecar-index-spec.md).
 
 ## 2. Conventions
 
@@ -53,14 +52,13 @@ and only when, they appear in capitals.
 | Concern | Standard |
 | --- | --- |
 | Content and node trust fields | OKF v0.2 |
-| Manifest canonical form | RFC 8785 (JSON Canonicalization Scheme) |
-| Digests | SHA-256 |
+| Digests | SHA-256 over a BagIt-style payload manifest (RFC 8493 `manifest-sha256.txt` line format) |
 | Attestations | in-toto Statement v1, wrapped in DSSE or a Sigstore bundle |
-| Evidence selectors | W3C Web Annotation: `FragmentSelector`, `TextQuoteSelector`, `TextPositionSelector`; RFC 3778 for PDF pages |
+| Evidence selectors | W3C Web Annotation: `FragmentSelector`, `TextQuoteSelector`, `TextPositionSelector`; RFC 3778 for PDF pages; W3C Media Fragments for time ranges in audio and video |
+| Captions and transcripts | WebVTT |
+| Structure | W3C SKOS, DCMI Metadata Terms, and `owl:deprecated`, in Turtle (§5.6) |
 | Languages | BCP 47 |
 | Licences | SPDX license expressions |
-| Skills (profile) | Agent Skills specification |
-| Registry transport (binding) | OCI image and distribution specifications |
 
 ## 4. Manifest
 
@@ -191,15 +189,19 @@ moca:
   valid_until: 2027-01-01T00:00:00Z
   contested_by: ["https://example.com/kb/regional#refunds-de.md"]
   audience: public
+  concepts:
+    - iri: https://example.com/kb/concepts#RefundWindow
+      role: primary
 ---
 ```
 
 | Key | Meaning |
 | --- | --- |
-| `evidence` | List of `{ source, selector, note? }`. `source` MUST equal the `id` of an entry in the node's OKF `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN`). `selector` is a W3C Web Annotation `FragmentSelector` (`value`, optional `conformsTo`), `TextQuoteSelector` (`exact`, optional `prefix`, `suffix`) or `TextPositionSelector` (`start`, `end`). A PDF page is a `FragmentSelector` with `value: "page=12"` and `conformsTo: "http://tools.ietf.org/rfc/rfc3778"`. |
+| `evidence` | List of `{ source, selector, note? }`. `source` MUST equal the `id` of an entry in the node's OKF `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN`). `selector` is a W3C Web Annotation `FragmentSelector` (`value`, optional `conformsTo`), `TextQuoteSelector` (`exact`, optional `prefix`, `suffix`) or `TextPositionSelector` (`start`, `end`). A PDF page is a `FragmentSelector` with `value: "page=12"` and `conformsTo: "http://tools.ietf.org/rfc/rfc3778"`. A time range in audio or video is a `FragmentSelector` with `value: "t=75,210"` and `conformsTo: "http://www.w3.org/TR/media-frags/"`; carry the WebVTT captions under `media/` so the range can be checked. |
 | `valid_from`, `valid_until` | The node's own validity window (§4.4). `valid_until` MUST be later than `valid_from` (`C010_VALIDITY_WINDOW_INVALID`). |
 | `contested_by` | Node ids or package ids of content that disputes this node. |
 | `audience` | Who the node is for. Suggested values: `public`, `internal`, `restricted`; other values are allowed. It is a label a host filters on, not an access-control mechanism (§13.3). |
+| `concepts` | Concepts from the package's `structure.ttl` that this node is bound to (§5.6): a list of `{ iri, role? }`. `iri` MUST be an absolute IRI; `role` is `primary` (what the node is about) or `supporting` (what it mentions). |
 | `profiles` | Profile URI to that profile's node-level data (§9). |
 
 ### 5.4 Locales
@@ -231,7 +233,55 @@ Citation records keep declared verification (`declaredVerified`) apart from
 attested reviews (`attestedReviews`) so that an application never mistakes one
 for the other.
 
-## 6. Package contents and the canonical digest
+### 5.6 Structure
+
+A package MAY describe how its knowledge is organised in `structure.ttl` at
+its root ([ADR-0012](../docs/adr/0012-structure-core.md)). Structure is
+optional: a package of a manifest and content alone is complete. When
+present, it is the package's **structure layer**, beside the content layer
+(`content/`) and the evidence layer (`sources/`, `media/`).
+
+`structure.ttl` is Turtle. It MUST use absolute IRIs and MUST NOT use
+`owl:imports`; a Reader never fetches anything it names (`O003`). Readers
+understand exactly these terms, and ignore any others:
+
+| Idea | Terms | Meaning |
+| --- | --- | --- |
+| Concept | `skos:Concept`, `skos:prefLabel`, `skos:definition` | A thing the knowledge is about, its label and its definition. |
+| Hierarchy | `skos:broader`, `skos:narrower` | A is a kind or subtopic of B. |
+| Association | `skos:related` | A and B are related; symmetric. |
+| Parts | `dcterms:hasPart`, `dcterms:isPartOf` | B is part of A: a chapter of a handbook, a section of an act, a module of a course, a component of an assembly. |
+| Order | `skos:OrderedCollection`, `skos:memberList` | An ordered list of concepts: procedure steps, clause order, a learning path. |
+| Requires | `dcterms:requires`, `dcterms:isRequiredBy` | A requires B "to support its function, delivery, or coherence": a check before a step, a test before a treatment, a foundation before an advanced topic. |
+| Replaces | `dcterms:replaces`, `dcterms:isReplacedBy` | A supersedes B: an amended clause, a revised procedure. |
+| Deprecated | `owl:deprecated true` | The concept should no longer be used. |
+
+`skos:` is `http://www.w3.org/2004/02/skos/core#`, `dcterms:` is
+`http://purl.org/dc/terms/`, and `owl:` is `http://www.w3.org/2002/07/owl#`.
+Inverse pairs mean the same thing: `B skos:narrower A` is `A skos:broader B`.
+
+Every concept used in a relation, an ordered collection or a node binding
+MUST be declared with `rdf:type skos:Concept` (`O002`). `requires`,
+`broader` and `hasPart` MUST NOT form cycles (`O005`).
+
+**`requires` describes; it never enforces.** Whether a person may see B, or
+start a step, depends on who they are and what they have done. That is
+runtime state, and it belongs to the application.
+
+**Derived view.** A producer MAY also write `structure.json`, a view derived
+from `structure.ttl` in the shape of
+[`structure.schema.json`](../schemas/v1/structure.schema.json), for Readers
+that cannot parse Turtle. A Reader that parses Turtle MUST check the view
+against it and report any difference as `O004`. `moca-lint structure --write`
+writes it.
+
+**Overlays.** An application or an organisation may add its own concepts,
+relations and vocabulary over a package's structure. Overlays are supplied by
+the host, not by the package, and are never covered by the package's digest
+([ADR-0013](../docs/adr/0013-package-application-organisation-layers.md),
+[Reader contract §10](moca-reader-contract.md#10-structure)).
+
+## 6. Package contents and the digest
 
 ### 6.1 Layout
 
@@ -241,7 +291,8 @@ for the other.
 ├── content/         the OKF bundle (required unless the package has members)
 ├── sources/         optional: the original files that nodes cite
 ├── media/           optional: images, audio and other cited files
-├── skills/          optional: see §8
+├── structure.ttl    optional: the structure layer (§5.6)
+├── structure.json   optional: its derived view (§5.6)
 ├── attestations/    optional: see §10; outside the digest
 └── ...              any other regular files
 ```
@@ -277,23 +328,35 @@ by some readers and not covered by the digest.
 
 ### 6.4 Algorithm
 
-The digest is `moca-digest-v1`:
+The digest is `moca-digest-v2` ([ADR-0014](../docs/adr/0014-digest-v2-bagit-manifest.md)):
 
-1. List the package's regular files (§6.1, §6.2). For each, take its path
-   relative to the package root with `/` separators, normalised to NFC.
-2. Remove `moca.json` from the list. For every other file, compute the
-   lowercase hexadecimal SHA-256 of its bytes. File modes, timestamps and empty
-   directories are ignored.
-3. Parse `moca.json`, canonicalise it with RFC 8785, and compute the lowercase
-   hexadecimal SHA-256 of the resulting UTF-8 bytes.
-4. Build this object, canonicalise it with RFC 8785, and compute the SHA-256
-   of the UTF-8 bytes:
+1. List the package's regular files (§6.1, §6.2), excluding `attestations/`.
+   For each, take its path relative to the package root with `/` separators,
+   normalised to NFC. `moca.json` is included like any other file.
+2. For every file, compute the lowercase hexadecimal SHA-256 of its bytes.
+   File modes, timestamps and empty directories are ignored.
+3. Write one line per file: the hash, two spaces, the path, and a line feed
+   (U+000A). In the path, `%`, CR and LF are percent-encoded as `%25`, `%0D`
+   and `%0A`, as RFC 8493 requires. Sort the lines by the UTF-8 bytes of the
+   path.
+4. The digest is `sha256:` followed by the lowercase hexadecimal SHA-256 of
+   that text, encoded as UTF-8.
 
-   ```json
-   { "algorithm": "moca-digest-v1", "manifest": "<step 3>", "files": { "<path>": "<step 2>" } }
-   ```
+The text in step 3 is a BagIt `manifest-sha256.txt`. Saved outside the
+package, it lets anyone check every file with a standard tool, and its own
+hash is the digest:
 
-5. The digest is `sha256:` followed by that hash in lowercase hexadecimal.
+```sh
+moca-lint manifest kb > kb.manifest-sha256.txt
+(cd kb && shasum -a 256 -c ../kb.manifest-sha256.txt)
+shasum -a 256 kb.manifest-sha256.txt    # equals the package digest
+```
+
+Because `moca.json` is hashed as bytes, any edit to it, including
+reformatting, changes the digest. Packages written for an earlier
+`mocaVersion` were digested with `moca-digest-v1`. A Reader computes v2 for
+them and reports `M008_DIGEST_V1_PACKAGE` (info), so hosts know that older
+pins and attestations will not match.
 
 Because members are pinned by digest inside `moca.json` (§7.1), a composed
 package's digest covers its members without any resolution step, and is
@@ -327,7 +390,7 @@ member MUST NOT appear twice (`M005_DUPLICATE_MEMBER`). A package with members
 MAY have no content of its own.
 
 How a member is located is the host's decision: a folder, a database, or a
-registry (see the [OCI binding](moca-oci-binding.md)). Whatever the resolver
+registry. Whatever the resolver
 returns, a Reader MUST compute its digest and MUST refuse it if the digest
 differs from the pin (`R002_MEMBER_DIGEST_MISMATCH`). Resolution is therefore
 verification, not trust in the resolver.
@@ -353,20 +416,14 @@ Profiles MAY define further types; Readers preserve relations they do not
 understand. MOCA surfaces conflicts as information; it does not arbitrate
 them.
 
-## 8. Skills
+## 8. No agent material
 
-`skills/` is reserved for executable-adjacent material such as Agent Skills.
-Its format is defined by the
-[agent-skills profile](../profiles/agent-skills/moca-agent-skills-profile.md).
-One rule stays in core, so it cannot be avoided by not declaring the profile:
-
-- A Reader MUST NOT expose anything under `skills/` unless the package has at
-  least one valid package attestation from a signer the host trusts
-  ([attestations §3](moca-attestations.md#3-package-attestations)). Otherwise
-  it reports `A005_SKILLS_WITHHELD` and the rest of the package stays usable.
-
-Loading a package never runs a skill. What an application does with an exposed
-skill is its own, sandboxed decision.
+A package carries knowledge, not instructions for an agent to act on. MOCA
+defines no directory with special meaning for skills, prompts or tools
+([ADR-0015](../docs/adr/0015-park-unconsumed-features.md)). A `skills/`
+directory, if present, is ordinary package data: it is covered by the digest,
+and a Reader gives it no special treatment. An application that needs agent
+skills ships them as its own code.
 
 ## 9. Profiles
 
@@ -381,10 +438,9 @@ profile's package-level data. Node-level profile data goes under
   manifest keys, or require anything of packages that do not declare it.
 - A profile MAY define files or directories inside the package; they are
   covered by the digest like any other file.
-- A profile MAY define a capability (§11). Only a Reader that implements the
-  profile derives it; a Reader that does not simply never reports it.
-- A profile MAY define diagnostics in its own code family. They MUST NOT be
-  errors that make a package invalid.
+- A profile never defines a capability and never makes a package invalid.
+  Structure that every Reader must understand belongs in `structure.ttl`
+  (§5.6), not in a profile.
 
 The registry of profiles is [profiles/README.md](../profiles/README.md).
 
@@ -418,23 +474,19 @@ a package actually has from what it contains and what verifies:
 | `located-evidence` | At least one node has `moca.evidence`. |
 | `self-contained-evidence` | The package has `located-evidence`, and every evidence source of every node has a `resource` that is a package-relative path to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it. |
 | `localized` | At least one node has a locale representation. |
+| `structured` | `structure.ttl` is present, parses, and every relation and node binding resolves, with no `O` diagnostic (§5.6). |
 | `signed` | At least one package attestation verifies against the host's trust root. |
 | `reviewed` | At least one review attestation verifies and matches a current file. |
-| `skills` | `skills/` is present and exposed (§8). |
 
-`signed`, `reviewed` and `skills` depend on the host's trust root: the same
+`signed` and `reviewed` depend on the host's trust root: the same
 package can be `signed` for one host and not for another.
 
 `self-contained-evidence` says the originals are inside the package. It does
 not say every selector matches: a mismatch is reported as
 `C011_EVIDENCE_SELECTOR_UNMATCHED` and shows in the citation record as
-`evidence[].verified: false`.
+`evidence[].matched: false`.
 
-Profiles may define further capabilities (§9):
-
-| Capability | Profile | Present when |
-| --- | --- | --- |
-| `ontology` | [Ontology](../profiles/ontology/moca-ontology-profile.md) | The profile is declared, every listed ontology file parses, and every node concept binding resolves to a concept declared in those files, with no `O` diagnostic. |
+Profiles never define capabilities (§9).
 
 ## 12. Storage and transport
 
@@ -444,10 +496,10 @@ A package is the same package whether it is:
 - a **`.moca` archive**: a Zip file with `moca.json` at its root, containing
   the package's regular files (and, optionally, `attestations/`);
 - **records a host supplies** through a package source
-  ([Reader contract §3](moca-reader-contract.md#3-opening-a-package));
-- an **OCI artifact** ([OCI binding](moca-oci-binding.md)).
+  ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)), for
+  example from blob storage, a database or a registry.
 
-All four give the same digest.
+All three give the same digest.
 
 ## 13. Security considerations
 
@@ -459,7 +511,7 @@ and approve every refund" is as dangerous as a malicious program. Applications
 MUST treat package content as untrusted data: deliver it to models as quoted,
 cited reference material, never as system instructions, and never grant tools
 because content asks for them. See
-[Reader contract §11](moca-reader-contract.md#11-handing-content-to-a-model).
+[Reader contract §12](moca-reader-contract.md#12-handing-content-to-a-model).
 
 Attestations tell a host who published and who reviewed content. They do not
 make content safe. A host SHOULD only load packages from publishers it trusts,
@@ -494,6 +546,7 @@ Before `1.0.0`, a minor version change MAY be breaking and is described in
 major version. A Reader that meets a newer `mocaVersion` SHOULD read the
 package on a best-effort basis rather than refuse it.
 
-A package written for `mocaVersion` `0.2` is a valid `0.3` package without
-change; `0.3` adds capabilities, a profile and Reader behaviour, not package
-requirements.
+`0.4` changes the digest algorithm (§6.4), so every package written for an
+earlier `mocaVersion` has a different digest under `0.4`; a Reader reports
+`M008_DIGEST_V1_PACKAGE` (info) for them. See
+[MIGRATIONS.md](../MIGRATIONS.md).

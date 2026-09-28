@@ -1,6 +1,6 @@
 # 0009 — Optional ontology as a profile, with local files and absolute IRIs
 
-- **Status:** Accepted
+- **Status:** Superseded by [0012](0012-structure-core.md)
 - **Date:** 2026-09-27
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 

@@ -3,7 +3,7 @@
   "target": {
     "id": "https://example.com/moca/support-kb",
     "version": "4.2.0",
-    "digest": "sha256:6539697fc762840cbaa031aec5288aae588ff6f376d56e24bc4ca98d647e5610"
+    "digest": "sha256:af2cdf985406ba1f8706c87493ca9a92524cd1f1f77c90169ff2bc44ce1c9e18"
   },
   "indexType": "lexical",
   "chunking": {

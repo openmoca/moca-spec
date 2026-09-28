@@ -103,9 +103,34 @@ export function bindSidecar(target, pkg, options = {}) {
       break;
     }
   }
+  if (bad === 0 && index.storage.vectors) bad += attachVectors(source, listed, index, out.chunks, lines.length, diagnostics);
   out.usable = bad === 0;
   if (!out.usable) out.chunks = [];
   return out;
+}
+
+/** Reads storage.vectors (little-endian float32, one row per item) onto the chunks. Returns 1 on a problem. */
+function attachVectors(source, listed, index, chunks, count, diagnostics) {
+  const { file, dimensions } = index.storage.vectors;
+  const path = posix.normalize(file);
+  if (path.startsWith('..') || posix.isAbsolute(path) || !listed.has(path)) {
+    diagnostics.add('S001_SIDECAR_INVALID', `storage.vectors.file "${file}" is missing or outside the sidecar`, { file: SIDECAR_MANIFEST });
+    return 1;
+  }
+  if (index.model?.dimensions && index.model.dimensions !== dimensions) {
+    diagnostics.add('S004_SIDECAR_ITEM_INVALID', `storage.vectors has ${dimensions} dimensions, model declares ${index.model.dimensions}`, { file: SIDECAR_MANIFEST });
+    return 1;
+  }
+  const bytes = source.read(path);
+  if (bytes.length !== count * dimensions * 4) {
+    diagnostics.add('S004_SIDECAR_ITEM_INVALID', `${path} has ${bytes.length} bytes; ${count} items x ${dimensions} float32 needs ${count * dimensions * 4}`, { file: path });
+    return 1;
+  }
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  chunks.forEach((chunk, i) => {
+    chunk.vector = Array.from({ length: dimensions }, (_, d) => view.getFloat32((i * dimensions + d) * 4, true));
+  });
+  return 0;
 }
 
 function checkItem(item, reps, index) {

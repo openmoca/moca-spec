@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import AdmZip from 'adm-zip';
 import { readPackage, hostSource, Library, validateAgainst } from '../lib/index.js';
@@ -34,14 +35,16 @@ test('the digest is the same for a directory, an archive and a host source', asy
   rmSync(archive);
 });
 
-test('reformatting moca.json does not change the digest; changing a value does', async () => {
-  const a = makePackage({ 'content/a.md': NODE });
-  const b = makePackage({ 'content/a.md': NODE });
+test('the digest is the SHA-256 of a BagIt-style manifest that includes moca.json as bytes', async () => {
+  const a = makePackage({ 'content/a.md': NODE, 'sources/100%.txt': 'x' });
+  const b = makePackage({ 'content/a.md': NODE, 'sources/100%.txt': 'x' });
   writeFileSync(join(b, 'moca.json'), '{\n  "title": "T",\n  "version": "1.0.0",\n  "id": "https://example.com/t"\n}\n');
-  const c = makePackage({ 'content/a.md': NODE }, { id: 'https://example.com/t', version: '1.0.1', title: 'T' });
-  const [ra, rb, rc] = await Promise.all([readPackage(a), readPackage(b), readPackage(c)]);
-  assert.equal(ra.digest, rb.digest);
-  assert.notEqual(ra.digest, rc.digest);
+  const [ra, rb] = await Promise.all([readPackage(a), readPackage(b)]);
+  assert.notEqual(ra.digest, rb.digest, 'moca.json is hashed as bytes, so reformatting changes the digest');
+  const lines = ra.payloadManifest.trimEnd().split('\n');
+  assert.deepEqual(lines.map((l) => l.split('  ')[1]), ['content/a.md', 'moca.json', 'sources/100%25.txt']);
+  assert.ok(lines.every((l) => /^[a-f0-9]{64}  \S/.test(l)));
+  assert.equal(ra.digest, `sha256:${createHash('sha256').update(ra.payloadManifest, 'utf8').digest('hex')}`);
 });
 
 test('attestations/ and hidden entries are outside the digest', async () => {

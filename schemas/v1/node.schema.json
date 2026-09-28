@@ -250,6 +250,29 @@
           "additionalProperties": {
             "type": "object"
           }
+        },
+        "concepts": {
+          "type": "array",
+          "description": "Concepts from the package's structure.ttl this node is bound to (spec/moca-package-spec.md §5.6).",
+          "items": {
+            "type": "object",
+            "required": [
+              "iri"
+            ],
+            "properties": {
+              "iri": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$"
+              },
+              "role": {
+                "enum": [
+                  "primary",
+                  "supporting"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
         }
       },
       "additionalProperties": true

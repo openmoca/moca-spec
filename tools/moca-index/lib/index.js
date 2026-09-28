@@ -73,12 +73,12 @@ export async function buildSidecar({ pkg, out, zip = false, chunker = 'node', fo
       });
     }
   }
+  let vectors = null;
   if (embedder) {
-    const vectors = await embedder.embed(items.map((i) => i.text));
+    vectors = await embedder.embed(items.map((i) => i.text));
     if (!Array.isArray(vectors) || vectors.length !== items.length || vectors.some((v) => !Array.isArray(v) || v.length !== embedder.dimensions)) {
       throw new IndexError(`the embedder must return one ${embedder.dimensions}-dimension vector per chunk`);
     }
-    items.forEach((item, i) => { item.vector = vectors[i]; });
   }
   const index = {
     indexVersion: 1,
@@ -86,25 +86,30 @@ export async function buildSidecar({ pkg, out, zip = false, chunker = 'node', fo
     indexType: embedder ? 'hybrid' : 'lexical',
     ...(embedder ? { model: { name: embedder.name, ...(embedder.version ? { version: embedder.version } : {}), dimensions: embedder.dimensions } } : {}),
     chunking: { strategy: chunker === 'node' ? 'whole-node' : 'headings-h1-h3' },
-    storage: { format: PORTABLE_FORMAT, file: 'payload/items.jsonl' },
+    storage: {
+      format: PORTABLE_FORMAT,
+      file: 'payload/items.jsonl',
+      ...(embedder ? { vectors: { file: 'payload/vectors.f32', dtype: 'float32', dimensions: embedder.dimensions } } : {}),
+    },
     createdBy: 'moca-index',
   };
   const files = {
-    'index.json': `${JSON.stringify(index, null, 2)}\n`,
-    'payload/items.jsonl': `${items.map((i) => JSON.stringify(i)).join('\n')}\n`,
+    'index.json': Buffer.from(`${JSON.stringify(index, null, 2)}\n`, 'utf8'),
+    'payload/items.jsonl': Buffer.from(`${items.map((i) => JSON.stringify(i)).join('\n')}\n`, 'utf8'),
   };
+  if (vectors) files['payload/vectors.f32'] = float32Bytes(vectors, embedder.dimensions);
 
   if (existsSync(out) && !force && (!zip ? readdirSync(out).length > 0 : true)) {
     throw new IndexError(`${out} already exists; pass --force to replace it`);
   }
   if (zip) {
     const archive = new AdmZip();
-    for (const [name, text] of Object.entries(files)) archive.addFile(name, Buffer.from(text, 'utf8'));
+    for (const [name, bytes] of Object.entries(files)) archive.addFile(name, bytes);
     archive.writeZip(out);
   } else {
     rmSync(out, { recursive: true, force: true });
     mkdirSync(join(out, 'payload'), { recursive: true });
-    for (const [name, text] of Object.entries(files)) writeFileSync(join(out, ...name.split('/')), text);
+    for (const [name, bytes] of Object.entries(files)) writeFileSync(join(out, ...name.split('/')), bytes);
   }
 
   const check = bindSidecar(out, result);
@@ -113,4 +118,11 @@ export async function buildSidecar({ pkg, out, zip = false, chunker = 'node', fo
     throw new IndexError(`the built sidecar failed its own check: ${check.diagnostics.map((d) => d.message).join('; ')}`);
   }
   return { out, items: items.length, digest: result.digest };
+}
+
+/** Vectors as little-endian float32, row-major: the portable sidecar vector file. */
+export function float32Bytes(vectors, dimensions) {
+  const buf = Buffer.alloc(vectors.length * dimensions * 4);
+  vectors.forEach((v, i) => v.forEach((x, d) => buf.writeFloatLE(x, (i * dimensions + d) * 4)));
+  return buf;
 }

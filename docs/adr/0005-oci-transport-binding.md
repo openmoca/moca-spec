@@ -1,6 +1,6 @@
 # 0005 — OCI registries as an optional transport binding
 
-- **Status:** Accepted
+- **Status:** Superseded by [0015](0015-park-unconsumed-features.md)
 - **Date:** 2026-09-27
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 
@@ -14,7 +14,7 @@ works offline.
 
 ## Decision
 
-A [binding](../../spec/moca-oci-binding.md) says how to store a `.moca`
+A [binding](https://github.com/openmoca/moca-spec/blob/v0.3.0-alpha.1/spec/moca-oci-binding.md) says how to store a `.moca`
 archive as an OCI artifact, with the MOCA digest as an annotation and
 attestations optionally attached as referrers. The MOCA digest, not the OCI
 digest, is what pins, attestations and sidecars rely on, and a Reader always

@@ -9,10 +9,11 @@ const CLOSE = /^---[ \t]*(\r?\n|$)/m;
 
 /**
  * @param {string} text  full file text
+ * @param {{ maxBytes?: number }} [options]  refuse larger frontmatter (untrusted input)
  * @returns {{ present: boolean, raw?: string, data?: any, error?: string, body: string, bodyOffset: number, line: number }}
  *   bodyOffset is the UTF-8 byte offset where the Markdown body starts.
  */
-export function splitFrontmatter(text) {
+export function splitFrontmatter(text, { maxBytes = Infinity } = {}) {
   const bom = text.startsWith('﻿') ? '﻿' : '';
   const rest = text.slice(bom.length);
   const open = rest.match(OPEN);
@@ -26,8 +27,13 @@ export function splitFrontmatter(text) {
   const consumed = bom + open[0] + afterOpen.slice(0, close.index + close[0].length);
   const body = text.slice(consumed.length);
   const result = { present: true, raw, body, bodyOffset: Buffer.byteLength(consumed), line: 1 };
+  if (Buffer.byteLength(raw) > maxBytes) {
+    result.error = `frontmatter is larger than the ${maxBytes}-byte limit`;
+    return result;
+  }
   try {
-    result.data = raw.trim() === '' ? {} : yaml.load(raw, { schema: yaml.CORE_SCHEMA });
+    // Aliases are refused: OKF frontmatter never needs them, and alias expansion is a denial-of-service vector.
+    result.data = raw.trim() === '' ? {} : yaml.load(raw, { schema: yaml.CORE_SCHEMA, maxAliases: 0 });
   } catch (err) {
     result.error = err.reason ?? err.message;
     if (err.mark?.line !== undefined) result.line = err.mark.line + 2;

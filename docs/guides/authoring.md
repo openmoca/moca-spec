@@ -47,7 +47,9 @@ Put the source files in the package, under `sources/` or `media/`, and cite
 them by package path, so the evidence travels with the claim. When every
 cited source is inside the package, it has `self-contained-evidence`. Readers
 check each `TextQuoteSelector` and `TextPositionSelector` against text sources
-(`.txt`, `.md`) and mark the citation `verified`. A quote that does not match
+(`.txt`, `.md`, `.html`, `.vtt`) after the normalisation in
+[Reader contract §7](../../spec/moca-reader-contract.md#7-citation-records),
+so a quote copied from the rendered text matches, and mark the citation `matched`. A quote that does not match
 the file exactly, character for character, is reported as
 `C011_EVIDENCE_SELECTOR_UNMATCHED`.
 

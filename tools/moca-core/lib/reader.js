@@ -7,16 +7,15 @@
 // its own, and never acts on a location or setting a package supplies.
 import { checkManifest } from './manifest.js';
 import { readContent } from './content.js';
-import { readSkills, SKILLS_DIR } from './skills.js';
 import { Diagnostics } from './diagnostics.js';
-import { openSource, TargetError } from './source.js';
+import { openSource, TargetError, DEFAULT_LIMITS } from './source.js';
 import { packageFiles, computeDigest, MANIFEST, ATTESTATIONS_DIR } from './digest.js';
 import {
   loadTrustRoot, parseAttestation, verifySignature, checkPackageStatement, checkReviewStatement,
   PREDICATE_PACKAGE, PREDICATE_REVIEW,
 } from './attestations.js';
-import { KNOWN_PROFILES, PROFILE_ONTOLOGY } from './profiles.js';
-import { readOntology } from './ontology.js';
+import { KNOWN_PROFILES } from './profiles.js';
+import { readStructure } from './structure.js';
 
 const INVALIDATING = /^(T|P|M|C)\d/;
 
@@ -26,7 +25,7 @@ const INVALIDATING = /^(T|P|M|C)\d/;
  * @property {(member: { id: string, version: string, digest: string }) => (string|object|null|Promise<string|object|null>)} [resolveMember]
  *   host resolver returning a target (path or source) for a member, or null
  * @property {boolean} [strict]  promote warnings to errors
- * @property {{ maxEntries?: number, maxBytes?: number }} [limits]
+ * @property {Partial<typeof DEFAULT_LIMITS>} [limits]  see DEFAULT_LIMITS in source.js
  * @property {Iterable<string>} [knownProfiles]
  * @property {boolean} [online]  opt in to online Sigstore verification
  * @property {boolean} [allowOfflineFallback]
@@ -51,13 +50,13 @@ async function readInternal(target, options, stack) {
     attestations: [],
     reviewsByFile: new Map(),
     signers: [],
-    skills: { present: false, exposed: false, list: [] },
     members: [],
     profiles: [],
     diagnostics: diagnostics.items,
     valid: false,
     capabilities: [],
-    ontology: null,
+    payloadManifest: null,
+    structure: null,
     source: null,
   };
 
@@ -101,18 +100,21 @@ async function readInternal(target, options, stack) {
   result.manifest = manifest;
   checkManifest(manifest, diagnostics, { knownProfiles: options.knownProfiles ?? KNOWN_PROFILES });
   result.profiles = Object.keys(manifest?.profiles ?? {});
+  const declared = /^(\d+)\.(\d+)$/.exec(String(manifest?.mocaVersion ?? ''));
+  if (declared && (Number(declared[1]) === 0 && Number(declared[2]) < 4)) {
+    diagnostics.add('M008_DIGEST_V1_PACKAGE', `written for mocaVersion ${manifest.mocaVersion}; its digest is now computed with moca-digest-v2, so pins and attestations made under 0.3 or earlier will not match`, { file: MANIFEST });
+  }
 
   if (entriesOk && readable) {
-    const { digest, fileDigests } = computeDigest(source, manifest, files, (stored) => bytes.get(stored.normalize('NFC')));
+    const { digest, fileDigests, manifest: payloadManifest } = computeDigest(source, files, (stored) => bytes.get(stored.normalize('NFC')));
     result.digest = digest;
     result.fileDigests = fileDigests;
+    result.payloadManifest = payloadManifest;
   }
 
-  result.nodes = readContent({ manifest, files, bytes, fileDigests: result.fileDigests, diagnostics });
-  const knownProfiles = [...(options.knownProfiles ?? KNOWN_PROFILES)];
-  if (result.profiles.includes(PROFILE_ONTOLOGY) && knownProfiles.includes(PROFILE_ONTOLOGY)) {
-    result.ontology = readOntology({ manifest, bytes, nodes: result.nodes, diagnostics });
-  }
+  const limits = { ...DEFAULT_LIMITS, ...options.limits };
+  result.nodes = readContent({ manifest, files, bytes, fileDigests: result.fileDigests, diagnostics, limits });
+  result.structure = readStructure({ bytes, nodes: result.nodes, diagnostics, limits, origin: result.digest });
   const members = Array.isArray(manifest?.members) ? manifest.members : [];
   if (result.nodes.length === 0 && members.length === 0) {
     diagnostics.add('M003_NO_CONTENT', 'a package needs at least one content node under content/ or at least one member');
@@ -121,18 +123,6 @@ async function readInternal(target, options, stack) {
   const trustRoot = options.trustRoot === undefined ? undefined
     : typeof options.trustRoot.key === 'function' ? options.trustRoot : loadTrustRoot(options.trustRoot);
   if (result.digest) await readAttestations(result, bytes, trustRoot, options, diagnostics);
-
-  const skillPaths = [...bytes.keys()].filter((p) => p.startsWith(`${SKILLS_DIR}/`));
-  if (skillPaths.length > 0) {
-    result.skills.present = true;
-    const list = readSkills(bytes, diagnostics);
-    if (result.signers.length > 0) {
-      result.skills.exposed = true;
-      result.skills.list = list;
-    } else {
-      diagnostics.add('A005_SKILLS_WITHHELD', 'skills/ requires a valid package attestation; the skills are withheld and the rest of the package is usable', { file: SKILLS_DIR });
-    }
-  }
 
   await resolveMembers(result, members, options, stack, diagnostics);
   return finish(result, diagnostics);
@@ -254,10 +244,9 @@ function finish(result, diagnostics) {
     }
   }
   if (caps.has('located-evidence') && allEvidenceLocal) caps.add('self-contained-evidence');
-  if (result.ontology?.ok) caps.add('ontology');
+  if (result.structure?.ok) caps.add('structured');
   if (result.members.length > 0) caps.add('composed');
   if (result.signers.length > 0) caps.add('signed');
-  if (result.skills.exposed) caps.add('skills');
   result.capabilities = [...caps].sort();
   return result;
 }

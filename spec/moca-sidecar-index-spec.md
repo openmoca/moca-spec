@@ -1,6 +1,6 @@
 # MOCA Sidecar Index Specification
 
-Specification version: `0.3.0-alpha.1`
+Specification version: `0.4.0-alpha.1`
 Status: Alpha. Expect changes before `1.0.0`.
 License: [Apache License 2.0](../LICENSE)
 
@@ -50,7 +50,7 @@ Valid against [`sidecar-index.schema.json`](../schemas/v1/sidecar-index.schema.j
 | `indexType` | `lexical`, `dense`, `sparse` or `hybrid`, or another tag. |
 | `model` | The embedding model: `name`, and optionally `version`, `dimensions`, `distance`. **Required** for `dense` and `hybrid` sidecars: vectors are useless without knowing the model that made them. |
 | `chunking` | How the text was split. Informative. |
-| `storage` | The payload `format` and its `file`, relative to the sidecar root. |
+| `storage` | The payload `format` and its `file`, relative to the sidecar root; and, for a dense or hybrid sidecar, `vectors` (§4.1). |
 
 A sidecar is metadata about search only. A Reader MUST NOT derive a package's
 validity, trust, configuration or credentials from it.
@@ -71,7 +71,27 @@ One JSON object per line:
 | `chunkIndex`, `chunkCount` | Yes | Position of this chunk among the representation's chunks: `0 ≤ chunkIndex < chunkCount`, and every index from 0 to `chunkCount - 1` present. |
 | `start`, `end` | Yes | UTF-8 byte offsets into the node file, `0 ≤ start ≤ end ≤` file length. These let a citation point at the exact passage. |
 | `text` | No | The chunk's text. |
-| `vector` | No | Numbers; length equal to `model.dimensions` when that is given. |
+| `vector` | No | **Deprecated**: numbers, of length `model.dimensions` when that is given. Readers still accept it; producers write `storage.vectors` instead (§4.1). |
+
+### 4.1 Vectors
+
+A dense or hybrid sidecar SHOULD store its vectors in a separate binary file,
+named in `index.json`:
+
+```json
+"storage": { "format": "moca-jsonl-v1", "file": "payload/items.jsonl",
+             "vectors": { "file": "payload/vectors.f32", "dtype": "float32", "dimensions": 384 } }
+```
+
+The file holds little-endian IEEE 754 float32 values, row-major, one row of
+`dimensions` values per payload item, in the order of the items in the payload
+file. Its size MUST be exactly `items × dimensions × 4` bytes, and
+`dimensions` MUST equal `model.dimensions` when that is given (`S004`).
+
+Binary vectors are about a quarter of the size of the same vectors written as
+JSON numbers, and need no parsing, which matters on devices. The text and
+offsets stay in the JSONL payload, so a Reader that does not search by vector
+can ignore the file.
 
 ## 5. Binding and staleness
 

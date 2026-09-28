@@ -120,7 +120,7 @@ test('a store backend never returns records from a package version that is not l
 });
 
 test('concept filters return only content bound to one of the concepts', async () => {
-  const library = new Library().add(await readPackage(at('profiles/ontology/examples/service-catalogue')));
+  const library = new Library().add(await readPackage(at('examples/service-catalogue')));
   const search = new Search(library, { backend: new LexicalBackend(library) });
   const order = await search.search('service data', { concepts: ['https://example.org/services#OrderDatabase'] });
   assert.deepEqual(order.map((r) => r.node.path), ['order-service.md']);
@@ -134,4 +134,22 @@ test('searchSync refuses an asynchronous backend', async () => {
   const library = await policyLibrary();
   const search = new Search(library, { backend: { features: [], search: async () => [] } });
   assert.throws(() => search.searchSync('x'), /asynchronous/);
+});
+
+test('a store is searched from its ingest-time records, with only a digest allowlist and a clock', async () => {
+  const both = await policyLibrary();
+  const store = await new MemoryStoreBackend({ filterPushdown: false }).ingest(both);
+  const [v1, v2] = both.packages.map((p) => p.result.digest);
+  const now = () => new Date('2026-09-27T00:00:00Z');
+
+  const current = await new Search({ digests: [v2], clock: now }, { backend: store }).search('customer records retention', { includeAll: true });
+  assert.ok(current.length > 0);
+  assert.ok(current.every((r) => r.package.digest === v2), 'records from a digest the host has not allowed are dropped');
+  for (const r of current) assert.deepEqual(validateAgainst('citationRecord', { ...r }), []);
+
+  // retention-2026 is in force from 2026-04-01: the clock is re-applied to the stored record.
+  const before = await new Search({ digests: [v2], clock: () => new Date('2026-01-01T00:00:00Z') }, { backend: store }).search('customer records retention');
+  assert.deepEqual(before, []);
+  const old = await new Search({ digests: [v1], clock: now }, { backend: store }).search('customer records retention', { includeAll: true });
+  assert.ok(old.every((r) => r.package.digest === v1));
 });

@@ -1,0 +1,6 @@
+{
+  "id": "https://example.com/conformance/digest-v1-package",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "mocaVersion": "0.3"
+}

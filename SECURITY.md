@@ -31,7 +31,7 @@ if you can, a minimal package that shows it.
 - **Content is untrusted input to a model.** Retrieved text can carry
   instructions. Hand it to models as cited data, never as instructions, and
   never grant tools because content asks
-  ([Reader contract §11](spec/moca-reader-contract.md#11-handing-content-to-a-model)).
+  ([Reader contract §12](spec/moca-reader-contract.md#12-handing-content-to-a-model)).
 - **Attestations prove who, not what.** A valid package attestation proves who
   published the bytes; a valid review proves who signed a statement about them.
   Neither proves the content is true or safe. Whom to trust is the host's trust

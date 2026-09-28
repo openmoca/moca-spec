@@ -1,6 +1,6 @@
 # 0008 — One search entry point over pluggable backends, with policy in one place
 
-- **Status:** Accepted
+- **Status:** Superseded by [0011](0011-three-pillars-and-admission-test.md)
 - **Date:** 2026-09-27
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 

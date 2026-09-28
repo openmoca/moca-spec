@@ -1,4 +1,4 @@
-// The canonical package digest, spec/moca-package-spec.md §6.
+// The package digest, moca-digest-v2: spec/moca-package-spec.md §6.
 //
 // The digest identifies a package's content independently of how it is
 // stored or transported: the same package as a directory, a .moca archive or
@@ -6,23 +6,18 @@
 // the package: a digest a package states about itself proves nothing, so it
 // is only ever compared with a reference held elsewhere (an attestation, a
 // member pin, a sidecar binding).
+//
+// The digest is the SHA-256 of a BagIt-style payload manifest
+// (RFC 8493 manifest-sha256.txt), so `sha256sum -c` can check a package.
 import { createHash } from 'node:crypto';
-import canonicalize from 'canonicalize';
 
-export const DIGEST_ALGORITHM = 'moca-digest-v1';
+export const DIGEST_ALGORITHM = 'moca-digest-v2';
 export const DIGEST_PATTERN = /^sha256:[a-f0-9]{64}$/;
 export const MANIFEST = 'moca.json';
 export const ATTESTATIONS_DIR = 'attestations';
 
 export function sha256Hex(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
-}
-
-/** RFC 8785 canonical JSON, as UTF-8 bytes. */
-export function canonicalBytes(value) {
-  const text = canonicalize(value);
-  if (text === undefined) throw new Error('value cannot be canonicalised');
-  return Buffer.from(text, 'utf8');
 }
 
 /** True when a path belongs to the attestations area, which the digest excludes. */
@@ -67,28 +62,38 @@ export function packageFiles(source, diagnostics) {
   return { ok, files };
 }
 
+/** A path as it appears in a BagIt manifest line: CR, LF and % percent-encoded (RFC 8493 §2.1.3). */
+export function manifestPath(path) {
+  return path.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+}
+
 /**
- * Computes the canonical digest.
+ * The payload manifest the digest is computed over: one `<hex>  <path>` line
+ * per file, LF-terminated, sorted by the UTF-8 bytes of the path.
+ * @param {Map<string, string>} fileDigests  NFC path -> lowercase hex SHA-256
+ */
+export function manifestText(fileDigests) {
+  return [...fileDigests.entries()]
+    .sort(([a], [b]) => Buffer.compare(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8')))
+    .map(([path, hex]) => `${hex}  ${manifestPath(path)}\n`)
+    .join('');
+}
+
+/**
+ * Computes moca-digest-v2.
  *
  * @param {import('./source.js').PackageSource} source
- * @param {object} manifest  parsed moca.json
  * @param {Map<string, string>} files  NFC path -> stored path, from packageFiles()
  * @param {(path: string) => Buffer} [read]  defaults to source.read
- * @returns {{ digest: string, fileDigests: Map<string, string> }}  fileDigests: NFC path -> hex
+ * @returns {{ digest: string, fileDigests: Map<string, string>, manifest: string }}
+ *   fileDigests: NFC path -> hex, moca.json included; manifest: the BagIt-style text
  */
-export function computeDigest(source, manifest, files, read = (p) => source.read(p)) {
+export function computeDigest(source, files, read = (p) => source.read(p)) {
   const fileDigests = new Map();
-  const entries = {};
-  for (const [nfc, stored] of [...files.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
-    if (nfc === MANIFEST || isAttestationPath(nfc)) continue;
-    const hex = sha256Hex(read(stored));
-    fileDigests.set(nfc, hex);
-    entries[nfc] = hex;
+  for (const [nfc, stored] of files) {
+    if (isAttestationPath(nfc)) continue;
+    fileDigests.set(nfc, sha256Hex(read(stored)));
   }
-  const input = {
-    algorithm: DIGEST_ALGORITHM,
-    manifest: sha256Hex(canonicalBytes(manifest)),
-    files: entries,
-  };
-  return { digest: `sha256:${sha256Hex(canonicalBytes(input))}`, fileDigests };
+  const manifest = manifestText(fileDigests);
+  return { digest: `sha256:${sha256Hex(Buffer.from(manifest, 'utf8'))}`, fileDigests, manifest };
 }

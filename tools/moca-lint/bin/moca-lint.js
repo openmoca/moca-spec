@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { Command } from 'commander';
-import { formatText, formatJson, formatSarif, readPackage } from '@openmoca/moca-core';
+import { formatText, formatJson, formatSarif, readPackage, structureView, STRUCTURE_VIEW_FILE } from '@openmoca/moca-core';
 import { lintPackage, packPackage, extractArchive, UsageError } from '../lib/index.js';
 
 const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -39,7 +40,7 @@ common(program.command('lint')
   }));
 
 program.command('digest')
-  .description('print the canonical digest of a package')
+  .description('print the digest of a package (moca-digest-v2)')
   .argument('<target>', 'package directory or .moca archive')
   .action((target) => run(async () => {
     const result = await readPackage(target);
@@ -49,6 +50,41 @@ program.command('digest')
       return;
     }
     console.log(result.digest);
+  }));
+
+program.command('manifest')
+  .description('print the BagIt-style manifest the digest is computed over; save it outside the package and check with shasum -a 256 -c')
+  .argument('<target>', 'package directory or .moca archive')
+  .action((target) => run(async () => {
+    const result = await readPackage(target);
+    if (!result.payloadManifest) {
+      console.error(formatText(result.diagnostics.filter((d) => d.severity === 'error')));
+      process.exitCode = 1;
+      return;
+    }
+    process.stdout.write(result.payloadManifest);
+  }));
+
+program.command('structure')
+  .description('print the structure.json view derived from structure.ttl; --write saves it in a package directory')
+  .argument('<target>', 'package directory or .moca archive')
+  .option('--write', 'write structure.json into the package directory', false)
+  .action((target, opts) => run(async () => {
+    const result = await readPackage(target);
+    if (!result.structure?.graph) {
+      console.error('the package has no parseable structure.ttl');
+      console.error(formatText(result.diagnostics.filter((d) => d.code.startsWith('O'))));
+      process.exitCode = 1;
+      return;
+    }
+    const text = `${JSON.stringify(structureView(result.structure.graph), null, 2)}\n`;
+    if (!opts.write) {
+      process.stdout.write(text);
+      return;
+    }
+    if (!statSync(target).isDirectory()) throw new UsageError('--write needs a package directory, not an archive');
+    writeFileSync(join(target, STRUCTURE_VIEW_FILE), text);
+    console.log(`Wrote ${join(target, STRUCTURE_VIEW_FILE)}; the package digest has changed.`);
   }));
 
 program.command('info')

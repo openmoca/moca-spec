@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "0.3.0-alpha.1",
+  "corpusVersion": "0.4.0-alpha.1",
   "cases": [
     {
       "id": "valid-minimal",
@@ -11,7 +11,7 @@
         "capabilities": [
           "core"
         ],
-        "digest": "sha256:361cba9c7dc2b5a3d09472fe88badd8655e1d1f8c921643ba7f4e04a45b9eb76"
+        "digest": "sha256:d38eef8a9aa059faabed7a60aba6b3d18031deabd3be1b7347ac7abfbc66b708"
       }
     },
     {
@@ -51,7 +51,7 @@
           "core",
           "localized"
         ],
-        "digest": "sha256:891c2608e09f733f95b6f0fe1fdf9b06ce48159a676185c26ba01b521a83fb83"
+        "digest": "sha256:db78c7fc514d10667e4c990a2bcf3398f7e08913e6cf63566146cab461c5a3ac"
       }
     },
     {
@@ -65,8 +65,8 @@
           "core",
           "located-evidence"
         ],
-        "digest": "sha256:28e33ca55345b0ce041e8068d4a21ba40ea6c48d9e57c04387eaa62cd10ef3df",
-        "evidenceVerified": {
+        "digest": "sha256:f1ca665de05b4022a5e2eb351bf008b81341793e62bb43d499ebf4e4633d25c9",
+        "evidenceMatched": {
           "refunds.md": [
             true,
             true,
@@ -87,8 +87,8 @@
           "located-evidence",
           "self-contained-evidence"
         ],
-        "digest": "sha256:3ca15773ee36f0ae5e59b7ff4b3f7542c2799c59e51fe1d2bb4c6ed7b4eddabb",
-        "evidenceVerified": {
+        "digest": "sha256:f5b0ad1432bae664217265c0fddb65dba56fb6f5c081598da746b7acf549cb1e",
+        "evidenceMatched": {
           "refunds.md": [
             true,
             true,
@@ -111,11 +111,63 @@
           "located-evidence",
           "self-contained-evidence"
         ],
-        "digest": "sha256:52978aa457e0855db2b29b6ee30cf4631f0a3ecf7111a288193e4939d3459595",
-        "evidenceVerified": {
+        "digest": "sha256:9f505aeaad74c4c9f4713fc520ba33b7df73c9f07456376189f40d73044ce68a",
+        "evidenceMatched": {
           "refunds.md": [
             false,
             false
+          ]
+        }
+      }
+    },
+    {
+      "id": "evidence-normalised",
+      "description": "Markdown and HTML sources are matched after normalisation: markup and link syntax removed, entities decoded. A quote that keeps raw Markdown markup does not match.",
+      "target": "fixtures/evidence-normalised",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:719ca2c214a26a70718c57b4f44d6b1d10fdf46123c071148ba4386628f3fe18",
+        "evidenceMatched": {
+          "refunds.md": [
+            true,
+            true,
+            true,
+            false,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "id": "evidence-webvtt",
+      "description": "WebVTT captions: quotes match cue text with cue tags removed; Media Fragments time ranges match when they overlap a cue.",
+      "target": "fixtures/evidence-webvtt",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:4a8a2339f48cd5223077c90f2f360e084c92f894784ca8312985b0e4ca698d6e",
+        "evidenceMatched": {
+          "briefing.md": [
+            true,
+            true,
+            true,
+            false,
+            true
           ]
         }
       }
@@ -135,7 +187,7 @@
           "reviewed",
           "signed"
         ],
-        "digest": "sha256:b03e0c4f4859ec35cc3a855d2291a72497eef89b84fb74e10780d379a1b9a3e4"
+        "digest": "sha256:d56a9665bb17013df662492f4c4a897cdb8727bd59a65dc0c903158f4f504a36"
       }
     },
     {
@@ -219,60 +271,6 @@
         ],
         "capabilities": [
           "core"
-        ]
-      }
-    },
-    {
-      "id": "skills-signed",
-      "description": "Skills are exposed when the package attestation is valid.",
-      "target": "fixtures/skills-signed",
-      "options": {
-        "trustRoot": "fixtures/trust-root.json"
-      },
-      "expect": {
-        "valid": true,
-        "codes": [],
-        "capabilities": [
-          "core",
-          "signed",
-          "skills"
-        ],
-        "digest": "sha256:992a2e4e50aed794369c0bc25100eb1bc40a088b018d1d5d98f1e92669707a01"
-      }
-    },
-    {
-      "id": "skills-unsigned",
-      "description": "Unsigned skills are withheld; the rest of the package stays valid and usable.",
-      "target": "fixtures/skills-unsigned",
-      "options": {
-        "trustRoot": "fixtures/trust-root.json"
-      },
-      "expect": {
-        "valid": true,
-        "codes": [
-          "A005_SKILLS_WITHHELD"
-        ],
-        "capabilities": [
-          "core"
-        ]
-      }
-    },
-    {
-      "id": "skill-invalid",
-      "description": "A skill that does not follow the Agent Skills spec: name/directory mismatch, array metadata, array allowed-tools.",
-      "target": "fixtures/skill-invalid",
-      "options": {
-        "trustRoot": "fixtures/trust-root.json"
-      },
-      "expect": {
-        "valid": true,
-        "codes": [
-          "K001_SKILL_INVALID"
-        ],
-        "capabilities": [
-          "core",
-          "signed",
-          "skills"
         ]
       }
     },
@@ -514,23 +512,23 @@
       }
     },
     {
-      "id": "ontology-valid",
-      "description": "Ontology profile: a local Turtle concept scheme and a node bound to a declared concept.",
-      "target": "fixtures/ontology-valid",
+      "id": "structure-valid",
+      "description": "Structure: a structure.ttl concept scheme and a node bound to a declared concept.",
+      "target": "fixtures/structure-valid",
       "expect": {
         "valid": true,
         "codes": [],
         "capabilities": [
           "core",
-          "ontology"
+          "structured"
         ],
-        "digest": "sha256:49d64c2f6fad7437cfcd55747a038af0a089d32e875749c42ef9d461e43aaed3"
+        "digest": "sha256:5bce001b37c438ad209a157ae343a30ffa5c16a2938247e7010de4787298cb36"
       }
     },
     {
-      "id": "ontology-unparseable",
-      "description": "Ontology profile: the listed file is not Turtle, so nothing is declared. Warnings only; the ontology capability is withheld.",
-      "target": "fixtures/ontology-unparseable",
+      "id": "structure-unparseable",
+      "description": "Structure: structure.ttl is not Turtle, so nothing is declared. Warnings only; the structured capability is withheld.",
+      "target": "fixtures/structure-unparseable",
       "expect": {
         "valid": true,
         "codes": [
@@ -543,9 +541,9 @@
       }
     },
     {
-      "id": "ontology-concept-undeclared",
-      "description": "Ontology profile: a node binds to a concept no ontology file declares.",
-      "target": "fixtures/ontology-concept-undeclared",
+      "id": "structure-undeclared-concept",
+      "description": "Structure: a node binds to a concept no structure file declares.",
+      "target": "fixtures/structure-undeclared-concept",
       "expect": {
         "valid": true,
         "codes": [
@@ -557,9 +555,9 @@
       }
     },
     {
-      "id": "ontology-remote-reference",
-      "description": "Ontology profile: owl:imports would make a Reader fetch; it is reported, never followed.",
-      "target": "fixtures/ontology-remote-reference",
+      "id": "structure-remote-reference",
+      "description": "Structure: owl:imports would make a Reader fetch; it is reported, never followed.",
+      "target": "fixtures/structure-remote-reference",
       "expect": {
         "valid": true,
         "codes": [
@@ -568,6 +566,97 @@
         "capabilities": [
           "core"
         ]
+      }
+    },
+    {
+      "id": "structure-cycle",
+      "description": "requires forms a cycle.",
+      "target": "fixtures/structure-cycle",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O005_STRUCTURE_CYCLE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:16c08dda9c33fb2dd388854972b9996fd687361d87d416d9d13c6d378a69676d"
+      }
+    },
+    {
+      "id": "structure-view-mismatch",
+      "description": "structure.json does not match the view derived from structure.ttl.",
+      "target": "fixtures/structure-view-mismatch",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O004_STRUCTURE_VIEW_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "structure-procedure",
+      "description": "A procedure: parts, an ordered collection of steps, and requires.",
+      "target": "fixtures/structure-procedure",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "digest": "sha256:ff29ef636ccda010b418d72b02dc6372b8764d98c35654fd21350d14e75cd7b3"
+      }
+    },
+    {
+      "id": "limit-structure-triples",
+      "description": "A structure file over the host's triple limit is refused (O001), and its bindings are then undeclared.",
+      "target": "fixtures/structure-procedure",
+      "options": {
+        "limits": {
+          "maxTriples": 3
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O001_ONTOLOGY_UNPARSEABLE",
+          "O002_CONCEPT_UNDECLARED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "limit-yaml-alias",
+      "description": "YAML aliases in frontmatter are refused (C002): alias expansion is a denial-of-service vector.",
+      "target": "fixtures/limit-yaml-alias",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID",
+          "M003_NO_CONTENT"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "digest-v1-package",
+      "description": "A package written for mocaVersion 0.3: the digest is computed with moca-digest-v2, and M008 tells the host older pins will not match.",
+      "target": "fixtures/digest-v1-package",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M008_DIGEST_V1_PACKAGE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:890b4a4aabe41627b64424071d012a542a9350c9c1b6fd68f504c53f88839cd9"
       }
     },
     {
@@ -586,7 +675,7 @@
           "core",
           "composed"
         ],
-        "digest": "sha256:61961568f8e053fe76c24b8c40594f17e127321f863355b673f9727b25bb1c9c"
+        "digest": "sha256:053883c0995b2cb643467d52327268e7a5c50189f151c64dbe6db4f6d68cfa62"
       }
     },
     {
@@ -770,6 +859,24 @@
       }
     },
     {
+      "id": "sidecar-vectors-length",
+      "description": "storage.vectors holds fewer float32 rows than there are payload items: the sidecar is not usable.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/vectors-length"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S004_SIDECAR_ITEM_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
       "id": "search-default-policy",
       "kind": "search",
       "description": "The default retrieval policy: superseded, out-of-force and deprecated content is never returned; stale content is returned.",
@@ -914,9 +1021,9 @@
     {
       "id": "search-concepts",
       "kind": "search",
-      "description": "Ontology profile: a concept filter keeps only records bound to one of the concepts.",
+      "description": "Structure: a concept filter keeps only records bound to one of the concepts.",
       "packages": [
-        "fixtures/ontology-valid",
+        "fixtures/structure-valid",
         "fixtures/valid-minimal"
       ],
       "options": {
@@ -932,7 +1039,7 @@
       "expect": {
         "count": 1,
         "include": [
-          "https://example.com/conformance/ontology-valid@1.0.0#boundaries.md"
+          "https://example.com/conformance/structure-valid@1.0.0#boundaries.md"
         ]
       }
     },
@@ -947,6 +1054,33 @@
         "now": "2026-09-27T00:00:00Z",
         "backend": "dense",
         "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-legacy-json",
+      "kind": "search",
+      "description": "Dense search over the deprecated form, a JSON vector on each payload item: Readers still accept it.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense-json",
         "embedder": {
           "name": "conformance-embedder",
           "version": "1",
@@ -986,7 +1120,341 @@
         "codes": [
           "S006_MODEL_MISMATCH"
         ],
-        "count": 0
+        "count": 0,
+        "include": []
+      }
+    },
+    {
+      "id": "structure-op-concept",
+      "kind": "structure",
+      "description": "concept: preferred label, labels, definition, deprecation and layer.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "concept",
+      "iri": "https://example.org/handbook/incident#NotifyCustomers",
+      "expect": {
+        "codes": [],
+        "result": {
+          "iri": "https://example.org/handbook/incident#NotifyCustomers",
+          "label": "Notify customers",
+          "labels": {
+            "en": "Notify customers"
+          },
+          "deprecated": false,
+          "replacedBy": [],
+          "replaces": [],
+          "layer": "package"
+        }
+      }
+    },
+    {
+      "id": "structure-op-sequence",
+      "kind": "structure",
+      "description": "sequence: members in list order.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "sequence",
+      "iri": "https://example.org/handbook/incident#ResponseSteps",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#ResolveAndReview",
+            "label": "Resolve and review",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-parts",
+      "kind": "structure",
+      "description": "parts: direct parts, ordered by IRI.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "parts",
+      "iri": "https://example.org/handbook/incident#IncidentResponse",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#ResolveAndReview",
+            "label": "Resolve and review",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-requires",
+      "kind": "structure",
+      "description": "requires, direct.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "requires",
+      "iri": "https://example.org/handbook/incident#NotifyCustomers",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-required-by",
+      "kind": "structure",
+      "description": "requiredBy, ordered by IRI.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "requiredBy",
+      "iri": "https://example.org/handbook/incident#AssessSeverity",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-nodes",
+      "kind": "structure",
+      "description": "nodes bound to a concept and its parts, ordered by node reference.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "nodes",
+      "iri": "https://example.org/handbook/incident#IncidentResponse",
+      "args": {
+        "include": "parts"
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          "https://example.com/conformance/structure-procedure@1.0.0#incident-response.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/assess-severity.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/declare-incident.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/resolve-and-review.md"
+        ]
+      }
+    },
+    {
+      "id": "structure-overlay-requires",
+      "kind": "structure",
+      "description": "An organisation overlay adds a requirement; transitive requires lists dependencies first, and each item names the layer that stated it.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "overlays": [
+          {
+            "id": "acme",
+            "layer": "organisation",
+            "path": "fixtures/overlays/organisation-review.ttl"
+          }
+        ]
+      },
+      "op": "requires",
+      "iri": "https://example.org/handbook/incident#ResolveAndReview",
+      "args": {
+        "transitive": true
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "organisation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-overlay-narrower",
+      "kind": "structure",
+      "description": "An overlay can declare new concepts under a package concept.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "overlays": [
+          {
+            "id": "acme",
+            "layer": "organisation",
+            "path": "fixtures/overlays/organisation-review.ttl"
+          }
+        ]
+      },
+      "op": "narrower",
+      "iri": "https://example.org/handbook/incident#ResolveAndReview",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#LegalHold",
+            "label": "Legal hold",
+            "layer": "organisation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-scope",
+      "kind": "search",
+      "description": "scope keeps only nodes bound to the concept or its descendants.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "scope": "https://example.org/handbook/incident#NotifyCustomers"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md"
+        ]
+      }
+    },
+    {
+      "id": "search-ontology-guided",
+      "kind": "search",
+      "description": "The default ontology-guided hooks add the nodes of required concepts; the gate still applies.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "hooks": "ontology-guided"
+      },
+      "search": {
+        "query": "notify customers"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/assess-severity.md"
+        ]
+      }
+    },
+    {
+      "id": "search-hostile-egress",
+      "kind": "search",
+      "description": "An egress hook that returns everything, and a record from a package that is not loaded: the gate removes all that policy and audience exclude.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "hooks": "hostile",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "retention"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ],
+        "count": 2
+      }
+    },
+    {
+      "id": "search-store-records",
+      "kind": "search",
+      "description": "A store search resolves hits from ingest-time records and returns only packages in the host's allowlist.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/search-policy/v1"
+        ]
+      },
+      "search": {
+        "query": "retention period",
+        "includeAll": true
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md"
+        ]
       }
     }
   ]

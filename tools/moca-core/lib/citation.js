@@ -40,6 +40,7 @@ export function citationFor(result, node, rep, { now = new Date(), index, text }
     },
     node: {
       id: `${manifest.id}#${node.path}`,
+      ref: `${manifest.id}@${manifest.version}#${node.path}`,
       path: node.path,
       ...(rep.locale ? { locale: rep.locale } : manifest.language ? { locale: manifest.language } : {}),
       type: fm.type,
@@ -67,13 +68,13 @@ export function citationFor(result, node, rep, { now = new Date(), index, text }
       ...(contestedBy.length > 0 ? { contestedBy } : {}),
     },
     evidence: (Array.isArray(moca.evidence) ? moca.evidence : [])
-      .map((e, i) => ({ e, verified: rep.evidenceChecks?.[i]?.verified }))
+      .map((e, i) => ({ e, matched: rep.evidenceChecks?.[i]?.matched }))
       .filter(({ e }) => e && typeof e === 'object')
-      .map(({ e, verified }) => ({
+      .map(({ e, matched }) => ({
         source: sources.get(e.source) ?? { id: e.source },
         ...(e.selector ? { selector: e.selector } : {}),
         ...(e.note ? { note: e.note } : {}),
-        ...(verified !== undefined ? { verified } : {}),
+        ...(matched !== undefined ? { matched } : {}),
       })),
     ...(rep.concepts ? { concepts: [...rep.concepts] } : {}),
     ...(typeof moca.audience === 'string' ? { audience: moca.audience } : {}),

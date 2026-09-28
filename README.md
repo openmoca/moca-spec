@@ -3,98 +3,93 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status: Alpha](https://img.shields.io/badge/status-alpha-orange.svg)](#status)
 
-**A package layer for knowledge that AI systems use.** MOCA wraps an
-[Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
-(OKF) bundle, a folder of Markdown with YAML frontmatter, so it can be
-exchanged, verified, composed and cited, whatever model, vector database or
-framework reads it.
+**Portable grounding for AI.** A MOCA package holds the knowledge an AI system
+uses, how that knowledge is organised, and the original sources it came from.
+Any system can read it the same way, on a server or on a device with no
+network, whatever model, vector database or agent framework it runs.
 
-**MOCA ships knowledge with its evidence, sealed.** A package carries the
-original source files, not just knowledge written about them, and its digest
-covers both. A citation can be checked against its original on a device with
-no network.
+A MOCA package wraps an
+[Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+(OKF) bundle, a folder of Markdown with YAML frontmatter, in three layers:
+
+| Layer | Holds | Built on |
+| --- | --- | --- |
+| **Structure** (optional) | Concepts and how they relate: hierarchy, parts, order, what requires what, what replaces what | W3C SKOS and DCMI terms, in `structure.ttl` |
+| **Content** | The knowledge, one Markdown node per topic | OKF |
+| **Evidence** | The original sources, and selectors that point into them | W3C Web Annotation, Media Fragments, WebVTT |
+
+**Trust runs across all three.** The package's digest covers every file, so
+the originals travel with the knowledge and arrive unchanged. A signed package
+proves who published it, and signed reviews prove who checked which node.
+MOCA ships knowledge with its evidence, sealed when signed.
 
 ## The problem
 
-- Knowledge that feeds AI is copied between teams, vendors and pipelines, and
-  nobody can prove which version an answer came from, who published it, or
-  whether anyone checked it.
-- "Verified" is usually a label anyone can type. Nothing ties it to a person
-  or to the exact text they checked.
-- Superseded and expired content keeps being served because nothing tells the
+- Knowledge that feeds AI is rebuilt for every model, vendor and pipeline, and
+  loses its structure and sources on the way.
+- Nobody can prove which version an answer came from, who published it, or
+  whether anyone checked it. "Verified" is usually a label anyone can type.
+- Superseded and expired content keeps being served, because nothing tells the
   pipeline it is no longer in force.
+- Retrieval ignores how a domain is organised. An assistant answers an
+  advanced question before a prerequisite, or pulls in material from the
+  wrong system.
 
-OKF already gives knowledge a common file format and trust fields. It
-deliberately stops at the file: no package identity, no integrity, no
-signatures, no way to compose bundles or relate versions, and no guarantee
-that the sources it cites travel with it or arrive unchanged. MOCA is that
-missing layer, and nothing more.
+## Three pillars
 
-## Two purposes
+| Pillar | What it is | Openness |
+| --- | --- | --- |
+| **MOCA Package** | The format: structure, content, evidence, and the identity and trust that cover them | Open standard |
+| **MOCA Reader** | The standard way to get anything out of a package, whether for RAG or any other search, structure navigation or citation. It is in-process, one per language, and each Reader passes one conformance corpus | Open source |
+| **MOCA Application** | The product for one use case, built on a Reader and the agent harness of your choice | Yours |
 
-| Purpose | What it needs from MOCA |
-| --- | --- |
-| **Move knowledge between platforms, securely and verifiably** | Identity, a digest that survives repacking, signatures and reviews, pinned members, and the original sources inside the package. |
-| **Read and integrate packages locally**, on edge devices or on infrastructure a client owns | An in-process Reader in the host's language, offline search, one search API whatever the backend, and bindings to the host's framework. |
-
-## What MOCA adds to an OKF bundle
-
-| Adds | So that |
-| --- | --- |
-| **Identity and content version** (`moca.json`) | A package has one name across its versions, and version numbers say how much the meaning changed. |
-| **A digest** computed from the content | The same package has the same identity as a folder, a `.moca` file or a registry artifact, and any change is detectable. |
-| **Publisher attestations** | A host can verify who published exactly these bytes (Sigstore or DSSE). |
-| **Review attestations** | A reviewer signs that they checked the exact bytes of a node; it stops counting as soon as the node changes. |
-| **Members pinned by digest** | A handbook can be composed from chapters without copying them, reproducibly. |
-| **Typed relations** (`supersedes`, `amends`, `conflictsWith`) | A newer policy retires an older one, and conflicts are surfaced instead of hidden. |
-| **The original sources**, inside the package | `sources/` is covered by the digest, and every quoted passage is checked against it (`self-contained-evidence`). |
-| **Evidence, validity and audience** on each node | An answer can cite the exact sentence of a source, out-of-force content is left out by default, and hosts can filter internal content. |
-| **A Reader contract and conformance corpus** | Any implementation reaches the same conclusions about a package, down to the digest. |
+See [ADR-0011](docs/adr/0011-three-pillars-and-admission-test.md) and the
+[architecture](docs/architecture.md).
 
 ## Quick look
 
 ```text
-support-kb/
+incident-response/
 ├── moca.json
+├── structure.ttl            optional: concepts, parts, order, requires
 ├── content/                 an OKF bundle
-│   └── refund-window.md
-├── sources/refund-policy-2026.txt
+│   ├── incident-response.md
+│   └── steps/notify-customers.md
+├── sources/                 the originals the nodes cite
 └── attestations/            signatures, outside the digest
 ```
 
-```json
-{
-  "id": "https://example.com/moca/support-kb",
-  "version": "4.2.0",
-  "title": "Acme Support Knowledge Base"
-}
+```turtle
+ir:NotifyCustomers a skos:Concept ;
+  skos:prefLabel "Notify customers"@en ;
+  dcterms:requires ir:AssessSeverity .
 ```
 
 ```markdown
 ---
-type: Policy
-title: Refund eligibility window
-verified:
-  - by: human:sam.ortiz
-    at: 2026-08-14T00:00:00Z
-sources:
-  - id: terms-7
-    resource: ../sources/refund-policy-2026.txt
+type: Procedure
+title: Notify customers
 moca:
-  evidence:
-    - source: terms-7
-      selector: { type: TextQuoteSelector, exact: "Customers may request a full refund within 30 days of delivery." }
-  audience: public
+  concepts:
+    - iri: https://example.org/handbook/incident#NotifyCustomers
+      role: primary
 ---
-# Refund eligibility window
-
-Customers may request a full refund within **30 days of delivery**.
+# Notify customers
 ```
 
-A Reader turns every node into a **citation record**: the text, plus package
-id, version and digest, who signed it, declared and attested reviews,
-freshness, validity, supersession, and evidence marked `verified` when the
-quote was found in the source inside the package.
+A Reader turns every node into a **citation record**. It carries:
+
+- the text;
+- the package id, version and digest, and a versioned node reference;
+- who signed it, and its declared and attested reviews;
+- its freshness, validity and supersession;
+- its evidence, marked `matched` when the quote was found in the original.
+
+A Reader answers structure questions too: what "notify customers" requires,
+the steps of a procedure in order, and everything under a topic. Its search
+can be limited to a topic, and an application can plug in
+**ontology-guided retrieval**: for example, following `requires` to bring in
+the step that must come first.
 
 ## Get started
 
@@ -118,55 +113,32 @@ node tools/moca-mcp/bin/moca-mcp.js my-package
 Then read the [quickstart](docs/quickstart.md) or the
 [walkthrough](docs/walkthrough.md) (convert, sign, review, index, serve).
 
-## How it fits
-
-```text
-Your application   agents, prompts, policy: decides what to do with trust signals
-      │
-      │  citation records
-      ▼
-Bindings           LangChain / LlamaIndex retriever, Agent Framework context provider,
-      │            Microsoft.Extensions.VectorData, MCP server
-      ▼
-Search             one search(): lexical · sidecar · dense · your vector store,
-      │            with the retrieval policy and audience rules applied once
-      ▼
-Reader             open · check · digest · verify · resolve members · cite
-      │            (in-process, in the host's language)
-      ▼
-MOCA package       moca.json + OKF content + sources + attestations
-```
-
-Each language has its own Reader, built to one
-[Reader interface](spec/moca-reader-interface.md) and tested against one
-conformance corpus. Vector storage, embedding and ranking stay with the stack
-you already use; MOCA adds trust and citation. See
-[architecture](docs/architecture.md).
-
 ## What MOCA is not
 
 - **Not a content model.** OKF is. MOCA reads OKF's fields as OKF defines them.
-- **Not a retrieval engine or vector database.** Search in MOCA is one entry
-  point that applies trust rules over backends you already have; the optional
-  [sidecar index](spec/moca-sidecar-index-spec.md) is a cache.
+- **Not a retrieval engine or vector database.** The Reader's search is one
+  entry point that applies trust rules over backends you already have; the
+  optional [sidecar index](spec/moca-sidecar-index-spec.md) is a cache.
 - **Not configuration.** Nothing in a package can make a Reader contact
-  anything or change a setting.
+  anything or change a setting. Application and organisation rules are
+  overlays the host loads, never package content.
 - **Not a guarantee of truth.** Attestations prove who published and who
-  reviewed. Content is still untrusted input to a model.
+  reviewed; `matched` proves a quote is in its source. Content is still
+  untrusted input to a model, and structure narrows what is retrieved, not
+  what a model says.
 
 ## Specification
 
 | Document | Covers |
 | --- | --- |
-| [Package specification](spec/moca-package-spec.md) | Manifest, content, digest, members, relations, skills, profiles, capabilities |
-| [Reader contract](spec/moca-reader-contract.md) | What every Reader concludes and must never do; citation records; search; diagnostic codes |
-| [Reader interface](spec/moca-reader-interface.md) | The operations every language's Reader offers: Reader, Search, Bindings |
+| [Package specification](spec/moca-package-spec.md) | Manifest, content, structure, evidence, digest, members, relations, profiles, capabilities |
+| [Reader contract](spec/moca-reader-contract.md) | What every Reader concludes and must never do; citation records; search; structure operations; diagnostic codes |
+| [Reader interface](spec/moca-reader-interface.md) | The operations every language's Reader offers, and how applications extend them |
 | [Attestations](spec/moca-attestations.md) | Package and review attestations, trust roots, verification outcomes |
-| [Sidecar index](spec/moca-sidecar-index-spec.md) | The portable `moca-jsonl-v1` search index |
-| [OCI binding](spec/moca-oci-binding.md) | Storing and pulling packages from OCI registries |
-| [Profiles](profiles/README.md) | Agent Skills, claims (nanopublications), ontology (SKOS/OWL), EU AI Act data governance |
-| [Schemas](schemas/v1) | Manifest, node, citation record, search hit, sidecar, review predicate, trust root |
-| [Conformance corpus](conformance/README.md) | 57 cases, with pinned digests, that any implementation must pass, runnable against a Reader in any language |
+| [Sidecar index](spec/moca-sidecar-index-spec.md) | The portable `moca-jsonl-v1` search index, with binary vectors |
+| [Profiles](profiles/README.md) | Optional extensions; today the ontology profile (extra vocabulary files) |
+| [Schemas](schemas/v1) | Manifest, node, structure, citation record, search hit, sidecar, review predicate, trust root |
+| [Conformance corpus](conformance/README.md) | 76 cases, with pinned digests, that any Reader must pass, in any language |
 
 Identifiers use `https://w3id.org/moca/...`. The w3id.org redirect is being
 registered; until then these URIs are stable names, not live links.
@@ -175,16 +147,16 @@ registered; until then these URIs are stable names, not live links.
 
 | Tool | Purpose |
 | --- | --- |
-| [`moca-core`](tools/moca-core/README.md) | The reference Reader and Search library (TypeScript) |
-| [`moca-mcp`](tools/moca-mcp/README.md) | MCP server: search and cite packages from any agent |
+| [`moca-core`](tools/moca-core/README.md) | The reference MOCA Reader (TypeScript) |
+| [`moca-mcp`](tools/moca-mcp/README.md) | MCP server: search, navigate and cite packages from any agent |
 | [`moca-convert`](tools/moca-convert/README.md) | Build packages from Markdown folders, Obsidian vaults and OpenAPI documents |
-| [`moca-lint`](tools/moca-lint/README.md) | Check, pack, extract; print digests |
+| [`moca-lint`](tools/moca-lint/README.md) | Check, pack, extract; print digests, manifests and structure views |
 | [`moca-sign`](tools/moca-sign/README.md) | Publisher and review attestations (DSSE or Sigstore) |
 | [`moca-index`](tools/moca-index/README.md) | Build sidecar indexes |
 
 ## Status
 
-**Alpha, `0.3.0-alpha.1`.** The format may change before `1.0.0`. The
+**Alpha, `0.4.0-alpha.1`.** The format may change before `1.0.0`. The
 specification, schemas, examples, conformance corpus and tools are complete
 and tested together (`npm test`). What is not proven yet is value in use: the
 [outcome evaluation](docs/plans/01-outcome-evaluation.md) is the next

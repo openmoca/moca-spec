@@ -33,6 +33,22 @@ const search = new Search(library, { backend: new DenseBackend(library, { embedd
 
 `library.search(query, options)` is a synchronous shortcut for lexical search.
 
+## Scope and ontology-guided retrieval
+
+When a package has a [structure](structure.md), search can be limited to a
+topic, and an application can plug in a retrieval strategy:
+
+```js
+await search.search('customers', { scope: 'https://example.org/handbook/incident#NotifyCustomers' });
+
+const guided = new Search(library, { backend: new LexicalBackend(library), hooks: ontologyGuided() });
+await guided.search('when do we notify customers');   // adds the required "assess severity" step
+```
+
+Hooks run before and after the backend; the Reader's gate always runs last, so
+no strategy can return what the retrieval policy or the audience set excludes
+([Reader contract §9.2](../../spec/moca-reader-contract.md#92-the-pipeline-and-the-gate)).
+
 ## Sidecars
 
 A sidecar is a derived, disposable index for one package version, kept
@@ -47,8 +63,9 @@ node tools/moca-index/bin/moca-index.js check kb.moca.idx --package kb
   stale; Readers ignore it and search the package directly.
 - Every chunk has byte offsets into its node file, so a hit can be cited to
   the exact passage.
-- The portable payload is `moca-jsonl-v1`. A dense or hybrid sidecar adds a
-  `vector` to each item and MUST name its embedding `model`.
+- The portable payload is `moca-jsonl-v1`. A dense or hybrid sidecar names
+  its embedding `model` and stores its vectors in a binary float32 file
+  (`storage.vectors`), about a quarter of the size of JSON numbers.
 
 ## Embedders
 

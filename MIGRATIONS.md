@@ -2,6 +2,34 @@
 
 How to move packages and Readers between versions of the specification.
 
+## From 0.3.0-alpha.1 to 0.4.0-alpha.1
+
+Every change below that alters bytes or digests is breaking.
+
+### Packages
+
+| 0.3 | 0.4 | What to do |
+| --- | --- | --- |
+| `moca-digest-v1` (canonical JSON) | `moca-digest-v2`: the SHA-256 of a BagIt-style manifest of every file, `moca.json` included as bytes ([ADR-0014](docs/adr/0014-digest-v2-bagit-manifest.md)) | Every digest changes. Re-pin members (`moca-lint digest`), re-sign, and re-review. Set `mocaVersion` to `0.4`; older packages are read with v2 and flagged `M008` (info). |
+| Ontology profile: `ontologies/*.ttl` and `moca.profiles["https://w3id.org/moca/profiles/ontology/v1"].concepts` | Structure core: `structure.ttl` at the root, `moca.concepts` on nodes ([package spec §5.6](spec/moca-package-spec.md#56-structure)) | Move the concept scheme into `structure.ttl`, keep only the core terms there, declare every concept `a skos:Concept`, and move bindings to `moca.concepts`. Keep other vocabulary under the ontology profile. The `ontology` capability becomes `structured`. |
+| `skills/` with a signing gate | No special meaning ([ADR-0015](docs/adr/0015-park-unconsumed-features.md)) | Ship agent skills as application code. `A005` and `K001` are retired. |
+| Agent Skills, claims and EU AI Act profiles | Removed; at tag [`v0.3.0-alpha.1`](https://github.com/openmoca/moca-spec/blob/v0.3.0-alpha.1/profiles) | They are now reported as unrecognised (`F001`, info). |
+| OCI binding | Removed; at tag [`v0.3.0-alpha.1`](https://github.com/openmoca/moca-spec/blob/v0.3.0-alpha.1/spec/moca-oci-binding.md) | Any registry can still carry the files. |
+| Media and captions | Media Fragments time ranges and WebVTT captions are checked | Carry captions under `media/` to make video citations checkable. |
+
+### Readers and applications
+
+| 0.3 | 0.4 | What to do |
+| --- | --- | --- |
+| `evidence[].verified` | `evidence[].matched` | Rename. It says the quote is in the file, not that anyone verified the claim. |
+| Citations keyed by `node.id` | `node.ref`, `<id>@<version>#<path>` | Key citations and logs by `node.ref`. |
+| Quotes matched against raw bytes | Matched against normalised text (Markdown, HTML, WebVTT rules in [Reader contract §7](spec/moca-reader-contract.md#7-citation-records)) | Quotes copied from rendered text now match. |
+| A Search conformance class | Search is part of the Reader; §9 is the pipeline and its gate | Nothing to change in calls. Hooks and `scope` are new options. |
+| Store search resolved hits through a loaded Library | Store records carry whole citation records; `new Search({ digests, clock }, { backend })` | Store the citation record at ingest. |
+| JSON `vector` on sidecar items | Binary `storage.vectors` (float32); JSON vectors deprecated | Rebuild dense sidecars with `moca-index`. |
+| Unbounded YAML and structure parsing | Limits ([Reader contract §3](spec/moca-reader-contract.md#3-opening-a-package)) | Frontmatter with YAML aliases is now `C002`. |
+| Reader contract §10-§13 | Now §11-§14, with §10 Structure | Update links. |
+
 ## From 0.2.0-alpha.1 to 0.3.0-alpha.1
 
 **Packages: nothing to do.** A `0.2` package is a valid `0.3` package. To use
@@ -36,7 +64,7 @@ locally. Every change below is breaking.
 | 0.1 draft | 0.2 | What to do |
 | --- | --- | --- |
 | `id: "urn:moca:..."` | Absolute URI; registered URN namespaces or `https:`/`tag:` URIs | Rename, for example to `https://<your-domain>/moca/<name>`. |
-| `@context`, `ontologies`, `entryConcepts` | Removed from core | From 0.3, move ontologies and `entryConcepts` to the [ontology profile](profiles/ontology/moca-ontology-profile.md), as Turtle with absolute IRIs; `@context` has no successor. Move claims to the [claims profile](profiles/claims/moca-claims-profile.md). |
+| `@context`, `ontologies`, `entryConcepts` | Removed from core | From 0.3, move ontologies and `entryConcepts` to the [ontology profile](profiles/ontology/moca-ontology-profile.md), as Turtle with absolute IRIs; `@context` has no successor. Claims went to the claims profile, which 0.4 removed ([tag v0.3.0-alpha.1](https://github.com/openmoca/moca-spec/blob/v0.3.0-alpha.1/profiles/claims/moca-claims-profile.md)). |
 | `integrity` | Removed | Nothing to do: Readers compute per-file digests. |
 | `canonicalDigest` | Removed: the digest is computed, never declared | Delete. Run `moca-lint digest` to see the digest. |
 | `signature` | Detached attestation under `attestations/` | Delete, then run `moca-sign sign`. |
