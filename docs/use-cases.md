@@ -21,6 +21,10 @@ connection.
 - A `.moca` file with a **sidecar index** runs on a laptop or tablet with no
   model server and no network, and `supersedes` stops a withdrawn procedure
   being used. See [`examples/handbook`](../examples/handbook).
+- Manuals usually already exist as PDFs. `moca-convert` splits each one into
+  a node per section, and **evidence** cites the PDF pages each node came
+  from (`page=12`, with the printed page number). See
+  [`examples/pdf`](../examples/pdf), a 19-PDF flying handbook.
 
 ## Legal and regulatory corpora
 

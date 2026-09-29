@@ -15,11 +15,25 @@ versions follow [the versioning policy](docs/versioning-and-release.md).
   command that captures a video or playlist with yt-dlp and runs the
   conversion. Adapters can now add files under `sources/` and `media/`, and
   `structure.ttl`. Converted packages declare `mocaVersion` 0.4.
+- `moca-convert`: a `pdf` adapter (using Mozilla's pdf.js) that converts a
+  PDF, a folder of PDFs, or a folder with a `pdfs.json` listing documents in
+  order with their URLs and SHA-256 digests. Each document becomes a node
+  per section, found from its bookmarks or its type sizes and bold
+  headings; each node cites its pages as RFC 3778 `page=` evidence with the
+  printed page number, and `structure.ttl` keeps documents and sections in
+  order. `--sources copy` (default) carries the PDFs under `sources/`;
+  `--sources link` cites them by URL. `scripts/fetch-pdfs.mjs` downloads a
+  `pdfs.json`'s documents and pins their digests.
+- `moca-core`: a Markdown link written with its destination in angle
+  brackets (`[PDF](<https://…>)`) is no longer reported as an unresolved
+  package path (`C007_LINK_UNRESOLVED`).
 
 ### Examples
 
 - `examples/youtube`: a single video and a playlist, generated with
   `moca-youtube`.
+- `examples/pdf`: the FAA *Airplane Flying Handbook*, 19 PDFs converted
+  into 251 section nodes with page evidence.
 
 ## [0.4.0-alpha.1] - 2026-09-27
 

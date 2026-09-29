@@ -23,6 +23,7 @@ const EXAMPLES = [
   { dir: 'examples/service-catalogue', capabilities: ['core', 'structured'] },
   { dir: 'examples/youtube/video', capabilities: ['core', 'located-evidence', 'self-contained-evidence'] },
   { dir: 'examples/youtube/playlist', capabilities: ['core', 'located-evidence', 'self-contained-evidence', 'structured'] },
+  { dir: 'examples/pdf/airplane-flying-handbook', capabilities: ['core', 'located-evidence', 'structured'] },
 ];
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });

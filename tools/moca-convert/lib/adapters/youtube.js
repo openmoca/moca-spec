@@ -9,6 +9,7 @@ import { joinFrontmatter } from '@openmoca/moca-core';
 import { buildManifest } from '../manifest.js';
 import { slugify } from '../slug.js';
 import { UsageError } from '../target.js';
+import { escapeInline, escapeText, firstLine, summary, turtleString, uniqueSlug } from '../text.js';
 import { CAPTURE_FILE } from '../youtube/capture.js';
 import { parseVtt } from '../youtube/json3-to-vtt.js';
 
@@ -179,31 +180,6 @@ function playlistStructure(capture, videos, { iri, lang, title }) {
   return `${blocks.join('\n\n')}\n`;
 }
 
-function turtleString(text) {
-  return `"${String(text).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r')}"`;
-}
-
-/** First non-empty line, trimmed. */
-function firstLine(text) {
-  return text.split('\n').map((l) => l.trim()).find(Boolean) ?? '';
-}
-
-/** A one-line summary for `description`: the first line, cut at a sentence when long. */
-function summary(text) {
-  const line = firstLine(text ?? '');
-  if (line.length <= 300) return line || undefined;
-  const cut = line.slice(0, 300);
-  const stop = cut.lastIndexOf('. ');
-  return stop > 80 ? cut.slice(0, stop + 1) : `${cut.slice(0, cut.lastIndexOf(' '))}…`;
-}
-
-function uniqueSlug(base, taken) {
-  let slug = base;
-  for (let n = 2; taken.has(slug); n++) slug = `${base}-${n}`;
-  taken.add(slug);
-  return slug;
-}
-
 /** Seconds as m:ss or h:mm:ss, as YouTube shows them. */
 function clock(seconds) {
   const s = Math.floor(seconds);
@@ -211,32 +187,6 @@ function clock(seconds) {
   const m = Math.floor((s % 3600) / 60);
   const ss = String(s % 60).padStart(2, '0');
   return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`;
-}
-
-// Source text is shown as written, not interpreted as Markdown: characters
-// that would start emphasis, links or HTML are escaped. Bare URLs become
-// autolinks.
-function escapeInline(text) {
-  return String(text)
-    .split(/(https?:\/\/[^\s<>]+)/)
-    .map((part, i) => (i % 2 === 1 ? `<${part}>` : part.replace(/([\\`*_[\]<>|])/g, '\\$1')))
-    .join('');
-}
-
-// Multi-line text: blank lines separate paragraphs and single line breaks are
-// kept as hard breaks. A line that would start a heading, list, quote or
-// code block is escaped.
-function escapeText(text) {
-  return text
-    .split(/\n\s*\n/)
-    .map((para) =>
-      para
-        .split('\n')
-        .map((line) => escapeInline(line.trim()).replace(/^([#>+-])/, '\\$1').replace(/^(\d+)([.)])/, '$1\\$2'))
-        .filter(Boolean)
-        .join('\\\n'))
-    .filter(Boolean)
-    .join('\n\n');
 }
 
 function readJson(path) {

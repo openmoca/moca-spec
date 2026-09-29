@@ -1,7 +1,7 @@
 {
   "name": "@openmoca/moca-convert",
   "version": "0.4.0-alpha.1",
-  "description": "Create MOCA packages (OKF content bundles) from Markdown folders, Obsidian vaults, OpenAPI documents and YouTube videos.",
+  "description": "Create MOCA packages (OKF content bundles) from Markdown folders, Obsidian vaults, OpenAPI documents, PDFs and YouTube videos.",
   "license": "Apache-2.0",
   "type": "module",
   "engines": {
@@ -17,7 +17,8 @@
   "dependencies": {
     "@openmoca/moca-core": "^0.4.0-alpha.1",
     "commander": "^12.1.0",
-    "js-yaml": "^5.2.2"
+    "js-yaml": "^5.2.2",
+    "pdfjs-dist": "^6.3.289"
   },
   "publishConfig": {
     "access": "public"

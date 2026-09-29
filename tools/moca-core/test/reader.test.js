@@ -155,3 +155,14 @@ test('an invalid package cannot be added to a library', async () => {
   const r = await readPackage(dir);
   assert.throws(() => new Library().add(r));
 });
+
+test('a link destination in angle brackets is read as written: URLs are not package paths', async () => {
+  const body = '---\ntype: Note\ntitle: A\n---\n\n# A\n\nSee [the PDF](<https://example.com/a (1).pdf#page=2>), [B](<b.md>) and [C](<missing.md>).\n';
+  const dir = makePackage({ 'content/a.md': body, 'content/b.md': NODE });
+  try {
+    const result = await readPackage(dir);
+    assert.deepEqual(result.diagnostics.filter((d) => d.code === 'C007_LINK_UNRESOLVED').map((d) => d.message), ['link "missing.md" does not resolve']);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

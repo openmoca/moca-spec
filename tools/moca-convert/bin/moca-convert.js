@@ -11,6 +11,7 @@ const ADAPTER_ONLY_FLAGS = {
   exclude: 'obsidian',
   minDescriptionRatio: 'openapi',
   chunker: 'openapi',
+  sources: 'pdf',
 };
 
 function parseRatio(value) {
@@ -30,7 +31,7 @@ const { version } = JSON.parse(
 const program = new Command();
 program
   .name('moca-convert')
-  .description('Create a MOCA package, with an OKF content bundle, from a directory, Markdown files, an Obsidian vault, a suitable OpenAPI document, or a YouTube capture folder.')
+  .description('Create a MOCA package, with an OKF content bundle, from a directory, Markdown files, an Obsidian vault, a suitable OpenAPI document, PDFs, or a YouTube capture folder.')
   // `--version <semver>` already sets the *generated package's* version, so the
   // CLI's own version is exposed as --cli-version rather than redefining it.
   .version(version, '-V, --cli-version', "output moca-convert's own version")
@@ -42,10 +43,11 @@ program
   .option('--type <type>', 'OKF type for nodes that lack one (default per adapter: Document, Note, API Operation)')
   .option('--language <bcp47>', 'default content language, e.g. en')
   .option('--license <spdx>', 'SPDX license expression for the package')
-  .option('--from <format>', 'source format: directory|markdown|obsidian|openapi|youtube (auto-detected if omitted)')
+  .option('--from <format>', 'source format: directory|markdown|obsidian|openapi|pdf|youtube (auto-detected if omitted)')
   .option('--exclude <glob...>', 'obsidian only: note paths to exclude from conversion (still indexed for wikilink resolution)')
   .option('--min-description-ratio <ratio>', 'openapi only: minimum fraction of operations needing a summary/description, 0-1 (default 0.5)', parseRatio)
   .option('--chunker <mode>', 'openapi only: operation|tag content-node grouping (default operation)')
+  .option('--sources <mode>', 'pdf only: copy the PDFs into sources/ (copy, the default) or cite each by its pdfs.json url (link)')
   .option('--force', 'allow writing into a non-empty output directory', false)
   .option('--strict', 'escalate warning-level output-validation findings to errors', false)
   .option('--format <fmt>', 'summary output format: text|json', 'text')
@@ -102,7 +104,7 @@ async function run(input, options) {
     assertAdapterSpecificFlags(adapterName, options);
     const adapter = getAdapter(adapterName);
 
-    const draft = adapter.convert({
+    const draft = await adapter.convert({
       inputPath: input,
       options: {
         id: options.id,
@@ -111,6 +113,7 @@ async function run(input, options) {
         exclude: options.exclude,
         minDescriptionRatio: options.minDescriptionRatio,
         chunker: options.chunker,
+        sources: options.sources,
         type: options.type,
         language: options.language,
         license: options.license,

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.4",
+  "id": "https://example.com/moca/pdf/airplane-flying-handbook",
+  "version": "1.0.0",
+  "title": "Airplane Flying Handbook (FAA-H-8083-3C)",
+  "description": "The FAA handbook on the skills and knowledge needed to fly airplanes, from basic flight maneuvers to transitions to complex, multiengine, tailwheel, turboprop and jet airplanes, and emergency procedures.",
+  "language": "en"
+}

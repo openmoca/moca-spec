@@ -1,0 +1,1355 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#collection> a skos:Concept ;
+  skos:prefLabel "Airplane Flying Handbook (FAA-H-8083-3C)"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#collection-order> a skos:OrderedCollection ;
+  skos:prefLabel "Airplane Flying Handbook (FAA-H-8083-3C) (document order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training> a skos:Concept ;
+  skos:prefLabel "Chapter 1: Introduction to Flight Training"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-faa>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-pilot-examiner>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-flight-instructor>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/sources-of-flight-training>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/airman-certification-standards-acs-and-practical-test-standards-pts>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/safety-considerations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/continuing-education>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 1: Introduction to Flight Training (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-faa>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-pilot-examiner>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-flight-instructor>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/sources-of-flight-training>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/airman-certification-standards-acs-and-practical-test-standards-pts>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/safety-considerations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/continuing-education>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-faa> a skos:Concept ;
+  skos:prefLabel "Role of the FAA"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-pilot-examiner> a skos:Concept ;
+  skos:prefLabel "Role of the Pilot Examiner"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/role-of-the-flight-instructor> a skos:Concept ;
+  skos:prefLabel "Role of the Flight Instructor"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/sources-of-flight-training> a skos:Concept ;
+  skos:prefLabel "Sources of Flight Training"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/airman-certification-standards-acs-and-practical-test-standards-pts> a skos:Concept ;
+  skos:prefLabel "Airman Certification Standards (ACS) and Practical Test Standards (PTS)"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/safety-considerations> a skos:Concept ;
+  skos:prefLabel "Safety Considerations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/continuing-education> a skos:Concept ;
+  skos:prefLabel "Continuing Education"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-1-introduction-to-flight-training/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations> a skos:Concept ;
+  skos:prefLabel "Chapter 2: Ground Operations"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/preflight-assessment-of-the-aircraft>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/risk-and-resource-management>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/ground-operations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/engine-starting>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/hand-propping>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/taxiing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/before-takeoff-check>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/takeoff-checks>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/after-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/clear-of-runway-and-stopped>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/parking>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/engine-shutdown>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/post-flight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 2: Ground Operations (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/preflight-assessment-of-the-aircraft>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/risk-and-resource-management>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/ground-operations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/engine-starting>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/hand-propping>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/taxiing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/before-takeoff-check>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/takeoff-checks>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/after-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/clear-of-runway-and-stopped>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/parking>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/engine-shutdown>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/post-flight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/preflight-assessment-of-the-aircraft> a skos:Concept ;
+  skos:prefLabel "Preflight Assessment of the Aircraft"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/risk-and-resource-management> a skos:Concept ;
+  skos:prefLabel "Risk and Resource Management"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/ground-operations> a skos:Concept ;
+  skos:prefLabel "Ground Operations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/engine-starting> a skos:Concept ;
+  skos:prefLabel "Engine Starting"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/hand-propping> a skos:Concept ;
+  skos:prefLabel "Hand Propping"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/taxiing> a skos:Concept ;
+  skos:prefLabel "Taxiing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/before-takeoff-check> a skos:Concept ;
+  skos:prefLabel "Before-Takeoff Check"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/takeoff-checks> a skos:Concept ;
+  skos:prefLabel "Takeoff Checks"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/after-landing> a skos:Concept ;
+  skos:prefLabel "After-Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/clear-of-runway-and-stopped> a skos:Concept ;
+  skos:prefLabel "Clear of Runway and Stopped"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/parking> a skos:Concept ;
+  skos:prefLabel "Parking"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/engine-shutdown> a skos:Concept ;
+  skos:prefLabel "Engine Shutdown"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/post-flight> a skos:Concept ;
+  skos:prefLabel "Post-Flight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-2-ground-operations/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers> a skos:Concept ;
+  skos:prefLabel "Chapter 3: Basic Flight Maneuvers"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/the-four-fundamentals>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/effect-and-use-of-flight-controls>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/attitude-flying>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/integrated-flight-instruction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/straight-and-level-flight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/trim-control>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/level-turns>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/climbs-and-climbing-turns>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/descents-and-descending-turns>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/glides>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 3: Basic Flight Maneuvers (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/the-four-fundamentals>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/effect-and-use-of-flight-controls>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/attitude-flying>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/integrated-flight-instruction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/straight-and-level-flight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/trim-control>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/level-turns>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/climbs-and-climbing-turns>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/descents-and-descending-turns>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/glides>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/the-four-fundamentals> a skos:Concept ;
+  skos:prefLabel "The Four Fundamentals"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/effect-and-use-of-flight-controls> a skos:Concept ;
+  skos:prefLabel "Effect and Use of Flight Controls"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/attitude-flying> a skos:Concept ;
+  skos:prefLabel "Attitude Flying"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/integrated-flight-instruction> a skos:Concept ;
+  skos:prefLabel "Integrated Flight Instruction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/straight-and-level-flight> a skos:Concept ;
+  skos:prefLabel "Straight-and-Level Flight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/trim-control> a skos:Concept ;
+  skos:prefLabel "Trim Control"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/level-turns> a skos:Concept ;
+  skos:prefLabel "Level Turns"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/climbs-and-climbing-turns> a skos:Concept ;
+  skos:prefLabel "Climbs and Climbing Turns"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/descents-and-descending-turns> a skos:Concept ;
+  skos:prefLabel "Descents and Descending Turns"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/glides> a skos:Concept ;
+  skos:prefLabel "Glides"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-3-basic-flight-maneuvers/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control> a skos:Concept ;
+  skos:prefLabel "Chapter 4: Energy Management: Mastering Altitude and Airspeed Control"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/importance-of-energy-management>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/viewing-the-airplane-as-an-energy-system>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/role-of-the-controls-to-manage-energy-state>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/rules-of-energy-control>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/mitigating-risks-from-mismanagement-of-energy>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/review-of-terms-and-definitions>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 4: Energy Management: Mastering Altitude and Airspeed Control (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/importance-of-energy-management>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/viewing-the-airplane-as-an-energy-system>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/role-of-the-controls-to-manage-energy-state>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/rules-of-energy-control>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/mitigating-risks-from-mismanagement-of-energy>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/review-of-terms-and-definitions>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/importance-of-energy-management> a skos:Concept ;
+  skos:prefLabel "Importance of Energy Management"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/viewing-the-airplane-as-an-energy-system> a skos:Concept ;
+  skos:prefLabel "Viewing the Airplane as an Energy System"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/role-of-the-controls-to-manage-energy-state> a skos:Concept ;
+  skos:prefLabel "Role of the Controls to Manage Energy State"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/rules-of-energy-control> a skos:Concept ;
+  skos:prefLabel "Rules of Energy Control"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/mitigating-risks-from-mismanagement-of-energy> a skos:Concept ;
+  skos:prefLabel "Mitigating Risks from Mismanagement of Energy"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/review-of-terms-and-definitions> a skos:Concept ;
+  skos:prefLabel "Review of Terms and Definitions"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-4-energy-management-mastering-altitude-and-airspeed-control/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training> a skos:Concept ;
+  skos:prefLabel "Chapter 5: Maintaining Aircraft Control: Upset Prevention and Recovery Training"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/upset-prevention-and-recovery>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/slow-flight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/stalls>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 5: Maintaining Aircraft Control: Upset Prevention and Recovery Training (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/upset-prevention-and-recovery>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/slow-flight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/stalls>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/upset-prevention-and-recovery> a skos:Concept ;
+  skos:prefLabel "Upset Prevention and Recovery"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/slow-flight> a skos:Concept ;
+  skos:prefLabel "Slow Flight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/stalls> a skos:Concept ;
+  skos:prefLabel "Stalls"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-5-maintaining-aircraft-control-upset-prevention-and-recovery-training/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs> a skos:Concept ;
+  skos:prefLabel "Chapter 6: Takeoffs and Departure Climbs"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/prior-to-takeoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/normal-takeoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/crosswind-takeoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/ground-effect-on-takeoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/short-field-takeoff-and-maximum-performance-climb>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/soft-rough-field-takeoff-and-climb>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/rejected-takeoff-engine-failure>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/noise-abatement>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 6: Takeoffs and Departure Climbs (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/prior-to-takeoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/normal-takeoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/crosswind-takeoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/ground-effect-on-takeoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/short-field-takeoff-and-maximum-performance-climb>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/soft-rough-field-takeoff-and-climb>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/rejected-takeoff-engine-failure>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/noise-abatement>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/prior-to-takeoff> a skos:Concept ;
+  skos:prefLabel "Prior to Takeoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/normal-takeoff> a skos:Concept ;
+  skos:prefLabel "Normal Takeoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/crosswind-takeoff> a skos:Concept ;
+  skos:prefLabel "Crosswind Takeoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/ground-effect-on-takeoff> a skos:Concept ;
+  skos:prefLabel "Ground Effect on Takeoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/short-field-takeoff-and-maximum-performance-climb> a skos:Concept ;
+  skos:prefLabel "Short-Field Takeoff and Maximum Performance Climb"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/soft-rough-field-takeoff-and-climb> a skos:Concept ;
+  skos:prefLabel "Soft/Rough-Field Takeoff and Climb"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/rejected-takeoff-engine-failure> a skos:Concept ;
+  skos:prefLabel "Rejected Takeoff/Engine Failure"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/noise-abatement> a skos:Concept ;
+  skos:prefLabel "Noise Abatement"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-6-takeoffs-and-departure-climbs/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers> a skos:Concept ;
+  skos:prefLabel "Chapter 7: Ground Reference Maneuvers"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/maneuvering-by-reference-to-ground-objects>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/drift-and-ground-track-control>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/rectangular-course>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/turns-around-a-point>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/s-turns>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/elementary-eights>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 7: Ground Reference Maneuvers (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/maneuvering-by-reference-to-ground-objects>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/drift-and-ground-track-control>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/rectangular-course>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/turns-around-a-point>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/s-turns>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/elementary-eights>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/maneuvering-by-reference-to-ground-objects> a skos:Concept ;
+  skos:prefLabel "Maneuvering by Reference to Ground Objects"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/drift-and-ground-track-control> a skos:Concept ;
+  skos:prefLabel "Drift and Ground Track Control"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/rectangular-course> a skos:Concept ;
+  skos:prefLabel "Rectangular Course"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/turns-around-a-point> a skos:Concept ;
+  skos:prefLabel "Turns Around a Point"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/s-turns> a skos:Concept ;
+  skos:prefLabel "S-Turns"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/elementary-eights> a skos:Concept ;
+  skos:prefLabel "Elementary Eights"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-7-ground-reference-maneuvers/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns> a skos:Concept ;
+  skos:prefLabel "Chapter 8: Airport Traffic Patterns"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/airport-traffic-patterns-and-operations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/standard-airport-traffic-patterns>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/non-towered-airports>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/safety-considerations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 8: Airport Traffic Patterns (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/airport-traffic-patterns-and-operations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/standard-airport-traffic-patterns>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/non-towered-airports>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/safety-considerations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/airport-traffic-patterns-and-operations> a skos:Concept ;
+  skos:prefLabel "Airport Traffic Patterns and Operations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/standard-airport-traffic-patterns> a skos:Concept ;
+  skos:prefLabel "Standard Airport Traffic Patterns"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/non-towered-airports> a skos:Concept ;
+  skos:prefLabel "Non-Towered Airports"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/safety-considerations> a skos:Concept ;
+  skos:prefLabel "Safety Considerations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-8-airport-traffic-patterns/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings> a skos:Concept ;
+  skos:prefLabel "Chapter 9: Approaches and Landings"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/use-of-flaps>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/normal-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/go-arounds-rejected-landings>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/intentional-slips>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/crosswind-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/turbulent-air-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/short-field-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/soft-field-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/power-off-accuracy-approaches>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/emergency-approaches-and-landings-simulated>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/faulty-approaches-and-landings>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/hydroplaning>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 9: Approaches and Landings (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/use-of-flaps>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/normal-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/go-arounds-rejected-landings>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/intentional-slips>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/crosswind-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/turbulent-air-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/short-field-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/soft-field-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/power-off-accuracy-approaches>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/emergency-approaches-and-landings-simulated>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/faulty-approaches-and-landings>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/hydroplaning>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/use-of-flaps> a skos:Concept ;
+  skos:prefLabel "Use of Flaps"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/normal-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Normal Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/go-arounds-rejected-landings> a skos:Concept ;
+  skos:prefLabel "Go-Arounds (Rejected Landings)"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/intentional-slips> a skos:Concept ;
+  skos:prefLabel "Intentional Slips"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/crosswind-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Crosswind Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/turbulent-air-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Turbulent Air Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/short-field-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Short-Field Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/soft-field-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Soft-Field Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/power-off-accuracy-approaches> a skos:Concept ;
+  skos:prefLabel "Power-Off Accuracy Approaches"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/emergency-approaches-and-landings-simulated> a skos:Concept ;
+  skos:prefLabel "Emergency Approaches and Landings (Simulated)"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/faulty-approaches-and-landings> a skos:Concept ;
+  skos:prefLabel "Faulty Approaches and Landings"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/hydroplaning> a skos:Concept ;
+  skos:prefLabel "Hydroplaning"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-9-approaches-and-landings/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers> a skos:Concept ;
+  skos:prefLabel "Chapter 10: Performance Maneuvers"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/steep-turns>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/steep-spiral>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/chandelle>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/lazy-eight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 10: Performance Maneuvers (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/steep-turns>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/steep-spiral>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/chandelle>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/lazy-eight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/steep-turns> a skos:Concept ;
+  skos:prefLabel "Steep Turns"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/steep-spiral> a skos:Concept ;
+  skos:prefLabel "Steep Spiral"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/chandelle> a skos:Concept ;
+  skos:prefLabel "Chandelle"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/lazy-eight> a skos:Concept ;
+  skos:prefLabel "Lazy Eight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-10-performance-maneuvers/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations> a skos:Concept ;
+  skos:prefLabel "Chapter 11: Night Operations"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/night-vision>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/night-illusions>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/pilot-equipment>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/airplane-equipment-and-lighting>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/airport-and-navigation-lighting-aids>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/training-for-night-flight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/preparation-and-preflight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/starting-taxiing-and-run-up>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/takeoff-and-climb>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/orientation-and-navigation>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/approaches-and-landings>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/how-to-prevent-landing-errors-due-to-optical-illusions>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 11: Night Operations (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/night-vision>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/night-illusions>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/pilot-equipment>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/airplane-equipment-and-lighting>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/airport-and-navigation-lighting-aids>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/training-for-night-flight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/preparation-and-preflight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/starting-taxiing-and-run-up>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/takeoff-and-climb>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/orientation-and-navigation>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/approaches-and-landings>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/how-to-prevent-landing-errors-due-to-optical-illusions>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/night-vision> a skos:Concept ;
+  skos:prefLabel "Night Vision"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/night-illusions> a skos:Concept ;
+  skos:prefLabel "Night Illusions"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/pilot-equipment> a skos:Concept ;
+  skos:prefLabel "Pilot Equipment"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/airplane-equipment-and-lighting> a skos:Concept ;
+  skos:prefLabel "Airplane Equipment and Lighting"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/airport-and-navigation-lighting-aids> a skos:Concept ;
+  skos:prefLabel "Airport and Navigation Lighting Aids"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/training-for-night-flight> a skos:Concept ;
+  skos:prefLabel "Training for Night Flight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/preparation-and-preflight> a skos:Concept ;
+  skos:prefLabel "Preparation and Preflight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/starting-taxiing-and-run-up> a skos:Concept ;
+  skos:prefLabel "Starting, Taxiing, and Run-up"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/takeoff-and-climb> a skos:Concept ;
+  skos:prefLabel "Takeoff and Climb"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/orientation-and-navigation> a skos:Concept ;
+  skos:prefLabel "Orientation and Navigation"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/approaches-and-landings> a skos:Concept ;
+  skos:prefLabel "Approaches and Landings"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/how-to-prevent-landing-errors-due-to-optical-illusions> a skos:Concept ;
+  skos:prefLabel "How to Prevent Landing Errors Due to Optical Illusions"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-11-night-operations/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes> a skos:Concept ;
+  skos:prefLabel "Chapter 12: Transition to Complex Airplanes"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/controllable-pitch-propeller>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/turbocharging>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/retractable-landing-gear>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/transition-training>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 12: Transition to Complex Airplanes (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/controllable-pitch-propeller>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/turbocharging>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/retractable-landing-gear>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/transition-training>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/controllable-pitch-propeller> a skos:Concept ;
+  skos:prefLabel "Controllable-Pitch Propeller"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/turbocharging> a skos:Concept ;
+  skos:prefLabel "Turbocharging"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/retractable-landing-gear> a skos:Concept ;
+  skos:prefLabel "Retractable Landing Gear"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/transition-training> a skos:Concept ;
+  skos:prefLabel "Transition Training"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-12-transition-to-complex-airplanes/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes> a skos:Concept ;
+  skos:prefLabel "Chapter 13: Transition to Multiengine Airplanes"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/general>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/terms-and-definitions>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/operation-of-systems>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/performance-and-limitations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/weight-and-balance>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/ground-operation>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/normal-and-crosswind-takeoff-and-climb>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/short-field-takeoff-and-climb>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/rejected-takeoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/level-off-and-cruise>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/slow-flight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/spin-awareness-and-stalls>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/normal-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/crosswind-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/short-field-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/go-around>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-inoperative-flight-principles>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/low-altitude-engine-failure-scenarios>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-failure-during-flight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-inoperative-approach-and-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/multiengine-training-considerations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 13: Transition to Multiengine Airplanes (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/general>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/terms-and-definitions>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/operation-of-systems>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/performance-and-limitations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/weight-and-balance>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/ground-operation>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/normal-and-crosswind-takeoff-and-climb>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/short-field-takeoff-and-climb>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/rejected-takeoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/level-off-and-cruise>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/slow-flight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/spin-awareness-and-stalls>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/normal-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/crosswind-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/short-field-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/go-around>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-inoperative-flight-principles>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/low-altitude-engine-failure-scenarios>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-failure-during-flight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-inoperative-approach-and-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/multiengine-training-considerations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/general> a skos:Concept ;
+  skos:prefLabel "General"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/terms-and-definitions> a skos:Concept ;
+  skos:prefLabel "Terms and Definitions"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/operation-of-systems> a skos:Concept ;
+  skos:prefLabel "Operation of Systems"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/performance-and-limitations> a skos:Concept ;
+  skos:prefLabel "Performance and Limitations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/weight-and-balance> a skos:Concept ;
+  skos:prefLabel "Weight and Balance"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/ground-operation> a skos:Concept ;
+  skos:prefLabel "Ground Operation"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/normal-and-crosswind-takeoff-and-climb> a skos:Concept ;
+  skos:prefLabel "Normal and Crosswind Takeoff and Climb"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/short-field-takeoff-and-climb> a skos:Concept ;
+  skos:prefLabel "Short-Field Takeoff and Climb"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/rejected-takeoff> a skos:Concept ;
+  skos:prefLabel "Rejected Takeoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/level-off-and-cruise> a skos:Concept ;
+  skos:prefLabel "Level Off and Cruise"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/slow-flight> a skos:Concept ;
+  skos:prefLabel "Slow Flight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/spin-awareness-and-stalls> a skos:Concept ;
+  skos:prefLabel "Spin Awareness and Stalls"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/normal-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Normal Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/crosswind-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Crosswind Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/short-field-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Short-Field Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/go-around> a skos:Concept ;
+  skos:prefLabel "Go-Around"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-inoperative-flight-principles> a skos:Concept ;
+  skos:prefLabel "Engine Inoperative Flight Principles"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/low-altitude-engine-failure-scenarios> a skos:Concept ;
+  skos:prefLabel "Low Altitude Engine Failure Scenarios"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-failure-during-flight> a skos:Concept ;
+  skos:prefLabel "Engine Failure During Flight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/engine-inoperative-approach-and-landing> a skos:Concept ;
+  skos:prefLabel "Engine Inoperative Approach and Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/multiengine-training-considerations> a skos:Concept ;
+  skos:prefLabel "Multiengine Training Considerations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-13-transition-to-multiengine-airplanes/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes> a skos:Concept ;
+  skos:prefLabel "Chapter 14: Transition to Tailwheel Airplanes"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/landing-gear>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/angle-of-attack>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/taxiing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/weathervaning>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/visibility>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/directional-control>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/normal-takeoff-roll>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/liftoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/crosswind-takeoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/short-field-takeoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/soft-field-takeoff>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/touchdown>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/after-landing-roll>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/crosswind-after-landing-roll>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/short-field-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/soft-field-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/ground-loop>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 14: Transition to Tailwheel Airplanes (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/landing-gear>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/angle-of-attack>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/taxiing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/weathervaning>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/visibility>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/directional-control>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/normal-takeoff-roll>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/liftoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/crosswind-takeoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/short-field-takeoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/soft-field-takeoff>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/touchdown>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/after-landing-roll>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/crosswind-after-landing-roll>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/short-field-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/soft-field-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/ground-loop>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/landing-gear> a skos:Concept ;
+  skos:prefLabel "Landing Gear"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/angle-of-attack> a skos:Concept ;
+  skos:prefLabel "Angle of Attack"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/taxiing> a skos:Concept ;
+  skos:prefLabel "Taxiing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/weathervaning> a skos:Concept ;
+  skos:prefLabel "Weathervaning"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/visibility> a skos:Concept ;
+  skos:prefLabel "Visibility"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/directional-control> a skos:Concept ;
+  skos:prefLabel "Directional Control"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/normal-takeoff-roll> a skos:Concept ;
+  skos:prefLabel "Normal Takeoff Roll"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/liftoff> a skos:Concept ;
+  skos:prefLabel "Liftoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/crosswind-takeoff> a skos:Concept ;
+  skos:prefLabel "Crosswind Takeoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/short-field-takeoff> a skos:Concept ;
+  skos:prefLabel "Short-Field Takeoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/soft-field-takeoff> a skos:Concept ;
+  skos:prefLabel "Soft-Field Takeoff"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/landing> a skos:Concept ;
+  skos:prefLabel "Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/touchdown> a skos:Concept ;
+  skos:prefLabel "Touchdown"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/after-landing-roll> a skos:Concept ;
+  skos:prefLabel "After-Landing Roll"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/crosswind-after-landing-roll> a skos:Concept ;
+  skos:prefLabel "Crosswind After-Landing Roll"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/short-field-landing> a skos:Concept ;
+  skos:prefLabel "Short-Field Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/soft-field-landing> a skos:Concept ;
+  skos:prefLabel "Soft-Field Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/ground-loop> a skos:Concept ;
+  skos:prefLabel "Ground Loop"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-14-transition-to-tailwheel-airplanes/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes> a skos:Concept ;
+  skos:prefLabel "Chapter 15: Transition to Turbopropeller-Powered Airplanes"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/gas-turbine-engine>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-engines>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-engine-types>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/reverse-thrust-and-beta-range-operations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-airplane-electrical-systems>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/operational-considerations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/training-considerations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 15: Transition to Turbopropeller-Powered Airplanes (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/gas-turbine-engine>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-engines>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-engine-types>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/reverse-thrust-and-beta-range-operations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-airplane-electrical-systems>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/operational-considerations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/training-considerations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/gas-turbine-engine> a skos:Concept ;
+  skos:prefLabel "Gas Turbine Engine"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-engines> a skos:Concept ;
+  skos:prefLabel "Turboprop Engines"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-engine-types> a skos:Concept ;
+  skos:prefLabel "Turboprop Engine Types"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/reverse-thrust-and-beta-range-operations> a skos:Concept ;
+  skos:prefLabel "Reverse Thrust and Beta Range Operations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/turboprop-airplane-electrical-systems> a skos:Concept ;
+  skos:prefLabel "Turboprop Airplane Electrical Systems"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/operational-considerations> a skos:Concept ;
+  skos:prefLabel "Operational Considerations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/training-considerations> a skos:Concept ;
+  skos:prefLabel "Training Considerations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-15-transition-to-turbopropeller-powered-airplanes/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes> a skos:Concept ;
+  skos:prefLabel "Chapter 16: Transition to Jet-Powered Airplanes"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/ground-safety>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-basics>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/operating-the-jet-engine>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-efficiency>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/absence-of-propeller-effects>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/speed-margins>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/mach-buffet>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/low-speed-flight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/stalls>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/drag-devices>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/thrust-reversers>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/pilot-sensations-in-jet-flying>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-takeoff-and-climb>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-descent-and-approach>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-landing>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-systems-and-maintenance>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 16: Transition to Jet-Powered Airplanes (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/ground-safety>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-basics>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/operating-the-jet-engine>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-efficiency>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/absence-of-propeller-effects>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/speed-margins>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/mach-buffet>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/low-speed-flight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/stalls>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/drag-devices>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/thrust-reversers>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/pilot-sensations-in-jet-flying>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-takeoff-and-climb>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-descent-and-approach>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-landing>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-systems-and-maintenance>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/ground-safety> a skos:Concept ;
+  skos:prefLabel "Ground Safety"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-basics> a skos:Concept ;
+  skos:prefLabel "Jet Engine Basics"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/operating-the-jet-engine> a skos:Concept ;
+  skos:prefLabel "Operating the Jet Engine"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-efficiency> a skos:Concept ;
+  skos:prefLabel "Jet Engine Efficiency"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/absence-of-propeller-effects> a skos:Concept ;
+  skos:prefLabel "Absence of Propeller Effects"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/speed-margins> a skos:Concept ;
+  skos:prefLabel "Speed Margins"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/mach-buffet> a skos:Concept ;
+  skos:prefLabel "Mach Buffet"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/low-speed-flight> a skos:Concept ;
+  skos:prefLabel "Low-Speed Flight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/stalls> a skos:Concept ;
+  skos:prefLabel "Stalls"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/drag-devices> a skos:Concept ;
+  skos:prefLabel "Drag Devices"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/thrust-reversers> a skos:Concept ;
+  skos:prefLabel "Thrust Reversers"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/pilot-sensations-in-jet-flying> a skos:Concept ;
+  skos:prefLabel "Pilot Sensations in Jet Flying"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-takeoff-and-climb> a skos:Concept ;
+  skos:prefLabel "Jet Airplane Takeoff and Climb"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-descent-and-approach> a skos:Concept ;
+  skos:prefLabel "Jet Airplane Descent and Approach"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-engine-landing> a skos:Concept ;
+  skos:prefLabel "Jet Engine Landing"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/jet-airplane-systems-and-maintenance> a skos:Concept ;
+  skos:prefLabel "Jet Airplane Systems and Maintenance"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-16-transition-to-jet-powered-airplanes/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa> a skos:Concept ;
+  skos:prefLabel "Chapter 17: Transition to Light Sport Airplanes (LSA)"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/light-sport-aircraft-background>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/light-sport-airplane-synopsis>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/sport-pilot-certificate>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/transition-training-considerations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/lsa-maintenance>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/airframe-and-systems>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/weather-considerations>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/flight-environment>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/key-points>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 17: Transition to Light Sport Airplanes (LSA) (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/light-sport-aircraft-background>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/light-sport-airplane-synopsis>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/sport-pilot-certificate>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/transition-training-considerations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/lsa-maintenance>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/airframe-and-systems>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/weather-considerations>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/flight-environment>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/key-points>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/light-sport-aircraft-background> a skos:Concept ;
+  skos:prefLabel "Light-Sport Aircraft Background"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/light-sport-airplane-synopsis> a skos:Concept ;
+  skos:prefLabel "Light-Sport Airplane Synopsis"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/sport-pilot-certificate> a skos:Concept ;
+  skos:prefLabel "Sport Pilot Certificate"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/transition-training-considerations> a skos:Concept ;
+  skos:prefLabel "Transition Training Considerations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/lsa-maintenance> a skos:Concept ;
+  skos:prefLabel "LSA Maintenance"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/airframe-and-systems> a skos:Concept ;
+  skos:prefLabel "Airframe and Systems"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/weather-considerations> a skos:Concept ;
+  skos:prefLabel "Weather Considerations"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/flight-environment> a skos:Concept ;
+  skos:prefLabel "Flight Environment"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/key-points> a skos:Concept ;
+  skos:prefLabel "Key Points"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-17-transition-to-light-sport-airplanes-lsa/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures> a skos:Concept ;
+  skos:prefLabel "Chapter 18: Emergency Procedures"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/introduction>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-landings>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/basic-safety-concepts>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/terrain-types>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/engine-failure-after-takeoff-single-engine>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-descents>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/in-flight-fire>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/flight-control-malfunction-failure>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/system-malfunctions>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/abnormal-engine-instrument-indication>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/door-opening-in-flight>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/inadvertent-vfr-flight-into-imc>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-response-systems>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/chapter-summary> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/order> a skos:OrderedCollection ;
+  skos:prefLabel "Chapter 18: Emergency Procedures (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/introduction>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-landings>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/basic-safety-concepts>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/terrain-types>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/engine-failure-after-takeoff-single-engine>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-descents>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/in-flight-fire>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/flight-control-malfunction-failure>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/system-malfunctions>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/abnormal-engine-instrument-indication>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/door-opening-in-flight>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/inadvertent-vfr-flight-into-imc>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-response-systems>
+    <https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/chapter-summary>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/introduction> a skos:Concept ;
+  skos:prefLabel "Introduction"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-landings> a skos:Concept ;
+  skos:prefLabel "Emergency Landings"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/basic-safety-concepts> a skos:Concept ;
+  skos:prefLabel "Basic Safety Concepts"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/terrain-types> a skos:Concept ;
+  skos:prefLabel "Terrain Types"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/engine-failure-after-takeoff-single-engine> a skos:Concept ;
+  skos:prefLabel "Engine Failure After Takeoff (Single-Engine)"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-descents> a skos:Concept ;
+  skos:prefLabel "Emergency Descents"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/in-flight-fire> a skos:Concept ;
+  skos:prefLabel "In-Flight Fire"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/flight-control-malfunction-failure> a skos:Concept ;
+  skos:prefLabel "Flight Control Malfunction/Failure"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/system-malfunctions> a skos:Concept ;
+  skos:prefLabel "System Malfunctions"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/abnormal-engine-instrument-indication> a skos:Concept ;
+  skos:prefLabel "Abnormal Engine Instrument Indication"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/door-opening-in-flight> a skos:Concept ;
+  skos:prefLabel "Door Opening In-Flight"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/inadvertent-vfr-flight-into-imc> a skos:Concept ;
+  skos:prefLabel "Inadvertent VFR Flight Into IMC"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/emergency-response-systems> a skos:Concept ;
+  skos:prefLabel "Emergency Response Systems"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#chapter-18-emergency-procedures/chapter-summary> a skos:Concept ;
+  skos:prefLabel "Chapter Summary"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary> a skos:Concept ;
+  skos:prefLabel "Glossary"@en ;
+  dct:hasPart <https://example.com/moca/pdf/airplane-flying-handbook#glossary/numbers-and-symbols>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/a>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/b>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/c>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/d>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/e>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/f>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/g>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/h>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/l>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/j>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/k>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/m>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/n>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/o>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/p>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/r>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/s>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/t>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/u>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/w>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/y>,
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/z> .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/order> a skos:OrderedCollection ;
+  skos:prefLabel "Glossary (section order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/numbers-and-symbols>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/a>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/b>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/c>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/d>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/e>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/f>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/g>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/h>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/l>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/j>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/k>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/m>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/n>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/o>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/p>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/r>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/s>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/t>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/u>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/w>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/y>
+    <https://example.com/moca/pdf/airplane-flying-handbook#glossary/z>
+  ) .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/numbers-and-symbols> a skos:Concept ;
+  skos:prefLabel "Numbers and Symbols"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/a> a skos:Concept ;
+  skos:prefLabel "A"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/b> a skos:Concept ;
+  skos:prefLabel "B"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/c> a skos:Concept ;
+  skos:prefLabel "C"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/d> a skos:Concept ;
+  skos:prefLabel "D"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/e> a skos:Concept ;
+  skos:prefLabel "E"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/f> a skos:Concept ;
+  skos:prefLabel "F"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/g> a skos:Concept ;
+  skos:prefLabel "G"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/h> a skos:Concept ;
+  skos:prefLabel "H"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/l> a skos:Concept ;
+  skos:prefLabel "L"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/j> a skos:Concept ;
+  skos:prefLabel "J"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/k> a skos:Concept ;
+  skos:prefLabel "K"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/m> a skos:Concept ;
+  skos:prefLabel "M"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/n> a skos:Concept ;
+  skos:prefLabel "N"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/o> a skos:Concept ;
+  skos:prefLabel "O"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/p> a skos:Concept ;
+  skos:prefLabel "P"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/r> a skos:Concept ;
+  skos:prefLabel "R"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/s> a skos:Concept ;
+  skos:prefLabel "S"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/t> a skos:Concept ;
+  skos:prefLabel "T"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/u> a skos:Concept ;
+  skos:prefLabel "U"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/w> a skos:Concept ;
+  skos:prefLabel "W"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/y> a skos:Concept ;
+  skos:prefLabel "Y"@en .
+
+<https://example.com/moca/pdf/airplane-flying-handbook#glossary/z> a skos:Concept ;
+  skos:prefLabel "Z"@en .

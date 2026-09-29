@@ -11,6 +11,9 @@ moca-lint.sarif
 *.moca
 *.moca.idx.zip
 
+# Source PDFs for examples/pdf are downloaded by scripts/fetch-pdfs.mjs
+examples/pdf/capture/*.pdf
+
 # Agent / editor local state
 .claude/
 .vscode/

@@ -48,6 +48,10 @@ function detectDirectory(inputPath) {
     return 'obsidian';
   }
 
+  if (getAdapter('pdf').detect(inputPath)) {
+    return 'pdf';
+  }
+
   // "Has at least one Markdown file anywhere" is the same test the
   // directory adapter's own detect() runs; it's inlined here (rather than
   // calling it separately) because the file list and count are also needed
@@ -83,6 +87,10 @@ function detectFile(inputPath) {
   }
 
   const ext = extname(inputPath);
+  if (ext === '.pdf') {
+    return 'pdf';
+  }
+
   if (OPENAPI_JSON_YAML_EXT.has(ext)) {
     try {
       parseOpenApiDocument(inputPath);

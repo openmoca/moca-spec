@@ -202,7 +202,7 @@ function checkPaths(file, fm, body, files, diagnostics) {
     if (/^\s*(```|~~~)/.test(line)) fence = !fence;
     if (fence) return;
     for (const m of line.replace(/`[^`]*`/g, '').matchAll(LINK)) {
-      const target = m[1];
+      const target = m[1].replace(/^<|>$/g, '');
       if (SCHEME.test(target) || target.startsWith('#')) continue;
       let resolved;
       try {

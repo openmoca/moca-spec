@@ -1,0 +1,10 @@
+// The package here is generated from PDFs: lists keep the handbook's own
+// numbering (a list may resume at 3 after a figure), headings repeat as they
+// do in the handbook ("Common Errors" under each maneuver), and figure
+// captions are set in italics.
+{
+  "extends": "../../.markdownlint.jsonc",
+  "MD024": false,
+  "MD029": false,
+  "MD036": false
+}
