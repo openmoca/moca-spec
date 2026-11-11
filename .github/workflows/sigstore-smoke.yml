@@ -17,15 +17,15 @@ jobs:
     if: github.repository == 'openmoca/moca-spec' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: moca-spec
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: openmoca/moca-reader-typescript
           ref: v0.6.0
           path: moca-reader-typescript
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: openmoca/moca-tools
           ref: v0.6.0
