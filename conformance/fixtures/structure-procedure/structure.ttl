@@ -1,0 +1,25 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix ir: <https://example.org/handbook/incident#> .
+
+ir:IncidentResponse a skos:Concept ;
+  skos:prefLabel "Incident response"@en ;
+  dct:hasPart ir:AssessSeverity, ir:DeclareIncident, ir:NotifyCustomers, ir:ResolveAndReview .
+
+ir:ResponseSteps a skos:OrderedCollection ;
+  skos:prefLabel "Incident response steps"@en ;
+  skos:memberList ( ir:AssessSeverity ir:DeclareIncident ir:NotifyCustomers ir:ResolveAndReview ) .
+
+ir:AssessSeverity a skos:Concept ;
+  skos:prefLabel "Assess severity"@en .
+
+ir:DeclareIncident a skos:Concept ;
+  skos:prefLabel "Declare the incident"@en ;
+  dct:requires ir:AssessSeverity .
+
+ir:NotifyCustomers a skos:Concept ;
+  skos:prefLabel "Notify customers"@en ;
+  dct:requires ir:AssessSeverity .
+
+ir:ResolveAndReview a skos:Concept ;
+  skos:prefLabel "Resolve and review"@en .

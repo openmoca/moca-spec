@@ -1,0 +1,5 @@
+{
+  "id": "https://example.com/conformance/m001-utf8",
+  "version": "1.0.0",
+  "title": "Bad ÿ byte"
+}

@@ -1,0 +1,13 @@
+{
+  "keys": [
+    {
+      "keyid": "small-order",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\n-----END PUBLIC KEY-----\n",
+      "identity": "Conformance signature-small-order-key key (INSECURE, published construction)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "package"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+Refunds: customers may request a refund within 30 days of delivery.
+Café orders are excluded.

@@ -1,0 +1,11 @@
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ir: <https://example.org/handbook/incident#> .
+
+# An organisation rule layered over the incident-response package:
+# a review may only start once the incident has been declared.
+ir:ResolveAndReview dct:requires ir:DeclareIncident .
+
+ir:LegalHold a skos:Concept ;
+  skos:prefLabel "Legal hold"@en ;
+  skos:broader ir:ResolveAndReview .

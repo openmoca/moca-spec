@@ -1,0 +1,23 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix svc: <https://example.org/services#> .
+
+svc:ServiceBoundary a skos:Concept ;
+  skos:prefLabel "Service boundary"@en ;
+  skos:definition "The ownership and data-isolation perimeter of a service."@en .
+
+svc:Microservice a skos:Concept ;
+  skos:prefLabel "Microservice"@en ;
+  skos:related svc:ServiceBoundary .
+
+svc:OrderPlatform a skos:Concept ;
+  skos:prefLabel "Order platform"@en ;
+  dct:hasPart svc:OrderService, svc:OrderDatabase .
+
+svc:OrderService a skos:Concept ;
+  skos:prefLabel "Order service"@en ;
+  skos:broader svc:Microservice ;
+  dct:requires svc:OrderDatabase .
+
+svc:OrderDatabase a skos:Concept ;
+  skos:prefLabel "Order database"@en .

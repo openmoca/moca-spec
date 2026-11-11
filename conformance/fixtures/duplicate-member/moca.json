@@ -1,0 +1,17 @@
+{
+  "id": "https://example.com/conformance/m005",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "members": [
+    {
+      "id": "https://example.com/conformance/a",
+      "version": "1.0.0",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "id": "https://example.com/conformance/a",
+      "version": "1.0.0",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  ]
+}

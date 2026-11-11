@@ -1,0 +1,5 @@
+Welcome to AGF-1, the first video of this complete series on the Microsoft Agent Framework — an open-source framework from Microsoft that unifies AutoGen, Semantic Kernel, and Azure Agent Service into a single powerful ecosystem.
+
+This video walks through the fundamentals of creating agents in different modes, understanding how the framework works under the hood, and learning how to interact with agents using the Python SDK.
+
+#azureai #agentframework #aiagents #workflow #microsoftai

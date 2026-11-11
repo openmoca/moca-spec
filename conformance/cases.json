@@ -1,0 +1,3780 @@
+{
+  "corpusVersion": "0.6.0",
+  "cases": [
+    {
+      "id": "valid-minimal",
+      "description": "Smallest valid package.",
+      "target": "fixtures/valid-minimal",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:d38eef8a9aa059faabed7a60aba6b3d18031deabd3be1b7347ac7abfbc66b708"
+      }
+    },
+    {
+      "id": "valid-hidden-entries",
+      "description": "Entries whose name starts with \".\" are not part of the package and do not change its digest.",
+      "target": "fixtures/valid-hidden-entries",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal"
+      }
+    },
+    {
+      "id": "log-heading-in-fence",
+      "description": "A level-two heading inside a fenced code block in log.md is code, not a date heading: no C004.",
+      "target": "fixtures/log-heading-in-fence",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:70de3895a1cbf3d91ed81f07b82200df6f19eb519207ef52c6d27f9a8d62e7dd"
+      }
+    },
+    {
+      "id": "manifest-invalid-utf8",
+      "description": "moca.json with a byte that is not valid UTF-8 is M001; it is not read with a replacement character.",
+      "target": "fixtures/manifest-invalid-utf8",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M001_MANIFEST_INVALID_JSON"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "manifest-duplicate-key",
+      "description": "moca.json that repeats a member name is M001 (I-JSON, RFC 7493): Readers must not disagree on which id it declares.",
+      "target": "fixtures/manifest-duplicate-key",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M001_MANIFEST_INVALID_JSON"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "attestations-as-file",
+      "description": "Only entries under the attestations/ directory are left out of the digest. A top-level file named attestations is ordinary content and is digested.",
+      "target": "fixtures/attestations-as-file",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:e9982b8e756d26b13bb01aa6f89be9d5b1bee80e4800f80aca48998a091ed52c"
+      }
+    },
+    {
+      "id": "valid-archive",
+      "description": "The same package as a .zip archive has the same digest as the directory.",
+      "target": "fixtures/archive-minimal.zip",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal"
+      }
+    },
+    {
+      "id": "archive-escaped-paths",
+      "description": "Package spec §6.4: digest lines are sorted by the UTF-8 bytes of each NFC path before %, CR and LF are percent-encoded. Paths here hold %, #, !, CR and LF.",
+      "target": "fixtures/archive-escaped-paths.zip",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:eb7010b04528af9307a67ebec03188a7d1cb7cdefe44fd4bdeb1d9191c0d768f"
+      }
+    },
+    {
+      "id": "target-not-found",
+      "description": "A target that does not exist is T001.",
+      "target": "fixtures/no-such-package",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T001_TARGET_NOT_FOUND"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "target-no-manifest",
+      "description": "A target that exists but has no moca.json at its root is T002, reported separately from T001.",
+      "target": "fixtures/target-no-manifest",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T002_MANIFEST_NOT_FOUND"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "limit-archive-entries",
+      "description": "An archive with more entries than the entry limit is rejected before any entry is read (T003).",
+      "target": "fixtures/archive-minimal.zip",
+      "options": {
+        "limits": {
+          "maxEntries": 1
+        }
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "limit-archive-bytes",
+      "description": "An archive with more uncompressed bytes than the byte limit is rejected (T003).",
+      "target": "fixtures/archive-minimal.zip",
+      "options": {
+        "limits": {
+          "maxBytes": 10
+        }
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "limit-directory-entries",
+      "description": "Contract §3: the entry limit applies to directories too, not only archives.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "limits": {
+          "maxEntries": 1
+        }
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-name-not-utf8",
+      "description": "Contract §3: an entry name with bytes outside ASCII and without the UTF-8 flag is rejected, not guessed.",
+      "target": "fixtures/archive-name-not-utf8.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-empty-segment",
+      "description": "An entry name with an empty segment (a//b) is rejected.",
+      "target": "fixtures/archive-empty-segment.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-dot-segment",
+      "description": "An entry name with a \".\" segment is rejected.",
+      "target": "fixtures/archive-dot-segment.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-nul-name",
+      "description": "An entry name containing NUL is rejected.",
+      "target": "fixtures/archive-nul-name.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-bzip2",
+      "description": "Only stored and deflated entries are read; an entry compressed any other way is unreadable.",
+      "target": "fixtures/archive-bzip2.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "P002_UNREADABLE_ENTRY"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-stored-size",
+      "description": "Contract §3: a stored (uncompressed) entry is checked like a deflated one. Its bytes must be exactly its declared size and match its CRC-32, or it is unreadable.",
+      "target": "fixtures/archive-stored-size.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "P002_UNREADABLE_ENTRY"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-duplicate-entry",
+      "description": "Two entries with one name collide.",
+      "target": "fixtures/archive-duplicate-entry.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "P003_PATH_COLLISION"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-symlink",
+      "description": "An entry whose Unix mode is a symbolic link is not a regular file.",
+      "target": "fixtures/archive-symlink.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "P001_UNSUPPORTED_ENTRY"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "valid-noncharacter-path",
+      "description": "A path may hold any code point, including the noncharacter U+FFFE: the package is valid, and every Reader reads it without failing and computes the same digest.",
+      "target": "fixtures/archive-noncharacter.zip",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:b2819d37ab277659712c10efb32b902d27e043d66c9da4f0cdf1722dd9fd647d"
+      }
+    },
+    {
+      "id": "path-collision-nfc",
+      "description": "Two paths equal after NFC normalisation (café.md, composed and decomposed): a package error.",
+      "target": "fixtures/archive-collision-nfc.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "P003_PATH_COLLISION"
+        ]
+      }
+    },
+    {
+      "id": "path-collision-case",
+      "description": "Two paths equal after lower-casing (Hello.md, hello.md): a package error.",
+      "target": "fixtures/archive-collision-case.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "P003_PATH_COLLISION"
+        ]
+      }
+    },
+    {
+      "id": "path-collision-simple-lowercase",
+      "description": "Lower-casing is the simple mapping per code point: İ (U+0130) becomes i, so İ.md and i.md collide.",
+      "target": "fixtures/archive-collision-simple-lowercase.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "P003_PATH_COLLISION"
+        ]
+      }
+    },
+    {
+      "id": "valid-dotted-i",
+      "description": "İ.md and i̇.md (i + U+0307) do not collide: simple lower-casing maps İ to i, not to i + U+0307.",
+      "target": "fixtures/archive-dotted-i.zip",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:e401bf3dc5318612bfef7265fff7e816c0848a43ddd271b691d9de98761aed39"
+      }
+    },
+    {
+      "id": "valid-locales",
+      "description": "Locale variants are representations of one node; a dotted name that is not a declared locale is a separate node.",
+      "target": "fixtures/valid-locales",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "sha256:db78c7fc514d10667e4c990a2bcf3398f7e08913e6cf63566146cab461c5a3ac"
+      }
+    },
+    {
+      "id": "audience-rules",
+      "description": "A moca.audience that is not a non-empty string is C005; the node is still read.",
+      "target": "fixtures/audience-rules",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "sha256:a3e45050ef40837c4d52e47556337ae3f047e9cf7d24e11df847990317c1cc7c"
+      }
+    },
+    {
+      "id": "valid-evidence",
+      "description": "Evidence joined to OKF sources by id, with the three selector types. A TextPositionSelector on its own is not checked (contract §7): matched is absent.",
+      "target": "fixtures/valid-evidence",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ],
+        "digest": "sha256:f1ca665de05b4022a5e2eb351bf008b81341793e62bb43d499ebf4e4633d25c9",
+        "evidenceMatched": {
+          "refunds.md": [
+            true,
+            null,
+            null
+          ]
+        }
+      }
+    },
+    {
+      "id": "self-contained-evidence",
+      "description": "Every evidence source is a text file under sources/, and every quote and position selector matches it. The position selector is not checked; the capability depends on where the evidence is, not on matching.",
+      "target": "fixtures/self-contained-evidence",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:f5b0ad1432bae664217265c0fddb65dba56fb6f5c081598da746b7acf549cb1e",
+        "evidenceMatched": {
+          "refunds.md": [
+            true,
+            true,
+            null
+          ]
+        }
+      }
+    },
+    {
+      "id": "evidence-selector-unmatched",
+      "description": "A quote that is not in the cited file, and a position past its end: warnings, verified false, still self-contained. The position selector past the end is not checked; the quote that is not in the file still gives C011.",
+      "target": "fixtures/evidence-selector-unmatched",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:9f505aeaad74c4c9f4713fc520ba33b7df73c9f07456376189f40d73044ce68a",
+        "evidenceMatched": {
+          "refunds.md": [
+            false,
+            null
+          ]
+        }
+      }
+    },
+    {
+      "id": "evidence-normalised",
+      "description": "Markdown and HTML sources are matched after normalisation: markup and link syntax removed, entities decoded. The quote is normalised as the source is, so a quote that keeps Markdown markup matches too; the position selector is not checked.",
+      "target": "fixtures/evidence-normalised",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:719ca2c214a26a70718c57b4f44d6b1d10fdf46123c071148ba4386628f3fe18",
+        "evidenceMatched": {
+          "refunds.md": [
+            true,
+            true,
+            null,
+            true,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "id": "evidence-webvtt",
+      "description": "WebVTT captions: quotes match cue text with cue tags removed; Media Fragments time ranges match when they overlap a cue.",
+      "target": "fixtures/evidence-webvtt",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:4a8a2339f48cd5223077c90f2f360e084c92f894784ca8312985b0e4ca698d6e",
+        "evidenceMatched": {
+          "briefing.md": [
+            true,
+            true,
+            true,
+            false,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "id": "signed-reviewed",
+      "description": "Publisher-signed and reviewed package, verified against the trust root.",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "digest": "sha256:d56a9665bb17013df662492f4c4a897cdb8727bd59a65dc0c903158f4f504a36"
+      }
+    },
+    {
+      "id": "key-expired",
+      "description": "A key is not trusted from the instant it expires (now ≥ expires), whatever the signing time: the package attestation is invalid. The host clock applies to reading. With no valid package attestation, its reviews do not make it reviewed (ADR-0017).",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-expiring.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "key-not-yet-expired",
+      "description": "One second before its expiry the same key is trusted.",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-expiring.json",
+        "now": "2026-09-26T23:59:59Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "signed-no-trust-root",
+      "description": "Without a trust root, attestations are unverifiable, never valid.",
+      "target": "fixtures/signed-reviewed",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A003_ATTESTATION_UNVERIFIABLE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "signature-tampered",
+      "description": "Content changed after signing: the package attestation no longer matches and the review of the changed file is outdated. A statement that names this id and version with another digest is positive evidence of tampering (A008).",
+      "target": "fixtures/signature-tampered",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A006_REVIEW_OUTDATED",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "require-signature-unsigned",
+      "description": "Attestations §8: a host that requires a signature refuses a package with no valid package attestation (A009).",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "requireSignature": true
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "A009_SIGNATURE_REQUIRED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "require-signature-tampered",
+      "description": "Under the same requirement, a tampered package is refused.",
+      "target": "fixtures/signature-tampered",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "requireSignature": true
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "A006_REVIEW_OUTDATED",
+          "A008_PACKAGE_DIGEST_MISMATCH",
+          "A009_SIGNATURE_REQUIRED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "require-signature-signed",
+      "description": "A signed package passes the requirement.",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "requireSignature": true
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "signature-untrusted-key",
+      "description": "Signed with a key the trust root does not list.",
+      "target": "fixtures/signature-untrusted-key",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "signature-key-not-ed25519",
+      "description": "A correct DSSE signature from an RSA key the trust root lists does not verify: DSSE keys are Ed25519 (attestations §5).",
+      "target": "fixtures/signature-key-not-ed25519",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "signature-small-order-key",
+      "description": "Attestations §5: a trusted key that is a small-order point verifies nothing. Here A and R are the identity and S is 0, which some Ed25519 libraries accept for any message.",
+      "target": "fixtures/signature-small-order-key",
+      "options": {
+        "trustRoot": "fixtures/trust-root-signature-small-order-key.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "signature-mixed-order-key",
+      "description": "Attestations §5: a trusted key with a small-order component verifies nothing, even when the signature passes both the cofactored and the cofactorless equation, as this one does.",
+      "target": "fixtures/signature-mixed-order-key",
+      "options": {
+        "trustRoot": "fixtures/trust-root-signature-mixed-order-key.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-signed",
+      "description": "Attestations §6, §7: a keyless Sigstore package attestation, verified offline against the host's sigstore.trustedRoot (a self-made test Sigstore, INSECURE), for an identity the trust root lists.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-signed",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-reviewed",
+      "description": "A Sigstore package attestation and a Sigstore review attestation, each from its listed identity and role.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-reviewed",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-identity-not-listed",
+      "description": "The bundle verifies, but its identity is not one the trust root lists: invalid. Some valid Sigstore signature is never enough.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-signed",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root-other-identity.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-wrong-role",
+      "description": "The identity is listed only for reviews, so it cannot attest a package.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-signed",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root-review-only.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-tampered",
+      "description": "Content changed after signing: the attested digest is not this package's (A008).",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-tampered",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-tlog-mismatch",
+      "description": "The transparency-log entry records another signature than the bundle's: invalid.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-tlog-mismatch",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-untrusted-ca",
+      "description": "The certificate chains to a CA that is not in the host's trusted root: invalid.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-untrusted-ca",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "review-wrong-role",
+      "description": "A review signed with a key trusted only for the package role does not verify.",
+      "target": "fixtures/review-wrong-role",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "trust-root-empty-roles",
+      "description": "A key whose roles list is empty is trusted for nothing: a host disables a key by emptying its roles. The package attestation does not verify. With no valid package attestation, its reviews do not make it reviewed (ADR-0017).",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-empty-roles.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "attestation-malformed",
+      "description": "An attestation that is not an in-toto envelope.",
+      "target": "fixtures/attestation-malformed",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "attestation-wrong-payload-type",
+      "description": "An envelope whose payloadType is not application/vnd.in-toto+json is malformed (A001), whatever its signature.",
+      "target": "fixtures/attestation-wrong-payload-type",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:00c9b9f6bd36cd907d7e2bb7a09d47fdff542e779f342f34fb2ea8d0a18ae78f"
+      }
+    },
+    {
+      "id": "attestation-payload-not-json",
+      "description": "An envelope whose payload does not decode to JSON is malformed (A001).",
+      "target": "fixtures/attestation-payload-not-json",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:1f95e8cd384134ba31351acbc87cfe4c340d4a4c548a83c0184bd132488ab9e9"
+      }
+    },
+    {
+      "id": "attestation-not-statement",
+      "description": "A payload that is JSON but not an in-toto v1 Statement is malformed (A001).",
+      "target": "fixtures/attestation-not-statement",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:697a07f5cb31433717b6cab41fce20052f4e39a3ebc72aa8804ca413c7f0f86d"
+      }
+    },
+    {
+      "id": "attestation-duplicate-key",
+      "description": "A statement that repeats a member name is malformed (A001).",
+      "target": "fixtures/attestation-duplicate-key",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "attestation-no-signatures",
+      "description": "A well-formed envelope with no signatures does not verify (A002).",
+      "target": "fixtures/attestation-no-signatures",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:c142150495824d524f097de6053f2a57a2e7af5a06d1209270088b22a8c3eac3"
+      }
+    },
+    {
+      "id": "signature-no-keyid",
+      "description": "A signature with no keyid is never tried against a key, so it does not verify (A002).",
+      "target": "fixtures/signature-no-keyid",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:0e4372a8ed663029bb210d6df7501543d8e7a4a478e73e1bc52fb7010a676c5e"
+      }
+    },
+    {
+      "id": "signature-subject-mismatch",
+      "description": "A correct signature over a statement naming another version does not attest this package (A002).",
+      "target": "fixtures/signature-subject-mismatch",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:2219e5ee86843f28b83d9e186a17ae30011bc5e183da9f64cf7f89335b7f4bec"
+      }
+    },
+    {
+      "id": "signature-one-of-two",
+      "description": "An envelope with an untrusted signature and a trusted one is valid: one signature that verifies is enough, and the signer is that key's identity.",
+      "target": "fixtures/signature-one-of-two",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "digest": "sha256:95692f10be9a12765931a638b143c119311d58231a67546d7deb618dfaddd83c"
+      }
+    },
+    {
+      "id": "signature-base64url",
+      "description": "Payload and signature may be base64url (RFC 4648 §5) without padding, as DSSE allows.",
+      "target": "fixtures/signature-base64url",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "digest": "sha256:b271168281fb879363ce42fcdb7da3fb807f36abba6a07592ce7759b5529fcfc"
+      }
+    },
+    {
+      "id": "attestation-unknown-predicate",
+      "description": "A signed statement with a predicate type MOCA does not define is ignored: no diagnostic, and it attests nothing.",
+      "target": "fixtures/attestation-unknown-predicate",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:9cc92a27f14b324645b1a05f8365a412b7c0af01939497bf808e0594f6ba4b99"
+      }
+    },
+    {
+      "id": "review-package-mismatch",
+      "description": "A review whose predicate names another package id does not count (A002).",
+      "target": "fixtures/review-package-mismatch",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "digest": "sha256:61afe16a587f8bfccceecb6127bf6940ea14308a6d5f0dbb8fc8b86d9d33ba8a"
+      }
+    },
+    {
+      "id": "review-inaccurate",
+      "description": "Package spec §11 (ADR-0017): a review that says inaccurate does not make the package reviewed.",
+      "target": "fixtures/review-inaccurate",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "digest": "sha256:03631665f3f7f65cdf1884e257b59c1ff22a23ba2373f03d5d4dc3ee3fd0b1f5"
+      }
+    },
+    {
+      "id": "search-review-inaccurate",
+      "kind": "search",
+      "description": "A node whose current review says inaccurate is disputed.",
+      "packages": [
+        "fixtures/review-inaccurate"
+      ],
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "reviewed fixture page"
+      },
+      "expect": {
+        "reviewStatus": {
+          "https://example.com/conformance/review-inaccurate@1.0.0#hello.md": "disputed"
+        }
+      }
+    },
+    {
+      "id": "review-latest-wins",
+      "description": "The latest review from each signer counts: an inaccurate review followed by an accurate one from the same key leaves the node approved.",
+      "target": "fixtures/review-latest-wins",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "digest": "sha256:28e96bda667813ed869cd22519c3a7103e7593e21843c74da00b9da10e9d70c5"
+      }
+    },
+    {
+      "id": "search-review-latest-wins",
+      "kind": "search",
+      "description": "The latest review from each signer counts.",
+      "packages": [
+        "fixtures/review-latest-wins"
+      ],
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "reviewed fixture page"
+      },
+      "expect": {
+        "reviewStatus": {
+          "https://example.com/conformance/review-latest-wins@1.0.0#hello.md": "approved"
+        }
+      }
+    },
+    {
+      "id": "review-unsigned",
+      "description": "A review in a package with no valid package attestation never makes it reviewed: the package id is only a claim.",
+      "target": "fixtures/review-unsigned",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:e89bec7c9ddfb0b880ca3a26d2150bf6a99a00a06d752a404f4558cae17153a0"
+      }
+    },
+    {
+      "id": "search-review-unsigned",
+      "kind": "search",
+      "description": "Reviews in an unsigned package are listed, flagged packageVerified false, and the node is unverified.",
+      "packages": [
+        "fixtures/review-unsigned"
+      ],
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "reviewed fixture page"
+      },
+      "expect": {
+        "reviewStatus": {
+          "https://example.com/conformance/review-unsigned@1.0.0#hello.md": "unverified"
+        }
+      }
+    },
+    {
+      "id": "review-future",
+      "description": "A review dated after the host clock does not count (A007).",
+      "target": "fixtures/review-future",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A007_REVIEW_DATE_FUTURE"
+        ],
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "digest": "sha256:06522eda069877a083e6b4038ecfd3d75aff39d7899149626fe062a93c5299e4"
+      }
+    },
+    {
+      "id": "search-review-future",
+      "kind": "search",
+      "description": "A node whose only review is dated in the future has no review.",
+      "packages": [
+        "fixtures/review-future"
+      ],
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "reviewed fixture page"
+      },
+      "expect": {
+        "reviewStatus": {
+          "https://example.com/conformance/review-future@1.0.0#hello.md": "none"
+        }
+      }
+    },
+    {
+      "id": "review-reviewer-not-allowed",
+      "description": "A key whose trust-root entry lists reviewers may sign only as those reviewers; a review naming anyone else is invalid.",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-reviewers.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "frontmatter-missing",
+      "description": "OKF requires frontmatter on every concept document.",
+      "target": "fixtures/frontmatter-missing",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C001_FRONTMATTER_MISSING",
+          "M003_NO_CONTENT"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "frontmatter-duplicate-key",
+      "description": "Frontmatter that repeats a key is invalid (C002): YAML parsers disagree on which value wins, so none is chosen. The node is not read; the package's other nodes are.",
+      "target": "fixtures/frontmatter-duplicate-key",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "frontmatter-invalid",
+      "description": "Frontmatter that is not parseable YAML.",
+      "target": "fixtures/frontmatter-invalid",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "frontmatter-close-after-cr",
+      "description": "Package spec §5.1: only LF ends a line. A --- that follows a lone CR is not on a line of its own, so the block is never closed (C002).",
+      "target": "fixtures/frontmatter-close-after-cr",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "frontmatter-close-line-separator",
+      "description": "Package spec §5.1: only LF ends a line. A --- followed by U+2028 does not close the block (C002).",
+      "target": "fixtures/frontmatter-close-line-separator",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "type-missing",
+      "description": "OKF requires a non-empty type.",
+      "target": "fixtures/type-missing",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C003_TYPE_MISSING"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "type-white-space",
+      "description": "OKF requires a type that is not empty. One made only of white space (here U+FEFF and U+00A0, both white space in package spec §2) is missing (C003).",
+      "target": "fixtures/type-white-space",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C003_TYPE_MISSING",
+          "M003_NO_CONTENT"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "reserved-file-invalid",
+      "description": "Root index.md may declare okf_version only; nested index.md has no frontmatter; log.md headings start with a date.",
+      "target": "fixtures/reserved-file-invalid",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C004_RESERVED_FILE_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "reserved-name-ascii-only",
+      "description": "Package spec §5.1: reserved names are compared ASCII case-insensitively. A file named with a dotless ı (U+0131) is an ordinary concept document, not index.md.",
+      "target": "fixtures/reserved-name-ascii-only",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:fce2f75e5afe5c31209021fe7c07a01e20e592734fed751349bf5f66302e458e"
+      }
+    },
+    {
+      "id": "field-invalid",
+      "description": "Optional fields that break the node schema are warnings, never errors.",
+      "target": "fixtures/field-invalid",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "evidence-source-unknown",
+      "description": "Evidence must name a declared source id.",
+      "target": "fixtures/evidence-source-unknown",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C006_EVIDENCE_SOURCE_UNKNOWN"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ]
+      }
+    },
+    {
+      "id": "link-unresolved",
+      "description": "Internal links that do not resolve are warnings; external links, inline code and fenced code are not checked.",
+      "target": "fixtures/link-unresolved",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C007_LINK_UNRESOLVED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "strict-promotes-warnings",
+      "description": "Contract §11: strict mode promotes warnings to errors without changing codes. An unresolved link (C007, a warning) then makes the package invalid.",
+      "target": "fixtures/link-unresolved",
+      "options": {
+        "strict": true
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C007_LINK_UNRESOLVED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "strict-other-families",
+      "description": "Contract §11: under strict mode a structure cycle (O005) becomes an error, but only T, P, M and C errors make a package invalid.",
+      "target": "fixtures/structure-cycle",
+      "options": {
+        "strict": true
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O005_STRUCTURE_CYCLE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "unsafe-path",
+      "description": "References that escape the package root are errors.",
+      "target": "fixtures/unsafe-path",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C008_UNSAFE_PATH"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "unsafe-path-absolute",
+      "description": "Absolute references (a leading slash or a drive prefix) are unsafe paths, as are references that escape the package root: they are not resolved under content/.",
+      "target": "fixtures/unsafe-path-absolute",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C008_UNSAFE_PATH"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "resource-bad-escape",
+      "description": "A malformed percent-encoding in a source resource or a link is an unsafe path, reported as a diagnostic; the Reader does not fail.",
+      "target": "fixtures/resource-bad-escape",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C008_UNSAFE_PATH"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "locale-orphan",
+      "description": "A locale variant with no default-language file.",
+      "target": "fixtures/locale-orphan",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C009_LOCALE_ORPHAN"
+        ],
+        "capabilities": [
+          "core",
+          "localized"
+        ]
+      }
+    },
+    {
+      "id": "node-validity-window",
+      "description": "moca.valid_until must be after moca.valid_from.",
+      "target": "fixtures/node-validity-window",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C010_VALIDITY_WINDOW_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "manifest-invalid-json",
+      "description": "moca.json must be JSON.",
+      "target": "fixtures/manifest-invalid-json",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M001_MANIFEST_INVALID_JSON"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "manifest-schema",
+      "description": "id must be an absolute URI, version semver, and title is required.",
+      "target": "fixtures/manifest-schema",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "manifest-id-fragment",
+      "description": "Package spec §4.2: a package id never contains #, because a node identifier is the id, #, and the node path.",
+      "target": "fixtures/manifest-id-fragment",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "relation-version-not-semver",
+      "description": "Package spec §7.2: a relation's version is an exact semantic version.",
+      "target": "fixtures/relation-version-not-semver",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "no-content",
+      "description": "A package needs a content node or a member.",
+      "target": "fixtures/no-content",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M003_NO_CONTENT"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "unknown-key",
+      "description": "Unknown top-level keys are reported as info and ignored; a Reader never acts on them. x-<vendor>-<key> keys are not reported.",
+      "target": "fixtures/unknown-key",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M004_UNKNOWN_KEY"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "vendor-key-trailing-newline",
+      "description": "Package spec §4.5: a vendor key must match x-<vendor>-<key> exactly. One with a trailing newline is an unknown key (M004).",
+      "target": "fixtures/vendor-key-trailing-newline",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M004_UNKNOWN_KEY"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:aee909fadcf1b7f483a7025e93626571efbda38bfc2767dbe055420faa910156"
+      }
+    },
+    {
+      "id": "duplicate-member",
+      "description": "The same member twice.",
+      "target": "fixtures/duplicate-member",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M005_DUPLICATE_MEMBER"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "validity-window",
+      "description": "validUntil must be after validFrom.",
+      "target": "fixtures/validity-window",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M006_VALIDITY_WINDOW_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "validity-unparseable",
+      "description": "Malformed dates and OKF entries with no actor are C005 warnings; the node is still read.",
+      "target": "fixtures/validity-unparseable",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "date-non-ascii-digits",
+      "description": "Package spec §4.4: dates use ASCII digits. A date in Arabic-Indic digits is unparseable (C005) and ignored, in every Reader.",
+      "target": "fixtures/date-non-ascii-digits",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:207d7618f53b3ebae20b075d056df3d946222e7a4c986eae6c12d3b43da5b573"
+      }
+    },
+    {
+      "id": "validity-dates",
+      "description": "A date-time without an offset is C005; a window whose end is not after its start is C010. Neither makes the package invalid.",
+      "target": "fixtures/validity-dates",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID",
+          "C010_VALIDITY_WINDOW_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:a216f184d99c0ca7523c55794f59be10a25f06dc07fc1ffab3c596d6be6bd892"
+      }
+    },
+    {
+      "id": "search-validity-unparseable",
+      "kind": "search",
+      "description": "A validity bound or stale_after that does not parse as a date is treated as absent: it never takes a node out of force or makes it stale.",
+      "packages": [
+        "fixtures/validity-unparseable"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "retention"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/validity-unparseable@1.0.0#n.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-validity-dates",
+      "kind": "search",
+      "description": "Package spec §4.4: a node's window is the intersection with the package's; a full date means 00:00Z and validUntil is exclusive; a date-time without an offset and an inverted window are ignored.",
+      "packages": [
+        "fixtures/validity-dates"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "retention rule"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/validity-dates@1.0.0#wider.md",
+          "https://example.com/conformance/validity-dates@1.0.0#ends-tomorrow.md",
+          "https://example.com/conformance/validity-dates@1.0.0#no-offset.md",
+          "https://example.com/conformance/validity-dates@1.0.0#inverted.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/validity-dates@1.0.0#narrowed.md",
+          "https://example.com/conformance/validity-dates@1.0.0#ends-today.md"
+        ],
+        "count": 4
+      }
+    },
+    {
+      "id": "search-validity-package-end",
+      "kind": "search",
+      "description": "A node cannot outlast its package: at the package's validUntil, even a node whose own window runs later is out of force.",
+      "packages": [
+        "fixtures/validity-dates"
+      ],
+      "options": {
+        "now": "2027-01-01T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "retention rule"
+      },
+      "expect": {
+        "exclude": [
+          "https://example.com/conformance/validity-dates@1.0.0#wider.md"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "unregistered-urn",
+      "description": "urn:moca: is not a registered URN namespace.",
+      "target": "fixtures/unregistered-urn",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M007_UNREGISTERED_URN"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "profile-unrecognised",
+      "description": "An unknown profile is info only and its data is preserved; a recognised one is silent.",
+      "target": "fixtures/profile-unrecognised",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "F001_PROFILE_UNRECOGNISED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "structure-valid",
+      "description": "Structure: a structure.ttl concept scheme and a node bound to a declared concept.",
+      "target": "fixtures/structure-valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "digest": "sha256:5bce001b37c438ad209a157ae343a30ffa5c16a2938247e7010de4787298cb36"
+      }
+    },
+    {
+      "id": "structure-unparseable",
+      "description": "Structure: structure.ttl is not Turtle, so nothing is declared. Warnings only; the structured capability is withheld.",
+      "target": "fixtures/structure-unparseable",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O001_ONTOLOGY_UNPARSEABLE",
+          "O002_CONCEPT_UNDECLARED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "structure-undeclared-concept",
+      "description": "Structure: a node binds to a concept no structure file declares.",
+      "target": "fixtures/structure-undeclared-concept",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O002_CONCEPT_UNDECLARED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "structure-remote-reference",
+      "description": "Structure: owl:imports would make a Reader fetch; it is reported, never followed.",
+      "target": "fixtures/structure-remote-reference",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O003_REMOTE_REFERENCE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "structure-cycle",
+      "description": "requires forms a cycle.",
+      "target": "fixtures/structure-cycle",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O005_STRUCTURE_CYCLE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:16c08dda9c33fb2dd388854972b9996fd687361d87d416d9d13c6d378a69676d"
+      }
+    },
+    {
+      "id": "structure-deep-chain",
+      "description": "A 30,000-concept requires chain, within every structure limit, reads without failing: structure traversal must not exhaust the call stack.",
+      "target": "fixtures/structure-deep-chain",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ]
+      }
+    },
+    {
+      "id": "structure-json-ordinary-file",
+      "description": "structure.json is an ordinary package file. No Reader checks it against structure.ttl (O004 is retired, ADR-0019).",
+      "target": "fixtures/structure-json-ordinary-file",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ]
+      }
+    },
+    {
+      "id": "structure-procedure",
+      "description": "A procedure: parts, an ordered collection of steps, and requires.",
+      "target": "fixtures/structure-procedure",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "digest": "sha256:ff29ef636ccda010b418d72b02dc6372b8764d98c35654fd21350d14e75cd7b3"
+      }
+    },
+    {
+      "id": "limit-structure-triples",
+      "description": "A structure file over the host's triple limit is refused (O001), and its bindings are then undeclared.",
+      "target": "fixtures/structure-procedure",
+      "options": {
+        "limits": {
+          "maxTriples": 3
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O001_ONTOLOGY_UNPARSEABLE",
+          "O002_CONCEPT_UNDECLARED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "limit-yaml-alias",
+      "description": "YAML aliases in frontmatter are refused (C002): alias expansion is a denial-of-service vector.",
+      "target": "fixtures/limit-yaml-alias",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID",
+          "M003_NO_CONTENT"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "limit-evidence-checks",
+      "description": "Contract §3: evidence checks are bounded per package. Past the budget, an entry is not checked and matched is absent.",
+      "target": "fixtures/valid-evidence",
+      "options": {
+        "limits": {
+          "maxEvidenceChecksPerPackage": 1
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ],
+        "evidenceMatched": {
+          "refunds.md": [
+            true,
+            null,
+            null
+          ]
+        }
+      }
+    },
+    {
+      "id": "limit-evidence-bytes",
+      "description": "Source bytes scanned for evidence are bounded per package, counted once per check.",
+      "target": "fixtures/valid-evidence",
+      "options": {
+        "limits": {
+          "maxEvidenceBytesPerPackage": 1
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ],
+        "evidenceMatched": {
+          "refunds.md": [
+            null,
+            null,
+            null
+          ]
+        }
+      }
+    },
+    {
+      "id": "digest-v1-package",
+      "description": "A package written for mocaVersion 0.3: the digest is computed with moca-digest-v2, and M008 tells the host older pins will not match.",
+      "target": "fixtures/digest-v1-package",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M008_DIGEST_V1_PACKAGE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:890b4a4aabe41627b64424071d012a542a9350c9c1b6fd68f504c53f88839cd9"
+      }
+    },
+    {
+      "id": "moca-version-newer",
+      "description": "Package spec §14: a package written for a newer mocaVersion is read on a best-effort basis, and M009 says so.",
+      "target": "fixtures/moca-version-newer",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M009_MOCA_VERSION_NEWER"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:0f260154c2bb570d736fc9fea680071a14b6b8f8a71ecaae885715189485cb06"
+      }
+    },
+    {
+      "id": "moca-version-leading-zeros",
+      "description": "Package spec §14: mocaVersion is compared numerically, so 00.03 is 0.3 and M008 applies.",
+      "target": "fixtures/moca-version-leading-zeros",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M008_DIGEST_V1_PACKAGE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:9d29b67bfce288c70cc6dffc9e18eee8a50805b27bc2b4634769e68cdd7e6b66"
+      }
+    },
+    {
+      "id": "moca-version-trailing-newline",
+      "description": "A mocaVersion with a trailing newline is not major.minor: the manifest fails the schema, and there is no M008.",
+      "target": "fixtures/moca-version-trailing-newline",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "moca-version-non-ascii-digits",
+      "description": "Only ASCII digits make a mocaVersion: one in Arabic-Indic digits fails the schema, and no Reader throws.",
+      "target": "fixtures/moca-version-non-ascii-digits",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "manifest-id-unicode-space",
+      "description": "Schema patterns have their ECMAScript meaning in every Reader: a no-break space (U+00A0) is white space, so an id containing one fails the schema.",
+      "target": "fixtures/manifest-id-unicode-space",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "composed-members",
+      "description": "A composition-only package whose members resolve and match their pinned digests.",
+      "target": "fixtures/composed-members/book",
+      "options": {
+        "members": [
+          "fixtures/composed-members"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "composed"
+        ],
+        "digest": "sha256:053883c0995b2cb643467d52327268e7a5c50189f151c64dbe6db4f6d68cfa62"
+      }
+    },
+    {
+      "id": "composed-members-no-resolver",
+      "description": "Without a resolver, members are exposed unresolved and nothing is reported.",
+      "target": "fixtures/composed-members/book",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "composed"
+        ],
+        "digest": "SAME:composed-members"
+      }
+    },
+    {
+      "id": "member-digest-mismatch",
+      "description": "A resolved member whose digest differs from its pin.",
+      "target": "fixtures/member-digest-mismatch/book",
+      "options": {
+        "members": [
+          "fixtures/member-digest-mismatch"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "R002_MEMBER_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core",
+          "composed"
+        ]
+      }
+    },
+    {
+      "id": "member-unresolved",
+      "description": "The resolver cannot find a member.",
+      "target": "fixtures/member-unresolved",
+      "options": {
+        "members": [
+          "fixtures/member-unresolved"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "R001_MEMBER_UNRESOLVED"
+        ],
+        "capabilities": [
+          "core",
+          "composed"
+        ]
+      }
+    },
+    {
+      "id": "member-cycle",
+      "description": "Members that include each other.",
+      "target": "fixtures/member-cycle/a",
+      "options": {
+        "members": [
+          "fixtures/member-cycle"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "R003_MEMBER_CYCLE"
+        ],
+        "capabilities": [
+          "core",
+          "composed"
+        ]
+      }
+    },
+    {
+      "id": "member-other-version",
+      "description": "A package that composes another version of the same package is not a cycle: cycles are detected by id and version.",
+      "target": "fixtures/member-other-version/v2",
+      "options": {
+        "members": [
+          "fixtures/member-other-version"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "composed"
+        ],
+        "digest": "sha256:bcb3d05f6c0364ad32fdfa43f190065aff8cde66803d2fae1f7651916027542e"
+      }
+    },
+    {
+      "id": "relation-unauthorised",
+      "description": "A supersedes relation in a package with no valid package attestation is reported (R004, info) and has no effect.",
+      "target": "fixtures/search-policy/v2",
+      "options": {
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A003_ATTESTATION_UNVERIFIABLE",
+          "R004_RELATION_UNAUTHORISED"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:f654cc2eaacb4561e1944f59769c6ef57b067c44d0d2a73823a1370bcc5b6178"
+      }
+    },
+    {
+      "id": "relation-authorised",
+      "description": "The same package, signed by a key whose ids cover the target's id, makes the relation with no diagnostic.",
+      "target": "fixtures/search-policy/v2",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "digest": "sha256:f654cc2eaacb4561e1944f59769c6ef57b067c44d0d2a73823a1370bcc5b6178"
+      }
+    },
+    {
+      "id": "sidecar-valid",
+      "description": "A lexical sidecar bound to the package digest.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/valid"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": true
+      }
+    },
+    {
+      "id": "sidecar-text-mismatch",
+      "description": "Sidecar §5: an item's text, when present, must be exactly the package's bytes at start..end. A sidecar cannot attach other text to a node, for example to stuff keywords; it is not used (S004).",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/text-mismatch"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S004_SIDECAR_ITEM_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-stale",
+      "description": "Built for a different digest.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/stale"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S003_SIDECAR_STALE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-item-invalid",
+      "description": "chunkIndex is not below chunkCount.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/item-invalid"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S004_SIDECAR_ITEM_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-format-unknown",
+      "description": "Payload format this Reader does not know.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/format-unknown"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S005_SIDECAR_FORMAT_UNKNOWN"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-target-mismatch",
+      "description": "Bound to another package.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/target-mismatch"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S002_SIDECAR_TARGET_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-invalid",
+      "description": "index.json breaks the schema: a dense index without a model.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/invalid"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S001_SIDECAR_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "sidecar-vectors-length",
+      "description": "storage.vectors holds fewer float32 rows than there are payload items: the sidecar is not usable.",
+      "target": "fixtures/valid-minimal",
+      "options": {
+        "sidecar": "fixtures/sidecars/vectors-length"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "S004_SIDECAR_ITEM_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
+      "id": "search-default-policy",
+      "kind": "search",
+      "description": "The default retrieval policy: superseded, out-of-force and deprecated content is never returned; stale content is returned.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ]
+      }
+    },
+    {
+      "id": "search-identity-conflict",
+      "kind": "search",
+      "description": "Contract §7: a library refuses a second package with the same id and version but a different digest (L001); only the first is searched.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/identity-conflict"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "codes": [
+          "L001_IDENTITY_CONFLICT"
+        ],
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-relation-unsigned",
+      "kind": "search",
+      "description": "Package spec §7.2: without a trust root nothing is signed, so the supersedes relation has no effect and the superseded version is returned.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ]
+      }
+    },
+    {
+      "id": "search-relation-out-of-scope",
+      "kind": "search",
+      "description": "A signer whose ids do not cover the target's id cannot make a relation take effect.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root-narrow-ids.json"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ]
+      }
+    },
+    {
+      "id": "search-relation-no-boundary",
+      "kind": "search",
+      "description": "An ids entry that does not end in /, : or # matches only that exact id, never a longer one.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root-ids-no-boundary.json"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ]
+      }
+    },
+    {
+      "id": "search-relation-host-allows",
+      "kind": "search",
+      "description": "A host that allows unsigned relations applies them: the superseded version is left out.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "allowUnsignedRelations": true
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ]
+      }
+    },
+    {
+      "id": "search-relation-conflict",
+      "kind": "search",
+      "description": "Package spec §7.2: an authorised conflictsWith marks the nodes of both packages contested. Contested content is returned, flagged, never left out.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-conflict/rival"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-conflict-rival@1.0.0#current.md"
+        ],
+        "contested": {
+          "https://example.com/conformance/search-policy@1.0.0#current.md": true,
+          "https://example.com/conformance/search-conflict-rival@1.0.0#current.md": true
+        }
+      }
+    },
+    {
+      "id": "search-relation-conflict-unauthorised",
+      "kind": "search",
+      "description": "Package spec §7.2: with no trust root the conflictsWith is not authorised (the package reports R004), and neither package is contested.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-conflict/rival"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-conflict-rival@1.0.0#current.md"
+        ],
+        "contested": {
+          "https://example.com/conformance/search-policy@1.0.0#current.md": false,
+          "https://example.com/conformance/search-conflict-rival@1.0.0#current.md": false
+        }
+      }
+    },
+    {
+      "id": "search-include-all",
+      "kind": "search",
+      "description": "With the host's opt-in, excluded content is returned, flagged.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "retention period",
+        "includeAll": true
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ]
+      }
+    },
+    {
+      "id": "search-audience",
+      "kind": "search",
+      "description": "Records outside the host's audience set are removed even when the caller includes everything.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "audiences": [
+          "public"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "retention period",
+        "includeAll": true
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@2.0.0#internal.md"
+        ]
+      }
+    },
+    {
+      "id": "search-audience-unlabelled",
+      "kind": "search",
+      "description": "Contract §8 (ADR-0016): under an audience set, a node with no label is outside the set, and a malformed label never matches.",
+      "packages": [
+        "fixtures/audience-rules"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "refund procedure remboursement"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/audience-rules@1.0.0#public.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/audience-rules@1.0.0#unlabelled.md",
+          "https://example.com/conformance/audience-rules@1.0.0#internal.md",
+          "https://example.com/conformance/audience-rules@1.0.0#inherited.md",
+          "https://example.com/conformance/audience-rules@1.0.0#malformed-list.md",
+          "https://example.com/conformance/audience-rules@1.0.0#malformed-number.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-audience-allow-unlabelled",
+      "kind": "search",
+      "description": "A host that allows unlabelled content gets it alongside its audiences; a malformed label still never matches.",
+      "packages": [
+        "fixtures/audience-rules"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "audiences": [
+          "public"
+        ],
+        "allowUnlabelled": true
+      },
+      "search": {
+        "query": "refund procedure remboursement"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/audience-rules@1.0.0#public.md",
+          "https://example.com/conformance/audience-rules@1.0.0#unlabelled.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/audience-rules@1.0.0#malformed-list.md",
+          "https://example.com/conformance/audience-rules@1.0.0#malformed-number.md"
+        ],
+        "count": 2
+      }
+    },
+    {
+      "id": "search-audience-gate-unlabelled",
+      "kind": "search",
+      "description": "The gate applies the audience rules whatever the backend returns.",
+      "packages": [
+        "fixtures/audience-rules"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "refund procedure remboursement"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/audience-rules@1.0.0#public.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/audience-rules@1.0.0#unlabelled.md",
+          "https://example.com/conformance/audience-rules@1.0.0#malformed-list.md",
+          "https://example.com/conformance/audience-rules@1.0.0#malformed-number.md"
+        ]
+      }
+    },
+    {
+      "id": "search-audience-inherited",
+      "kind": "search",
+      "description": "A translation with no label of its own takes its default representation's label: the French page of an internal node is internal.",
+      "packages": [
+        "fixtures/audience-rules"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "refund procedure remboursement",
+        "locale": "fr"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/audience-rules@1.0.0#public.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/audience-rules@1.0.0#inherited.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-recheck",
+      "kind": "search",
+      "description": "A backend that ignores every filter and returns every node, plus a hit from a package that is not loaded. Search still applies the policy and drops the unknown hit.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "audiences": [
+          "public"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ]
+      }
+    },
+    {
+      "id": "search-locale",
+      "kind": "search",
+      "description": "A requested locale returns that locale's representation, or the default one for a node without it.",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md",
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/locales@1.0.0#intro.md": "fr",
+          "https://example.com/conformance/locales@1.0.0#v1.2.md": "en"
+        }
+      }
+    },
+    {
+      "id": "search-locale-fallback",
+      "kind": "search",
+      "description": "Package spec §5.4: a request for fr-CA falls back to fr (the request truncated, RFC 4647 Lookup).",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr-CA"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/locales@1.0.0#intro.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "search-locale-region",
+      "kind": "search",
+      "description": "A request for pt, with no pt representation, takes the first representation whose tag starts with pt- (here pt-BR).",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "pt"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/locales@1.0.0#intro.md": "pt-BR"
+        }
+      }
+    },
+    {
+      "id": "search-locale-case",
+      "kind": "search",
+      "description": "Language tags compare case-insensitively.",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "PT-br"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/locales@1.0.0#intro.md": "pt-BR"
+        }
+      }
+    },
+    {
+      "id": "search-gate-representations",
+      "kind": "search",
+      "description": "Contract §9.2: with no locale requested, the gate keeps one result per node representation and span, so the English, French and Brazilian Portuguese pages of one node are three results.",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md",
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "count": 4
+      }
+    },
+    {
+      "id": "search-concepts",
+      "kind": "search",
+      "description": "Structure: a concept filter keeps only records bound to one of the concepts.",
+      "packages": [
+        "fixtures/structure-valid",
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "concepts": [
+          "https://example.org/conformance#ServiceBoundary"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/structure-valid@1.0.0#boundaries.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense",
+      "kind": "search",
+      "description": "Dense search over sidecar vectors with the conformance embedder, whose identity matches the sidecar's model.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-legacy-json",
+      "kind": "search",
+      "description": "Dense search over the deprecated form, a JSON vector on each payload item: Readers still accept it.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense-json",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-model-mismatch",
+      "kind": "search",
+      "description": "The host embedder is a different model from the sidecar's: S006, and no dense search.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "another-embedder",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [
+          "S006_MODEL_MISMATCH"
+        ],
+        "count": 0,
+        "include": []
+      }
+    },
+    {
+      "id": "search-dense-version-mismatch",
+      "kind": "search",
+      "description": "Contract §9.3: the host embedder has the sidecar model's name but another version: S006, and no dense search.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "2",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [
+          "S006_MODEL_MISMATCH"
+        ],
+        "count": 0,
+        "include": []
+      }
+    },
+    {
+      "id": "search-dense-dimension-mismatch",
+      "kind": "search",
+      "description": "Contract §9.3: the host embedder has the sidecar model's name and version but another number of dimensions: S006, and no dense search.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 3
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [
+          "S006_MODEL_MISMATCH"
+        ],
+        "count": 0,
+        "include": []
+      }
+    },
+    {
+      "id": "search-dense-prefix-match",
+      "kind": "search",
+      "description": "The index and the host embedder declare the same prefixes: dense search runs.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense-prefixed",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2,
+          "queryPrefix": "query: ",
+          "documentPrefix": "passage: "
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-prefix-mismatch",
+      "kind": "search",
+      "description": "The host embedder declares other prefixes than the index: S006, and no dense search.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense-prefixed",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2,
+          "queryPrefix": "search_query: ",
+          "documentPrefix": "search_document: "
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [
+          "S006_MODEL_MISMATCH"
+        ],
+        "include": [],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-dense-prefix-undeclared",
+      "kind": "search",
+      "description": "Contract §9.3: the index declares prefixes and the host embedder declares none. A prefix declared on one side only is a mismatch (S006): the vectors are not searched.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense-prefixed",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [
+          "S006_MODEL_MISMATCH"
+        ],
+        "exclude": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-no-vectors",
+      "kind": "search",
+      "description": "Two packages; the dense sidecar binds only to one. The other has no vectors: S007, and no hits from it.",
+      "packages": [
+        "fixtures/valid-minimal",
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "hello"
+      },
+      "expect": {
+        "codes": [
+          "S002_SIDECAR_TARGET_MISMATCH",
+          "S007_NO_VECTORS"
+        ],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/locales@1.0.0#intro.md",
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-hybrid",
+      "kind": "search",
+      "description": "Hybrid search with the default fusion: hello.md, which has vectors, and the locales nodes, which have none and come back through the lexical side.",
+      "packages": [
+        "fixtures/valid-minimal",
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "hybrid",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "body"
+      },
+      "expect": {
+        "codes": [
+          "S002_SIDECAR_TARGET_MISMATCH",
+          "S007_NO_VECTORS"
+        ],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md",
+          "https://example.com/conformance/locales@1.0.0#intro.md",
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "count": 3
+      }
+    },
+    {
+      "id": "search-hybrid-dense-only",
+      "kind": "search",
+      "description": "Hybrid search with the lexical weight 0: only the dense side counts, so only hello.md comes back.",
+      "packages": [
+        "fixtures/valid-minimal",
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "hybrid",
+        "sidecar": "fixtures/sidecars/dense",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        },
+        "hybrid": {
+          "weights": {
+            "lexical": 0
+          }
+        }
+      },
+      "search": {
+        "query": "body"
+      },
+      "expect": {
+        "codes": [
+          "S002_SIDECAR_TARGET_MISMATCH",
+          "S007_NO_VECTORS"
+        ],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/locales@1.0.0#intro.md",
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-dense-distance-cosine",
+      "kind": "search",
+      "description": "No model.distance: cosine. Query [1,0]; a.md [1,0] scores 1, b.md [3,3] 0.71, so a.md comes first.",
+      "packages": [
+        "fixtures/search-distance"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/distance-cosine",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "anything",
+        "limit": 1
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/distance@1.0.0#a.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/distance@1.0.0#b.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-dense-distance-dot",
+      "kind": "search",
+      "description": "model.distance dot. Query [1,0]; a.md [1,0] scores 1, b.md [3,3] 3, so b.md comes first.",
+      "packages": [
+        "fixtures/search-distance"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/distance-dot",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "anything",
+        "limit": 1
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/distance@1.0.0#b.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/distance@1.0.0#a.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-dense-distance-euclidean",
+      "kind": "search",
+      "description": "model.distance euclidean (negative distance). Query [1,0]; a.md [10,0] is 9 away, b.md [0.9,0.1] 0.14, so b.md comes first.",
+      "packages": [
+        "fixtures/search-distance"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/distance-euclidean",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "anything",
+        "limit": 1
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/distance@1.0.0#b.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/distance@1.0.0#a.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-sidecar-no-text",
+      "kind": "search",
+      "description": "A sidecar whose items carry no text (it is optional): lexical search runs over the package text the offsets point at.",
+      "packages": [
+        "fixtures/valid-minimal"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "sidecar": "fixtures/sidecars/no-text"
+      },
+      "search": {
+        "query": "body"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/minimal@1.0.0#hello.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "structure-op-concept",
+      "kind": "structure",
+      "description": "concept: preferred label, labels, definition, deprecation and layer.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "concept",
+      "iri": "https://example.org/handbook/incident#NotifyCustomers",
+      "expect": {
+        "codes": [],
+        "result": {
+          "iri": "https://example.org/handbook/incident#NotifyCustomers",
+          "label": "Notify customers",
+          "labels": {
+            "en": "Notify customers"
+          },
+          "deprecated": false,
+          "replacedBy": [],
+          "replaces": [],
+          "layer": "package"
+        }
+      }
+    },
+    {
+      "id": "structure-op-requires-cycle",
+      "kind": "structure",
+      "description": "Contract §10: traversal over a cycle visits each concept once and never returns the start. A requires B requires C requires A, so transitive requires of A is C, then B.",
+      "packages": [
+        "fixtures/structure-cycle"
+      ],
+      "op": "requires",
+      "iri": "https://example.org/conformance/cycle#A",
+      "args": {
+        "transitive": true
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/conformance/cycle#C",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/conformance/cycle#B",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-sequence",
+      "kind": "structure",
+      "description": "sequence: members in list order.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "sequence",
+      "iri": "https://example.org/handbook/incident#ResponseSteps",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#ResolveAndReview",
+            "label": "Resolve and review",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-parts",
+      "kind": "structure",
+      "description": "parts: direct parts, ordered by IRI.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "parts",
+      "iri": "https://example.org/handbook/incident#IncidentResponse",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#ResolveAndReview",
+            "label": "Resolve and review",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-requires",
+      "kind": "structure",
+      "description": "requires, direct.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "requires",
+      "iri": "https://example.org/handbook/incident#NotifyCustomers",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-required-by",
+      "kind": "structure",
+      "description": "requiredBy, ordered by IRI.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "requiredBy",
+      "iri": "https://example.org/handbook/incident#AssessSeverity",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#NotifyCustomers",
+            "label": "Notify customers",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-op-nodes",
+      "kind": "structure",
+      "description": "nodes bound to a concept and its parts, ordered by node reference.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "op": "nodes",
+      "iri": "https://example.org/handbook/incident#IncidentResponse",
+      "args": {
+        "include": "parts"
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          "https://example.com/conformance/structure-procedure@1.0.0#incident-response.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/assess-severity.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/declare-incident.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/resolve-and-review.md"
+        ]
+      }
+    },
+    {
+      "id": "structure-overlay-requires",
+      "kind": "structure",
+      "description": "An organisation overlay adds a requirement; transitive requires lists dependencies first, and each item names the layer that stated it.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "overlays": [
+          {
+            "id": "acme",
+            "layer": "organisation",
+            "path": "fixtures/overlays/organisation-review.ttl"
+          }
+        ]
+      },
+      "op": "requires",
+      "iri": "https://example.org/handbook/incident#ResolveAndReview",
+      "args": {
+        "transitive": true
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#AssessSeverity",
+            "label": "Assess severity",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/handbook/incident#DeclareIncident",
+            "label": "Declare the incident",
+            "layer": "organisation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-overlay-narrower",
+      "kind": "structure",
+      "description": "An overlay can declare new concepts under a package concept.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "overlays": [
+          {
+            "id": "acme",
+            "layer": "organisation",
+            "path": "fixtures/overlays/organisation-review.ttl"
+          }
+        ]
+      },
+      "op": "narrower",
+      "iri": "https://example.org/handbook/incident#ResolveAndReview",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/handbook/incident#LegalHold",
+            "label": "Legal hold",
+            "layer": "organisation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-scope",
+      "kind": "search",
+      "description": "scope keeps only nodes bound to the concept or its descendants.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "scope": "https://example.org/handbook/incident#NotifyCustomers"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md"
+        ]
+      }
+    },
+    {
+      "id": "search-ontology-guided",
+      "kind": "search",
+      "description": "The default ontology-guided hooks add the nodes of required concepts; the gate still applies.",
+      "packages": [
+        "fixtures/structure-procedure"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "hooks": "ontology-guided"
+      },
+      "search": {
+        "query": "notify customers"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md",
+          "https://example.com/conformance/structure-procedure@1.0.0#steps/assess-severity.md"
+        ]
+      }
+    },
+    {
+      "id": "search-hostile-egress",
+      "kind": "search",
+      "description": "An egress hook that returns everything, and a record from a package that is not loaded: the gate removes all that policy and audience exclude.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "hooks": "hostile",
+        "audiences": [
+          "public"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "retention"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#stale.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#internal.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ],
+        "count": 2
+      }
+    },
+    {
+      "id": "search-hostile-ingress",
+      "kind": "search",
+      "description": "An ingress hook that asks for content the policy excludes, a larger limit and another locale: the gate follows the caller.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "hooks": "hostile-ingress",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "retention period",
+        "limit": 1
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md",
+          "https://example.com/conformance/search-policy@2.0.0#deprecated.md",
+          "https://example.com/conformance/search-policy@2.0.0#expired.md"
+        ],
+        "count": 1
+      }
+    },
+    {
+      "id": "search-store-records",
+      "kind": "search",
+      "description": "A store search resolves hits from ingest-time records and returns only packages in the host's allowlist.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/search-policy/v1"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "retention period",
+        "includeAll": true
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md"
+        ]
+      }
+    },
+    {
+      "id": "search-store-recomputed",
+      "kind": "search",
+      "description": "Contract §9.4: a store search recomputes every library- and trust-dependent field from the host's package states. Version 1.0.0 was ingested alone, so its stored records say it is not superseded; once 2.0.0, which supersedes it, is loaded, the store search leaves it out.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "ingestSeparately": true,
+        "allow": [
+          "fixtures/search-policy/v1",
+          "fixtures/search-policy/v2"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "retention period"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/search-policy@2.0.0#current.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ]
+      }
+    }
+  ]
+}

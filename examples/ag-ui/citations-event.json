@@ -1,0 +1,99 @@
+{
+  "type": "CUSTOM",
+  "name": "moca.citations",
+  "value": {
+    "version": 1,
+    "messageId": "msg-answer-1",
+    "citations": [
+      {
+        "marker": "[1]",
+        "record": {
+          "package": {
+            "id": "https://example.com/moca/support-kb",
+            "version": "4.2.0",
+            "digest": "sha256:4992176b90ea0992037617ee56d5dcafecf60aeb400cfa9369c9164453df96da",
+            "signed": true,
+            "signers": [
+              "MOCA examples publisher (INSECURE, published private key)"
+            ]
+          },
+          "node": {
+            "id": "https://example.com/moca/support-kb#refund-window.md",
+            "ref": "https://example.com/moca/support-kb@4.2.0#refund-window.md",
+            "path": "refund-window.md",
+            "locale": "en",
+            "type": "Policy",
+            "title": "Refund eligibility window",
+            "description": "How long customers have to ask for a refund, and from when.",
+            "tags": [
+              "refunds",
+              "policy"
+            ],
+            "digest": "sha256:f125562daf254a2eccb0637496ce1247b39ece0ba598963e291ae01999c1d2ab"
+          },
+          "span": {
+            "start": 753,
+            "end": 1077
+          },
+          "trust": {
+            "status": "stable",
+            "generated": {
+              "by": "acme-drafter/2.1",
+              "at": "2026-07-30T09:00:00Z"
+            },
+            "declaredVerified": [
+              {
+                "by": "human:sam.ortiz",
+                "at": "2026-08-14T00:00:00Z"
+              }
+            ],
+            "attestedReviews": [
+              {
+                "reviewer": "human:sam.ortiz",
+                "reviewedAt": "2026-08-14T00:00:00Z",
+                "outcome": "accurate",
+                "signer": "MOCA examples reviewer (INSECURE, published private key)",
+                "scope": "Checked against Acme Customer Terms section 7",
+                "packageVerified": true
+              }
+            ],
+            "reviewStatus": "approved",
+            "staleAfter": "2027-02-14T00:00:00Z",
+            "stale": false,
+            "inForce": true,
+            "superseded": false,
+            "contested": false
+          },
+          "evidence": [
+            {
+              "source": {
+                "id": "terms-7",
+                "resource": "../sources/refund-policy-2026.txt",
+                "title": "Acme Customer Terms, section 7"
+              },
+              "selector": {
+                "type": "TextQuoteSelector",
+                "exact": "Customers may request a full refund within 30 days of delivery."
+              },
+              "matched": true
+            },
+            {
+              "source": {
+                "id": "terms-7",
+                "resource": "../sources/refund-policy-2026.txt",
+                "title": "Acme Customer Terms, section 7"
+              },
+              "selector": {
+                "type": "TextQuoteSelector",
+                "exact": "Items marked as final sale are not eligible for a refund."
+              },
+              "matched": true
+            }
+          ],
+          "audience": "public",
+          "text": "\n# Refund eligibility window\n\nCustomers may request a full refund within **30 days of delivery**. The window\nruns from the delivery date recorded by the carrier, not the order date.\n\nItems marked as final sale are not eligible. Where a carrier has not recorded a\ndelivery date, use the dispatch date plus five working days.\n"
+        }
+      }
+    ]
+  }
+}

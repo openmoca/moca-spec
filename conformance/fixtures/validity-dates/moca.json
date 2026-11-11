@@ -1,0 +1,7 @@
+{
+  "id": "https://example.com/conformance/validity-dates",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "validFrom": "2026-01-01",
+  "validUntil": "2027-01-01T00:00:00Z"
+}

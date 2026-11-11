@@ -1,0 +1,34 @@
+{
+  "keys": [
+    {
+      "keyid": "example-publisher-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAV7oSvpgKWeRJP+wg5aoP04bxrq2ZzOiT+NPhHsW1W4g=\n-----END PUBLIC KEY-----\n",
+      "identity": "MOCA examples publisher (INSECURE, published private key)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "package"
+      ],
+      "ids": [
+        "https://example.com/other/"
+      ]
+    },
+    {
+      "keyid": "example-reviewer-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAd+kdml4bu1kox2XqQzNnozVEIk/uqmHzldo9qc1PMKA=\n-----END PUBLIC KEY-----\n",
+      "identity": "MOCA examples reviewer (INSECURE, published private key)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "review"
+      ]
+    },
+    {
+      "keyid": "example-rsa-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyEInwMmGEfSnW7aPAoze\nWgQktHcyRIPMp+vZ3ZsB+4XOKH9iADSDSE4u9aVETgDghiqeUxuVnPA1O74zEZEz\nDN/nxUj9BZNCoZtmv1ReDGAVpmMLikL340dzLpmxUWLRJtYwv9XxuD1eq7cNj6Ij\n7HlITuoJMyQi9mPyHgqyKYa1zBEoSfT6tZkZ1TU3EmlrOT6CHEEgkFBBLb8mgyjL\nBnpMGHlW/s46Yx5HGxGHaJlNp0OGlyWO2GsS8BoNZHfOdmZwHw7UUcZ63xTxax48\n19XuHx3tur07FVk1x7UY/d6VDZ0GhN0bNZngdFJ3HGrgEF4Y5wqo7weudW7cw+PB\nIQIDAQAB\n-----END PUBLIC KEY-----\n",
+      "identity": "MOCA conformance RSA key (INSECURE; not Ed25519, so it verifies nothing)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "package"
+      ]
+    }
+  ]
+}

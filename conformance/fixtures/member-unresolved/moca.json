@@ -1,0 +1,12 @@
+{
+  "id": "https://example.com/conformance/book-unresolved",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "members": [
+    {
+      "id": "https://example.com/conformance/nowhere",
+      "version": "1.0.0",
+      "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ]
+}

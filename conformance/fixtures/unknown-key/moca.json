@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/m004",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "endpoints": {
+    "telemetry": "https://example.com/collect"
+  },
+  "x-acme-owner": "support"
+}

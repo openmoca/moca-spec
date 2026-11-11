@@ -1,0 +1,38 @@
+Acme Customer Terms
+
+These terms apply to every order placed with Acme from 1 January 2026.
+
+3. Orders
+
+3.1 You can change or cancel an order free of charge until it is dispatched.
+3.2 Once an order has been dispatched, it can no longer be cancelled; return it instead.
+
+4. Payment
+
+4.1 We accept Visa, Mastercard, American Express, PayPal and Acme gift cards.
+4.2 Payment is taken when the order is dispatched.
+4.3 Gift cards are valid for 24 months from the date of purchase and cannot be exchanged for cash.
+
+5. Delivery
+
+5.1 Standard delivery within the UK takes 3 to 5 working days.
+5.2 Express delivery within the UK takes 1 to 2 working days.
+5.3 Delivery to the European Union takes 5 to 8 working days.
+5.4 Standard delivery is free on orders over £50.
+
+7. Refunds and returns
+
+7.1 Customers may request a full refund within 30 days of delivery.
+7.2 Items marked as final sale are not eligible for a refund.
+7.3 Returned items must be unused and in their original packaging.
+7.4 Refunds are made to the original payment method within 5 working days of the returned item being received.
+
+8. Faulty items and warranty
+
+8.1 Every Acme product carries a two-year warranty against manufacturing faults.
+8.2 Faulty or damaged items can be returned at any time within the warranty period, and we pay the return postage.
+
+10. Your data
+
+10.1 We keep your account data for as long as your account is open.
+10.2 When you close your account, we delete your personal data within 30 days, except where the law requires us to keep it.

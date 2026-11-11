@@ -1,0 +1,12 @@
+{
+  "id": "https://example.com/conformance/edition",
+  "version": "2.0.0",
+  "title": "Fixture: the second edition, which includes the first",
+  "members": [
+    {
+      "id": "https://example.com/conformance/edition",
+      "version": "1.0.0",
+      "digest": "sha256:dba2a4c88270b9a8a1e19c8e45f5e3bb9f0b3e7dac98a1aee5a076cffe29425d"
+    }
+  ]
+}

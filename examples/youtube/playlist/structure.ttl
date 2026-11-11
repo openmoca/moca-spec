@@ -1,0 +1,55 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+<https://example.com/moca/youtube/agent-framework-playlist#playlist> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework"@en ;
+  dct:hasPart <https://example.com/moca/youtube/agent-framework-playlist#video-fDDabiixHrs>,
+    <https://example.com/moca/youtube/agent-framework-playlist#video-Nnf6E1fmPBs>,
+    <https://example.com/moca/youtube/agent-framework-playlist#video--k8SQn3sQjQ>,
+    <https://example.com/moca/youtube/agent-framework-playlist#video-24Ckyktl-8E>,
+    <https://example.com/moca/youtube/agent-framework-playlist#video-fJqqdN7VLms>,
+    <https://example.com/moca/youtube/agent-framework-playlist#video-uRGabAxGals>,
+    <https://example.com/moca/youtube/agent-framework-playlist#video-XAxK9_21vgc>,
+    <https://example.com/moca/youtube/agent-framework-playlist#video--xpcW3dfN7w>,
+    <https://example.com/moca/youtube/agent-framework-playlist#video-Dea5ZZRtH28> .
+
+<https://example.com/moca/youtube/agent-framework-playlist#playlist-order> a skos:OrderedCollection ;
+  skos:prefLabel "Microsoft Agent Framework (playlist order)"@en ;
+  skos:memberList (
+    <https://example.com/moca/youtube/agent-framework-playlist#video-fDDabiixHrs>
+    <https://example.com/moca/youtube/agent-framework-playlist#video-Nnf6E1fmPBs>
+    <https://example.com/moca/youtube/agent-framework-playlist#video--k8SQn3sQjQ>
+    <https://example.com/moca/youtube/agent-framework-playlist#video-24Ckyktl-8E>
+    <https://example.com/moca/youtube/agent-framework-playlist#video-fJqqdN7VLms>
+    <https://example.com/moca/youtube/agent-framework-playlist#video-uRGabAxGals>
+    <https://example.com/moca/youtube/agent-framework-playlist#video-XAxK9_21vgc>
+    <https://example.com/moca/youtube/agent-framework-playlist#video--xpcW3dfN7w>
+    <https://example.com/moca/youtube/agent-framework-playlist#video-Dea5ZZRtH28>
+  ) .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video-fDDabiixHrs> a skos:Concept ;
+  skos:prefLabel "Azure AI Search Explained | Keyword vs Vector vs Hybrid Search + RAG Architecture"@en .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video-Nnf6E1fmPBs> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework - Part#7: Events, Human-in-the-Loop & Resilient workflows using Checkpoint"@en .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video--k8SQn3sQjQ> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework - Part#7: Orchestration Types | Sequential, Concurrent, Group & Magnetic"@en .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video-24Ckyktl-8E> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework - Part#6: Build Intelligent Workflows with Azure AI Agent Framework"@en .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video-fJqqdN7VLms> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework - Part#5: MCP Explained: The Future of Tool Integration for AI Agents"@en .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video-uRGabAxGals> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework - Part#4: Azure AI Agents: Observability & Middleware"@en .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video-XAxK9_21vgc> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework - Part#3: Threads and State Management in Azure Agent Framework"@en .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video--xpcW3dfN7w> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework - Part#2: How to Use Tools in Azure Agent Framework"@en .
+
+<https://example.com/moca/youtube/agent-framework-playlist#video-Dea5ZZRtH28> a skos:Concept ;
+  skos:prefLabel "Microsoft Agent Framework - Part#1: In-Memory, Temporary & Permanent Agents"@en .

@@ -1,0 +1,5 @@
+In this video, we deep-dive into two critical enterprise concepts in Azure AI Agents: Observability and Middleware.
+
+Modern AI agents are not just about generating responses—they must be traceable, measurable, debuggable, and controllable. This session explains how Azure AI Agent Framework enables full visibility into agent execution using OpenTelemetry-based tracing and how middleware (interceptors) allows you to control agent behavior at runtime.
+
+#azureaiagentframework

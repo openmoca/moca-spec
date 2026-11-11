@@ -1,0 +1,9 @@
+In this comprehensive guide, we explore the advanced features of the Microsoft Agent Framework to help you build production-ready AI orchestrations.
+
+We start by breaking down Workflow Events, an event-based system that allows developers to monitor, debug, and dynamically control execution. You'll learn how to categorize these into lifecycle, super-step, and executor events for maximum observability.
+
+Next, we tackle Human-in-the-Loop (HITL). Using the request_info event, we demonstrate how to pause a workflow for manual approval (e.g., a refund request over $100) and resume it once external feedback is received.
+
+Finally, we dive into Checkpoints. Discover how to save the state of long-running workflows to a file or database, allowing you to "rehydrate" and resume execution even after a system crash or intentional pause.
+
+#azureai #agentframework

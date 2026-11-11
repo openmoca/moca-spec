@@ -1,0 +1,13 @@
+{
+  "keys": [
+    {
+      "keyid": "mixed-order",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAkdH4lx196XAKlzYvLfDJDmQfp6ubsfAZ3Vkeo8Yh9p0=\n-----END PUBLIC KEY-----\n",
+      "identity": "Conformance signature-mixed-order-key key (INSECURE, published construction)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "package"
+      ]
+    }
+  ]
+}

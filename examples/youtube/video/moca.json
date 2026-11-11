@@ -1,0 +1,9 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.4",
+  "id": "https://example.com/moca/youtube/agent-framework-workflows",
+  "version": "1.0.0",
+  "title": "Microsoft Agent Framework Workflows: From Zero to Hero",
+  "description": "Microsoft Agent Framework Workflows: From Zero to Hero is a practical developer session that turns familiar workflow patterns into powerful orchestration using Executors, Edges, and Events. From core workflow patterns to advanced agent orchestration.",
+  "language": "en"
+}

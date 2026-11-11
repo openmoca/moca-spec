@@ -1,0 +1,5 @@
+In this video, we take a deep dive into Azure AI Agent Framework workflows, focusing on how to design, build, and execute enterprise-grade intelligent workflows using multi-agent orchestration and directed graph models.
+
+You will learn how Azure AI Agent Framework goes beyond traditional workflow tools by enabling intelligent routing, automation, observability, and fault-tolerant execution. We explore real-world use cases such as customer support automation, data processing pipelines, and fully automated software development lifecycles.
+
+#azureai #agentframework #aiagents #workflow #microsoftai

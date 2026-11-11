@@ -1,0 +1,16 @@
+Learn how Microsoft Azure AI Search works and how it powers modern AI applications using keyword search, vector search, and hybrid search.
+
+In this video, we break down:
+- What Azure AI Search is and how it works
+- Traditional keyword-based search vs embedding-based search
+- Hybrid search (best of both worlds)
+- How vector embeddings improve relevance
+- Using search results with LLMs (RAG architecture)
+- Real-world enterprise use cases
+
+This is a must-watch if you're building:
+- AI assistants 🤖
+- Enterprise search systems 📊
+- RAG-based applications with LLMs
+
+#azureai #agentframework #aiagents #workflow #microsoftai

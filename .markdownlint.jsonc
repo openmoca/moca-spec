@@ -1,0 +1,22 @@
+{
+  "default": true,
+  "MD013": false,
+  "MD033": false,
+  "MD041": false,
+  // Existing tables use compact pipe formatting; keep this style stable
+  // across the specification and generated-looking reference tables.
+  "MD060": false,
+  // content/*.md nodes intentionally pair an OKF frontmatter "title" with a
+  // body H1; don't flag that as two titles.
+  "MD025": { "front_matter_title": "" },
+  // CHANGELOG.md repeats "### Added"/"### Changed"/"### Fixed" under each
+  // release heading, as Keep a Changelog prescribes. Only flag duplicate
+  // headings that share the same parent.
+  "MD024": { "siblings_only": true },
+  // Fixture and example Markdown is content, not documentation; relax
+  // formatting-only rules it does not need to follow.
+  "MD022": false,
+  "MD032": false,
+  "MD034": false,
+  "MD040": false
+}

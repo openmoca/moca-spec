@@ -1,0 +1,11 @@
+{
+  "id": "https://example.com/conformance/f001",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "profiles": {
+    "https://example.org/profiles/unknown/v1": {
+      "anything": true
+    },
+    "https://w3id.org/moca/profiles/claims/v1": {}
+  }
+}

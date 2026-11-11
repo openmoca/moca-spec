@@ -1,0 +1,14 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.5",
+  "id": "https://example.com/moca/acme-support",
+  "version": "1.0.0",
+  "title": "Acme Support Knowledge Base",
+  "description": "What Acme's support team tells customers about orders, delivery, returns, payments, accounts and products, and the procedures it follows, in English and French.",
+  "language": "en",
+  "locales": [
+    "fr"
+  ],
+  "license": "CC-BY-4.0",
+  "publisher": "Acme Support"
+}

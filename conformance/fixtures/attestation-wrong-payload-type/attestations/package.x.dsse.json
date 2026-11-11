@@ -1,0 +1,10 @@
+{
+  "payloadType": "text/plain",
+  "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJzdWJqZWN0IjpbeyJuYW1lIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9jb25mb3JtYW5jZS9hMDAxLXR5cGVAMS4wLjAiLCJkaWdlc3QiOnsic2hhMjU2IjoiMDBjOWI5ZjZiZDM2Y2Q5MDdkN2UyYmI3YTA5ZDQ3ZmRmZjU0MmU3NzlmMzQyZjM0ZmIyZWE4ZDBhMThhZTc4ZiJ9fV0sInByZWRpY2F0ZVR5cGUiOiJodHRwczovL3czaWQub3JnL21vY2EvYXR0ZXN0YXRpb24vcGFja2FnZS92MSIsInByZWRpY2F0ZSI6e319",
+  "signatures": [
+    {
+      "keyid": "example-publisher-2026",
+      "sig": "75+GvJla/lb0MRjI7KJNrGZcSb+sDy8uJdFzYMiP48aA1A5RE1DWVzFqS2tTpIgcQfnimcz6bX0USkTeLpQIDw=="
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/search-conflict-rival",
+  "version": "1.0.0",
+  "title": "Conflicting policy fixture",
+  "language": "en",
+  "relations": [
+    { "type": "conflictsWith", "target": "https://example.com/conformance/search-policy", "version": "1.0.0" }
+  ]
+}

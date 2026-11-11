@@ -1,0 +1,17 @@
+{
+  "indexVersion": 1,
+  "target": {
+    "id": "https://example.com/moca/support-kb",
+    "version": "4.2.0",
+    "digest": "sha256:4992176b90ea0992037617ee56d5dcafecf60aeb400cfa9369c9164453df96da"
+  },
+  "indexType": "lexical",
+  "chunking": {
+    "strategy": "headings-h1-h3"
+  },
+  "storage": {
+    "format": "moca-jsonl-v1",
+    "file": "payload/items.jsonl"
+  },
+  "createdBy": "moca-index"
+}

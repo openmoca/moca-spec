@@ -1,0 +1,6 @@
+{
+  "id": "https://example.com/conformance/moca-version-non-ascii-digits",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "mocaVersion": "٠.٣"
+}

@@ -1,0 +1,3 @@
+In this video, we explore how to build an Azure Agent Framework agent that supports multi-turn conversations. A multi-turn agent remembers previous messages, understands context, and uses past information to answer follow-up questions—even when the user does not repeat earlier details.
+
+#azureai #agentframework #aiagents #workflow #microsoftai

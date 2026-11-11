@@ -1,0 +1,60 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# The released reference Reader and tools this corpus is checked against. Pins are release
+# tags, or commits while a Spec Change Proposal is in flight; never a branch (CONTRIBUTING.md).
+env:
+  MOCA_READER_TYPESCRIPT_REF: v0.6.0
+  MOCA_TOOLS_REF: v0.6.0
+
+jobs:
+  deps:
+    name: Public dependencies only
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/check-deps.mjs
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: moca-spec
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/moca-reader-typescript
+          ref: ${{ env.MOCA_READER_TYPESCRIPT_REF }}
+          path: moca-reader-typescript
+          # Read access to the other MOCA repos while they are private.
+          token: ${{ secrets.MOCA_REPOS_TOKEN || github.token }}
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/moca-tools
+          ref: ${{ env.MOCA_TOOLS_REF }}
+          path: moca-tools
+          # Read access to the other MOCA repos while they are private.
+          token: ${{ secrets.MOCA_REPOS_TOKEN || github.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: '*/package-lock.json'
+      - run: npm ci
+        working-directory: moca-reader-typescript
+      - run: npm ci
+        working-directory: moca-tools
+      - run: npm ci
+        working-directory: moca-spec
+      - run: npm run validate
+        working-directory: moca-spec

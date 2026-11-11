@@ -1,0 +1,76 @@
+{
+  "keys": [],
+  "sigstore": {
+    "identities": [
+      {
+        "issuer": "https://issuer.sigstore-test.openmoca.example",
+        "subject": "https://ci.sigstore-test.openmoca.example/publish@refs/heads/main",
+        "roles": [
+          "package"
+        ]
+      },
+      {
+        "issuer": "https://issuer.sigstore-test.openmoca.example",
+        "subject": "reviewer@sigstore-test.openmoca.example",
+        "roles": [
+          "review"
+        ]
+      }
+    ],
+    "trustedRoot": {
+      "mediaType": "application/vnd.dev.sigstore.trustedroot+json;version=0.1",
+      "tlogs": [
+        {
+          "baseUrl": "https://rekor.sigstore-test.openmoca.example",
+          "hashAlgorithm": "SHA2_256",
+          "publicKey": {
+            "rawBytes": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEg6Wsl6uKtRuXtKYC/2ERH3WirWWkgOHRub9mByPVKVJvvkbl2XddxNH0y74glO5k+qx9wl4ARhiUL6N/CMtdsw==",
+            "keyDetails": "PKIX_ECDSA_P256_SHA_256",
+            "validFor": {
+              "start": "2026-01-01T00:00:00Z"
+            }
+          },
+          "logId": {
+            "keyId": "oarydHdGZ1FCF31laxZ1V4ouJ2/McfH6mMIWTNb5bmU="
+          }
+        }
+      ],
+      "certificateAuthorities": [
+        {
+          "subject": {
+            "organization": "OpenMOCA conformance (INSECURE)",
+            "commonName": "MOCA sigstore-test CA"
+          },
+          "uri": "https://fulcio.sigstore-test.openmoca.example",
+          "certChain": {
+            "certificates": [
+              {
+                "rawBytes": "MIIB1jCCAXugAwIBAgIRAIJIE3WLRcBdzoinFUnq0gwwCgYIKoZIzj0EAwIwSjEoMCYGA1UECgwfT3Blbk1PQ0EgY29uZm9ybWFuY2UgKElOU0VDVVJFKTEeMBwGA1UEAwwVTU9DQSBzaWdzdG9yZS10ZXN0IENBMB4XDTI2MDEwMTAwMDAwMFoXDTM1MTIzMDAwMDAwMFowSjEoMCYGA1UECgwfT3Blbk1PQ0EgY29uZm9ybWFuY2UgKElOU0VDVVJFKTEeMBwGA1UEAwwVTU9DQSBzaWdzdG9yZS10ZXN0IENBMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEe2EnGiNuRjp3ooAuTLgnaZcI6S64eEeXWsIqX5K0DmBy8w2jEz/7ux1TIWDDg0/J1aRI4qwfeVeq0bg1lfTnw6NCMEAwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAQYwHQYDVR0OBBYEFLfUJ3Oq45cUXXd6C88R4fZeOMKrMAoGCCqGSM49BAMCA0kAMEYCIQDthBr/vwkvv9B2q7wj/vTD2vyH9GdGNIU0xCs60kOyDwIhAKxPznAbkviDPipwYtNmTG6F1MT3C0L8S6IzmaMfQKUT"
+              }
+            ]
+          },
+          "validFor": {
+            "start": "2026-01-01T00:00:00Z"
+          }
+        }
+      ],
+      "ctlogs": [
+        {
+          "baseUrl": "https://ctfe.sigstore-test.openmoca.example",
+          "hashAlgorithm": "SHA2_256",
+          "publicKey": {
+            "rawBytes": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEuqECNB0BlcZH7G71PekhpuuYLM+M/py9fmteZsB76IpefR5TOaKdJQiNEQQfcwo5DieGqG5OWn3cqeMZTeP8yA==",
+            "keyDetails": "PKIX_ECDSA_P256_SHA_256",
+            "validFor": {
+              "start": "2026-01-01T00:00:00Z"
+            }
+          },
+          "logId": {
+            "keyId": "F02S4fPgrXfXdfX1bc3rWoB03Nt4KWcnwhrg8WU9YfE="
+          }
+        }
+      ],
+      "timestampAuthorities": []
+    }
+  }
+}

@@ -1,0 +1,1931 @@
+WEBVTT
+
+NOTE Automatic captions for https://www.youtube.com/watch?v=XAxK9_21vgc, from YouTube.
+
+1
+00:00:00.320 --> 00:00:02.560
+Welcome to this video. In this video, we
+
+2
+00:00:02.560 --> 00:00:05.759
+will see how do we create a agent that
+
+3
+00:00:05.759 --> 00:00:08.960
+supports multi-turn conversation. It
+
+4
+00:00:08.960 --> 00:00:11.200
+means that for instance first user will
+
+5
+00:00:11.200 --> 00:00:12.880
+be asking hey like what is the weather
+
+6
+00:00:12.880 --> 00:00:15.920
+in Toronto and like the second question
+
+7
+00:00:15.920 --> 00:00:17.279
+he will be asking what are all the
+
+8
+00:00:17.279 --> 00:00:19.760
+places that I can visit right so for the
+
+9
+00:00:19.760 --> 00:00:22.160
+second question the user is not saying
+
+10
+00:00:22.160 --> 00:00:24.400
+like which city he is looking at rather
+
+11
+00:00:24.400 --> 00:00:26.160
+like he is saying like hey what are all
+
+12
+00:00:26.160 --> 00:00:29.439
+the places that I can refer right so in
+
+13
+00:00:29.439 --> 00:00:32.160
+that sense like agent should know the
+
+14
+00:00:32.160 --> 00:00:35.040
+user is actually talking about the city
+
+15
+00:00:35.040 --> 00:00:37.600
+Toronto which he mentioned in the first
+
+16
+00:00:37.600 --> 00:00:40.320
+question Right? In that sense, the agent
+
+17
+00:00:40.320 --> 00:00:43.040
+should keep the conversation, right? So,
+
+18
+00:00:43.040 --> 00:00:44.879
+it should be able to refer back to the
+
+19
+00:00:44.879 --> 00:00:47.200
+previous history, conversation history
+
+20
+00:00:47.200 --> 00:00:49.120
+and uh you know, extract the relevant
+
+21
+00:00:49.120 --> 00:00:51.039
+information, right? So, in order to do
+
+22
+00:00:51.039 --> 00:00:53.360
+that, we have something called a thread.
+
+23
+00:00:53.360 --> 00:00:55.199
+So, that's what we will be discussing,
+
+24
+00:00:55.199 --> 00:00:56.879
+right? In this particular, it's pretty
+
+25
+00:00:56.879 --> 00:01:00.079
+simple. If I just come over here like uh
+
+26
+00:01:00.079 --> 00:01:02.640
+actually like I just create a agent you
+
+27
+00:01:02.640 --> 00:01:04.320
+know similar to like how we used to
+
+28
+00:01:04.320 --> 00:01:06.720
+create the agent and like when you have
+
+29
+00:01:06.720 --> 00:01:08.560
+a agent all you need to do is that you
+
+30
+00:01:08.560 --> 00:01:10.320
+need to create something called a
+
+31
+00:01:10.320 --> 00:01:13.200
+thread. So when you create a thread and
+
+32
+00:01:13.200 --> 00:01:15.680
+use the thread when you submit you know
+
+33
+00:01:15.680 --> 00:01:18.080
+your input to the agent the agent will
+
+34
+00:01:18.080 --> 00:01:20.479
+make use of this particular thread and
+
+35
+00:01:20.479 --> 00:01:22.799
+capture all the relevant information
+
+36
+00:01:22.799 --> 00:01:24.640
+going forward as long as you provide
+
+37
+00:01:24.640 --> 00:01:27.040
+this thread information in the
+
+38
+00:01:27.040 --> 00:01:29.360
+subsequent conversation right so
+
+39
+00:01:29.360 --> 00:01:31.600
+basically like uh behind the scenes
+
+40
+00:01:31.600 --> 00:01:33.280
+Microsoft takes care of you know
+
+41
+00:01:33.280 --> 00:01:35.200
+capturing all this information putting
+
+42
+00:01:35.200 --> 00:01:38.000
+it under the uh thread right you really
+
+43
+00:01:38.000 --> 00:01:39.520
+don't have to do anything that is the
+
+44
+00:01:39.520 --> 00:01:42.320
+beauty of this framework work right all
+
+45
+00:01:42.320 --> 00:01:43.840
+you need to do is that again just create
+
+46
+00:01:43.840 --> 00:01:46.399
+a thread pause it with your conversation
+
+47
+00:01:46.399 --> 00:01:49.520
+right so now let's go ahead and see like
+
+48
+00:01:49.520 --> 00:01:52.240
+how exactly it works so again like if at
+
+49
+00:01:52.240 --> 00:01:53.680
+all you wanted to delete the thread you
+
+50
+00:01:53.680 --> 00:01:55.280
+can very well delete the thread so where
+
+51
+00:01:55.280 --> 00:01:57.520
+do I see the thread right so if if I
+
+52
+00:01:57.520 --> 00:01:59.840
+just come over to the portal here if you
+
+53
+00:01:59.840 --> 00:02:01.759
+just come over click on this agent and
+
+54
+00:02:01.759 --> 00:02:04.240
+if you just go here it will create a
+
+55
+00:02:04.240 --> 00:02:06.719
+thread for us whenever you say hey like
+
+56
+00:02:06.719 --> 00:02:08.399
+create a new thread something of this
+
+57
+00:02:08.399 --> 00:02:10.160
+sort get a new thread it will create a
+
+58
+00:02:10.160 --> 00:02:12.560
+thread for for you. So what happens like
+
+59
+00:02:12.560 --> 00:02:14.160
+if you don't specify this thread
+
+60
+00:02:14.160 --> 00:02:15.920
+information like so for the agent will
+
+61
+00:02:15.920 --> 00:02:17.760
+still create a thread but that is
+
+62
+00:02:17.760 --> 00:02:20.000
+something called a disposable thread. So
+
+63
+00:02:20.000 --> 00:02:22.480
+once the execution it's done the thread
+
+64
+00:02:22.480 --> 00:02:25.120
+will be disposed it is of no use right
+
+65
+00:02:25.120 --> 00:02:27.360
+but like when you create a thread the
+
+66
+00:02:27.360 --> 00:02:29.680
+history will be stored. So now let's go
+
+67
+00:02:29.680 --> 00:02:31.440
+to the visual studio and see like how
+
+68
+00:02:31.440 --> 00:02:35.200
+exactly it works here. It's all going to
+
+69
+00:02:35.200 --> 00:02:38.560
+be the same but then like um as said I'm
+
+70
+00:02:38.560 --> 00:02:41.840
+just creating a new thread here and um
+
+71
+00:02:41.840 --> 00:02:43.680
+the user questions are like what is the
+
+72
+00:02:43.680 --> 00:02:45.840
+weather in Tokyo and I pass the thread
+
+73
+00:02:45.840 --> 00:02:48.400
+information they was again asking what
+
+74
+00:02:48.400 --> 00:02:51.519
+was the last city he asked about right
+
+75
+00:02:51.519 --> 00:02:54.480
+so now again like he is asking like how
+
+76
+00:02:54.480 --> 00:02:57.040
+compared to London's weather right
+
+77
+00:02:57.040 --> 00:02:58.800
+because like we are using a weather tool
+
+78
+00:02:58.800 --> 00:03:00.800
+here for all these we will be just
+
+79
+00:03:00.800 --> 00:03:02.879
+responding back the static content here
+
+80
+00:03:02.879 --> 00:03:04.720
+like the weather in that particular city
+
+81
+00:03:04.720 --> 00:03:06.959
+it's a sunny or whatever is the time be
+
+82
+00:03:06.959 --> 00:03:09.040
+London beat Tokyo or whatever is that so
+
+83
+00:03:09.040 --> 00:03:10.720
+that is what we will be responding back
+
+84
+00:03:10.720 --> 00:03:12.159
+because like that is the tool that we
+
+85
+00:03:12.159 --> 00:03:15.599
+are referring here right so now uh let's
+
+86
+00:03:15.599 --> 00:03:18.000
+see like how exactly this works right
+
+87
+00:03:18.000 --> 00:03:19.920
+now let me go ahead and run the program
+
+88
+00:03:19.920 --> 00:03:23.519
+so this is going to give me 16 program
+
+89
+00:03:23.519 --> 00:03:26.239
+thread so let it run in between like if
+
+90
+00:03:26.239 --> 00:03:28.319
+you see here like this is this is how
+
+91
+00:03:28.319 --> 00:03:31.040
+this will get executed right so first we
+
+92
+00:03:31.040 --> 00:03:34.159
+create a thread so now we will pass that
+
+93
+00:03:34.159 --> 00:03:36.560
+user query along with the thread
+
+94
+00:03:36.560 --> 00:03:39.920
+information. Now what Azure service will
+
+95
+00:03:39.920 --> 00:03:41.920
+do is that in case of any history exist
+
+96
+00:03:41.920 --> 00:03:43.760
+in the history database, it will pull up
+
+97
+00:03:43.760 --> 00:03:45.840
+that information, pass it to the LLM,
+
+98
+00:03:45.840 --> 00:03:48.959
+the agent will respond back and like
+
+99
+00:03:48.959 --> 00:03:51.440
+finally it will save that information
+
+100
+00:03:51.440 --> 00:03:53.599
+into the thread history. So in the
+
+101
+00:03:53.599 --> 00:03:57.200
+upcoming uh user query if you say hey
+
+102
+00:03:57.200 --> 00:03:59.120
+like what is the city that I asked? So
+
+103
+00:03:59.120 --> 00:04:01.200
+now again like the user like we we are
+
+104
+00:04:01.200 --> 00:04:03.280
+passing this thread information it will
+
+105
+00:04:03.280 --> 00:04:05.920
+again go back and pull up the history
+
+106
+00:04:05.920 --> 00:04:07.920
+from the database and pass it to the
+
+107
+00:04:07.920 --> 00:04:10.239
+llm. So that way like the overall
+
+108
+00:04:10.239 --> 00:04:12.799
+conversation it's stored somewhere. So
+
+109
+00:04:12.799 --> 00:04:15.280
+the agent can always refer back you know
+
+110
+00:04:15.280 --> 00:04:17.600
+because if I expand this one so first
+
+111
+00:04:17.600 --> 00:04:19.919
+like what is the weather like in Tokyo
+
+112
+00:04:19.919 --> 00:04:21.519
+the weather in Tokyo it's a sunny
+
+113
+00:04:21.519 --> 00:04:23.759
+whatever is that what is the last city
+
+114
+00:04:23.759 --> 00:04:26.639
+that I asked about the city that it's
+
+115
+00:04:26.639 --> 00:04:29.520
+Tokyo because now again like it respond
+
+116
+00:04:29.520 --> 00:04:32.080
+back the weather in London it's also
+
+117
+00:04:32.080 --> 00:04:34.000
+sunny with the same degree because like
+
+118
+00:04:34.000 --> 00:04:35.919
+we are using the tool that always
+
+119
+00:04:35.919 --> 00:04:38.800
+returns the same weather information. Uh
+
+120
+00:04:38.800 --> 00:04:40.880
+so it says that the whether in both
+
+121
+00:04:40.880 --> 00:04:43.840
+tokun it's the same it it all happens
+
+122
+00:04:43.840 --> 00:04:46.080
+because of this thread and the history
+
+123
+00:04:46.080 --> 00:04:48.960
+it's being you know perceived in the uh
+
+124
+00:04:48.960 --> 00:04:51.120
+thread database right we don't we really
+
+125
+00:04:51.120 --> 00:04:53.199
+don't have to do anything you know in
+
+126
+00:04:53.199 --> 00:04:55.600
+order to manage all this conversation I
+
+127
+00:04:55.600 --> 00:04:58.240
+remember like in the past we have to you
+
+128
+00:04:58.240 --> 00:05:00.639
+know send the user queries back and
+
+129
+00:05:00.639 --> 00:05:03.840
+forth the overall payload will will be
+
+130
+00:05:03.840 --> 00:05:07.039
+so huge now thanks to thread we really
+
+131
+00:05:07.039 --> 00:05:08.880
+don't have to do anything just pass this
+
+132
+00:05:08.880 --> 00:05:11.759
+thread information right so now let me
+
+133
+00:05:11.759 --> 00:05:14.479
+clear this console so let's see like how
+
+134
+00:05:14.479 --> 00:05:16.240
+do we make use of a existing thread
+
+135
+00:05:16.240 --> 00:05:18.560
+right so in the previous program like I
+
+136
+00:05:18.560 --> 00:05:20.560
+showed you like what is this thread how
+
+137
+00:05:20.560 --> 00:05:23.039
+do we use that right now in this program
+
+138
+00:05:23.039 --> 00:05:24.800
+what I want to do is that I really you
+
+139
+00:05:24.800 --> 00:05:28.320
+know quickly want to create a API and
+
+140
+00:05:28.320 --> 00:05:30.240
+like user will be using that particular
+
+141
+00:05:30.240 --> 00:05:34.560
+API to interact with the agent and like
+
+142
+00:05:34.560 --> 00:05:36.080
+he will be passing the thread
+
+143
+00:05:36.080 --> 00:05:38.240
+information back and forth Right now
+
+144
+00:05:38.240 --> 00:05:40.080
+overall execution it is going to be the
+
+145
+00:05:40.080 --> 00:05:42.560
+same. So I have the same kind of a
+
+146
+00:05:42.560 --> 00:05:45.520
+weather tool here. Right. And like what
+
+147
+00:05:45.520 --> 00:05:48.800
+I do is that I created a fast API client
+
+148
+00:05:48.800 --> 00:05:51.520
+here and this is what will host my
+
+149
+00:05:51.520 --> 00:05:54.720
+agent. Right? Now what I want to do is
+
+150
+00:05:54.720 --> 00:05:57.919
+that uh this program. So what I want to
+
+151
+00:05:57.919 --> 00:06:00.160
+do here is that
+
+152
+00:06:00.160 --> 00:06:02.720
+uh when a user
+
+153
+00:06:02.720 --> 00:06:04.880
+has a hosting he will be passing the
+
+154
+00:06:04.880 --> 00:06:06.319
+thread information. If there is no
+
+155
+00:06:06.319 --> 00:06:08.479
+thread information it's given then it
+
+156
+00:06:08.479 --> 00:06:10.800
+will create a new thread uh and like
+
+157
+00:06:10.800 --> 00:06:12.800
+when it return back it will always
+
+158
+00:06:12.800 --> 00:06:15.759
+return back two two things like adds to
+
+159
+00:06:15.759 --> 00:06:17.280
+the user query as well as the thread
+
+160
+00:06:17.280 --> 00:06:19.919
+information. So what user have to do is
+
+161
+00:06:19.919 --> 00:06:22.880
+that in the next time he will be
+
+162
+00:06:22.880 --> 00:06:25.840
+reaching this API he will be passing the
+
+163
+00:06:25.840 --> 00:06:28.479
+next query plus the thread information
+
+164
+00:06:28.479 --> 00:06:30.560
+right basically like the thread ID he
+
+165
+00:06:30.560 --> 00:06:33.199
+needs to pass that. So that's how we can
+
+166
+00:06:33.199 --> 00:06:35.039
+use it. Now with that like let me go
+
+167
+00:06:35.039 --> 00:06:38.000
+ahead and run this program. So python
+
+168
+00:06:38.000 --> 00:06:39.680
+17.
+
+169
+00:06:39.680 --> 00:06:41.919
+Okay let me run that. So quickly it will
+
+170
+00:06:41.919 --> 00:06:44.240
+create a fast API.
+
+171
+00:06:44.240 --> 00:06:47.440
+Now let me go and uh run this uh curl
+
+172
+00:06:47.440 --> 00:06:50.919
+commands here.
+
+173
+00:06:50.960 --> 00:06:53.520
+So let me copy this. So what I'm saying
+
+174
+00:06:53.520 --> 00:06:55.759
+is that this is running in the port
+
+175
+00:06:55.759 --> 00:06:58.479
+8,000. So with the with the endpoint
+
+176
+00:06:58.479 --> 00:07:01.039
+chat I'm asking you what is the weather
+
+177
+00:07:01.039 --> 00:07:03.280
+like in London. Same query right? But
+
+178
+00:07:03.280 --> 00:07:04.720
+this time around the thread ID because
+
+179
+00:07:04.720 --> 00:07:06.639
+like this is my first conversation. I
+
+180
+00:07:06.639 --> 00:07:09.280
+really don't have the thread ID and run
+
+181
+00:07:09.280 --> 00:07:12.479
+call and that is going to hit the API.
+
+182
+00:07:12.479 --> 00:07:15.039
+So it is going to create agent and then
+
+183
+00:07:15.039 --> 00:07:16.880
+like it is going to respond back. Now I
+
+184
+00:07:16.880 --> 00:07:19.039
+have the thread ID here. Now if you see
+
+185
+00:07:19.039 --> 00:07:20.800
+the weather in London, it's sunny with
+
+186
+00:07:20.800 --> 00:07:22.880
+whatever the weather is that right now I
+
+187
+00:07:22.880 --> 00:07:26.000
+copy this thread ID and I will pass this
+
+188
+00:07:26.000 --> 00:07:28.800
+information right to the subsequent
+
+189
+00:07:28.800 --> 00:07:31.520
+query. So I will go and run this curl
+
+190
+00:07:31.520 --> 00:07:33.360
+command.
+
+191
+00:07:33.360 --> 00:07:35.520
+So now as we are passing the thread
+
+192
+00:07:35.520 --> 00:07:38.240
+information it should have access to the
+
+193
+00:07:38.240 --> 00:07:41.840
+previous query rain. So now it sees the
+
+194
+00:07:41.840 --> 00:07:43.840
+weather in Paris also sunny whether
+
+195
+00:07:43.840 --> 00:07:46.639
+whatever is that. So it sees here also
+
+196
+00:07:46.639 --> 00:07:48.800
+sunny because like it knows that we have
+
+197
+00:07:48.800 --> 00:07:51.360
+breakfast or the information
+
+198
+00:07:51.360 --> 00:07:53.280
+for a specific city. Right now if you
+
+199
+00:07:53.280 --> 00:07:55.919
+wanted to you know go ahead and do the
+
+200
+00:07:55.919 --> 00:07:58.400
+multi- turn conversation you can very
+
+201
+00:07:58.400 --> 00:08:00.800
+well do that by pausing this sread
+
+202
+00:08:00.800 --> 00:08:03.759
+information between your calls. Now
+
+203
+00:08:03.759 --> 00:08:05.599
+let's go ahead and discuss about the
+
+204
+00:08:05.599 --> 00:08:08.319
+next topic that is going to be a state
+
+205
+00:08:08.319 --> 00:08:12.080
+management. So you have noticed
+
+206
+00:08:12.080 --> 00:08:15.440
+um the chargation
+
+207
+00:08:15.440 --> 00:08:17.360
+you will have all your previous
+
+208
+00:08:17.360 --> 00:08:19.599
+conversation listed right when you click
+
+209
+00:08:19.599 --> 00:08:21.199
+on that it will load all this
+
+210
+00:08:21.199 --> 00:08:23.520
+information. So how exactly it does? So
+
+211
+00:08:23.520 --> 00:08:26.080
+behind the scenes it stores the thread
+
+212
+00:08:26.080 --> 00:08:28.400
+ID and its relevant information. So
+
+213
+00:08:28.400 --> 00:08:31.039
+think of this way. So for each
+
+214
+00:08:31.039 --> 00:08:32.719
+conversation there is going to be a
+
+215
+00:08:32.719 --> 00:08:35.440
+thread created and like when you have a
+
+216
+00:08:35.440 --> 00:08:37.519
+multiple conversation each conversation
+
+217
+00:08:37.519 --> 00:08:39.360
+will have a thread information. So
+
+218
+00:08:39.360 --> 00:08:41.120
+somehow you should be able to capture
+
+219
+00:08:41.120 --> 00:08:43.200
+and store this thread information. when
+
+220
+00:08:43.200 --> 00:08:46.160
+a user opens your charge GPT UI you
+
+221
+00:08:46.160 --> 00:08:47.839
+should be able to pull all the thread
+
+222
+00:08:47.839 --> 00:08:49.839
+information related to a specific user
+
+223
+00:08:49.839 --> 00:08:52.160
+and based on which you have to you know
+
+224
+00:08:52.160 --> 00:08:54.640
+build all this right so in order to do
+
+225
+00:08:54.640 --> 00:08:56.959
+that you can very well use the state
+
+226
+00:08:56.959 --> 00:08:59.600
+management so basic when you have your
+
+227
+00:08:59.600 --> 00:09:02.240
+thread information you can serialize and
+
+228
+00:09:02.240 --> 00:09:04.320
+deserialize this thread information
+
+229
+00:09:04.320 --> 00:09:05.839
+that's what we are going to discuss in
+
+230
+00:09:05.839 --> 00:09:08.320
+this particular topic right so first we
+
+231
+00:09:08.320 --> 00:09:10.240
+will have a thread history dojson so in
+
+232
+00:09:10.240 --> 00:09:11.680
+which we will be capturing all the
+
+233
+00:09:11.680 --> 00:09:14.640
+thread relevant information. If a file
+
+234
+00:09:14.640 --> 00:09:17.440
+exist, we will des serialize. If doesn't
+
+235
+00:09:17.440 --> 00:09:20.000
+exist, we will create one, right? And
+
+236
+00:09:20.000 --> 00:09:22.320
+like in this particular file, we will be
+
+237
+00:09:22.320 --> 00:09:24.399
+storing all the thread information,
+
+238
+00:09:24.399 --> 00:09:27.519
+right? So, and like when a user runs,
+
+239
+00:09:27.519 --> 00:09:29.839
+then um you know it will des serialize
+
+240
+00:09:29.839 --> 00:09:32.320
+and see like if there are any existing
+
+241
+00:09:32.320 --> 00:09:34.720
+uh thread then it will load that thread
+
+242
+00:09:34.720 --> 00:09:37.760
+into the in you know user request and
+
+243
+00:09:37.760 --> 00:09:39.760
+then like it will it will respond back
+
+244
+00:09:39.760 --> 00:09:43.040
+to us. Right? So now let me go ahead and
+
+245
+00:09:43.040 --> 00:09:44.640
+run this particular program. Let me
+
+246
+00:09:44.640 --> 00:09:48.000
+clear the console here again. So if you
+
+247
+00:09:48.000 --> 00:09:51.519
+see here it will create a file something
+
+248
+00:09:51.519 --> 00:09:53.519
+called you know something like this. So
+
+249
+00:09:53.519 --> 00:09:55.920
+thread history.json. So in which it will
+
+250
+00:09:55.920 --> 00:09:58.399
+store all this relevant information. So
+
+251
+00:09:58.399 --> 00:10:00.959
+let me first go and delete this file. So
+
+252
+00:10:00.959 --> 00:10:02.959
+before I run that. So now let me go
+
+253
+00:10:02.959 --> 00:10:06.160
+ahead and run this particular file 18.
+
+254
+00:10:06.160 --> 00:10:08.399
+Now let me go ahead and run this file.
+
+255
+00:10:08.399 --> 00:10:11.360
+So now it is asking us um what is your
+
+256
+00:10:11.360 --> 00:10:14.079
+input. So first let me ask what is the
+
+257
+00:10:14.079 --> 00:10:16.480
+capital of India. So it is again going
+
+258
+00:10:16.480 --> 00:10:18.399
+to create a agent and like agent will
+
+259
+00:10:18.399 --> 00:10:20.880
+respond back. Now the thread history
+
+260
+00:10:20.880 --> 00:10:23.120
+dojson file get created. If you see here
+
+261
+00:10:23.120 --> 00:10:24.959
+like number of messages one and this is
+
+262
+00:10:24.959 --> 00:10:28.160
+the thread id right. So basically like
+
+263
+00:10:28.160 --> 00:10:30.560
+the whenever you create a thread uh the
+
+264
+00:10:30.560 --> 00:10:32.720
+agent framework provides a mechanism for
+
+265
+00:10:32.720 --> 00:10:34.640
+you to serialize and deserialize and
+
+266
+00:10:34.640 --> 00:10:36.480
+store this information. So basically
+
+267
+00:10:36.480 --> 00:10:37.920
+storing it's up to you but then like a
+
+268
+00:10:37.920 --> 00:10:39.839
+serializing and deserializing it's part
+
+269
+00:10:39.839 --> 00:10:42.720
+of a Asian framework right and then like
+
+270
+00:10:42.720 --> 00:10:45.440
+now let me go ahead and ask this what is
+
+271
+00:10:45.440 --> 00:10:49.040
+the capital of Canada so now it is again
+
+272
+00:10:49.040 --> 00:10:52.320
+going to you know now it has the user
+
+273
+00:10:52.320 --> 00:10:54.640
+input and like it will load the profile
+
+274
+00:10:54.640 --> 00:10:56.880
+information profile history and it will
+
+275
+00:10:56.880 --> 00:10:59.360
+respond back to us. So it says the
+
+276
+00:10:59.360 --> 00:11:02.160
+capital city of Canada it's Atava and
+
+277
+00:11:02.160 --> 00:11:04.720
+like how far they are because now I am
+
+278
+00:11:04.720 --> 00:11:06.079
+not saying like which city we are
+
+279
+00:11:06.079 --> 00:11:07.519
+talking about right because I already
+
+280
+00:11:07.519 --> 00:11:09.200
+mentioned two cities and that
+
+281
+00:11:09.200 --> 00:11:11.440
+information it's part of a thread and
+
+282
+00:11:11.440 --> 00:11:13.519
+the program has access to the thread it
+
+283
+00:11:13.519 --> 00:11:14.560
+should be able to pull up this
+
+284
+00:11:14.560 --> 00:11:18.240
+information now if you go here let let
+
+285
+00:11:18.240 --> 00:11:21.120
+it complete so it says that um the
+
+286
+00:11:21.120 --> 00:11:22.880
+distance between New Delhi and datawites
+
+287
+00:11:22.880 --> 00:11:25.120
+whatever the distance is the train it it
+
+288
+00:11:25.120 --> 00:11:27.680
+has some information for us now if you
+
+289
+00:11:27.680 --> 00:11:29.760
+Just go here. It says that hey like this
+
+290
+00:11:29.760 --> 00:11:31.760
+is the thread you are you know using it
+
+291
+00:11:31.760 --> 00:11:35.360
+and the like you have. So you can very
+
+292
+00:11:35.360 --> 00:11:37.120
+well you know have this thread
+
+293
+00:11:37.120 --> 00:11:39.200
+information somewhere like in a JSON
+
+294
+00:11:39.200 --> 00:11:41.839
+file or in your database. So typically
+
+295
+00:11:41.839 --> 00:11:43.519
+you will be storing this information in
+
+296
+00:11:43.519 --> 00:11:45.519
+a database right? So that like you can
+
+297
+00:11:45.519 --> 00:11:48.160
+whenever a user access your UI then you
+
+298
+00:11:48.160 --> 00:11:49.920
+can pull up all the information and show
+
+299
+00:11:49.920 --> 00:11:51.839
+it to the user. when a user click on
+
+300
+00:11:51.839 --> 00:11:53.760
+that particular topic you know
+
+301
+00:11:53.760 --> 00:11:55.519
+particular user input or whatever is
+
+302
+00:11:55.519 --> 00:11:58.240
+that then at the time you know like what
+
+303
+00:11:58.240 --> 00:12:00.079
+thread he is talking about or you know
+
+304
+00:12:00.079 --> 00:12:02.640
+relevant to that particular you know
+
+305
+00:12:02.640 --> 00:12:05.120
+title that you are showing in your UI
+
+306
+00:12:05.120 --> 00:12:07.120
+and pull that information and show it in
+
+307
+00:12:07.120 --> 00:12:09.760
+the UI and that's how it works right
+
+308
+00:12:09.760 --> 00:12:12.560
+that's how like all the agent UIs that
+
+309
+00:12:12.560 --> 00:12:15.200
+you have chat JPT or Jiny or whatever is
+
+310
+00:12:15.200 --> 00:12:17.920
+that right and basically underneath this
+
+311
+00:12:17.920 --> 00:12:20.880
+this is how they do it okay Now let's
+
+312
+00:12:20.880 --> 00:12:24.320
+move forward and let's talk about um
+
+313
+00:12:24.320 --> 00:12:26.639
+something called structured output with
+
+314
+00:12:26.639 --> 00:12:30.240
+that like let me go ahead and clear this
+
+315
+00:12:30.240 --> 00:12:32.880
+let me clear this technically like now
+
+316
+00:12:32.880 --> 00:12:35.120
+what I want to do is that so user will
+
+317
+00:12:35.120 --> 00:12:38.399
+be saying like my name is uh um you know
+
+318
+00:12:38.399 --> 00:12:41.040
+John D and I'm 30 years old whatever is
+
+319
+00:12:41.040 --> 00:12:42.959
+that right now what I want to do is that
+
+320
+00:12:42.959 --> 00:12:45.760
+I want to extract this information
+
+321
+00:12:45.760 --> 00:12:47.920
+uh the user information right so
+
+322
+00:12:47.920 --> 00:12:50.959
+basically like I have defined my model
+
+323
+00:12:50.959 --> 00:12:54.959
+here. So when a when a user like when
+
+324
+00:12:54.959 --> 00:12:57.279
+when my agent respond back, it has to
+
+325
+00:12:57.279 --> 00:12:59.920
+respond back in this particular format.
+
+326
+00:12:59.920 --> 00:13:03.120
+Right? So ex now I'm saying like extract
+
+327
+00:13:03.120 --> 00:13:06.320
+the person information from the user's
+
+328
+00:13:06.320 --> 00:13:08.959
+text. So user will be providing this
+
+329
+00:13:08.959 --> 00:13:12.160
+kind of a text. Um so right my name is
+
+330
+00:13:12.160 --> 00:13:13.920
+whatever is that time you know how
+
+331
+00:13:13.920 --> 00:13:16.320
+oldever and then like I do this in this
+
+332
+00:13:16.320 --> 00:13:18.800
+particular city right. So now if you see
+
+333
+00:13:18.800 --> 00:13:21.360
+here usually like we will be passing the
+
+334
+00:13:21.360 --> 00:13:23.680
+user in input and like in the previous
+
+335
+00:13:23.680 --> 00:13:27.200
+like file we showed you like how do we
+
+336
+00:13:27.200 --> 00:13:29.279
+use the thread information. Now we will
+
+337
+00:13:29.279 --> 00:13:32.240
+introduce one more. So this is called
+
+338
+00:13:32.240 --> 00:13:34.560
+response format. When you pass the
+
+339
+00:13:34.560 --> 00:13:36.720
+response format
+
+340
+00:13:36.720 --> 00:13:39.519
+u then the you know agent will will know
+
+341
+00:13:39.519 --> 00:13:41.839
+that hey like I need to respond back to
+
+342
+00:13:41.839 --> 00:13:44.240
+the user but like when you respond back
+
+343
+00:13:44.240 --> 00:13:45.680
+to the user I have to follow this
+
+344
+00:13:45.680 --> 00:13:48.079
+particular format right. So now with
+
+345
+00:13:48.079 --> 00:13:49.920
+that like let me go and run this
+
+346
+00:13:49.920 --> 00:13:54.440
+particular file. So this is 19.
+
+347
+00:13:54.639 --> 00:13:58.079
+Okay. Now let me run this file. So this
+
+348
+00:13:58.079 --> 00:14:00.079
+is the user input. Now let's say like
+
+349
+00:14:00.079 --> 00:14:01.920
+how exactly the agent it's responding.
+
+350
+00:14:01.920 --> 00:14:03.920
+So the agent is responding name is this,
+
+351
+00:14:03.920 --> 00:14:06.399
+age is this, occupation is this, city is
+
+352
+00:14:06.399 --> 00:14:10.800
+this. So now what I'm saying is that you
+
+353
+00:14:10.800 --> 00:14:13.680
+know you really don't have to have the
+
+354
+00:14:13.680 --> 00:14:16.000
+uh you know very paragraph kind of a
+
+355
+00:14:16.000 --> 00:14:18.639
+response from the agent rather like you
+
+356
+00:14:18.639 --> 00:14:20.800
+can very well control the response
+
+357
+00:14:20.800 --> 00:14:24.639
+format by defining your uh data format
+
+358
+00:14:24.639 --> 00:14:26.800
+here right so like likewise like if you
+
+359
+00:14:26.800 --> 00:14:28.800
+see here this is the data format that
+
+360
+00:14:28.800 --> 00:14:31.360
+should exactly match the age occupation
+
+361
+00:14:31.360 --> 00:14:33.760
+city everything should match exactly
+
+362
+00:14:33.760 --> 00:14:35.920
+what happens in in keys it doesn't have
+
+363
+00:14:35.920 --> 00:14:37.519
+the information it is going to be empty
+
+364
+00:14:37.519 --> 00:14:40.560
+right but then like it shows the way for
+
+365
+00:14:40.560 --> 00:14:42.959
+us to extract the information in the
+
+366
+00:14:42.959 --> 00:14:45.040
+format that I am interested in that can
+
+367
+00:14:45.040 --> 00:14:46.639
+be very depending let's say like how do
+
+368
+00:14:46.639 --> 00:14:49.279
+we extract the user personal information
+
+369
+00:14:49.279 --> 00:14:50.880
+right for instance let's say like I'm
+
+370
+00:14:50.880 --> 00:14:53.519
+saying like my name is Karthikumar and I
+
+371
+00:14:53.519 --> 00:14:55.839
+live in Toronto and I like to play
+
+372
+00:14:55.839 --> 00:14:58.720
+cricket and I have you know a specific
+
+373
+00:14:58.720 --> 00:15:01.120
+kind of a car right so these are all the
+
+374
+00:15:01.120 --> 00:15:04.800
+information the agent can capture and uh
+
+375
+00:15:04.800 --> 00:15:07.600
+keep it so that uh in the future future
+
+376
+00:15:07.600 --> 00:15:09.760
+when you want to ask something here like
+
+377
+00:15:09.760 --> 00:15:12.720
+I am looking for a paint for my car now
+
+378
+00:15:12.720 --> 00:15:14.480
+you really don't have to specify which
+
+379
+00:15:14.480 --> 00:15:16.000
+car you are talking about because like
+
+380
+00:15:16.000 --> 00:15:18.000
+the agent should have all your
+
+381
+00:15:18.000 --> 00:15:20.800
+information right so we will extract all
+
+382
+00:15:20.800 --> 00:15:23.440
+this information and store it into the
+
+383
+00:15:23.440 --> 00:15:25.839
+profile so in this time around I don't
+
+384
+00:15:25.839 --> 00:15:28.800
+want to define the data model here
+
+385
+00:15:28.800 --> 00:15:31.600
+rather like I want to say like any
+
+386
+00:15:31.600 --> 00:15:34.399
+personal information any capture and
+
+387
+00:15:34.399 --> 00:15:36.959
+store it into your profile file
+
+388
+00:15:36.959 --> 00:15:38.800
+for let's see like how exactly this is
+
+389
+00:15:38.800 --> 00:15:42.079
+going to work here. So now let me go
+
+390
+00:15:42.079 --> 00:15:45.680
+ahead and minimize this. So like we will
+
+391
+00:15:45.680 --> 00:15:47.920
+be using something called AI memory
+
+392
+00:15:47.920 --> 00:15:50.079
+extractor. It's a it's a pretty simple
+
+393
+00:15:50.079 --> 00:15:53.040
+Python file implementation right. So
+
+394
+00:15:53.040 --> 00:15:56.240
+when a program starts it try to see if
+
+395
+00:15:56.240 --> 00:15:59.120
+there is any existing file. If there is
+
+396
+00:15:59.120 --> 00:16:00.800
+a file then it will load that
+
+397
+00:16:00.800 --> 00:16:02.480
+information. Basically like this file
+
+398
+00:16:02.480 --> 00:16:04.480
+will have all your profile information
+
+399
+00:16:04.480 --> 00:16:07.279
+pretty similar to this thread.json file.
+
+400
+00:16:07.279 --> 00:16:10.399
+So we'll create right now what we'll do
+
+401
+00:16:10.399 --> 00:16:12.959
+is that whenever user send a message we
+
+402
+00:16:12.959 --> 00:16:15.040
+will be calling something called
+
+403
+00:16:15.040 --> 00:16:17.920
+invoking. So that would be part of this
+
+404
+00:16:17.920 --> 00:16:21.360
+class a memory extractor. So that class
+
+405
+00:16:21.360 --> 00:16:23.199
+will get called that will load the
+
+406
+00:16:23.199 --> 00:16:25.600
+profile information and that information
+
+407
+00:16:25.600 --> 00:16:27.519
+will be passed to the agent. And now the
+
+408
+00:16:27.519 --> 00:16:29.360
+agent will have your query as well as
+
+409
+00:16:29.360 --> 00:16:31.120
+your profile information based on which
+
+410
+00:16:31.120 --> 00:16:34.160
+it will respond back after the uh you
+
+411
+00:16:34.160 --> 00:16:36.240
+know after the we receive the response
+
+412
+00:16:36.240 --> 00:16:38.959
+from the llm. Now what we'll do is that
+
+413
+00:16:38.959 --> 00:16:41.440
+we will call something called invoked
+
+414
+00:16:41.440 --> 00:16:44.000
+method that is again part of the same
+
+415
+00:16:44.000 --> 00:16:46.399
+class. So what it will do is that it
+
+416
+00:16:46.399 --> 00:16:49.199
+will extract the personal information
+
+417
+00:16:49.199 --> 00:16:51.120
+and like it will store that information
+
+418
+00:16:51.120 --> 00:16:53.759
+into the JSON file. So that is the
+
+419
+00:16:53.759 --> 00:16:57.360
+process. So, so first we will load the
+
+420
+00:16:57.360 --> 00:17:00.160
+profile and pass the user query get the
+
+421
+00:17:00.160 --> 00:17:02.639
+response back to the user like once the
+
+422
+00:17:02.639 --> 00:17:05.360
+information is there then we will store
+
+423
+00:17:05.360 --> 00:17:07.600
+the any additional information we will
+
+424
+00:17:07.600 --> 00:17:10.799
+store it into the profile file right so
+
+425
+00:17:10.799 --> 00:17:13.199
+now let me go and see this file right so
+
+426
+00:17:13.199 --> 00:17:15.439
+this is how you implement a memory
+
+427
+00:17:15.439 --> 00:17:17.919
+extractor you will pass something called
+
+428
+00:17:17.919 --> 00:17:21.280
+context provider you will have these two
+
+429
+00:17:21.280 --> 00:17:24.319
+classes so invoking and invoked So the
+
+430
+00:17:24.319 --> 00:17:26.400
+difference is that invoking before you
+
+431
+00:17:26.400 --> 00:17:29.280
+pass it to the LLM invoked after you
+
+432
+00:17:29.280 --> 00:17:31.360
+pass like receive the information from
+
+433
+00:17:31.360 --> 00:17:33.919
+LLM again
+
+434
+00:17:33.919 --> 00:17:36.080
+uh again like this invoked method if you
+
+435
+00:17:36.080 --> 00:17:38.559
+see here internally it will make a call
+
+436
+00:17:38.559 --> 00:17:42.960
+to the uh LLM only. So ll you know it
+
+437
+00:17:42.960 --> 00:17:45.360
+will like whatever the information that
+
+438
+00:17:45.360 --> 00:17:47.360
+you have from the user query it will
+
+439
+00:17:47.360 --> 00:17:50.160
+pass it to the LLM saying that hey like
+
+440
+00:17:50.160 --> 00:17:52.720
+if you find any additional profile
+
+441
+00:17:52.720 --> 00:17:54.799
+information apart from like what I
+
+442
+00:17:54.799 --> 00:17:57.120
+already have extract that information
+
+443
+00:17:57.120 --> 00:17:59.039
+give it to me and like we will just
+
+444
+00:17:59.039 --> 00:18:02.160
+update the JSON file right go and run
+
+445
+00:18:02.160 --> 00:18:05.480
+this program.
+
+446
+00:18:07.280 --> 00:18:09.280
+So now let me go ahead and pass the
+
+447
+00:18:09.280 --> 00:18:13.039
+query here. So now I say my name is or
+
+448
+00:18:13.039 --> 00:18:15.827
+this whatever is that
+
+449
+00:18:15.827 --> 00:18:16.640
+[sighs and gasps]
+
+450
+00:18:16.640 --> 00:18:19.840
+I just go and send it to the agent. Now
+
+451
+00:18:19.840 --> 00:18:23.520
+it says now if you just come over here
+
+452
+00:18:23.520 --> 00:18:26.080
+there is a file created with all this
+
+453
+00:18:26.080 --> 00:18:29.360
+information right. So I didn't say like
+
+454
+00:18:29.360 --> 00:18:32.160
+what exactly you have to extract right
+
+455
+00:18:32.160 --> 00:18:34.799
+but then like I leave it up to the LLM
+
+456
+00:18:34.799 --> 00:18:38.160
+to identify what are all the information
+
+457
+00:18:38.160 --> 00:18:40.400
+that you know you consider the LLM
+
+458
+00:18:40.400 --> 00:18:43.280
+consider for the profile right I store
+
+459
+00:18:43.280 --> 00:18:46.320
+all this information so now let me go
+
+460
+00:18:46.320 --> 00:18:51.120
+and uh see I like to play what is that
+
+461
+00:18:51.120 --> 00:18:54.080
+right also
+
+462
+00:18:54.080 --> 00:18:58.440
+next time I see this.
+
+463
+00:18:59.520 --> 00:19:02.559
+So now let me go and uh ask. Now the
+
+464
+00:19:02.559 --> 00:19:04.400
+agent should have enough information.
+
+465
+00:19:04.400 --> 00:19:05.919
+Now if I just come over here, it
+
+466
+00:19:05.919 --> 00:19:08.320
+captures all this information.
+
+467
+00:19:08.320 --> 00:19:13.039
+So now let me go ahead and u what is the
+
+468
+00:19:13.039 --> 00:19:15.760
+weather in my
+
+469
+00:19:15.760 --> 00:19:17.600
+place right? Because I did not say
+
+470
+00:19:17.600 --> 00:19:20.320
+anything. It should pull up the
+
+471
+00:19:20.320 --> 00:19:22.960
+information from the profile. It says
+
+472
+00:19:22.960 --> 00:19:26.400
+that um Toronto something about Toronto
+
+473
+00:19:26.400 --> 00:19:30.320
+right. Now how you create a profile user
+
+474
+00:19:30.320 --> 00:19:34.000
+profile and you know store it and like
+
+475
+00:19:34.000 --> 00:19:37.440
+that will be used in the subsequent
+
+476
+00:19:37.440 --> 00:19:40.240
+from the user. Right? We understood what
+
+477
+00:19:40.240 --> 00:19:42.480
+is this thread and how do we better use
+
+478
+00:19:42.480 --> 00:19:45.039
+this thread. Right? Coming videos we
+
+479
+00:19:45.039 --> 00:19:47.280
+will discuss about some of the most
+
+480
+00:19:47.280 --> 00:19:49.919
+advanced concepts like middleware
+
+481
+00:19:49.919 --> 00:19:53.840
+observability. How do we use the MCP?
+
+482
+00:19:53.840 --> 00:19:57.200
+Thank you for watching this video.

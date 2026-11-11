@@ -1,0 +1,38 @@
+{
+  "name": "moca-spec",
+  "private": true,
+  "version": "0.6.0",
+  "description": "MOCA (Modular Ontology, Content & Attestation): a package layer for portable, verifiable AI knowledge. Specification, schemas, examples and conformance corpus.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "test": "npm run validate",
+    "validate": "npm run check:deps && npm run validate:examples && npm run conformance && npm run validate:trace && npm run validate:derived && npm run validate:links && npm run validate:packs && npm run lint:md",
+    "check:deps": "node scripts/check-deps.mjs",
+    "validate:examples": "node scripts/validate-examples.mjs",
+    "conformance": "node scripts/run-conformance.mjs",
+    "conformance:actual": "node scripts/run-conformance.mjs --actual",
+    "validate:trace": "node scripts/check-traceability.mjs",
+    "validate:derived": "node scripts/refresh-derived.mjs --check",
+    "refresh:derived": "node scripts/refresh-derived.mjs",
+    "validate:links": "node scripts/validate-links.mjs",
+    "validate:packs": "node scripts/pack-examples.mjs --check",
+    "pack:examples": "node scripts/pack-examples.mjs",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"!**/node_modules/**\""
+  },
+  "devDependencies": {
+    "adm-zip": "^0.6.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "markdownlint-cli2": "^0.23.2",
+    "@openmoca/moca-core": "file:../moca-reader-typescript",
+    "@openmoca/moca-index": "file:../moca-tools/packages/moca-index",
+    "@openmoca/moca-lint": "file:../moca-tools/packages/moca-lint",
+    "@openmoca/moca-sign": "file:../moca-tools/packages/moca-sign"
+  },
+  "overrides": {
+    "markdown-it": "^15.0.3",
+    "smol-toml": "^1.9.1",
+    "katex": "^0.19.1"
+  }
+}

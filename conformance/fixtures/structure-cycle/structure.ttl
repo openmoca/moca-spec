@@ -1,0 +1,7 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix c: <https://example.org/conformance/cycle#> .
+
+c:A a skos:Concept ; dct:requires c:B .
+c:B a skos:Concept ; dct:requires c:C .
+c:C a skos:Concept ; dct:requires c:A .

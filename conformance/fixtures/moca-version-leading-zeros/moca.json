@@ -1,0 +1,6 @@
+{
+  "id": "https://example.com/conformance/moca-version-leading-zeros",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "mocaVersion": "00.03"
+}

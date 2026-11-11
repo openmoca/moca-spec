@@ -1,0 +1,5 @@
+{
+  "id": "https://openmoca.org/conformance/sigstore-smoke",
+  "version": "1.0.0",
+  "title": "Sigstore smoke test"
+}

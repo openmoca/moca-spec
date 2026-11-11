@@ -1,0 +1,10 @@
+{
+  "payloadType": "application/vnd.in-toto+json",
+  "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJzdWJqZWN0IjpbeyJuYW1lIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9jb25mb3JtYW5jZS9yZXZpZXctZnV0dXJlQDEuMC4wIiwiZGlnZXN0Ijp7InNoYTI1NiI6IjA2NTIyZWRhMDY5ODc3YTA4M2U2YjQwMzhlY2ZkM2Q3NWFmZjM5ZDc4OTkxNDk2MjZmZTA2MmE5M2M1Mjk5ZTQifX1dLCJwcmVkaWNhdGVUeXBlIjoiaHR0cHM6Ly93M2lkLm9yZy9tb2NhL2F0dGVzdGF0aW9uL3BhY2thZ2UvdjEiLCJwcmVkaWNhdGUiOnt9fQ==",
+  "signatures": [
+    {
+      "keyid": "example-publisher-2026",
+      "sig": "Udqa5WWLanRBMQBhKPrlOc6nxE6GsrGP1bMp+xa1GonRLemibf717u1fIRrQupF217jAlftymWk+8pbPSe4FBg=="
+    }
+  ]
+}

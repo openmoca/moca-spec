@@ -1,0 +1,28 @@
+{
+  "indexVersion": 1,
+  "target": {
+    "id": "https://example.com/conformance/distance",
+    "version": "1.0.0",
+    "digest": "sha256:8791d16c706bf9244e15c37d1de6066ee0638560f0d981b6639f72a6013d4ef3"
+  },
+  "indexType": "hybrid",
+  "chunking": {
+    "strategy": "whole-node"
+  },
+  "storage": {
+    "format": "moca-jsonl-v1",
+    "file": "payload/items.jsonl",
+    "vectors": {
+      "file": "payload/vectors.f32",
+      "dtype": "float32",
+      "dimensions": 2
+    }
+  },
+  "createdBy": "moca-index",
+  "model": {
+    "name": "conformance-embedder",
+    "version": "1",
+    "dimensions": 2,
+    "distance": "euclidean"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "title": "Airplane Flying Handbook (FAA-H-8083-3C)",
+  "description": "The FAA handbook on the skills and knowledge needed to fly airplanes, from basic flight maneuvers to transitions to complex, multiengine, tailwheel, turboprop and jet airplanes, and emergency procedures.",
+  "documents": [
+    {
+      "file": "02_afh_ch1.pdf",
+      "title": "Chapter 1: Introduction to Flight Training",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/02_afh_ch1.pdf",
+      "sha256": "ff3e6c79397509c55c83a08d4cf1a36a7399eb4bab83d4bfdbe9415ab89c351d"
+    },
+    {
+      "file": "03_afh_ch2.pdf",
+      "title": "Chapter 2: Ground Operations",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/03_afh_ch2.pdf",
+      "sha256": "83d499db7a4b2ff1f5f90241d53ec80a83514241291de94051a2b0c3c4fe7142"
+    },
+    {
+      "file": "04_afh_ch3.pdf",
+      "title": "Chapter 3: Basic Flight Maneuvers",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/04_afh_ch3.pdf",
+      "sha256": "8dd948a4f8c99a304b9cfbc7746726bfda2109660d53bcb904b0b9383bd57e71"
+    },
+    {
+      "file": "05_afh_ch4.pdf",
+      "title": "Chapter 4: Energy Management: Mastering Altitude and Airspeed Control",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/05_afh_ch4.pdf",
+      "sha256": "bcf790ff0cc591e2c84de93f03befe7a393501f3c2188ad81377574107a57fa9"
+    },
+    {
+      "file": "06_afh_ch5.pdf",
+      "title": "Chapter 5: Maintaining Aircraft Control: Upset Prevention and Recovery Training",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/06_afh_ch5.pdf",
+      "sha256": "4e8b1c1f7e439568fb90bf2ec8b2c43b81b10832ee51abe04c22d1d06d08f950"
+    },
+    {
+      "file": "07_afh_ch6.pdf",
+      "title": "Chapter 6: Takeoffs and Departure Climbs",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/07_afh_ch6.pdf",
+      "sha256": "99a261f92cdb1427ce36daf09e3092f1a132b2d7fa76a78782135b385fe754f5"
+    },
+    {
+      "file": "08_afh_ch7.pdf",
+      "title": "Chapter 7: Ground Reference Maneuvers",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/08_afh_ch7.pdf",
+      "sha256": "d8602f81ef5949ca7baea72a3c31f3ca8b9ef55e33b78cf036871cc962708aed"
+    },
+    {
+      "file": "09_afh_ch8.pdf",
+      "title": "Chapter 8: Airport Traffic Patterns",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/09_afh_ch8.pdf",
+      "sha256": "68cdf73e3fb330b50ef875d40ac17bcf731ce5ed1c86efd715609b7d2fbc96af"
+    },
+    {
+      "file": "10_afh_ch9.pdf",
+      "title": "Chapter 9: Approaches and Landings",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/10_afh_ch9.pdf",
+      "sha256": "6ffdf93b601c3de993dcc664be0dd91455b634e7def2991a859039ce621a6853"
+    },
+    {
+      "file": "11_afh_ch10.pdf",
+      "title": "Chapter 10: Performance Maneuvers",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/11_afh_ch10.pdf",
+      "sha256": "0cb4a18e8b34d889d912ed8dc181a5946c3634e70f261ede7653f26276a47f6b"
+    },
+    {
+      "file": "12_afh_ch11.pdf",
+      "title": "Chapter 11: Night Operations",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/12_afh_ch11.pdf",
+      "sha256": "1edfca294fae67632dc445340a9d46fdde7fb62b00d38b6dd547d4411443b2c5"
+    },
+    {
+      "file": "13_afh_ch12.pdf",
+      "title": "Chapter 12: Transition to Complex Airplanes",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/13_afh_ch12.pdf",
+      "sha256": "1ee24950a3a73556f938ada615c4656c31568c1124ed7358e4a6b992d7a20912"
+    },
+    {
+      "file": "14_afh_ch13.pdf",
+      "title": "Chapter 13: Transition to Multiengine Airplanes",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/14_afh_ch13.pdf",
+      "sha256": "a4b9136006206584f3daad3ae8779b5d9b51302125698d19840b3395ef532ecd"
+    },
+    {
+      "file": "15_afh_ch14.pdf",
+      "title": "Chapter 14: Transition to Tailwheel Airplanes",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/15_afh_ch14.pdf",
+      "sha256": "db233471ce0ecaadf2319fd1501cdb0d40153de3eea691d21aecd51e28af9b01"
+    },
+    {
+      "file": "16_afh_ch15.pdf",
+      "title": "Chapter 15: Transition to Turbopropeller-Powered Airplanes",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/16_afh_ch15.pdf",
+      "sha256": "bcd0cfd92a4ef4bc4b4c0be3b76d1666bd9f27522ccbcb5e38fe72b6ac5e352c"
+    },
+    {
+      "file": "17_afh_ch16.pdf",
+      "title": "Chapter 16: Transition to Jet-Powered Airplanes",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/17_afh_ch16.pdf",
+      "sha256": "e0f587c073a59a1082a614d741d6a7be83965d30367c95f9c9fb6d0673e1f0c9"
+    },
+    {
+      "file": "18_afh_ch17.pdf",
+      "title": "Chapter 17: Transition to Light Sport Airplanes (LSA)",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/18_afh_ch17.pdf",
+      "sha256": "5b7619ebcbf8123d79b56411813cd3a1b001ef4d6f96b0f036dcd15c5263dff6"
+    },
+    {
+      "file": "19_afh_ch18.pdf",
+      "title": "Chapter 18: Emergency Procedures",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/19_afh_ch18.pdf",
+      "sha256": "0fac959a0b0ebd1109cdee797eb83eaaf77a76f2f92660056cbef30e3cde03a5"
+    },
+    {
+      "file": "20_afh_glossary.pdf",
+      "title": "Glossary",
+      "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/20_afh_glossary.pdf",
+      "sha256": "a7f7946efd5859318c7630c303149aba1cae4e200f4b10cc8219e21da9214b6e"
+    }
+  ]
+}

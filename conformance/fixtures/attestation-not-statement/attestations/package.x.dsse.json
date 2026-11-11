@@ -1,0 +1,10 @@
+{
+  "payloadType": "application/vnd.in-toto+json",
+  "payload": "eyJoZWxsbyI6IndvcmxkIn0=",
+  "signatures": [
+    {
+      "keyid": "example-publisher-2026",
+      "sig": "oWXiAT9XM3o64Lz9+zandhT9tt9vhgG7Auc9zL3hPqdC0rDirig685U3qWGrXWE70hP9PDjHz0/w8ANhR4fDDA=="
+    }
+  ]
+}

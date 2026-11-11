@@ -1,0 +1,2411 @@
+WEBVTT
+
+NOTE Automatic captions for https://www.youtube.com/watch?v=-k8SQn3sQjQ, from YouTube.
+
+1
+00:00:00.160 --> 00:00:02.159
+Hello everyone, welcome to this video.
+
+2
+00:00:02.159 --> 00:00:04.000
+In this video, we will see how do we
+
+3
+00:00:04.000 --> 00:00:05.920
+implement the various orchestration
+
+4
+00:00:05.920 --> 00:00:08.400
+types supported by Azure Agent
+
+5
+00:00:08.400 --> 00:00:10.960
+Framework. So in the previous video, I
+
+6
+00:00:10.960 --> 00:00:12.639
+clearly explained what are the
+
+7
+00:00:12.639 --> 00:00:15.360
+orchestration type and how do we use it.
+
+8
+00:00:15.360 --> 00:00:17.359
+If you need further information, you can
+
+9
+00:00:17.359 --> 00:00:19.279
+refer to this particular blog where like
+
+10
+00:00:19.279 --> 00:00:21.119
+they clearly explained the various
+
+11
+00:00:21.119 --> 00:00:23.760
+orchestration types. And if you need a
+
+12
+00:00:23.760 --> 00:00:25.920
+code samples, you can always get it from
+
+13
+00:00:25.920 --> 00:00:27.920
+Microsoft. So this is the link for that
+
+14
+00:00:27.920 --> 00:00:30.720
+particular g repo from where you can see
+
+15
+00:00:30.720 --> 00:00:33.120
+the samples. So now let's go to the
+
+16
+00:00:33.120 --> 00:00:34.719
+visual studio code and see how do we
+
+17
+00:00:34.719 --> 00:00:36.880
+implement this. So for this particular
+
+18
+00:00:36.880 --> 00:00:38.559
+sample what I want to do is that I want
+
+19
+00:00:38.559 --> 00:00:41.840
+to write a kind of a blog. So I will be
+
+20
+00:00:41.840 --> 00:00:43.520
+passing some input to the writer. Writer
+
+21
+00:00:43.520 --> 00:00:45.440
+will be writing some draft and like that
+
+22
+00:00:45.440 --> 00:00:47.840
+will be passed to the SEO. Then finally
+
+23
+00:00:47.840 --> 00:00:49.600
+that will be passed to the editor agent
+
+24
+00:00:49.600 --> 00:00:52.160
+to do the final review and publish the
+
+25
+00:00:52.160 --> 00:00:54.559
+blog. So input if you see like I will be
+
+26
+00:00:54.559 --> 00:00:57.199
+passing artificial intelligence in 2026
+
+27
+00:00:57.199 --> 00:00:59.520
+and finally I will be having some draft
+
+28
+00:00:59.520 --> 00:01:02.399
+version here. So now go and see the code
+
+29
+00:01:02.399 --> 00:01:04.640
+sample here. So if you see here I have
+
+30
+00:01:04.640 --> 00:01:07.760
+three different agent writer SEO editor.
+
+31
+00:01:07.760 --> 00:01:09.680
+So now let's go and see like what do we
+
+32
+00:01:09.680 --> 00:01:12.240
+have here. These are all very simple
+
+33
+00:01:12.240 --> 00:01:14.320
+class- based exeutor. If you see here
+
+34
+00:01:14.320 --> 00:01:16.240
+the editor agent it is inherited from
+
+35
+00:01:16.240 --> 00:01:19.119
+the exeutor and it has a single method
+
+36
+00:01:19.119 --> 00:01:21.600
+called publish content. It takes the uh
+
+37
+00:01:21.600 --> 00:01:23.600
+string as an input and like it finally
+
+38
+00:01:23.600 --> 00:01:25.920
+yields the output. Pretty similar. If
+
+39
+00:01:25.920 --> 00:01:27.759
+you just come over here, if you see the
+
+40
+00:01:27.759 --> 00:01:29.840
+writer agent, this is again extended
+
+41
+00:01:29.840 --> 00:01:32.159
+from the executor, it has a single
+
+42
+00:01:32.159 --> 00:01:34.479
+method and it takes a string and returns
+
+43
+00:01:34.479 --> 00:01:36.000
+the strings. You can very well replace
+
+44
+00:01:36.000 --> 00:01:38.560
+the hardcoded values with llm so that it
+
+45
+00:01:38.560 --> 00:01:41.280
+will mimic the real world execution. But
+
+46
+00:01:41.280 --> 00:01:42.960
+that is not the whole point here. I'm
+
+47
+00:01:42.960 --> 00:01:45.040
+just trying to show you what is this
+
+48
+00:01:45.040 --> 00:01:47.600
+workflow it's all about. So now if I
+
+49
+00:01:47.600 --> 00:01:49.680
+just come over here I have a workflow
+
+50
+00:01:49.680 --> 00:01:52.479
+builder. I'm setting this writer as a
+
+51
+00:01:52.479 --> 00:01:54.799
+executor and like adding the edges from
+
+52
+00:01:54.799 --> 00:01:58.240
+writer to SEO SEO to editor. So now let
+
+53
+00:01:58.240 --> 00:02:00.799
+me run the workflow. If you look into
+
+54
+00:02:00.799 --> 00:02:02.880
+the workflow output our input it's
+
+55
+00:02:02.880 --> 00:02:05.200
+passed to the writer. The writer's
+
+56
+00:02:05.200 --> 00:02:07.520
+output pass to the SEO. SEO's output
+
+57
+00:02:07.520 --> 00:02:09.440
+pass to the editor. Finally we printed
+
+58
+00:02:09.440 --> 00:02:12.879
+the result here. So this simulates the
+
+59
+00:02:12.879 --> 00:02:15.200
+sequential workflow. Now let's move
+
+60
+00:02:15.200 --> 00:02:17.120
+forward and let's talk about conditional
+
+61
+00:02:17.120 --> 00:02:20.080
+workflow. So if you see here we will be
+
+62
+00:02:20.080 --> 00:02:22.400
+sending some input and like we will have
+
+63
+00:02:22.400 --> 00:02:24.560
+some condition based on which we will
+
+64
+00:02:24.560 --> 00:02:26.800
+execute one portion of the workflow. Say
+
+65
+00:02:26.800 --> 00:02:29.360
+like this is for a order processing. So
+
+66
+00:02:29.360 --> 00:02:31.120
+if order it's greater than a certain
+
+67
+00:02:31.120 --> 00:02:33.040
+value we will apply some discount if not
+
+68
+00:02:33.040 --> 00:02:34.879
+we do not apply any discount. And
+
+69
+00:02:34.879 --> 00:02:38.160
+finally we print the uh summary here.
+
+70
+00:02:38.160 --> 00:02:39.760
+Let's go to the code and see how do we
+
+71
+00:02:39.760 --> 00:02:42.720
+implement this. So if you see here I
+
+72
+00:02:42.720 --> 00:02:44.959
+have a parser order. So basically like
+
+73
+00:02:44.959 --> 00:02:47.519
+we will be sending the JSON as a input
+
+74
+00:02:47.519 --> 00:02:50.239
+to the workflow. This parser order will
+
+75
+00:02:50.239 --> 00:02:53.440
+convert the JSON into a uh object called
+
+76
+00:02:53.440 --> 00:02:56.640
+order. Then in the age we are adding
+
+77
+00:02:56.640 --> 00:02:58.800
+apply discount with the condition when
+
+78
+00:02:58.800 --> 00:03:02.159
+the order value is greater than 500.
+
+79
+00:03:02.159 --> 00:03:04.720
+Then finally we will be sending to
+
+80
+00:03:04.720 --> 00:03:06.959
+generate summary. There is going to be
+
+81
+00:03:06.959 --> 00:03:08.720
+another route where like we will not be
+
+82
+00:03:08.720 --> 00:03:11.120
+applying any discount when the order
+
+83
+00:03:11.120 --> 00:03:14.000
+total it's less than 500. Then finally
+
+84
+00:03:14.000 --> 00:03:16.480
+we will be sending the uh summary here.
+
+85
+00:03:16.480 --> 00:03:18.879
+So if you see here uh we will be
+
+86
+00:03:18.879 --> 00:03:21.040
+receiving the input here as a JSON
+
+87
+00:03:21.040 --> 00:03:23.680
+parcel will convert to a object and like
+
+88
+00:03:23.680 --> 00:03:25.680
+we will see if it is greater than 500 we
+
+89
+00:03:25.680 --> 00:03:28.159
+will apply then finally to the summary.
+
+90
+00:03:28.159 --> 00:03:30.319
+Same thing if it is less than 500 it
+
+91
+00:03:30.319 --> 00:03:32.400
+goes to no discount then finally we will
+
+92
+00:03:32.400 --> 00:03:34.319
+be printing the summary. With that let's
+
+93
+00:03:34.319 --> 00:03:35.680
+go ahead and run the flow here. Let me
+
+94
+00:03:35.680 --> 00:03:37.680
+clear the terminal. So this is going to
+
+95
+00:03:37.680 --> 00:03:41.519
+be 31st program.
+
+96
+00:03:41.519 --> 00:03:43.360
+If you look into the output, we are
+
+97
+00:03:43.360 --> 00:03:45.680
+running two orders. First, we will have
+
+98
+00:03:45.680 --> 00:03:47.840
+a large order. So this is the order
+
+99
+00:03:47.840 --> 00:03:50.959
+total. And as you see here, 5 percentage
+
+100
+00:03:50.959 --> 00:03:52.640
+discounted supplied and this is going to
+
+101
+00:03:52.640 --> 00:03:55.120
+be the final total. And we are also
+
+102
+00:03:55.120 --> 00:03:57.040
+running a small order here. This is the
+
+103
+00:03:57.040 --> 00:03:58.959
+total and like there is going to be no
+
+104
+00:03:58.959 --> 00:04:01.760
+discount and the final total it will be
+
+105
+00:04:01.760 --> 00:04:04.239
+the same. So this is how we can use the
+
+106
+00:04:04.239 --> 00:04:07.680
+conditional flow. So we can also use the
+
+107
+00:04:07.680 --> 00:04:09.599
+uh switchbased condition here. Time
+
+108
+00:04:09.599 --> 00:04:11.439
+around what we want to do is that we
+
+109
+00:04:11.439 --> 00:04:13.599
+will be applying a premium discount. If
+
+110
+00:04:13.599 --> 00:04:16.320
+the total is greater than 1,000 if it is
+
+111
+00:04:16.320 --> 00:04:18.400
+between 500 and 1,000 the standard
+
+112
+00:04:18.400 --> 00:04:20.320
+discount will be applied less than 500
+
+113
+00:04:20.320 --> 00:04:22.560
+there is no discount. So now let me go
+
+114
+00:04:22.560 --> 00:04:24.639
+ahead and open the program here. If you
+
+115
+00:04:24.639 --> 00:04:26.800
+see here same implementation we are
+
+116
+00:04:26.800 --> 00:04:29.360
+using the parse order that will convert
+
+117
+00:04:29.360 --> 00:04:32.240
+to a order object. If the total is
+
+118
+00:04:32.240 --> 00:04:34.960
+greater than 1,000 then we will apply a
+
+119
+00:04:34.960 --> 00:04:37.600
+premium discount. Uh between 500 and
+
+120
+00:04:37.600 --> 00:04:40.080
+1,000 we will apply a standard discount.
+
+121
+00:04:40.080 --> 00:04:42.160
+Uh if not there is no discount here. If
+
+122
+00:04:42.160 --> 00:04:43.600
+you see here we are using this which
+
+123
+00:04:43.600 --> 00:04:45.840
+case here. So the this is the first case
+
+124
+00:04:45.840 --> 00:04:47.280
+this is the second case and this is
+
+125
+00:04:47.280 --> 00:04:49.360
+going to be the default case. Everything
+
+126
+00:04:49.360 --> 00:04:51.360
+else will be the same. So with that let
+
+127
+00:04:51.360 --> 00:04:54.240
+me go and run the program. So if you see
+
+128
+00:04:54.240 --> 00:04:56.479
+the output we are processing three
+
+129
+00:04:56.479 --> 00:04:59.520
+different orders. So if I just see here
+
+130
+00:04:59.520 --> 00:05:02.080
+there is a small order with no discount
+
+131
+00:05:02.080 --> 00:05:04.240
+and we also have some standard order
+
+132
+00:05:04.240 --> 00:05:06.800
+wherein like 5%age discount it's applied
+
+133
+00:05:06.800 --> 00:05:08.960
+and we also have some premium order
+
+134
+00:05:08.960 --> 00:05:11.759
+wherein like we have 10%age discount and
+
+135
+00:05:11.759 --> 00:05:15.759
+this is how we can use the switchbased
+
+136
+00:05:15.759 --> 00:05:18.880
+flows and then we also have some
+
+137
+00:05:18.880 --> 00:05:21.759
+concurrent flow. So let me expand this a
+
+138
+00:05:21.759 --> 00:05:24.639
+bit. So if you see here what we want to
+
+139
+00:05:24.639 --> 00:05:26.400
+do is that we want to search the flight
+
+140
+00:05:26.400 --> 00:05:29.680
+between Toronto and Bangalore and there
+
+141
+00:05:29.680 --> 00:05:32.000
+are some n number of providers. We don't
+
+142
+00:05:32.000 --> 00:05:34.080
+want to go one after another like like
+
+143
+00:05:34.080 --> 00:05:36.000
+when we say like go and search for the
+
+144
+00:05:36.000 --> 00:05:38.080
+flight. We should be able to search
+
+145
+00:05:38.080 --> 00:05:40.560
+across all the providers. Finally all
+
+146
+00:05:40.560 --> 00:05:42.160
+the results will be sent to the
+
+147
+00:05:42.160 --> 00:05:44.800
+aggregator. Then finally we will print
+
+148
+00:05:44.800 --> 00:05:47.120
+the best deal. Right? So this is the
+
+149
+00:05:47.120 --> 00:05:49.199
+real case uh implementation. So if you
+
+150
+00:05:49.199 --> 00:05:53.440
+just go here. So here the flow like we
+
+151
+00:05:53.440 --> 00:05:55.840
+do a start with the search then we uh
+
+152
+00:05:55.840 --> 00:05:58.000
+create a fan out node in the sense like
+
+153
+00:05:58.000 --> 00:06:01.280
+basically like from one uh node we will
+
+154
+00:06:01.280 --> 00:06:04.400
+be sending the input to multiple nodes
+
+155
+00:06:04.400 --> 00:06:06.400
+like from search we will be sending to
+
+156
+00:06:06.400 --> 00:06:09.120
+delta and united and like fan in in the
+
+157
+00:06:09.120 --> 00:06:11.440
+sense like from multiple nodes we will
+
+158
+00:06:11.440 --> 00:06:14.000
+be sending the output to a single node
+
+159
+00:06:14.000 --> 00:06:15.440
+in the sense it is going to be the
+
+160
+00:06:15.440 --> 00:06:18.240
+aggregator. So this is all about using
+
+161
+00:06:18.240 --> 00:06:20.319
+fan in and fan out. From search we are
+
+162
+00:06:20.319 --> 00:06:22.560
+fanning out and like from all other
+
+163
+00:06:22.560 --> 00:06:24.720
+nodes delta and united we are fanning
+
+164
+00:06:24.720 --> 00:06:27.360
+in. So with that let let me go and run
+
+165
+00:06:27.360 --> 00:06:28.960
+the program here. Let me clear the
+
+166
+00:06:28.960 --> 00:06:31.120
+console.
+
+167
+00:06:31.120 --> 00:06:33.840
+So if you see the output we are you know
+
+168
+00:06:33.840 --> 00:06:36.000
+actually going to search first. From
+
+169
+00:06:36.000 --> 00:06:38.560
+search we go to delta united. both of
+
+170
+00:06:38.560 --> 00:06:40.639
+these will be sending uh the results to
+
+171
+00:06:40.639 --> 00:06:42.960
+the aggregator and finally aggregator
+
+172
+00:06:42.960 --> 00:06:45.440
+will be printing the uh you know best
+
+173
+00:06:45.440 --> 00:06:47.520
+deal for us. So this is how we can use
+
+174
+00:06:47.520 --> 00:06:49.759
+the concurrent. So basically the idea is
+
+175
+00:06:49.759 --> 00:06:52.000
+that from one particular node we will be
+
+176
+00:06:52.000 --> 00:06:53.840
+calling multiple nodes from multiple
+
+177
+00:06:53.840 --> 00:06:55.600
+nodes we will be combining the result
+
+178
+00:06:55.600 --> 00:06:57.919
+into a single node that this is how we
+
+179
+00:06:57.919 --> 00:07:00.400
+implement the concurrent flow. We can
+
+180
+00:07:00.400 --> 00:07:03.360
+also use the constructor. So the why do
+
+181
+00:07:03.360 --> 00:07:04.880
+we use the constructor? We already
+
+182
+00:07:04.880 --> 00:07:06.479
+discussed in our previous video. The
+
+183
+00:07:06.479 --> 00:07:08.240
+reason is that the constructor or the
+
+184
+00:07:08.240 --> 00:07:10.720
+class-based implementation has multiple
+
+185
+00:07:10.720 --> 00:07:12.720
+features. With the constructor, we
+
+186
+00:07:12.720 --> 00:07:14.960
+should be able to store and retrieve the
+
+187
+00:07:14.960 --> 00:07:17.520
+information. Right? So, say like the
+
+188
+00:07:17.520 --> 00:07:19.199
+same [clears throat] person is trying to
+
+189
+00:07:19.199 --> 00:07:21.840
+get the result for the same date of same
+
+190
+00:07:21.840 --> 00:07:23.520
+provider. You don't have to go and pull
+
+191
+00:07:23.520 --> 00:07:25.840
+the information unnecessarily rather
+
+192
+00:07:25.840 --> 00:07:28.080
+like you can store that information in a
+
+193
+00:07:28.080 --> 00:07:29.360
+database and then like pull that
+
+194
+00:07:29.360 --> 00:07:31.599
+information and that is how we can use
+
+195
+00:07:31.599 --> 00:07:33.199
+the class-based implementation
+
+196
+00:07:33.199 --> 00:07:35.280
+especially the constructor. So with that
+
+197
+00:07:35.280 --> 00:07:36.880
+let me go ahead and run this program
+
+198
+00:07:36.880 --> 00:07:39.759
+also. Let me create the console.
+
+199
+00:07:39.759 --> 00:07:41.840
+So if you see the output the output it
+
+200
+00:07:41.840 --> 00:07:43.759
+is going to be the same except that we
+
+201
+00:07:43.759 --> 00:07:45.360
+are using the constructor based
+
+202
+00:07:45.360 --> 00:07:47.919
+implementation. If I just come over here
+
+203
+00:07:47.919 --> 00:07:49.599
+if you look into the constructor right
+
+204
+00:07:49.599 --> 00:07:51.440
+now like it might not make a lot of
+
+205
+00:07:51.440 --> 00:07:53.840
+sense but like now you know that you can
+
+206
+00:07:53.840 --> 00:07:56.000
+very well use the constructor with the
+
+207
+00:07:56.000 --> 00:07:58.479
+concurrent workflow. Now let's move
+
+208
+00:07:58.479 --> 00:08:00.160
+forward. So far what we have done is
+
+209
+00:08:00.160 --> 00:08:04.000
+that we have used executor as a node. So
+
+210
+00:08:04.000 --> 00:08:05.680
+now in this program what I want to do is
+
+211
+00:08:05.680 --> 00:08:08.639
+that I want to use the Azure agent as
+
+212
+00:08:08.639 --> 00:08:11.360
+the node right. So like what I want to
+
+213
+00:08:11.360 --> 00:08:13.280
+do is that I want to create multiple
+
+214
+00:08:13.280 --> 00:08:16.000
+agent in Azure and like I wanted to
+
+215
+00:08:16.000 --> 00:08:17.599
+utilize all of these agent in my
+
+216
+00:08:17.599 --> 00:08:19.599
+workflow. So let's see how do we do
+
+217
+00:08:19.599 --> 00:08:21.680
+that. So if I just come over here it
+
+218
+00:08:21.680 --> 00:08:23.680
+will be the same exactly we will be
+
+219
+00:08:23.680 --> 00:08:26.240
+creating the uh agents here. So I create
+
+220
+00:08:26.240 --> 00:08:30.400
+a writer reviewer. I set this uh writer
+
+221
+00:08:30.400 --> 00:08:34.000
+as a ex starter node and like from
+
+222
+00:08:34.000 --> 00:08:35.919
+writer we will be going to the reviewer
+
+223
+00:08:35.919 --> 00:08:38.000
+from reviewer we will be just printing
+
+224
+00:08:38.000 --> 00:08:40.240
+the final result. So if you just see
+
+225
+00:08:40.240 --> 00:08:44.720
+here this is all azure a agent right. So
+
+226
+00:08:44.720 --> 00:08:47.519
+this is not a typical uh executors this
+
+227
+00:08:47.519 --> 00:08:51.040
+is a azure a agent. So it has some
+
+228
+00:08:51.040 --> 00:08:53.120
+instructions. So I create all of these.
+
+229
+00:08:53.120 --> 00:08:54.800
+If you go to the foundry you will see
+
+230
+00:08:54.800 --> 00:08:57.200
+all these agent. So now we create this
+
+231
+00:08:57.200 --> 00:08:59.200
+agent in Azure foundry and we will be
+
+232
+00:08:59.200 --> 00:09:02.480
+using this in our workflow. So now let's
+
+233
+00:09:02.480 --> 00:09:04.480
+see how does it work. So this is going
+
+234
+00:09:04.480 --> 00:09:06.880
+to make use of the LLM. So far like we
+
+235
+00:09:06.880 --> 00:09:09.279
+have used all hardcoded values. Right
+
+236
+00:09:09.279 --> 00:09:11.519
+now like we are moving away from the
+
+237
+00:09:11.519 --> 00:09:13.920
+hard-coded values to make use of the
+
+238
+00:09:13.920 --> 00:09:15.920
+actual LLM. With that let me go and
+
+239
+00:09:15.920 --> 00:09:17.680
+clear the console here. Now let me go
+
+240
+00:09:17.680 --> 00:09:19.519
+ahead and run the program. If you see
+
+241
+00:09:19.519 --> 00:09:21.680
+the output we are asking the LLM to
+
+242
+00:09:21.680 --> 00:09:24.000
+create a slogan for the electric
+
+243
+00:09:24.000 --> 00:09:26.880
+vehicle. So create a slogan for the new
+
+244
+00:09:26.880 --> 00:09:29.360
+electric vehicle right and like this is
+
+245
+00:09:29.360 --> 00:09:32.480
+what given to us and uh by the writer
+
+246
+00:09:32.480 --> 00:09:34.480
+agent that is reviewed by the reviewer
+
+247
+00:09:34.480 --> 00:09:37.760
+agent finally we have the slogan for us
+
+248
+00:09:37.760 --> 00:09:39.760
+now what I want to do is that I don't
+
+249
+00:09:39.760 --> 00:09:42.080
+want to directly use the Azure Agent
+
+250
+00:09:42.080 --> 00:09:44.800
+rather like I wanted to create the Agent
+
+251
+00:09:44.800 --> 00:09:46.560
+but like that will be used by the
+
+252
+00:09:46.560 --> 00:09:48.320
+exeutor that's what we are going to see
+
+253
+00:09:48.320 --> 00:09:51.279
+here. So if you see here I will be
+
+254
+00:09:51.279 --> 00:09:54.240
+creating a uh executor and this executor
+
+255
+00:09:54.240 --> 00:09:56.880
+will be using the agent.
+
+256
+00:09:56.880 --> 00:09:59.279
+Now let's go and see here. So if you
+
+257
+00:09:59.279 --> 00:10:01.600
+come over here there is a agent called
+
+258
+00:10:01.600 --> 00:10:04.080
+topic analyzer. And if you see here
+
+259
+00:10:04.080 --> 00:10:06.640
+within the executor we are creating or
+
+260
+00:10:06.640 --> 00:10:09.279
+using the existing agent.
+
+261
+00:10:09.279 --> 00:10:12.080
+Same case I also have a summary agent.
+
+262
+00:10:12.080 --> 00:10:14.000
+It also does the same thing. If you see
+
+263
+00:10:14.000 --> 00:10:16.079
+here it will try to identify the
+
+264
+00:10:16.079 --> 00:10:18.000
+existing agent. If there is existing
+
+265
+00:10:18.000 --> 00:10:20.079
+agent, it will use it. Otherwise, it
+
+266
+00:10:20.079 --> 00:10:22.399
+will create one and use it. Now, let me
+
+267
+00:10:22.399 --> 00:10:24.160
+go ahead and uh run this program. Let me
+
+268
+00:10:24.160 --> 00:10:25.920
+clear the console here. If you look into
+
+269
+00:10:25.920 --> 00:10:29.600
+the output, it is going to create
+
+270
+00:10:29.600 --> 00:10:31.920
+uh two agent here. So, if you see here,
+
+271
+00:10:31.920 --> 00:10:34.160
+first it create one for the topic
+
+272
+00:10:34.160 --> 00:10:36.560
+analyzer. So this is the input that we
+
+273
+00:10:36.560 --> 00:10:39.839
+given uh artificial intelligence and it
+
+274
+00:10:39.839 --> 00:10:42.399
+also create one more agent for the
+
+275
+00:10:42.399 --> 00:10:45.360
+summary and based on which it completes
+
+276
+00:10:45.360 --> 00:10:48.079
+the workflow. Right? So now what we have
+
+277
+00:10:48.079 --> 00:10:50.880
+done is that we are using the executors
+
+278
+00:10:50.880 --> 00:10:53.279
+and the executors internally uses the
+
+279
+00:10:53.279 --> 00:10:56.800
+Azure Agent. Now we are you know making
+
+280
+00:10:56.800 --> 00:10:59.360
+use of both the features to build our
+
+281
+00:10:59.360 --> 00:11:02.320
+workflow. We can also modularize the
+
+282
+00:11:02.320 --> 00:11:04.399
+overall workflow by using something
+
+283
+00:11:04.399 --> 00:11:07.680
+called subworkflow or teams. So we will
+
+284
+00:11:07.680 --> 00:11:09.360
+see how do we do that. Before I do that,
+
+285
+00:11:09.360 --> 00:11:11.920
+let me clear this console here. So if
+
+286
+00:11:11.920 --> 00:11:15.040
+you look into this, so this is my team
+
+287
+00:11:15.040 --> 00:11:18.079
+or you know logical group. So this is
+
+288
+00:11:18.079 --> 00:11:20.560
+called a copyrightiting team underneath
+
+289
+00:11:20.560 --> 00:11:23.600
+like I have a writer and a reviewer both
+
+290
+00:11:23.600 --> 00:11:25.680
+will be used if at all you refer
+
+291
+00:11:25.680 --> 00:11:28.079
+copyriter team. So there is going to be
+
+292
+00:11:28.079 --> 00:11:30.480
+input given that will be passed to the
+
+293
+00:11:30.480 --> 00:11:32.640
+copyrightiting agent. Uh this is going
+
+294
+00:11:32.640 --> 00:11:34.640
+to be a sequential flow this entity
+
+295
+00:11:34.640 --> 00:11:37.040
+team. So the copyriter will receive this
+
+296
+00:11:37.040 --> 00:11:38.880
+information reviewer will review and
+
+297
+00:11:38.880 --> 00:11:41.680
+pass the input to the next node. So
+
+298
+00:11:41.680 --> 00:11:44.079
+consider this you know entity team as a
+
+299
+00:11:44.079 --> 00:11:47.519
+kind of a node though it has two agents
+
+300
+00:11:47.519 --> 00:11:49.839
+within that. Now let's see how do we do
+
+301
+00:11:49.839 --> 00:11:52.959
+that. So if you just come over here, we
+
+302
+00:11:52.959 --> 00:11:55.680
+are creating a writer and a reviewer and
+
+303
+00:11:55.680 --> 00:11:58.160
+we are using a sequential builder and
+
+304
+00:11:58.160 --> 00:12:00.640
+participants will be both and like build
+
+305
+00:12:00.640 --> 00:12:03.519
+and we convert that as a team here by
+
+306
+00:12:03.519 --> 00:12:06.079
+using something called as agent. By
+
+307
+00:12:06.079 --> 00:12:09.760
+doing that we the sequential flow will
+
+308
+00:12:09.760 --> 00:12:13.040
+become a single logical group or a team.
+
+309
+00:12:13.040 --> 00:12:15.279
+Now what we can do is that within our
+
+310
+00:12:15.279 --> 00:12:17.519
+workflow instead of referring to the
+
+311
+00:12:17.519 --> 00:12:21.200
+individual uh agents or nodes we can use
+
+312
+00:12:21.200 --> 00:12:25.040
+this team agent as a starting agent and
+
+313
+00:12:25.040 --> 00:12:26.880
+like this is going to be the next node.
+
+314
+00:12:26.880 --> 00:12:28.560
+In this case this is going to finally
+
+315
+00:12:28.560 --> 00:12:31.279
+print the value but you know in the in
+
+316
+00:12:31.279 --> 00:12:33.680
+the similar manner you can logically
+
+317
+00:12:33.680 --> 00:12:36.480
+group your agents to work together. Now
+
+318
+00:12:36.480 --> 00:12:40.399
+let let me go and run this program.
+
+319
+00:12:40.399 --> 00:12:44.240
+So if you see the output here, so we are
+
+320
+00:12:44.240 --> 00:12:47.360
+asking the workflow to create a wireless
+
+321
+00:12:47.360 --> 00:12:50.560
+uh toaster here. So this is the toaster.
+
+322
+00:12:50.560 --> 00:12:52.320
+So basically like the input will be
+
+323
+00:12:52.320 --> 00:12:54.320
+passed to the team agent. Team agent
+
+324
+00:12:54.320 --> 00:12:56.639
+consist of those two and then finally
+
+325
+00:12:56.639 --> 00:12:59.519
+the output will be sent to the final uh
+
+326
+00:12:59.519 --> 00:13:01.440
+terminal. Right? So far what we have
+
+327
+00:13:01.440 --> 00:13:03.360
+discussed, you can consider this as a
+
+328
+00:13:03.360 --> 00:13:06.000
+basic feature. Though you can very well
+
+329
+00:13:06.000 --> 00:13:08.320
+build the very complex workflows using
+
+330
+00:13:08.320 --> 00:13:10.639
+these features but still these are all
+
+331
+00:13:10.639 --> 00:13:13.680
+very basic features. Now we will go and
+
+332
+00:13:13.680 --> 00:13:15.920
+discuss about the advanced features. So
+
+333
+00:13:15.920 --> 00:13:18.160
+let me clear this console. So first we
+
+334
+00:13:18.160 --> 00:13:19.600
+will try to understand the difference
+
+335
+00:13:19.600 --> 00:13:22.399
+between all of these. So if you see here
+
+336
+00:13:22.399 --> 00:13:24.399
+I have a comparison between handoff
+
+337
+00:13:24.399 --> 00:13:26.240
+orchestration, group chat orchestration
+
+338
+00:13:26.240 --> 00:13:28.880
+and the magnetic builder orchestration.
+
+339
+00:13:28.880 --> 00:13:30.639
+If you understand the difference between
+
+340
+00:13:30.639 --> 00:13:32.639
+all of these then it will become easier
+
+341
+00:13:32.639 --> 00:13:34.959
+for you to use it. So firstly we will
+
+342
+00:13:34.959 --> 00:13:36.079
+get start with the hand of
+
+343
+00:13:36.079 --> 00:13:38.320
+orchestration. So think of this way this
+
+344
+00:13:38.320 --> 00:13:41.920
+is a support team the triage person is
+
+345
+00:13:41.920 --> 00:13:44.800
+the lead uh so user support request will
+
+346
+00:13:44.800 --> 00:13:46.880
+be given to the triage person. [gasps]
+
+347
+00:13:46.880 --> 00:13:49.519
+The triage person will be asking one of
+
+348
+00:13:49.519 --> 00:13:51.920
+the support engineers to you know work
+
+349
+00:13:51.920 --> 00:13:53.920
+on that. Think of this way like the
+
+350
+00:13:53.920 --> 00:13:57.519
+incoming request to return that item.
+
+351
+00:13:57.519 --> 00:13:59.760
+Then the triage agent will be asking the
+
+352
+00:13:59.760 --> 00:14:02.079
+triage specialist to perform the you
+
+353
+00:14:02.079 --> 00:14:05.839
+know needed action. Then the person will
+
+354
+00:14:05.839 --> 00:14:07.440
+respond back to the triage agent saying
+
+355
+00:14:07.440 --> 00:14:10.240
+that the return is completed. Then if
+
+356
+00:14:10.240 --> 00:14:12.480
+there is a need to process the refund,
+
+357
+00:14:12.480 --> 00:14:14.320
+the triage agent will call the refund
+
+358
+00:14:14.320 --> 00:14:16.480
+agent. The refund agent will respond
+
+359
+00:14:16.480 --> 00:14:18.160
+back to the triage agent saying that the
+
+360
+00:14:18.160 --> 00:14:20.720
+refund is processed or whatever is that.
+
+361
+00:14:20.720 --> 00:14:23.519
+Now the triage agent will see if there
+
+362
+00:14:23.519 --> 00:14:25.760
+are any pending action needs to be done
+
+363
+00:14:25.760 --> 00:14:28.160
+on this user request. If so, it will
+
+364
+00:14:28.160 --> 00:14:30.560
+perform otherwise it will see the action
+
+365
+00:14:30.560 --> 00:14:32.880
+is completed. You can think of like you
+
+366
+00:14:32.880 --> 00:14:35.199
+know lead and the subordinate work
+
+367
+00:14:35.199 --> 00:14:38.560
+together to solve a specific issue. Then
+
+368
+00:14:38.560 --> 00:14:41.440
+we have this group chart again like here
+
+369
+00:14:41.440 --> 00:14:44.160
+we will have a lead. The lead will work
+
+370
+00:14:44.160 --> 00:14:47.360
+with various agents. Say like the uh you
+
+371
+00:14:47.360 --> 00:14:49.920
+know there is a request to come up with
+
+372
+00:14:49.920 --> 00:14:52.560
+some sort of a you know brainstorming
+
+373
+00:14:52.560 --> 00:14:55.839
+idea. So the lead will be asking uh he
+
+374
+00:14:55.839 --> 00:14:58.560
+who wants to discuss on this first. The
+
+375
+00:14:58.560 --> 00:15:00.320
+security person will say hey I want to
+
+376
+00:15:00.320 --> 00:15:03.120
+discuss first then he will provide the
+
+377
+00:15:03.120 --> 00:15:05.360
+input to the lead. Then the lead you
+
+378
+00:15:05.360 --> 00:15:07.600
+know will ask the cloud master hey like
+
+379
+00:15:07.600 --> 00:15:10.240
+do you have any any input? If so he will
+
+380
+00:15:10.240 --> 00:15:12.000
+share that information. The lead will
+
+381
+00:15:12.000 --> 00:15:14.000
+consider both the input and if there are
+
+382
+00:15:14.000 --> 00:15:16.639
+any additional discussion needed then
+
+383
+00:15:16.639 --> 00:15:18.959
+the lead will orchestrate. So basically
+
+384
+00:15:18.959 --> 00:15:21.279
+like the lead here perform the
+
+385
+00:15:21.279 --> 00:15:24.000
+orchestration uh that the individual
+
+386
+00:15:24.000 --> 00:15:26.720
+agents will perform the specific action
+
+387
+00:15:26.720 --> 00:15:28.000
+right. So this is more of a
+
+388
+00:15:28.000 --> 00:15:29.839
+brainstorming ideas where like you want
+
+389
+00:15:29.839 --> 00:15:31.519
+to discuss about some marketing strategy
+
+390
+00:15:31.519 --> 00:15:33.360
+or something of that sort you can
+
+391
+00:15:33.360 --> 00:15:35.920
+consider this a group chart. Then
+
+392
+00:15:35.920 --> 00:15:37.920
+magnetic is pretty similar to the group
+
+393
+00:15:37.920 --> 00:15:41.040
+chart except that the lead will come up
+
+394
+00:15:41.040 --> 00:15:42.880
+with the plan. So even before you know
+
+395
+00:15:42.880 --> 00:15:45.120
+it goes to the agent various agents
+
+396
+00:15:45.120 --> 00:15:47.040
+subordinates it will come up with its
+
+397
+00:15:47.040 --> 00:15:49.199
+own plan and it will get the approval
+
+398
+00:15:49.199 --> 00:15:51.040
+from a human hey like this is what I'm
+
+399
+00:15:51.040 --> 00:15:52.959
+planning to do it for this particular
+
+400
+00:15:52.959 --> 00:15:55.920
+given task are you okay with that if so
+
+401
+00:15:55.920 --> 00:15:58.639
+then it will execute the plan first it
+
+402
+00:15:58.639 --> 00:16:00.079
+will say hey like I need to gather this
+
+403
+00:16:00.079 --> 00:16:02.560
+information from the security then I ask
+
+404
+00:16:02.560 --> 00:16:04.639
+these information from the cloud master
+
+405
+00:16:04.639 --> 00:16:06.639
+and combine this result to provide the
+
+406
+00:16:06.639 --> 00:16:10.000
+output right so so that is what we will
+
+407
+00:16:10.000 --> 00:16:12.560
+do with the magnetica builder. So slight
+
+408
+00:16:12.560 --> 00:16:14.399
+difference between the group chart and
+
+409
+00:16:14.399 --> 00:16:17.440
+the magnetic uh builder. Group chart
+
+410
+00:16:17.440 --> 00:16:20.399
+it's like more of a democratic way of
+
+411
+00:16:20.399 --> 00:16:22.480
+doing it. Hey who wants to go first? You
+
+412
+00:16:22.480 --> 00:16:25.440
+know you have any additional uh input
+
+413
+00:16:25.440 --> 00:16:27.360
+for me of something of that sort where
+
+414
+00:16:27.360 --> 00:16:29.680
+the magnetic one. It's a plan based
+
+415
+00:16:29.680 --> 00:16:31.680
+execution more of a dictator right. So
+
+416
+00:16:31.680 --> 00:16:34.399
+the manager or the lead will uh decide
+
+417
+00:16:34.399 --> 00:16:36.959
+what needs to be done. The subordinate
+
+418
+00:16:36.959 --> 00:16:40.079
+will just execute the task. Now let's go
+
+419
+00:16:40.079 --> 00:16:42.959
+and see in action. We will begin with
+
+420
+00:16:42.959 --> 00:16:45.600
+the hand of flow here. So if you see
+
+421
+00:16:45.600 --> 00:16:48.320
+here the user request will be passed to
+
+422
+00:16:48.320 --> 00:16:51.120
+the triage agent. The triage agent will
+
+423
+00:16:51.120 --> 00:16:53.040
+understand what exactly the user it's
+
+424
+00:16:53.040 --> 00:16:54.959
+asking for. In this case the user it's
+
+425
+00:16:54.959 --> 00:16:57.680
+asking for a return and refund. So there
+
+426
+00:16:57.680 --> 00:16:59.759
+are two action needs to be done. So the
+
+427
+00:16:59.759 --> 00:17:01.759
+triage agent first will make a call to
+
+428
+00:17:01.759 --> 00:17:04.400
+the return agent to process the return.
+
+429
+00:17:04.400 --> 00:17:06.400
+Once the return agent respond back to
+
+430
+00:17:06.400 --> 00:17:08.640
+the triage JSON saying that it's done
+
+431
+00:17:08.640 --> 00:17:10.480
+that it will call the refund agent for
+
+432
+00:17:10.480 --> 00:17:12.959
+the refund. Finally, it will print the
+
+433
+00:17:12.959 --> 00:17:15.280
+result here. So let me go ahead and run
+
+434
+00:17:15.280 --> 00:17:18.160
+the program here. If you look into the
+
+435
+00:17:18.160 --> 00:17:22.000
+output, so user is saying hey like uh I
+
+436
+00:17:22.000 --> 00:17:23.520
+need a help requesting for your
+
+437
+00:17:23.520 --> 00:17:25.439
+assistant with the following issue. I
+
+438
+00:17:25.439 --> 00:17:28.480
+need to return the order one because it
+
+439
+00:17:28.480 --> 00:17:32.240
+is broken and once the return is started
+
+440
+00:17:32.240 --> 00:17:36.000
+please uh issue the refund. Now uh the
+
+441
+00:17:36.000 --> 00:17:39.440
+triage agent or the return agent and the
+
+442
+00:17:39.440 --> 00:17:42.559
+return agent said I have initiated
+
+443
+00:17:42.559 --> 00:17:45.600
+uh the return and the like a refund
+
+444
+00:17:45.600 --> 00:17:48.559
+processing uh it's a handed over. Now
+
+445
+00:17:48.559 --> 00:17:50.720
+the refund process it's saying that the
+
+446
+00:17:50.720 --> 00:17:53.520
+refund it's initiated. Now triage agent
+
+447
+00:17:53.520 --> 00:17:55.919
+it's saying that the case it's closed.
+
+448
+00:17:55.919 --> 00:17:59.120
+Now finally we have the summary like
+
+449
+00:17:59.120 --> 00:18:01.280
+what has happened the overall summary
+
+450
+00:18:01.280 --> 00:18:04.000
+it's here. So here exactly it says that
+
+451
+00:18:04.000 --> 00:18:07.200
+user asked for you know return on refund
+
+452
+00:18:07.200 --> 00:18:09.280
+and return agent processed refund agent
+
+453
+00:18:09.280 --> 00:18:12.799
+processed triage it's closed. So this is
+
+454
+00:18:12.799 --> 00:18:14.799
+how we could use the handout. Now let me
+
+455
+00:18:14.799 --> 00:18:17.039
+go ahead and open the program here. So
+
+456
+00:18:17.039 --> 00:18:19.039
+if you look into this particular program
+
+457
+00:18:19.039 --> 00:18:21.760
+itself it's a pretty simple. So we have
+
+458
+00:18:21.760 --> 00:18:23.760
+couple of agents created here. So if you
+
+459
+00:18:23.760 --> 00:18:25.679
+just come over here. [snorts] So we
+
+460
+00:18:25.679 --> 00:18:27.840
+created some of these agents here using
+
+461
+00:18:27.840 --> 00:18:31.200
+the Azure uh you know a agent framework.
+
+462
+00:18:31.200 --> 00:18:33.919
+We created the triage agent, refund
+
+463
+00:18:33.919 --> 00:18:36.320
+agent, um order agent and return agent
+
+464
+00:18:36.320 --> 00:18:37.679
+and whatever the agent that you wanted
+
+465
+00:18:37.679 --> 00:18:39.760
+to have. Now all of these agents are
+
+466
+00:18:39.760 --> 00:18:42.000
+here. Now we wanted to build the
+
+467
+00:18:42.000 --> 00:18:44.320
+workflow. So this time around we will be
+
+468
+00:18:44.320 --> 00:18:47.679
+using handoff builder. uh and like we
+
+469
+00:18:47.679 --> 00:18:49.360
+say hey these are all the participants
+
+470
+00:18:49.360 --> 00:18:52.400
+and this is the name of this uh workflow
+
+471
+00:18:52.400 --> 00:18:55.200
+and like start with the triage agent and
+
+472
+00:18:55.200 --> 00:18:58.240
+we see that each agent will get these
+
+473
+00:18:58.240 --> 00:19:01.280
+many terms. So for instance triage agent
+
+474
+00:19:01.280 --> 00:19:04.480
+can talk three times overall execution
+
+475
+00:19:04.480 --> 00:19:06.960
+refund order returns can talk two times
+
+476
+00:19:06.960 --> 00:19:09.600
+uh in the overall execution. So depends
+
+477
+00:19:09.600 --> 00:19:11.679
+on your need you will be changing number
+
+478
+00:19:11.679 --> 00:19:13.679
+of times the agents are allowed to
+
+479
+00:19:13.679 --> 00:19:15.200
+speak.
+
+480
+00:19:15.200 --> 00:19:17.520
+Now there is we need to have a
+
+481
+00:19:17.520 --> 00:19:19.600
+termination condition or you know when
+
+482
+00:19:19.600 --> 00:19:21.919
+when do we stop the workflow right? So
+
+483
+00:19:21.919 --> 00:19:23.919
+this is when the workflow gets uh
+
+484
+00:19:23.919 --> 00:19:26.320
+completed. So first of all we say that
+
+485
+00:19:26.320 --> 00:19:28.559
+number of messages in the overall uh
+
+486
+00:19:28.559 --> 00:19:30.480
+workflow history that should be more
+
+487
+00:19:30.480 --> 00:19:33.520
+than zero which means that at least you
+
+488
+00:19:33.520 --> 00:19:35.600
+have to have one workflow history
+
+489
+00:19:35.600 --> 00:19:38.640
+conversation history and then like in
+
+490
+00:19:38.640 --> 00:19:41.120
+the message you need to have this
+
+491
+00:19:41.120 --> 00:19:43.600
+particular keyword. It should say keys
+
+492
+00:19:43.600 --> 00:19:46.320
+is closed because like now if you go to
+
+493
+00:19:46.320 --> 00:19:48.960
+the triage it is clearly seeing that
+
+494
+00:19:48.960 --> 00:19:52.000
+when all the task are done you need to
+
+495
+00:19:52.000 --> 00:19:54.000
+close the keys with this particular
+
+496
+00:19:54.000 --> 00:19:56.480
+keyword. Now the workflow will get that
+
+497
+00:19:56.480 --> 00:19:59.760
+information and it will see if you know
+
+498
+00:19:59.760 --> 00:20:03.039
+the final uh history has this particular
+
+499
+00:20:03.039 --> 00:20:06.400
+keyword in that message. If so like it
+
+500
+00:20:06.400 --> 00:20:08.720
+it is indication that the workflow is
+
+501
+00:20:08.720 --> 00:20:10.960
+completed. As simple as that. So now
+
+502
+00:20:10.960 --> 00:20:13.039
+let's go ahead and talk about the group
+
+503
+00:20:13.039 --> 00:20:16.559
+orchestration. So if you see here uh so
+
+504
+00:20:16.559 --> 00:20:19.600
+there is going to be a a moderator or a
+
+505
+00:20:19.600 --> 00:20:21.440
+tech lead who will work with the
+
+506
+00:20:21.440 --> 00:20:24.000
+subordinates. So he will ask for input
+
+507
+00:20:24.000 --> 00:20:26.160
+from both of these guys and like
+
+508
+00:20:26.160 --> 00:20:28.640
+finalize the summary here. So in this
+
+509
+00:20:28.640 --> 00:20:30.400
+case let's assume that what we are
+
+510
+00:20:30.400 --> 00:20:32.799
+trying to do here is that we wanted to
+
+511
+00:20:32.799 --> 00:20:35.440
+migrate the payment gateway to Azure. we
+
+512
+00:20:35.440 --> 00:20:39.440
+plan to use the public VM SQL VM to
+
+513
+00:20:39.440 --> 00:20:42.960
+manage the uh cost right. So now in this
+
+514
+00:20:42.960 --> 00:20:45.679
+case the the tech lead will be asking
+
+515
+00:20:45.679 --> 00:20:48.559
+hey like this is the you know input that
+
+516
+00:20:48.559 --> 00:20:51.440
+we have and we wanted to do a brainstorm
+
+517
+00:20:51.440 --> 00:20:53.440
+the security agent will say something
+
+518
+00:20:53.440 --> 00:20:55.840
+and like the tech lead will be asking
+
+519
+00:20:55.840 --> 00:20:58.159
+the cloud master basically the architect
+
+520
+00:20:58.159 --> 00:21:01.360
+and like finally uh he will prepare the
+
+521
+00:21:01.360 --> 00:21:04.559
+overall summary here. So now let me go
+
+522
+00:21:04.559 --> 00:21:06.720
+ahead and run this program. Now if you
+
+523
+00:21:06.720 --> 00:21:09.200
+see the output uh this is what we are
+
+524
+00:21:09.200 --> 00:21:12.080
+asking. So the this is the proposal and
+
+525
+00:21:12.080 --> 00:21:15.440
+if you just uh scroll up here first the
+
+526
+00:21:15.440 --> 00:21:18.320
+security pro it's speaking he's saying
+
+527
+00:21:18.320 --> 00:21:21.840
+something then uh the cloud master it's
+
+528
+00:21:21.840 --> 00:21:26.240
+a speaking then uh what do we have then
+
+529
+00:21:26.240 --> 00:21:28.159
+again like the security pros are
+
+530
+00:21:28.159 --> 00:21:30.000
+speaking
+
+531
+00:21:30.000 --> 00:21:31.600
+then
+
+532
+00:21:31.600 --> 00:21:34.559
+then finally we have the uh final
+
+533
+00:21:34.559 --> 00:21:37.760
+outcome here. So the overall uh proposal
+
+534
+00:21:37.760 --> 00:21:40.799
+is this and like this is the uh final
+
+535
+00:21:40.799 --> 00:21:43.919
+outcome here cloud master outcome and
+
+536
+00:21:43.919 --> 00:21:45.840
+finally like the security pros are
+
+537
+00:21:45.840 --> 00:21:50.480
+speaking then um the tech lead says that
+
+538
+00:21:50.480 --> 00:21:53.600
+uh let's proceed with the uh migration
+
+539
+00:21:53.600 --> 00:21:54.799
+timeline and begin with the
+
+540
+00:21:54.799 --> 00:21:56.320
+implementation. Thank you for whatever
+
+541
+00:21:56.320 --> 00:21:59.679
+is that. So now as you see here whenever
+
+542
+00:21:59.679 --> 00:22:03.039
+you wanted to have a you know uh
+
+543
+00:22:03.039 --> 00:22:05.120
+discussion between between the agents
+
+544
+00:22:05.120 --> 00:22:07.360
+then you can variable use this group
+
+545
+00:22:07.360 --> 00:22:10.320
+chart orchestration.
+
+546
+00:22:10.320 --> 00:22:12.480
+Now if you look into the code it will be
+
+547
+00:22:12.480 --> 00:22:16.720
+very simple. So if you see here [gasps]
+
+548
+00:22:16.720 --> 00:22:19.039
+um so we are saying like we will be
+
+549
+00:22:19.039 --> 00:22:22.480
+using the group chart orchestration
+
+550
+00:22:22.480 --> 00:22:24.799
+and this is the lead and these are all
+
+551
+00:22:24.799 --> 00:22:27.120
+the participants and this is the
+
+552
+00:22:27.120 --> 00:22:30.320
+termination condition. So this is how we
+
+553
+00:22:30.320 --> 00:22:33.440
+build the uh group chart orchestration.
+
+554
+00:22:33.440 --> 00:22:35.679
+Now let's also talk about the magnetic
+
+555
+00:22:35.679 --> 00:22:38.960
+orchestration. Uh it will be the same uh
+
+556
+00:22:38.960 --> 00:22:41.039
+sample but like we will be using the
+
+557
+00:22:41.039 --> 00:22:43.840
+magnetic orchestration. So here like we
+
+558
+00:22:43.840 --> 00:22:46.960
+will have a lead and like we will have a
+
+559
+00:22:46.960 --> 00:22:49.440
+participants uh the overall workflow
+
+560
+00:22:49.440 --> 00:22:51.760
+count like overall number of times the
+
+561
+00:22:51.760 --> 00:22:55.360
+workflow can run between the agents it's
+
+562
+00:22:55.360 --> 00:22:58.080
+a six. So what will happen is that when
+
+563
+00:22:58.080 --> 00:23:00.960
+the input is given the lead will uh come
+
+564
+00:23:00.960 --> 00:23:03.440
+up with a plan and request for a manual
+
+565
+00:23:03.440 --> 00:23:06.480
+approval. Once it is approved the lead
+
+566
+00:23:06.480 --> 00:23:09.039
+will you know call the individual agents
+
+567
+00:23:09.039 --> 00:23:12.400
+and finalize the output. So if you just
+
+568
+00:23:12.400 --> 00:23:15.919
+come over here. So this is how we build.
+
+569
+00:23:15.919 --> 00:23:18.240
+So here instead of a group chat we will
+
+570
+00:23:18.240 --> 00:23:20.720
+be using the magnetic builder. So if you
+
+571
+00:23:20.720 --> 00:23:22.400
+see here we are using group chat
+
+572
+00:23:22.400 --> 00:23:24.240
+builder. Here we are using the magnetic
+
+573
+00:23:24.240 --> 00:23:27.360
+builder participants and uh you know
+
+574
+00:23:27.360 --> 00:23:30.480
+manager and maximum counted six. So it's
+
+575
+00:23:30.480 --> 00:23:33.200
+a global limit not necessarily for the
+
+576
+00:23:33.200 --> 00:23:35.760
+individual agent but the overall uh
+
+577
+00:23:35.760 --> 00:23:37.760
+communication between the agents that
+
+578
+00:23:37.760 --> 00:23:40.640
+includes the lead and any other agent
+
+579
+00:23:40.640 --> 00:23:43.520
+that participates in this uh workflow.
+
+580
+00:23:43.520 --> 00:23:47.760
+Then finally uh we will come out of the
+
+581
+00:23:47.760 --> 00:23:50.400
+you know iteration and print the result.
+
+582
+00:23:50.400 --> 00:23:52.080
+Let me go ahead and uh clear this
+
+583
+00:23:52.080 --> 00:23:55.280
+console. Let me run the program.
+
+584
+00:23:55.280 --> 00:23:57.840
+So if you look into the output it did go
+
+585
+00:23:57.840 --> 00:24:00.480
+through a lot of iteration. Finally like
+
+586
+00:24:00.480 --> 00:24:02.400
+this is the outcome that we have. It
+
+587
+00:24:02.400 --> 00:24:05.039
+says that do not use the blob storage
+
+588
+00:24:05.039 --> 00:24:07.679
+rather use the SQL to store this
+
+589
+00:24:07.679 --> 00:24:09.200
+information.
+
+590
+00:24:09.200 --> 00:24:11.600
+So far in this video we have covered all
+
+591
+00:24:11.600 --> 00:24:14.640
+the orchestration types using which you
+
+592
+00:24:14.640 --> 00:24:17.679
+can build a you know basic workflow to a
+
+593
+00:24:17.679 --> 00:24:20.240
+very complex workflow.
+
+594
+00:24:20.240 --> 00:24:22.159
+Now in the upcoming video we will be
+
+595
+00:24:22.159 --> 00:24:24.720
+discussing about the workflow events
+
+596
+00:24:24.720 --> 00:24:27.200
+based on which you can get the you know
+
+597
+00:24:27.200 --> 00:24:29.840
+uh human approval. Say you want to do
+
+598
+00:24:29.840 --> 00:24:31.679
+something before you actually perform
+
+599
+00:24:31.679 --> 00:24:34.720
+any action you need to get the uh human
+
+600
+00:24:34.720 --> 00:24:37.520
+approval that is mandatory right? So we
+
+601
+00:24:37.520 --> 00:24:39.360
+will see in the next video how do we do
+
+602
+00:24:39.360 --> 00:24:43.039
+that. Uh, thank you for watching.

@@ -1,0 +1,6 @@
+{
+  "id": "https://example.com/conformance/vendor-key-trailing-newline",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "x-acme-key\n": "value"
+}

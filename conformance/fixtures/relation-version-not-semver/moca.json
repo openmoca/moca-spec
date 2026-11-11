@@ -1,0 +1,12 @@
+{
+  "id": "https://example.com/conformance/relation-version-not-semver",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "relations": [
+    {
+      "type": "crossReferences",
+      "target": "https://example.com/other",
+      "version": "v1"
+    }
+  ]
+}

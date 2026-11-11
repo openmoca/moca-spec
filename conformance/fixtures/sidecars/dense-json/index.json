@@ -1,0 +1,22 @@
+{
+  "indexVersion": 1,
+  "target": {
+    "id": "https://example.com/conformance/minimal",
+    "version": "1.0.0",
+    "digest": "sha256:d38eef8a9aa059faabed7a60aba6b3d18031deabd3be1b7347ac7abfbc66b708"
+  },
+  "indexType": "hybrid",
+  "chunking": {
+    "strategy": "whole-node"
+  },
+  "storage": {
+    "format": "moca-jsonl-v1",
+    "file": "payload/items.jsonl"
+  },
+  "createdBy": "moca-index",
+  "model": {
+    "name": "conformance-embedder",
+    "version": "1",
+    "dimensions": 2
+  }
+}

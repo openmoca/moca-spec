@@ -1,0 +1,51 @@
+name: Sigstore smoke test
+
+# Signs sigstore-smoke/package keyless with this workflow's own identity, against the public Sigstore
+# instance, and uploads the bundle for a maintainer to commit. Run by hand only.
+# The signature and this workflow's identity are written to Rekor, a public log that keeps them for good,
+# so the job runs only in the openmoca organisation.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  sign:
+    if: github.repository == 'openmoca/moca-spec' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: moca-spec
+      - uses: actions/checkout@v4
+        with:
+          repository: openmoca/moca-reader-typescript
+          ref: v0.6.0
+          path: moca-reader-typescript
+      - uses: actions/checkout@v4
+        with:
+          repository: openmoca/moca-tools
+          ref: v0.6.0
+          path: moca-tools
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+        working-directory: moca-reader-typescript
+      - run: npm ci
+        working-directory: moca-tools
+      - run: npm ci
+        working-directory: moca-spec
+      - name: Sign keyless
+        run: node ../moca-tools/packages/moca-sign/bin/moca-sign.js sign sigstore-smoke/package --sigstore
+        working-directory: moca-spec
+      - name: Verify against public Sigstore
+        run: node scripts/sigstore-smoke.mjs --online
+        working-directory: moca-spec
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sigstore-smoke-bundle
+          path: moca-spec/sigstore-smoke/package/attestations/package.sigstore.json

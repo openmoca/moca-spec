@@ -1,0 +1,2735 @@
+WEBVTT
+
+NOTE Automatic captions for https://www.youtube.com/watch?v=Nnf6E1fmPBs, from YouTube.
+
+1
+00:00:00.160 --> 00:00:02.320
+Hello everyone, welcome to this video.
+
+2
+00:00:02.320 --> 00:00:04.080
+In this video, we'll be discussing about
+
+3
+00:00:04.080 --> 00:00:06.160
+quite a few topics that includes the
+
+4
+00:00:06.160 --> 00:00:08.720
+workflow events and how do we keep the
+
+5
+00:00:08.720 --> 00:00:11.040
+human in the workflow for reviewer and
+
+6
+00:00:11.040 --> 00:00:13.599
+approval purposes and we will also be
+
+7
+00:00:13.599 --> 00:00:16.160
+discussing about checkpoints. So first
+
+8
+00:00:16.160 --> 00:00:18.480
+we will begin with the workflow events.
+
+9
+00:00:18.480 --> 00:00:21.439
+Microsoft agent framework uses the event
+
+10
+00:00:21.439 --> 00:00:23.199
+based system within its workflow
+
+11
+00:00:23.199 --> 00:00:25.199
+feature. These events are published
+
+12
+00:00:25.199 --> 00:00:27.519
+throughout the workflow execution that
+
+13
+00:00:27.519 --> 00:00:29.519
+allow the developers to monitor and
+
+14
+00:00:29.519 --> 00:00:31.519
+debug and control the workflow
+
+15
+00:00:31.519 --> 00:00:33.040
+execution.
+
+16
+00:00:33.040 --> 00:00:35.840
+So again these uh events will help us
+
+17
+00:00:35.840 --> 00:00:38.399
+with the observability. You can you know
+
+18
+00:00:38.399 --> 00:00:40.879
+use these events to debug on auditing
+
+19
+00:00:40.879 --> 00:00:43.760
+purposes that will let you decouple your
+
+20
+00:00:43.760 --> 00:00:46.800
+workflow logic with you know your logic
+
+21
+00:00:46.800 --> 00:00:49.760
+that will also keep the context in sync
+
+22
+00:00:49.760 --> 00:00:52.000
+as well as you can you know dynamically
+
+23
+00:00:52.000 --> 00:00:54.960
+control the overall workflow execution.
+
+24
+00:00:54.960 --> 00:00:57.120
+So when I see the events what does it
+
+25
+00:00:57.120 --> 00:00:59.680
+mean? So if I just come over here if you
+
+26
+00:00:59.680 --> 00:01:01.359
+see here like let's assume that I have a
+
+27
+00:01:01.359 --> 00:01:04.400
+workflow with three different nodes.
+
+28
+00:01:04.400 --> 00:01:06.000
+It's a sequential workflow with the
+
+29
+00:01:06.000 --> 00:01:08.240
+three different nodes here. So first we
+
+30
+00:01:08.240 --> 00:01:10.000
+will begin with the parse text, convert
+
+31
+00:01:10.000 --> 00:01:12.720
+text and explain text right. So if you
+
+32
+00:01:12.720 --> 00:01:14.640
+see the events when you start the
+
+33
+00:01:14.640 --> 00:01:16.400
+workflow this particular event will
+
+34
+00:01:16.400 --> 00:01:18.159
+trigger. So this will say hey like
+
+35
+00:01:18.159 --> 00:01:20.080
+workflow it's started and then like
+
+36
+00:01:20.080 --> 00:01:23.119
+workflow status will change from starter
+
+37
+00:01:23.119 --> 00:01:26.320
+to in progress and like the executor
+
+38
+00:01:26.320 --> 00:01:29.360
+will get invoked and that event will get
+
+39
+00:01:29.360 --> 00:01:31.119
+triggered. So basically like this
+
+40
+00:01:31.119 --> 00:01:34.320
+particular executor will get invoked.
+
+41
+00:01:34.320 --> 00:01:37.280
+Then you will see the uh executor
+
+42
+00:01:37.280 --> 00:01:39.360
+result. The executor will say like I'm
+
+43
+00:01:39.360 --> 00:01:41.600
+done. Then the next executor will get
+
+44
+00:01:41.600 --> 00:01:44.240
+called. Then it is you know results.
+
+45
+00:01:44.240 --> 00:01:46.799
+Then it will get completed. Then finally
+
+46
+00:01:46.799 --> 00:01:49.119
+like the this particular executor will
+
+47
+00:01:49.119 --> 00:01:51.600
+get called its results and it will get
+
+48
+00:01:51.600 --> 00:01:54.560
+completed. Finally the workflow itself
+
+49
+00:01:54.560 --> 00:01:56.799
+will get completed. So as you see here
+
+50
+00:01:56.799 --> 00:02:00.079
+like from one fees to another fees as
+
+51
+00:02:00.079 --> 00:02:02.640
+the workflow moves you these events will
+
+52
+00:02:02.640 --> 00:02:04.880
+get triggered that provides lot of
+
+53
+00:02:04.880 --> 00:02:06.960
+information to us. So for instance if
+
+54
+00:02:06.960 --> 00:02:09.599
+you see here so here like we can start a
+
+55
+00:02:09.599 --> 00:02:11.440
+timer saying that hey like the workflow
+
+56
+00:02:11.440 --> 00:02:14.000
+started you know at this particular time
+
+57
+00:02:14.000 --> 00:02:16.000
+and finally we can say like this
+
+58
+00:02:16.000 --> 00:02:17.680
+workflow took this many seconds or
+
+59
+00:02:17.680 --> 00:02:20.640
+minutes to complete the execution as
+
+60
+00:02:20.640 --> 00:02:22.319
+well as if at all you wanted to control
+
+61
+00:02:22.319 --> 00:02:24.640
+something then you can very well do it
+
+62
+00:02:24.640 --> 00:02:27.520
+within these events. So if you see here
+
+63
+00:02:27.520 --> 00:02:29.680
+we can you know break down these events
+
+64
+00:02:29.680 --> 00:02:32.640
+into four different categories. So first
+
+65
+00:02:32.640 --> 00:02:35.200
+we will have a workflow life cycle
+
+66
+00:02:35.200 --> 00:02:37.840
+events. So again um it will say like
+
+67
+00:02:37.840 --> 00:02:39.840
+workflow started, workflow completed,
+
+68
+00:02:39.840 --> 00:02:42.160
+workflow output, error, warning or
+
+69
+00:02:42.160 --> 00:02:44.640
+whatever is that all of these events are
+
+70
+00:02:44.640 --> 00:02:46.800
+directly associated with the workflow
+
+71
+00:02:46.800 --> 00:02:49.360
+itself. Then you will have something
+
+72
+00:02:49.360 --> 00:02:51.599
+called superep. So basically like you
+
+73
+00:02:51.599 --> 00:02:54.480
+can split the workflow into any number
+
+74
+00:02:54.480 --> 00:02:57.519
+of logical pieces. Right? So if you
+
+75
+00:02:57.519 --> 00:03:00.319
+think of this way so this this entire
+
+76
+00:03:00.319 --> 00:03:02.319
+thing it's a workflow but let's assume
+
+77
+00:03:02.319 --> 00:03:05.440
+that the force text and convert text
+
+78
+00:03:05.440 --> 00:03:07.760
+it's one logical group and like this
+
+79
+00:03:07.760 --> 00:03:10.239
+explain text it's another logical group.
+
+80
+00:03:10.239 --> 00:03:12.400
+So in this particular workflow in this
+
+81
+00:03:12.400 --> 00:03:13.920
+particular case you will have two
+
+82
+00:03:13.920 --> 00:03:17.599
+different superstep. So again superep
+
+83
+00:03:17.599 --> 00:03:20.319
+it's nothing but the logical group right
+
+84
+00:03:20.319 --> 00:03:23.200
+of a workflow. So you you can also have
+
+85
+00:03:23.200 --> 00:03:27.040
+events for that. then the executor
+
+86
+00:03:27.040 --> 00:03:28.879
+events. So again like if I just come
+
+87
+00:03:28.879 --> 00:03:31.360
+over here here we have three different
+
+88
+00:03:31.360 --> 00:03:34.239
+executors. So for each executor you will
+
+89
+00:03:34.239 --> 00:03:37.440
+have the executor related events. So you
+
+90
+00:03:37.440 --> 00:03:39.680
+can also have that you know invoked,
+
+91
+00:03:39.680 --> 00:03:42.799
+completed, failed, run event, response
+
+92
+00:03:42.799 --> 00:03:44.640
+event and all of these events. Then
+
+93
+00:03:44.640 --> 00:03:47.040
+finally you will also have the request
+
+94
+00:03:47.040 --> 00:03:49.040
+info event. So basically like when you
+
+95
+00:03:49.040 --> 00:03:51.680
+want to uh get some information
+
+96
+00:03:51.680 --> 00:03:54.560
+externally then you can use this request
+
+97
+00:03:54.560 --> 00:03:56.879
+info event. If you want to learn more
+
+98
+00:03:56.879 --> 00:03:59.439
+about these events then you can use this
+
+99
+00:03:59.439 --> 00:04:01.840
+reference article that clearly explains
+
+100
+00:04:01.840 --> 00:04:04.480
+all these events and how do we use this.
+
+101
+00:04:04.480 --> 00:04:07.360
+Right now we know that what are all
+
+102
+00:04:07.360 --> 00:04:08.959
+these events we will go back to the
+
+103
+00:04:08.959 --> 00:04:10.959
+visual studio and see like how do we use
+
+104
+00:04:10.959 --> 00:04:13.680
+these uh events.
+
+105
+00:04:13.680 --> 00:04:15.360
+So what we want to do is that we want to
+
+106
+00:04:15.360 --> 00:04:17.199
+build a simple workflow. So basically
+
+107
+00:04:17.199 --> 00:04:18.880
+like this is the workflow that I want to
+
+108
+00:04:18.880 --> 00:04:21.280
+build right. So you will be having a
+
+109
+00:04:21.280 --> 00:04:23.120
+simple sequential workflow exactly the
+
+110
+00:04:23.120 --> 00:04:25.199
+same workflow we are going to build. So
+
+111
+00:04:25.199 --> 00:04:27.199
+first you need to import all the events.
+
+112
+00:04:27.199 --> 00:04:29.040
+These events are part of this agent
+
+113
+00:04:29.040 --> 00:04:30.720
+framework. So you need to import
+
+114
+00:04:30.720 --> 00:04:32.240
+whatever the events that you are
+
+115
+00:04:32.240 --> 00:04:34.240
+interested in. You can import all of
+
+116
+00:04:34.240 --> 00:04:36.800
+these events. So as you see here like I
+
+117
+00:04:36.800 --> 00:04:38.960
+have three different uh class uh you
+
+118
+00:04:38.960 --> 00:04:41.360
+know executors. I will be building a
+
+119
+00:04:41.360 --> 00:04:43.199
+simple sequential workflow from parser
+
+120
+00:04:43.199 --> 00:04:46.080
+to converter convert to the explainer.
+
+121
+00:04:46.080 --> 00:04:48.320
+Then when you say like workflow
+
+122
+00:04:48.320 --> 00:04:51.040
+runstream it will emit a lot of events.
+
+123
+00:04:51.040 --> 00:04:52.960
+You can check the type of that
+
+124
+00:04:52.960 --> 00:04:54.720
+particular event. So here I'm saying
+
+125
+00:04:54.720 --> 00:04:58.240
+like if the event is a type of workflow
+
+126
+00:04:58.240 --> 00:05:00.240
+started then you say workflow started
+
+127
+00:05:00.240 --> 00:05:03.440
+and like print the workflow ID. If it is
+
+128
+00:05:03.440 --> 00:05:05.600
+you know status event you will print the
+
+129
+00:05:05.600 --> 00:05:07.919
+status like whatever the status you know
+
+130
+00:05:07.919 --> 00:05:10.320
+right now it has. So we will print that.
+
+131
+00:05:10.320 --> 00:05:12.000
+In this particular case like all of
+
+132
+00:05:12.000 --> 00:05:15.280
+these events are more of a observability
+
+133
+00:05:15.280 --> 00:05:17.520
+uh events. You can only you know print
+
+134
+00:05:17.520 --> 00:05:19.199
+some of these information extract some
+
+135
+00:05:19.199 --> 00:05:21.680
+of these information from the workflow
+
+136
+00:05:21.680 --> 00:05:24.479
+execution. But there are quite a few uh
+
+137
+00:05:24.479 --> 00:05:26.400
+you know events that let you dynamically
+
+138
+00:05:26.400 --> 00:05:28.720
+control the workflow. So now if you just
+
+139
+00:05:28.720 --> 00:05:30.800
+come down here like likewise like I
+
+140
+00:05:30.800 --> 00:05:33.199
+captured all the events that I'm
+
+141
+00:05:33.199 --> 00:05:35.360
+interested in executor invoked executor
+
+142
+00:05:35.360 --> 00:05:38.000
+convoked uh completed and the like
+
+143
+00:05:38.000 --> 00:05:41.120
+workflow output workflow failed workflow
+
+144
+00:05:41.120 --> 00:05:43.120
+failed executor failed event or whatever
+
+145
+00:05:43.120 --> 00:05:45.360
+is that so like whatever I am interested
+
+146
+00:05:45.360 --> 00:05:48.080
+in I am going to just you know log all
+
+147
+00:05:48.080 --> 00:05:50.560
+this information in the console that
+
+148
+00:05:50.560 --> 00:05:52.800
+like let me go and run this. So this so
+
+149
+00:05:52.800 --> 00:05:55.440
+if I run it here you see here like it
+
+150
+00:05:55.440 --> 00:05:57.199
+says that workflow started and this is
+
+151
+00:05:57.199 --> 00:05:58.880
+the workflow ID. Each workflow will have
+
+152
+00:05:58.880 --> 00:06:01.600
+its you know ID and like the workflow
+
+153
+00:06:01.600 --> 00:06:04.319
+status event occurred in progress and we
+
+154
+00:06:04.319 --> 00:06:06.240
+extracted some of these events. If you
+
+155
+00:06:06.240 --> 00:06:08.479
+see here like extraction should happen
+
+156
+00:06:08.479 --> 00:06:11.120
+in the parser executor right. So if you
+
+157
+00:06:11.120 --> 00:06:13.199
+see here like executor invoked ideally
+
+158
+00:06:13.199 --> 00:06:16.319
+like it has to come between uh invoked
+
+159
+00:06:16.319 --> 00:06:19.199
+and completed. But because like as we
+
+160
+00:06:19.199 --> 00:06:21.199
+are using the async if I just come over
+
+161
+00:06:21.199 --> 00:06:24.160
+here this is the async operation right.
+
+162
+00:06:24.160 --> 00:06:27.199
+So it has to tagle between the main
+
+163
+00:06:27.199 --> 00:06:29.840
+thread and the uh executor thread. So it
+
+164
+00:06:29.840 --> 00:06:32.319
+is like you cannot really control that
+
+165
+00:06:32.319 --> 00:06:34.639
+actually like it execute in the proper
+
+166
+00:06:34.639 --> 00:06:35.759
+order.
+
+167
+00:06:35.759 --> 00:06:38.000
+So likewise like we have this executor
+
+168
+00:06:38.000 --> 00:06:40.960
+invoked for the uh converter. There is
+
+169
+00:06:40.960 --> 00:06:42.960
+some calculation happened and like
+
+170
+00:06:42.960 --> 00:06:46.240
+finally uh we have the result printed
+
+171
+00:06:46.240 --> 00:06:48.560
+here and then like finally we see like
+
+172
+00:06:48.560 --> 00:06:50.960
+the overall uh state becomes idle and
+
+173
+00:06:50.960 --> 00:06:54.160
+the workflow finished. So likewise like
+
+174
+00:06:54.160 --> 00:06:57.120
+you know you can use these events uh to
+
+175
+00:06:57.120 --> 00:06:58.960
+capture all the information that you are
+
+176
+00:06:58.960 --> 00:07:00.400
+interested in. So these are all the
+
+177
+00:07:00.400 --> 00:07:02.639
+built-in events right? We can also have
+
+178
+00:07:02.639 --> 00:07:04.880
+some custom events. So in this case if
+
+179
+00:07:04.880 --> 00:07:07.280
+you just come over here I'm going to
+
+180
+00:07:07.280 --> 00:07:09.840
+create something called uh resume
+
+181
+00:07:09.840 --> 00:07:12.639
+processed event. So I'm going to pass
+
+182
+00:07:12.639 --> 00:07:14.319
+some information the workflow is going
+
+183
+00:07:14.319 --> 00:07:17.360
+to process the resume and like when it
+
+184
+00:07:17.360 --> 00:07:19.120
+process the resume it is going to emit
+
+185
+00:07:19.120 --> 00:07:21.919
+this. So it is going to just emit uh the
+
+186
+00:07:21.919 --> 00:07:24.800
+processed resume processed event. This
+
+187
+00:07:24.800 --> 00:07:26.880
+event will have the these information
+
+188
+00:07:26.880 --> 00:07:29.840
+candidate name and the score. So if I
+
+189
+00:07:29.840 --> 00:07:32.400
+just come over here so these are all the
+
+190
+00:07:32.400 --> 00:07:34.479
+candidates that I'm having right. So
+
+191
+00:07:34.479 --> 00:07:36.800
+when you start the workflow, if I just
+
+192
+00:07:36.800 --> 00:07:38.960
+you know start the workflow run stream,
+
+193
+00:07:38.960 --> 00:07:40.720
+it is exactly the same thing here,
+
+194
+00:07:40.720 --> 00:07:42.479
+right? Only thing is that this time
+
+195
+00:07:42.479 --> 00:07:44.160
+around I will be looking for this
+
+196
+00:07:44.160 --> 00:07:46.479
+particular event uh you know resume
+
+197
+00:07:46.479 --> 00:07:48.400
+processed event because like when the
+
+198
+00:07:48.400 --> 00:07:50.319
+workflow executes if I just come over
+
+199
+00:07:50.319 --> 00:07:53.599
+here uh to the you know uh to the
+
+200
+00:07:53.599 --> 00:07:56.319
+executor here I'm saying that hey like
+
+201
+00:07:56.319 --> 00:07:59.199
+you throw uh this particular event. So
+
+202
+00:07:59.199 --> 00:08:01.280
+instead of just a context dot send a
+
+203
+00:08:01.280 --> 00:08:04.800
+message or output yield output I also
+
+204
+00:08:04.800 --> 00:08:06.720
+can send a event. So I'm just saying
+
+205
+00:08:06.720 --> 00:08:08.560
+like trigger a event. These are all the
+
+206
+00:08:08.560 --> 00:08:11.039
+values that you know you will be
+
+207
+00:08:11.039 --> 00:08:13.280
+exposing to because like if I just come
+
+208
+00:08:13.280 --> 00:08:15.680
+over here there is a constructor that
+
+209
+00:08:15.680 --> 00:08:17.840
+takes all of these information. If you
+
+210
+00:08:17.840 --> 00:08:19.759
+just see like the candidate name and the
+
+211
+00:08:19.759 --> 00:08:21.840
+score it takes. So that's why like I am
+
+212
+00:08:21.840 --> 00:08:23.680
+passing all of these information to this
+
+213
+00:08:23.680 --> 00:08:26.800
+particular class and like that will be
+
+214
+00:08:26.800 --> 00:08:29.360
+created as a event that I can capture
+
+215
+00:08:29.360 --> 00:08:32.159
+here and I can print these values here.
+
+216
+00:08:32.159 --> 00:08:34.959
+So now if I run it here,
+
+217
+00:08:34.959 --> 00:08:38.320
+if you see here, if you just come over
+
+218
+00:08:38.320 --> 00:08:40.560
+here, if you see like workflow started,
+
+219
+00:08:40.560 --> 00:08:42.399
+workflow in progress and like these are
+
+220
+00:08:42.399 --> 00:08:44.880
+all the events reported like as the
+
+221
+00:08:44.880 --> 00:08:48.480
+workflow executed, it triggered all of
+
+222
+00:08:48.480 --> 00:08:50.800
+these custom events and that can also be
+
+223
+00:08:50.800 --> 00:08:54.320
+captured. Now next thing is that uh we
+
+224
+00:08:54.320 --> 00:08:57.839
+will be looking into the possible event.
+
+225
+00:08:57.839 --> 00:08:59.839
+So basically like using these events you
+
+226
+00:08:59.839 --> 00:09:03.360
+can control the execution. So like let's
+
+227
+00:09:03.360 --> 00:09:06.160
+say like I have a refund processor. So
+
+228
+00:09:06.160 --> 00:09:08.959
+the user will be asking for a refund. If
+
+229
+00:09:08.959 --> 00:09:11.120
+it is under $100 that will be auto
+
+230
+00:09:11.120 --> 00:09:13.920
+approved. But if it is more than $100
+
+231
+00:09:13.920 --> 00:09:17.120
+then the human needs to decide whether
+
+232
+00:09:17.120 --> 00:09:19.519
+they wanted to approve it or not. So if
+
+233
+00:09:19.519 --> 00:09:22.320
+you see here I have a data class. So
+
+234
+00:09:22.320 --> 00:09:25.279
+data data class it's called uh refund
+
+235
+00:09:25.279 --> 00:09:27.279
+request. It has the order ID and the
+
+236
+00:09:27.279 --> 00:09:29.360
+amount. And if you see here like I have
+
+237
+00:09:29.360 --> 00:09:32.240
+a refund processor. It has the handler
+
+238
+00:09:32.240 --> 00:09:34.640
+class and the response handler class. So
+
+239
+00:09:34.640 --> 00:09:36.399
+what is the difference between handler
+
+240
+00:09:36.399 --> 00:09:38.000
+class? Handler class we already know
+
+241
+00:09:38.000 --> 00:09:40.480
+like when you when you make a call uh by
+
+242
+00:09:40.480 --> 00:09:42.399
+passing all these uh you know
+
+243
+00:09:42.399 --> 00:09:44.080
+information the handler will
+
+244
+00:09:44.080 --> 00:09:46.080
+automatically get called. But what is
+
+245
+00:09:46.080 --> 00:09:49.040
+this response handler? So when you use
+
+246
+00:09:49.040 --> 00:09:52.240
+this request info, if you see here uh
+
+247
+00:09:52.240 --> 00:09:55.200
+hey like first when it is less than $100
+
+248
+00:09:55.200 --> 00:09:57.360
+we will send back to the call uh you
+
+249
+00:09:57.360 --> 00:09:59.839
+know caller saying that hey this request
+
+250
+00:09:59.839 --> 00:10:03.040
+it's approved auto approved but if it is
+
+251
+00:10:03.040 --> 00:10:05.360
+greater than $100 then we don't want to
+
+252
+00:10:05.360 --> 00:10:07.200
+send a message rather like we wanted to
+
+253
+00:10:07.200 --> 00:10:09.200
+request for information when you say
+
+254
+00:10:09.200 --> 00:10:11.920
+request for information it will the
+
+255
+00:10:11.920 --> 00:10:13.760
+workflow will know that hey like I need
+
+256
+00:10:13.760 --> 00:10:16.160
+a information from external system it
+
+257
+00:10:16.160 --> 00:10:17.920
+can be a human being or it can be
+
+258
+00:10:17.920 --> 00:10:20.240
+external system that will pass me that
+
+259
+00:10:20.240 --> 00:10:22.320
+information with that information I will
+
+260
+00:10:22.320 --> 00:10:25.440
+execute the rest of the uh task as a
+
+261
+00:10:25.440 --> 00:10:27.360
+part of this particular workflow. So
+
+262
+00:10:27.360 --> 00:10:30.000
+here like I'm saying like a request info
+
+263
+00:10:30.000 --> 00:10:32.399
+the request data I I need to pass two
+
+264
+00:10:32.399 --> 00:10:34.959
+information request data and response
+
+265
+00:10:34.959 --> 00:10:37.440
+type right I will be passing this data
+
+266
+00:10:37.440 --> 00:10:39.600
+data it's like what it's passed to this
+
+267
+00:10:39.600 --> 00:10:41.839
+particular executor I will be sending
+
+268
+00:10:41.839 --> 00:10:43.600
+the same information so basically it's
+
+269
+00:10:43.600 --> 00:10:45.680
+nothing but the order id and the uh
+
+270
+00:10:45.680 --> 00:10:48.000
+amount that will be passed and the
+
+271
+00:10:48.000 --> 00:10:49.760
+response type I wanted to get the
+
+272
+00:10:49.760 --> 00:10:52.000
+response from the external system or a
+
+273
+00:10:52.000 --> 00:10:54.399
+human uh saying that approved or
+
+274
+00:10:54.399 --> 00:10:57.120
+rejected or whatever is that right So I
+
+275
+00:10:57.120 --> 00:10:59.600
+will be expecting the response of type
+
+276
+00:10:59.600 --> 00:11:01.440
+string. That's what I'm saying here. So
+
+277
+00:11:01.440 --> 00:11:03.519
+when you have this when somebody
+
+278
+00:11:03.519 --> 00:11:05.360
+responded back to this particular
+
+279
+00:11:05.360 --> 00:11:09.120
+request then this response handler will
+
+280
+00:11:09.120 --> 00:11:12.880
+get called. So now if you see here uh
+
+281
+00:11:12.880 --> 00:11:16.000
+now here like we know feedback we have
+
+282
+00:11:16.000 --> 00:11:18.240
+if the feedback is yes then the status
+
+283
+00:11:18.240 --> 00:11:20.320
+will be approved otherwise it will be
+
+284
+00:11:20.320 --> 00:11:22.880
+rejected right. So now you know like
+
+285
+00:11:22.880 --> 00:11:25.120
+when the response handler will get
+
+286
+00:11:25.120 --> 00:11:27.519
+called whenever somebody is uh you know
+
+287
+00:11:27.519 --> 00:11:30.320
+responding back to your request then
+
+288
+00:11:30.320 --> 00:11:32.800
+this response handler will get called.
+
+289
+00:11:32.800 --> 00:11:34.959
+So now if I just come over here this
+
+290
+00:11:34.959 --> 00:11:37.200
+workflow uh I am you know starting a
+
+291
+00:11:37.200 --> 00:11:40.480
+workflow with a message orderer id uh is
+
+292
+00:11:40.480 --> 00:11:43.760
+whatever is that amount is $500 I am
+
+293
+00:11:43.760 --> 00:11:45.920
+sending. So now what will happen is that
+
+294
+00:11:45.920 --> 00:11:48.399
+the workflow will get started. The
+
+295
+00:11:48.399 --> 00:11:51.200
+executor will get invoked and like the
+
+296
+00:11:51.200 --> 00:11:53.920
+executor when it sees $500 it will come
+
+297
+00:11:53.920 --> 00:11:56.720
+over here. When he sees $500 it will
+
+298
+00:11:56.720 --> 00:11:58.720
+request for information. So this
+
+299
+00:11:58.720 --> 00:12:02.240
+particular event will get called. So if
+
+300
+00:12:02.240 --> 00:12:05.920
+the event of a type request info event
+
+301
+00:12:05.920 --> 00:12:08.320
+then what I want to do is that I want to
+
+302
+00:12:08.320 --> 00:12:11.360
+print this message in the console saying
+
+303
+00:12:11.360 --> 00:12:14.720
+that hey like human approval needed for
+
+304
+00:12:14.720 --> 00:12:17.519
+this particular amount do you approve
+
+305
+00:12:17.519 --> 00:12:20.160
+you say yes or no then the response will
+
+306
+00:12:20.160 --> 00:12:22.800
+be captured here the response will be
+
+307
+00:12:22.800 --> 00:12:27.279
+sent back uh to the uh workflow again.
+
+308
+00:12:27.279 --> 00:12:29.519
+So now I'm just capturing this. If I
+
+309
+00:12:29.519 --> 00:12:32.000
+just come over here, the way you send
+
+310
+00:12:32.000 --> 00:12:34.240
+the response back to the workflow
+
+311
+00:12:34.240 --> 00:12:36.880
+workflow dot send a response streaming
+
+312
+00:12:36.880 --> 00:12:38.560
+like whatever the response that you
+
+313
+00:12:38.560 --> 00:12:40.639
+have. So basically like it will have two
+
+314
+00:12:40.639 --> 00:12:43.279
+things. One is the request ID and the
+
+315
+00:12:43.279 --> 00:12:46.480
+response. So that will be part of this
+
+316
+00:12:46.480 --> 00:12:48.639
+pending response. I will be passing it
+
+317
+00:12:48.639 --> 00:12:50.639
+to the workflow. Now workflow will have
+
+318
+00:12:50.639 --> 00:12:54.240
+the request ID like what is the like for
+
+319
+00:12:54.240 --> 00:12:56.639
+each request will have its own ID and
+
+320
+00:12:56.639 --> 00:12:58.800
+for that particular request what is the
+
+321
+00:12:58.800 --> 00:13:01.200
+response or received both will be uh
+
+322
+00:13:01.200 --> 00:13:03.440
+combined and sent back to the workflow
+
+323
+00:13:03.440 --> 00:13:05.360
+using this particular method send a
+
+324
+00:13:05.360 --> 00:13:08.560
+response streaming when when we call
+
+325
+00:13:08.560 --> 00:13:10.880
+this method send a response streaming
+
+326
+00:13:10.880 --> 00:13:13.680
+with the request ID and the response
+
+327
+00:13:13.680 --> 00:13:15.839
+this particular method will get called a
+
+328
+00:13:15.839 --> 00:13:17.839
+response handler will get called. Now
+
+329
+00:13:17.839 --> 00:13:21.519
+you will have two information one the uh
+
+330
+00:13:21.519 --> 00:13:23.920
+original request and like the feedback.
+
+331
+00:13:23.920 --> 00:13:26.480
+So based on which we can um the rest of
+
+332
+00:13:26.480 --> 00:13:28.880
+the workflow will get executed. Now let
+
+333
+00:13:28.880 --> 00:13:30.720
+me go ahead and clear this console. Now
+
+334
+00:13:30.720 --> 00:13:33.760
+let me go ahead and run this program.
+
+335
+00:13:33.760 --> 00:13:36.880
+So if you see here it says that hey like
+
+336
+00:13:36.880 --> 00:13:40.480
+a human approval needed for $500. Do you
+
+337
+00:13:40.480 --> 00:13:42.880
+approve or no? I see like I approve. Now
+
+338
+00:13:42.880 --> 00:13:45.440
+it says that like the final outcome for
+
+339
+00:13:45.440 --> 00:13:48.000
+this one human approved. Now if I say
+
+340
+00:13:48.000 --> 00:13:51.200
+again, now if I say no, it will say that
+
+341
+00:13:51.200 --> 00:13:53.040
+it is rejected by the human. This
+
+342
+00:13:53.040 --> 00:13:55.040
+workflow it's not a static workflow.
+
+343
+00:13:55.040 --> 00:13:56.480
+Basically it's a dynamic workflow,
+
+344
+00:13:56.480 --> 00:13:59.600
+right? Though like we pass the uh you
+
+345
+00:13:59.600 --> 00:14:02.399
+know a decision uh in the console which
+
+346
+00:14:02.399 --> 00:14:05.120
+we don't do it in the uh real world but
+
+347
+00:14:05.120 --> 00:14:07.279
+for a purpose of demonstrating I'm just
+
+348
+00:14:07.279 --> 00:14:10.160
+showcasing that the workflow can get the
+
+349
+00:14:10.160 --> 00:14:12.480
+response from a external system. In this
+
+350
+00:14:12.480 --> 00:14:14.480
+case like it is the same console. I'm
+
+351
+00:14:14.480 --> 00:14:16.480
+just passing this information but it
+
+352
+00:14:16.480 --> 00:14:19.760
+shows the ability for the workflow to
+
+353
+00:14:19.760 --> 00:14:21.680
+get the response from the external
+
+354
+00:14:21.680 --> 00:14:23.360
+system. Let's move forward and discuss
+
+355
+00:14:23.360 --> 00:14:26.399
+about the checkpoint. So checkpoint it's
+
+356
+00:14:26.399 --> 00:14:29.760
+a way of storing the workflow state. Uh
+
+357
+00:14:29.760 --> 00:14:32.079
+say like you have a longunning workflow.
+
+358
+00:14:32.079 --> 00:14:33.680
+You wanted to pause the workflow and
+
+359
+00:14:33.680 --> 00:14:35.760
+restart the workflow. at the time you
+
+360
+00:14:35.760 --> 00:14:38.000
+have to save the state and reload the
+
+361
+00:14:38.000 --> 00:14:40.000
+state before you can you know run the
+
+362
+00:14:40.000 --> 00:14:42.320
+workflow again or like the system
+
+363
+00:14:42.320 --> 00:14:44.399
+crashes you want to continue the
+
+364
+00:14:44.399 --> 00:14:46.720
+workflow from where it left off then you
+
+365
+00:14:46.720 --> 00:14:48.880
+have to save the state of these workflow
+
+366
+00:14:48.880 --> 00:14:51.360
+so what are all the instances where the
+
+367
+00:14:51.360 --> 00:14:53.519
+states get saved or checkpoint get
+
+368
+00:14:53.519 --> 00:14:56.079
+created right so you think of like a
+
+369
+00:14:56.079 --> 00:14:59.120
+workflow with the different life events
+
+370
+00:14:59.120 --> 00:15:01.120
+so say like the workflow initiated
+
+371
+00:15:01.120 --> 00:15:03.680
+workflow passed workflow resumed
+
+372
+00:15:03.680 --> 00:15:06.320
+workflow completed. So all these kind of
+
+373
+00:15:06.320 --> 00:15:08.399
+a events will trigger a checkpoint
+
+374
+00:15:08.399 --> 00:15:11.199
+creation and what gets saved in the
+
+375
+00:15:11.199 --> 00:15:14.079
+checkpoint. So typically the uh executor
+
+376
+00:15:14.079 --> 00:15:17.199
+state and then like the message like you
+
+377
+00:15:17.199 --> 00:15:19.120
+say you you want to send a message from
+
+378
+00:15:19.120 --> 00:15:21.279
+one executor to another exeutor that
+
+379
+00:15:21.279 --> 00:15:23.600
+message gets stored and then like you
+
+380
+00:15:23.600 --> 00:15:26.399
+will you can have a shared state and you
+
+381
+00:15:26.399 --> 00:15:28.959
+will also have a pending request. Say
+
+382
+00:15:28.959 --> 00:15:31.279
+like you want to pass the workflow for a
+
+383
+00:15:31.279 --> 00:15:33.839
+user input then you will be having the
+
+384
+00:15:33.839 --> 00:15:36.160
+pending request. So all this information
+
+385
+00:15:36.160 --> 00:15:38.399
+will get stored in the checkpoint. Now
+
+386
+00:15:38.399 --> 00:15:39.920
+let's go back to the visual studio code
+
+387
+00:15:39.920 --> 00:15:41.519
+and see how do we implement the
+
+388
+00:15:41.519 --> 00:15:44.399
+checkpoint. So if you see here like I'm
+
+389
+00:15:44.399 --> 00:15:46.320
+using the file checkpoint storage
+
+390
+00:15:46.320 --> 00:15:48.880
+likewise you also have a in-memory
+
+391
+00:15:48.880 --> 00:15:50.800
+checkpoint storage and if at all you
+
+392
+00:15:50.800 --> 00:15:53.199
+wanted to have a you know custom uh
+
+393
+00:15:53.199 --> 00:15:54.959
+checkpoint storage you can very well
+
+394
+00:15:54.959 --> 00:15:56.959
+create one but in this case I will be
+
+395
+00:15:56.959 --> 00:15:59.839
+using the file uh checkpoint storage to
+
+396
+00:15:59.839 --> 00:16:02.639
+store the checkpoint basically it's a
+
+397
+00:16:02.639 --> 00:16:05.040
+JSON file that will get stored and this
+
+398
+00:16:05.040 --> 00:16:08.000
+is the folder where I wanted to store my
+
+399
+00:16:08.000 --> 00:16:10.399
+JSON file basically the state file right
+
+400
+00:16:10.399 --> 00:16:12.000
+so if you see here the workflow by
+
+401
+00:16:12.000 --> 00:16:14.000
+itself itself. It's a pretty simple uh
+
+402
+00:16:14.000 --> 00:16:16.399
+flow. You run the workflow, it is going
+
+403
+00:16:16.399 --> 00:16:19.680
+to request for a user feedback by using
+
+404
+00:16:19.680 --> 00:16:22.160
+this particular data class here. So if I
+
+405
+00:16:22.160 --> 00:16:24.480
+just come over here, so what I am doing
+
+406
+00:16:24.480 --> 00:16:26.720
+here is that I'm creating a file
+
+407
+00:16:26.720 --> 00:16:28.880
+checkpoint storage using the path that
+
+408
+00:16:28.880 --> 00:16:30.560
+we mentioned that I'm creating a
+
+409
+00:16:30.560 --> 00:16:32.720
+workflow. If you see here, this is the
+
+410
+00:16:32.720 --> 00:16:35.120
+only node that it will have and like I'm
+
+411
+00:16:35.120 --> 00:16:36.880
+creating the workflow with the
+
+412
+00:16:36.880 --> 00:16:39.519
+checkpoint and I use the file checkpoint
+
+413
+00:16:39.519 --> 00:16:41.759
+storage class here. So with that like I
+
+414
+00:16:41.759 --> 00:16:43.759
+created a workflow and when I run the
+
+415
+00:16:43.759 --> 00:16:47.600
+workflow uh it will just go here right
+
+416
+00:16:47.600 --> 00:16:50.959
+and it will ask for a user input. Now at
+
+417
+00:16:50.959 --> 00:16:53.759
+this moment the workflow will get paused
+
+418
+00:16:53.759 --> 00:16:56.560
+right. So now uh up to this point it
+
+419
+00:16:56.560 --> 00:16:58.800
+will create two JSON file. when we
+
+420
+00:16:58.800 --> 00:17:01.040
+initialize the workflow, it will create
+
+421
+00:17:01.040 --> 00:17:03.519
+the very first JSON file and then like
+
+422
+00:17:03.519 --> 00:17:06.720
+when it reach the you know the user
+
+423
+00:17:06.720 --> 00:17:09.439
+input state then it is going to create
+
+424
+00:17:09.439 --> 00:17:13.600
+the second uh state file. Now uh if you
+
+425
+00:17:13.600 --> 00:17:16.319
+see here I am you know getting all the
+
+426
+00:17:16.319 --> 00:17:18.640
+checkpoints I'm getting the uh last
+
+427
+00:17:18.640 --> 00:17:20.160
+checkpoint
+
+428
+00:17:20.160 --> 00:17:23.039
+uh ID here and like I will store this
+
+429
+00:17:23.039 --> 00:17:25.039
+information with me. Now I am deleting
+
+430
+00:17:25.039 --> 00:17:26.559
+this particular workflow. Basically like
+
+431
+00:17:26.559 --> 00:17:28.240
+I'm just deleting the instance of this
+
+432
+00:17:28.240 --> 00:17:29.840
+workflow. Let's assume that at this
+
+433
+00:17:29.840 --> 00:17:32.799
+point in time the system crashed. The
+
+434
+00:17:32.799 --> 00:17:35.280
+workflow instance got destroyed. Now I
+
+435
+00:17:35.280 --> 00:17:37.440
+don't have anything. All I have is this
+
+436
+00:17:37.440 --> 00:17:39.679
+checkpoint ID. Right? Now what I will do
+
+437
+00:17:39.679 --> 00:17:42.720
+is that I will create a workflow again.
+
+438
+00:17:42.720 --> 00:17:44.480
+Exactly the same configuration. Right?
+
+439
+00:17:44.480 --> 00:17:45.840
+Because like we wanted to have the same
+
+440
+00:17:45.840 --> 00:17:48.400
+workflow. Now what I want to do is that
+
+441
+00:17:48.400 --> 00:17:51.360
+I want to rehydrate the workflow. Now
+
+442
+00:17:51.360 --> 00:17:53.200
+what I want to do is that I want to
+
+443
+00:17:53.200 --> 00:17:55.919
+bring the new workflow instance to the
+
+444
+00:17:55.919 --> 00:17:59.120
+old state. So the way I do it's like I
+
+445
+00:17:59.120 --> 00:18:01.039
+will run the workflow by using the run
+
+446
+00:18:01.039 --> 00:18:03.120
+stream but I will be passing the
+
+447
+00:18:03.120 --> 00:18:05.120
+checkpoint ID. So technically what it
+
+448
+00:18:05.120 --> 00:18:06.720
+will do is that it will go back and you
+
+449
+00:18:06.720 --> 00:18:08.240
+know look at the checkpoint files that
+
+450
+00:18:08.240 --> 00:18:10.880
+we have. It will rerun the workflow and
+
+451
+00:18:10.880 --> 00:18:13.039
+bring the new workflow instance to the
+
+452
+00:18:13.039 --> 00:18:15.840
+old state. Now it will reach the request
+
+453
+00:18:15.840 --> 00:18:18.000
+info event just because like we are
+
+454
+00:18:18.000 --> 00:18:20.480
+asking for the user uh input here right
+
+455
+00:18:20.480 --> 00:18:22.720
+request info. Now it will reach that
+
+456
+00:18:22.720 --> 00:18:25.760
+point. Now I will capture the request ID
+
+457
+00:18:25.760 --> 00:18:27.840
+here. Now what I will do is that if
+
+458
+00:18:27.840 --> 00:18:30.160
+there is a request ID then I want to
+
+459
+00:18:30.160 --> 00:18:32.559
+call the send a response or streaming by
+
+460
+00:18:32.559 --> 00:18:35.280
+passing the request ID and then like the
+
+461
+00:18:35.280 --> 00:18:38.080
+response response I hardcoded here
+
+462
+00:18:38.080 --> 00:18:40.080
+saying approved. So what it will do is
+
+463
+00:18:40.080 --> 00:18:42.320
+that it will take that request ID and
+
+464
+00:18:42.320 --> 00:18:44.400
+then like it will pass the response as
+
+465
+00:18:44.400 --> 00:18:47.200
+approved. Now it will go back here
+
+466
+00:18:47.200 --> 00:18:49.440
+right. So it will go back to the human
+
+467
+00:18:49.440 --> 00:18:51.520
+feedback. The human feedback will say
+
+468
+00:18:51.520 --> 00:18:53.840
+decision it's approved for the amount
+
+469
+00:18:53.840 --> 00:18:56.000
+like whatever it's that right now with
+
+470
+00:18:56.000 --> 00:18:58.000
+that like we will be completing the
+
+471
+00:18:58.000 --> 00:19:00.400
+workflow. Now let me go ahead and uh run
+
+472
+00:19:00.400 --> 00:19:04.400
+this uh flow here. If you see here uh we
+
+473
+00:19:04.400 --> 00:19:06.559
+started the workflow and like the
+
+474
+00:19:06.559 --> 00:19:09.360
+workflow passed for a user request and
+
+475
+00:19:09.360 --> 00:19:11.840
+like we created a checkpoint. Now the
+
+476
+00:19:11.840 --> 00:19:14.480
+system crashed. Now we resume the
+
+477
+00:19:14.480 --> 00:19:16.799
+workflow by using the checkpoint ID that
+
+478
+00:19:16.799 --> 00:19:18.559
+we created.
+
+479
+00:19:18.559 --> 00:19:21.760
+Now we have the uh you know request ID
+
+480
+00:19:21.760 --> 00:19:24.640
+here and like it is approved. So now if
+
+481
+00:19:24.640 --> 00:19:28.320
+I just go here to the temp folder. So if
+
+482
+00:19:28.320 --> 00:19:31.120
+you see here, so these are all the uh
+
+483
+00:19:31.120 --> 00:19:33.760
+checkpoints are created for me. So if I
+
+484
+00:19:33.760 --> 00:19:36.320
+just open here, so this is iteration
+
+485
+00:19:36.320 --> 00:19:39.200
+two. Now let me find the iteration one.
+
+486
+00:19:39.200 --> 00:19:40.880
+Yeah, this is the iteration first. So
+
+487
+00:19:40.880 --> 00:19:42.400
+this is the very first time the JSON
+
+488
+00:19:42.400 --> 00:19:45.600
+file got created. Right? So it is
+
+489
+00:19:45.600 --> 00:19:48.880
+pending for the uh user input. Right?
+
+490
+00:19:48.880 --> 00:19:50.480
+Now this is the very first time the
+
+491
+00:19:50.480 --> 00:19:53.120
+state file got created. Now this is
+
+492
+00:19:53.120 --> 00:19:56.000
+iteration two. Right? So when we uh
+
+493
+00:19:56.000 --> 00:19:59.360
+rehydrate using the checkpoint ID uh you
+
+494
+00:19:59.360 --> 00:20:01.039
+know this will reach this particular
+
+495
+00:20:01.039 --> 00:20:03.360
+state at that time there is going to be
+
+496
+00:20:03.360 --> 00:20:07.280
+another JSON file get created. Now uh
+
+497
+00:20:07.280 --> 00:20:09.280
+with that like we say approved so that
+
+498
+00:20:09.280 --> 00:20:11.120
+is also captured here that is part of a
+
+499
+00:20:11.120 --> 00:20:13.280
+message that you will see here. Then
+
+500
+00:20:13.280 --> 00:20:15.919
+finally the workflow got completed here
+
+501
+00:20:15.919 --> 00:20:17.440
+because like there is nothing pending
+
+502
+00:20:17.440 --> 00:20:19.600
+there is no message there is no pending
+
+503
+00:20:19.600 --> 00:20:22.559
+there is no uh shared state as well. Now
+
+504
+00:20:22.559 --> 00:20:24.720
+the workflow got completed. So now I
+
+505
+00:20:24.720 --> 00:20:27.039
+don't want to have the hard-coded
+
+506
+00:20:27.039 --> 00:20:29.840
+approval. So I want to combine both the
+
+507
+00:20:29.840 --> 00:20:32.960
+checkpoint and the uh external approval
+
+508
+00:20:32.960 --> 00:20:35.200
+together in a workflow. Right? So now
+
+509
+00:20:35.200 --> 00:20:36.720
+let's go ahead and uh have a look at
+
+510
+00:20:36.720 --> 00:20:39.200
+that. So if you see here this is exactly
+
+511
+00:20:39.200 --> 00:20:42.480
+the same uh workflow but if you see here
+
+512
+00:20:42.480 --> 00:20:44.960
+instead of you know hard coding that uh
+
+513
+00:20:44.960 --> 00:20:48.000
+approval what I want to do is that I
+
+514
+00:20:48.000 --> 00:20:50.480
+want to ask for the input and I will
+
+515
+00:20:50.480 --> 00:20:53.280
+pass that input. So it's very simple. So
+
+516
+00:20:53.280 --> 00:20:55.440
+now let me go ahead and uh run this
+
+517
+00:20:55.440 --> 00:20:58.240
+program. So if you see here it is asking
+
+518
+00:20:58.240 --> 00:21:00.640
+for the user input. Now let's say I
+
+519
+00:21:00.640 --> 00:21:04.080
+approve this. So it says that the final
+
+520
+00:21:04.080 --> 00:21:05.760
+decision it's approved for this
+
+521
+00:21:05.760 --> 00:21:08.799
+particular amount. Now let me go and run
+
+522
+00:21:08.799 --> 00:21:11.679
+it again. This time I will say deny. So
+
+523
+00:21:11.679 --> 00:21:13.840
+it says that the final decision it's
+
+524
+00:21:13.840 --> 00:21:16.799
+deny. So this is how you can combine
+
+525
+00:21:16.799 --> 00:21:20.080
+both the checkpoint and the uh external
+
+526
+00:21:20.080 --> 00:21:22.880
+approval system together. Now what I
+
+527
+00:21:22.880 --> 00:21:24.720
+want to do is that I don't want to do
+
+528
+00:21:24.720 --> 00:21:26.640
+everything in the console rather like I
+
+529
+00:21:26.640 --> 00:21:29.200
+wanted to replicate the real world use
+
+530
+00:21:29.200 --> 00:21:32.400
+case right now let me go and use this
+
+531
+00:21:32.400 --> 00:21:34.240
+particular program. Now let me go ahead
+
+532
+00:21:34.240 --> 00:21:36.960
+and run this program.
+
+533
+00:21:36.960 --> 00:21:39.120
+So if you see here let me maximize this.
+
+534
+00:21:39.120 --> 00:21:42.559
+So if you see here it is saying that uh
+
+535
+00:21:42.559 --> 00:21:46.640
+you know refund approval required. So
+
+536
+00:21:46.640 --> 00:21:48.640
+here it says that amount it's this is
+
+537
+00:21:48.640 --> 00:21:50.640
+the order number reason is this whatever
+
+538
+00:21:50.640 --> 00:21:53.440
+is that. So here you can see approve or
+
+539
+00:21:53.440 --> 00:21:55.360
+deny or partial approve or whatever is
+
+540
+00:21:55.360 --> 00:21:58.159
+that. Now if you see that human approved
+
+541
+00:21:58.159 --> 00:22:00.559
+for a refund whatever is that order
+
+542
+00:22:00.559 --> 00:22:02.080
+number whatever is that and amount
+
+543
+00:22:02.080 --> 00:22:04.240
+whatever is that. Now it also displays
+
+544
+00:22:04.240 --> 00:22:07.039
+all the uh checkpoint information here.
+
+545
+00:22:07.039 --> 00:22:08.720
+Now if you see here like I'm doing
+
+546
+00:22:08.720 --> 00:22:10.559
+everything through the console again.
+
+547
+00:22:10.559 --> 00:22:12.240
+Now think of this way like there will be
+
+548
+00:22:12.240 --> 00:22:15.120
+two set of a people. the first set of a
+
+549
+00:22:15.120 --> 00:22:16.880
+person who will be rising for a refund
+
+550
+00:22:16.880 --> 00:22:18.640
+request and there is going to be a
+
+551
+00:22:18.640 --> 00:22:20.320
+second set of a people who will be
+
+552
+00:22:20.320 --> 00:22:22.480
+approving this request. Now let's see
+
+553
+00:22:22.480 --> 00:22:24.400
+how do we do that. Now let me go ahead
+
+554
+00:22:24.400 --> 00:22:26.559
+and run this program. So if you see here
+
+555
+00:22:26.559 --> 00:22:29.120
+like we are running our program uh
+
+556
+00:22:29.120 --> 00:22:32.480
+locally using the fast API. Now let me
+
+557
+00:22:32.480 --> 00:22:34.559
+go ahead and uh open this. Let's assume
+
+558
+00:22:34.559 --> 00:22:36.799
+that the you know user it's rising for a
+
+559
+00:22:36.799 --> 00:22:40.240
+refund request for order ID 101. The
+
+560
+00:22:40.240 --> 00:22:43.120
+reason it's a defective right. So now
+
+561
+00:22:43.120 --> 00:22:45.919
+let's assume that you are a you know
+
+562
+00:22:45.919 --> 00:22:48.480
+another uh user who will be rising for a
+
+563
+00:22:48.480 --> 00:22:52.880
+refund request for some something for
+
+564
+00:22:52.880 --> 00:22:55.679
+damaged right so now we have two
+
+565
+00:22:55.679 --> 00:22:58.480
+different uh refund request now approver
+
+566
+00:22:58.480 --> 00:23:02.640
+comes in he can approve or he can delay
+
+567
+00:23:02.640 --> 00:23:05.919
+right so everything it's done uh through
+
+568
+00:23:05.919 --> 00:23:09.039
+fast API so what it does is that behind
+
+569
+00:23:09.039 --> 00:23:11.919
+the scenes it uses the workflow now we
+
+570
+00:23:11.919 --> 00:23:13.600
+can go back to the visual studio and see
+
+571
+00:23:13.600 --> 00:23:15.039
+like what has happened behind the
+
+572
+00:23:15.039 --> 00:23:17.280
+scenes. So if you just come over here
+
+573
+00:23:17.280 --> 00:23:20.480
+you will see all these API calls here
+
+574
+00:23:20.480 --> 00:23:22.480
+and if you see here like it is making a
+
+575
+00:23:22.480 --> 00:23:24.880
+call to the task and you know performing
+
+576
+00:23:24.880 --> 00:23:26.880
+the uh decision like when you click on
+
+577
+00:23:26.880 --> 00:23:30.720
+the approve or you know deny uh this
+
+578
+00:23:30.720 --> 00:23:32.720
+particular endp point will get called.
+
+579
+00:23:32.720 --> 00:23:35.520
+Now again let me go here. Now if I try
+
+580
+00:23:35.520 --> 00:23:39.039
+to add uh one more item here three uh
+
+581
+00:23:39.039 --> 00:23:42.480
+say like 500. If I just come over here,
+
+582
+00:23:42.480 --> 00:23:44.559
+so it is just going to create a refund
+
+583
+00:23:44.559 --> 00:23:46.960
+here. So behind the scenes, what it will
+
+584
+00:23:46.960 --> 00:23:50.559
+do is that it will create a uh entry in
+
+585
+00:23:50.559 --> 00:23:52.720
+the task. JSON like I'm not using the
+
+586
+00:23:52.720 --> 00:23:54.320
+database, but like you can very well use
+
+587
+00:23:54.320 --> 00:23:57.120
+the database to store all the refund
+
+588
+00:23:57.120 --> 00:23:58.799
+request. Consider this as a refund
+
+589
+00:23:58.799 --> 00:24:00.880
+request. So somebody writes a request
+
+590
+00:24:00.880 --> 00:24:03.280
+for order number three for the reason is
+
+591
+00:24:03.280 --> 00:24:05.039
+this. How somebody needs to approve
+
+592
+00:24:05.039 --> 00:24:07.360
+that. Now as a approver you will come
+
+593
+00:24:07.360 --> 00:24:09.039
+over here you approve or deny whatever
+
+594
+00:24:09.039 --> 00:24:10.960
+is that you click on that then again
+
+595
+00:24:10.960 --> 00:24:12.559
+like when you click on that this
+
+596
+00:24:12.559 --> 00:24:15.840
+particular task will get called uh and
+
+597
+00:24:15.840 --> 00:24:18.720
+the decision will be made. So if you
+
+598
+00:24:18.720 --> 00:24:21.440
+just come over here all this information
+
+599
+00:24:21.440 --> 00:24:23.520
+will be stored in the uh checkpoint
+
+600
+00:24:23.520 --> 00:24:26.240
+file. So that's how like we are able to
+
+601
+00:24:26.240 --> 00:24:28.720
+pass and you know retrieve the uh you
+
+602
+00:24:28.720 --> 00:24:30.720
+know workflow and execute the workflow.
+
+603
+00:24:30.720 --> 00:24:34.880
+If I just go back to the code again,
+
+604
+00:24:34.880 --> 00:24:37.919
+it is the pretty simple code, right? If
+
+605
+00:24:37.919 --> 00:24:39.840
+you see like this is where like we are
+
+606
+00:24:39.840 --> 00:24:42.080
+storing the checkpoint and if I just
+
+607
+00:24:42.080 --> 00:24:44.799
+come over here, it is exactly the same
+
+608
+00:24:44.799 --> 00:24:46.480
+kind of a workflow that we have here,
+
+609
+00:24:46.480 --> 00:24:49.840
+right? So if I just come over here, we
+
+610
+00:24:49.840 --> 00:24:51.600
+just build the workflow as the way we
+
+611
+00:24:51.600 --> 00:24:54.799
+did it, right? And like when we want to
+
+612
+00:24:54.799 --> 00:24:56.480
+run the workflow, we will just run
+
+613
+00:24:56.480 --> 00:24:58.640
+stream. We will just run stream. use the
+
+614
+00:24:58.640 --> 00:25:01.120
+run stream and like whenever we wanted
+
+615
+00:25:01.120 --> 00:25:02.880
+to make a decision right so what we need
+
+616
+00:25:02.880 --> 00:25:05.120
+to do we need to do the checkpoint we
+
+617
+00:25:05.120 --> 00:25:08.480
+use the checkpoint and we will pass the
+
+618
+00:25:08.480 --> 00:25:11.200
+uh approval right so we will pass the
+
+619
+00:25:11.200 --> 00:25:13.120
+approval so this is where like we will
+
+620
+00:25:13.120 --> 00:25:16.159
+pass the decision here so that's how you
+
+621
+00:25:16.159 --> 00:25:19.520
+can build the real world workflows and
+
+622
+00:25:19.520 --> 00:25:23.039
+integrate with your uh APIs using this
+
+623
+00:25:23.039 --> 00:25:24.720
+kind of a pattern you can very well
+
+624
+00:25:24.720 --> 00:25:28.080
+build the really powerful workflows
+
+625
+00:25:28.080 --> 00:25:29.919
+that can be integrated with your
+
+626
+00:25:29.919 --> 00:25:32.400
+application. Now finally we will see how
+
+627
+00:25:32.400 --> 00:25:34.480
+do we use the observability. In one of
+
+628
+00:25:34.480 --> 00:25:36.880
+the previous video I already discussed
+
+629
+00:25:36.880 --> 00:25:39.679
+about the observability. So if you see
+
+630
+00:25:39.679 --> 00:25:42.000
+here exactly the same thing it's what we
+
+631
+00:25:42.000 --> 00:25:43.840
+are going to apply here. We will have a
+
+632
+00:25:43.840 --> 00:25:45.760
+span. The span will contain all the
+
+633
+00:25:45.760 --> 00:25:48.159
+relevant information. So we will make
+
+634
+00:25:48.159 --> 00:25:50.720
+use of this span to extract all the
+
+635
+00:25:50.720 --> 00:25:52.799
+information. So now let's go back and
+
+636
+00:25:52.799 --> 00:25:55.360
+see how do we do this. So now let me go
+
+637
+00:25:55.360 --> 00:25:58.080
+ahead and clear this console. So let me
+
+638
+00:25:58.080 --> 00:26:00.000
+run it. If you see here it is going to
+
+639
+00:26:00.000 --> 00:26:03.440
+create a text file for me. So if I just
+
+640
+00:26:03.440 --> 00:26:05.840
+come over here. So this is what we have
+
+641
+00:26:05.840 --> 00:26:08.240
+here. Like if I go to the program again
+
+642
+00:26:08.240 --> 00:26:10.640
+this is a pretty simple program uh
+
+643
+00:26:10.640 --> 00:26:13.440
+simple sequential workflow from writer
+
+644
+00:26:13.440 --> 00:26:16.080
+to SEO to the editor. And this is what
+
+645
+00:26:16.080 --> 00:26:18.320
+you know we are interested in right. So
+
+646
+00:26:18.320 --> 00:26:20.960
+if you just come over here it says that
+
+647
+00:26:20.960 --> 00:26:23.120
+hey like initially we started the build
+
+648
+00:26:23.120 --> 00:26:26.000
+process that took about uh you know this
+
+649
+00:26:26.000 --> 00:26:28.480
+much time then the orchestrated
+
+650
+00:26:28.480 --> 00:26:31.840
+basically the workflow send a message to
+
+651
+00:26:31.840 --> 00:26:35.760
+the initial uh executor and the this is
+
+652
+00:26:35.760 --> 00:26:38.960
+the message passed and the like this
+
+653
+00:26:38.960 --> 00:26:41.760
+writer respond back to the orchestrator.
+
+654
+00:26:41.760 --> 00:26:43.520
+So the orchestrator send a message to
+
+655
+00:26:43.520 --> 00:26:47.120
+the SEO all this information. Now SEO
+
+656
+00:26:47.120 --> 00:26:48.799
+was sent back to orchestrator.
+
+657
+00:26:48.799 --> 00:26:51.679
+Orchestrator sent back to editor. Editor
+
+658
+00:26:51.679 --> 00:26:54.159
+completed and it sent back to the
+
+659
+00:26:54.159 --> 00:26:56.480
+orchestrator. Orchestrator received
+
+660
+00:26:56.480 --> 00:26:59.600
+finally we printed. So if you see this
+
+661
+00:26:59.600 --> 00:27:02.799
+you can tell the complete story right?
+
+662
+00:27:02.799 --> 00:27:05.840
+So you can always use the obserability
+
+663
+00:27:05.840 --> 00:27:08.159
+for this particular purpose. So if you
+
+664
+00:27:08.159 --> 00:27:10.320
+think of this way on the one hand you
+
+665
+00:27:10.320 --> 00:27:12.080
+have the events on the other hand you
+
+666
+00:27:12.080 --> 00:27:15.200
+have the observability which one to use.
+
+667
+00:27:15.200 --> 00:27:18.080
+So basically the events are not
+
+668
+00:27:18.080 --> 00:27:20.159
+necessarily meant for observability
+
+669
+00:27:20.159 --> 00:27:23.279
+though that can be used to export some
+
+670
+00:27:23.279 --> 00:27:25.279
+of these information.
+
+671
+00:27:25.279 --> 00:27:27.440
+It serves a different purpose. You can
+
+672
+00:27:27.440 --> 00:27:29.600
+use the events for observability. You
+
+673
+00:27:29.600 --> 00:27:31.600
+can use the events to control your
+
+674
+00:27:31.600 --> 00:27:34.640
+workflow. You can use the events to you
+
+675
+00:27:34.640 --> 00:27:37.440
+know calculate the percentage of know
+
+676
+00:27:37.440 --> 00:27:39.600
+task completed. All of these can be done
+
+677
+00:27:39.600 --> 00:27:42.480
+with events. On the other hand,
+
+678
+00:27:42.480 --> 00:27:44.640
+observability it's the industry standard
+
+679
+00:27:44.640 --> 00:27:47.440
+that captures the telemetry across the
+
+680
+00:27:47.440 --> 00:27:50.559
+execution. So you can use both of these
+
+681
+00:27:50.559 --> 00:27:53.120
+for your observability.
+
+682
+00:27:53.120 --> 00:27:55.440
+So that's all I have for this video. Uh,
+
+683
+00:27:55.440 --> 00:27:58.080
+thank you for watching.

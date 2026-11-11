@@ -1,0 +1,179 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix acme: <https://example.com/moca/acme-support/topics#> .
+
+acme:AcmeSupport a skos:Concept ;
+  skos:prefLabel "Acme support"@en, "Support Acme"@fr ;
+  dct:hasPart acme:Orders, acme:Delivery, acme:Returns, acme:Payments, acme:Account, acme:Products, acme:Support .
+
+acme:Orders a skos:Concept ;
+  skos:prefLabel "Orders"@en, "Commandes"@fr .
+
+acme:Delivery a skos:Concept ;
+  skos:prefLabel "Delivery"@en, "Livraison"@fr .
+
+acme:Returns a skos:Concept ;
+  skos:prefLabel "Returns and refunds"@en, "Retours et remboursements"@fr .
+
+acme:Payments a skos:Concept ;
+  skos:prefLabel "Payments and billing"@en, "Paiements et facturation"@fr .
+
+acme:Account a skos:Concept ;
+  skos:prefLabel "Account and privacy"@en, "Compte et confidentialité"@fr .
+
+acme:Products a skos:Concept ;
+  skos:prefLabel "Products and warranty"@en, "Produits et garantie"@fr .
+
+acme:Support a skos:Concept ;
+  skos:prefLabel "Support procedures"@en, "Procédures du support"@fr .
+
+acme:PlacingAnOrder a skos:Concept ;
+  skos:prefLabel "Placing an order"@en, "Passer une commande"@fr ;
+  skos:broader acme:Orders .
+
+acme:ChangingOrCancellingAnOrder a skos:Concept ;
+  skos:prefLabel "Changing or cancelling an order"@en, "Modifier ou annuler une commande"@fr ;
+  skos:broader acme:Orders .
+
+acme:OrderConfirmationNotReceived a skos:Concept ;
+  skos:prefLabel "Order confirmation not received"@en, "Confirmation de commande non reçue"@fr ;
+  skos:broader acme:Orders .
+
+acme:DeliveryOptionsAndTimes a skos:Concept ;
+  skos:prefLabel "Delivery options and times"@en, "Options et délais de livraison"@fr ;
+  skos:broader acme:Delivery .
+
+acme:DeliveryToTheEU a skos:Concept ;
+  skos:prefLabel "Delivery to the European Union"@en, "Livraison vers l'Union européenne"@fr ;
+  skos:broader acme:Delivery .
+
+acme:TrackingAParcel a skos:Concept ;
+  skos:prefLabel "Tracking a parcel"@en, "Suivre un colis"@fr ;
+  skos:broader acme:Delivery .
+
+acme:MissingOrLateParcel a skos:Concept ;
+  skos:prefLabel "Missing or late parcel"@en, "Colis manquant ou en retard"@fr ;
+  skos:broader acme:Delivery .
+
+acme:CarrierDisruptionNotice a skos:Concept ;
+  skos:prefLabel "Carrier disruption notice"@en, "Avis de perturbation du transporteur"@fr ;
+  skos:broader acme:Delivery .
+
+acme:ReturnsPolicy a skos:Concept ;
+  skos:prefLabel "Returns policy"@en, "Politique de retour"@fr ;
+  skos:broader acme:Returns .
+
+acme:RefundWindow a skos:Concept ;
+  skos:prefLabel "Refund window"@en, "Délai de remboursement"@fr ;
+  skos:broader acme:Returns ;
+  dct:replaces acme:RefundWindow2025 .
+
+acme:RefundWindow2025 a skos:Concept ;
+  skos:prefLabel "Refund window (2025)"@en, "Délai de remboursement (2025)"@fr ;
+  skos:broader acme:Returns .
+
+acme:ReturnsPortal2027 a skos:Concept ;
+  skos:prefLabel "New returns portal from March 2027"@en, "Nouveau portail de retour à partir de mars 2027"@fr ;
+  skos:broader acme:Returns .
+
+acme:HowToReturnAnItem a skos:Concept ;
+  skos:prefLabel "How to return an item"@en, "Retourner un article"@fr ;
+  skos:broader acme:Returns ;
+  dct:requires acme:RefundWindow .
+
+acme:FinalSaleItems a skos:Concept ;
+  skos:prefLabel "Final sale items"@en, "Articles en vente finale"@fr ;
+  skos:broader acme:Returns .
+
+acme:DamagedOrFaultyItems a skos:Concept ;
+  skos:prefLabel "Damaged or faulty items"@en, "Articles endommagés ou défectueux"@fr ;
+  skos:broader acme:Returns ;
+  dct:requires acme:Warranty .
+
+acme:RefundProcessingTimes a skos:Concept ;
+  skos:prefLabel "Refund processing times"@en, "Délais de traitement des remboursements"@fr ;
+  skos:broader acme:Returns ;
+  dct:requires acme:HowToReturnAnItem .
+
+acme:PaymentMethods a skos:Concept ;
+  skos:prefLabel "Payment methods"@en, "Moyens de paiement"@fr ;
+  skos:broader acme:Payments .
+
+acme:FailedPayments a skos:Concept ;
+  skos:prefLabel "Failed payments"@en, "Paiements refusés"@fr ;
+  skos:broader acme:Payments .
+
+acme:InvoicesAndVat a skos:Concept ;
+  skos:prefLabel "Invoices and VAT"@en, "Factures et TVA"@fr ;
+  skos:broader acme:Payments .
+
+acme:GiftCards a skos:Concept ;
+  skos:prefLabel "Gift cards"@en, "Cartes cadeaux"@fr ;
+  skos:broader acme:Payments .
+
+acme:CreatingAnAccount a skos:Concept ;
+  skos:prefLabel "Creating an account"@en, "Créer un compte"@fr ;
+  skos:broader acme:Account .
+
+acme:ResettingYourPassword a skos:Concept ;
+  skos:prefLabel "Resetting your password"@en, "Réinitialiser votre mot de passe"@fr ;
+  skos:broader acme:Account .
+
+acme:UpdatingYourDetails a skos:Concept ;
+  skos:prefLabel "Updating your details"@en, "Modifier vos informations"@fr ;
+  skos:broader acme:Account .
+
+acme:YourDataAndPrivacy a skos:Concept ;
+  skos:prefLabel "Your data and privacy"@en, "Vos données et votre vie privée"@fr ;
+  skos:broader acme:Account .
+
+acme:ClosingYourAccount a skos:Concept ;
+  skos:prefLabel "Closing your account"@en, "Fermer votre compte"@fr ;
+  skos:broader acme:Account ;
+  dct:requires acme:YourDataAndPrivacy .
+
+acme:Warranty a skos:Concept ;
+  skos:prefLabel "Warranty"@en, "Garantie"@fr ;
+  skos:broader acme:Products .
+
+acme:ProductCare a skos:Concept ;
+  skos:prefLabel "Product care"@en, "Entretien des produits"@fr ;
+  skos:broader acme:Products .
+
+acme:SizeGuide a skos:Concept ;
+  skos:prefLabel "Size guide"@en, "Guide des tailles"@fr ;
+  skos:broader acme:Products ;
+  dct:replaces acme:OldSizeChart .
+
+acme:OldSizeChart a skos:Concept ;
+  skos:prefLabel "Size chart (old)"@en, "Tableau des tailles (ancien)"@fr ;
+  skos:broader acme:Products ;
+  owl:deprecated true .
+
+acme:HandlingRefundRequests a skos:Concept ;
+  skos:prefLabel "Handling a refund request"@en, "Traiter une demande de remboursement"@fr ;
+  skos:broader acme:Support ;
+  dct:requires acme:RefundWindow ;
+  dct:requires acme:FinalSaleItems .
+
+acme:EscalatingAComplaint a skos:Concept ;
+  skos:prefLabel "Escalating a complaint"@en, "Faire remonter une réclamation"@fr ;
+  skos:broader acme:Support .
+
+acme:AccountDeletionProcedure a skos:Concept ;
+  skos:prefLabel "Deleting an account on request"@en, "Supprimer un compte sur demande"@fr ;
+  skos:broader acme:Support ;
+  dct:requires acme:ClosingYourAccount .
+
+acme:FraudChecks a skos:Concept ;
+  skos:prefLabel "Fraud checks"@en, "Contrôles anti-fraude"@fr ;
+  skos:broader acme:Support .
+
+acme:ToneOfVoice a skos:Concept ;
+  skos:prefLabel "Tone of voice"@en, "Ton à adopter"@fr ;
+  skos:broader acme:Support .
+
+acme:ReturnSteps a skos:OrderedCollection ;
+  skos:prefLabel "Returning an item, step by step"@en, "Retourner un article, étape par étape"@fr ;
+  skos:memberList ( acme:RefundWindow acme:HowToReturnAnItem acme:RefundProcessingTimes ) .
