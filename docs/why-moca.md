@@ -9,8 +9,8 @@ vector store or agent framework you use.
 
 **MOCA stands for Modular Ontology, Content & Attestation**: knowledge in
 modular packages that can be assembled into larger ones, organised by an
-optional ontology, with attestations, signatures that prove who published it
-and who checked it.
+optional ontology, its content kept with the original sources, and
+attestations, signatures that prove who published it and who checked it.
 
 It fits wherever an AI answers from your knowledge: [RAG](moca-and-rag.md)
 with citations you can check, [trust and provenance](trust-and-provenance.md),
@@ -23,20 +23,20 @@ in the [FAQ](faq.md).
 Knowledge that feeds AI systems moves: a vendor ships product documentation to
 customers, a platform team serves policies to many product teams, a regulator
 publishes guidance that thousands of assistants quote. At every hop, five
-questions go unanswered:
+questions often go unanswered:
 
-1. **Which content is this, exactly?** Nobody can prove an answer came from
+1. **Which content is this, exactly?** It is hard to prove an answer came from
    version 4.2 of the knowledge base and not a stale copy.
-2. **Who stands behind it?** "Verified" is a label anyone can type. Nothing ties
-   it to the person who checked, or to the text they checked.
-3. **Is it still in force?** Superseded policies and expired procedures stay in
-   the index, and nothing tells the pipeline to stop serving them.
-4. **Where is the original?** An answer cites a source, but the source stayed
-   behind on the sender's side, so nobody downstream can check the quote.
+2. **Who stands behind it?** "Verified" is a label anyone can type. Often
+   nothing ties it to the person who checked, or to the text they checked.
+3. **Is it still in force?** Superseded policies and expired procedures can
+   stay in the index, because the pipeline is rarely told to stop serving them.
+4. **Where is the original?** An answer cites a source, but the source often
+   stays behind on the sender's side, so it is hard to check the quote downstream.
 5. **How is this knowledge organised?** Procedures have steps in order,
    regulations have clauses that depend on each other, courses have
-   prerequisites. Plain retrieval flattens all of it, so an assistant answers
-   out of order or out of scope.
+   prerequisites. Plain retrieval often flattens all of it, so an assistant
+   answers out of order or out of scope.
 
 And more and more, knowledge is read where there is no service to ask: inside
 a mobile app, on an embedded device, or in a client network that allows no
@@ -63,7 +63,7 @@ MOCA has two purposes, and every part of it serves one of them:
 
 1. **Moving knowledge between platforms securely and verifiably**: identity,
    a digest, signatures, reviews, pinned members, the structure, and the
-   original sources inside the package.
+   original sources, carried in the package where they can be.
 2. **Reading and integrating packages locally**, on edge devices or on
    infrastructure a client owns: an in-process MOCA Reader in the host's
    language, offline search, structure operations, and bindings to the host's
@@ -82,9 +82,9 @@ MOCA has two purposes, and every part of it serves one of them:
   a node; the review stops counting the moment the node changes.
 - **Members pinned by digest and typed relations**, so bundles compose
   reproducibly and a newer version can retire an older one.
-- **The original sources inside the package**, covered by the digest. A Reader
-  checks each quoted passage against its source and says whether it matched,
-  with no network.
+- **The original sources, carried in the package** where they can be, and
+  covered by the digest. A Reader checks each quoted passage against a source
+  in the package and says whether it matched, with no network.
 - **Evidence, validity and audience** on nodes: cite the exact sentence of a
   source, stop serving content outside its validity window, filter internal
   content before retrieval.

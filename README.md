@@ -28,12 +28,12 @@ MOCA ships knowledge with its evidence, sealed when signed.
 
 ## The problem
 
-- Knowledge that feeds AI is rebuilt for every model, vendor and pipeline, and
-  loses its structure and sources on the way.
-- Nobody can prove which version an answer came from, who published it, or
+- Knowledge that feeds AI is often rebuilt for each model, vendor and pipeline,
+  and loses its structure and sources on the way.
+- It is hard to prove which version an answer came from, who published it, or
   whether anyone checked it. "Verified" is usually a label anyone can type.
-- Superseded and expired content keeps being served, because nothing tells the
-  pipeline it is no longer in force.
+- Superseded and expired content can keep being served, because the pipeline is
+  rarely told it is no longer in force.
 - Retrieval ignores how a domain is organised. An assistant answers an
   advanced question before a prerequisite, or pulls in material from the
   wrong system.
