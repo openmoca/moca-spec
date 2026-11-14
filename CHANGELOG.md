@@ -44,6 +44,10 @@ The 0.7.0 Spec Change Proposal:
   `options.identities`, `options.passphrase` and `options.fileKey`, and
   compares `expect.envelope`.
 
+- The reference adapter passes the reference Reader's age decryptor
+  (`@openmoca/moca-core/age`), so the corpus runs the `encryption` cases
+  against it.
+
 ### Changed
 
 - Reader contract §11 and package spec §11 (`core`): the `E` family counts

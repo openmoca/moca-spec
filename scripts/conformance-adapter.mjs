@@ -11,6 +11,8 @@ import {
   readPackage, bindSidecar, directoryResolver, Library, Search, LexicalBackend, DenseBackend, MemoryStoreBackend, HybridBackend, ontologyGuided,
   packageState,
 } from '@openmoca/moca-core';
+// The reference Reader implements the optional feature `encryption` through its separate age module.
+import { ageDecryptor } from '@openmoca/moca-core/age';
 
 /** The conformance embedder: the identity a case names, and [1, 0, 0, ...] for every text. */
 function conformanceEmbedder({ name, version, dimensions, queryPrefix, documentPrefix }) {
@@ -80,6 +82,7 @@ export async function actualFor(root, c) {
     requireSignature: o.requireSignature === true,
     strict: o.strict === true,
     keyProvider: conformanceKeyProvider(root, o),
+    decryptor: ageDecryptor,
   };
   const overlays = (o.overlays ?? []).map((v) => ({ id: v.id, layer: v.layer, path: join(root, v.path) }));
 
