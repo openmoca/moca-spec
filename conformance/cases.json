@@ -11,7 +11,8 @@
         "capabilities": [
           "core"
         ],
-        "digest": "sha256:d38eef8a9aa059faabed7a60aba6b3d18031deabd3be1b7347ac7abfbc66b708"
+        "digest": "sha256:d38eef8a9aa059faabed7a60aba6b3d18031deabd3be1b7347ac7abfbc66b708",
+        "distribution": "open"
       }
     },
     {
@@ -1600,6 +1601,33 @@
         "capabilities": [
           "core"
         ]
+      }
+    },
+    {
+      "id": "distribution-encrypted-only",
+      "description": "distribution is exposed in the package result. It changes nothing else: the package is read as if it were absent, with no diagnostic.",
+      "target": "fixtures/distribution-encrypted-only",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "distribution": "encrypted-only",
+        "digest": "sha256:29e5c5d498f9b6f0f3e628f242e9de11dd4488902baef74d2350c34fdb35594c"
+      }
+    },
+    {
+      "id": "distribution-unknown",
+      "description": "The distribution enum is closed: an unknown value fails the manifest schema, and the result has no distribution.",
+      "target": "fixtures/distribution-unknown",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "distribution": null
       }
     },
     {

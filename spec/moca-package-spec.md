@@ -167,6 +167,7 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `locales` | No | BCP 47 tags of additional representations (§5.4). |
 | `license` | No | SPDX license expression. |
 | `publisher` | No | Who publishes the package. Informative; identity is proven by attestations, not by this field. |
+| `distribution` | No | How the publisher intends the package to be handed out: `open` (the default), `encrypted-only` or `service-only`. A label, not access control (§13.3). |
 | `validFrom`, `validUntil` | No | When the package's content is in force (§4.4). |
 | `members` | No | Packages this package is composed of, pinned by digest (§7.1). |
 | `relations` | No | Typed relations to other packages (§7.2). |
@@ -179,6 +180,25 @@ are not supported, so the schema refuses them.
 
 A package MUST contain at least one node under `content/` or at least one
 member.
+
+**Distribution.** `distribution` states the publisher's intent:
+
+- `open`: the package may be handed over in full.
+- `encrypted-only`: the package is handed over only as an encrypted package
+  ([encrypted packages](moca-encrypted-package.md)), to named people, an
+  organisation's keys or one licensee.
+- `service-only`: the package is meant to be read only by a host that
+  returns citation records, not files.
+
+A Reader reads the package exactly as if the property were absent. It
+exposes the value in the package result
+([Reader interface §4](moca-reader-interface.md#4-reading)), so that a host
+or a catalogue can show it, or compare it with how the package was delivered.
+A Reader never refuses a package because of it, and the property never
+configures the Reader (§4.5). The property is covered by the digest, so it is
+the publisher's signed intent; changing it needs a new version. The enum is
+closed: an unknown value fails the schema (`M002`), and a new value needs a
+new minor release ([ADR-0024](../docs/adr/0024-distribution-is-signed-intent.md)).
 
 ### 4.2 Identifiers
 

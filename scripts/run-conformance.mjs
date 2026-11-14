@@ -46,6 +46,10 @@ function checkPackage(e, actual) {
     const want = e.digest.startsWith('SAME:') ? byId.get(e.digest.slice(5))?.expect.digest : e.digest;
     if (want !== actual.digest) problems.push(`digest: expected ${want}, got ${actual.digest}`);
   }
+  // Package spec §4.1: null means the result has no distribution (an invalid manifest).
+  if (e.distribution !== undefined && e.distribution !== (actual.distribution ?? null)) {
+    problems.push(`distribution: expected ${e.distribution}, got ${actual.distribution ?? null}`);
+  }
   if (e.sidecarUsable !== undefined && e.sidecarUsable !== actual.sidecarUsable) {
     problems.push(`sidecarUsable: expected ${e.sidecarUsable}, got ${actual.sidecarUsable}`);
   }

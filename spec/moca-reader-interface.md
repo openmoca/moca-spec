@@ -79,7 +79,10 @@ contract:
 - `manifest`, `digest` and `payloadManifest`;
 - `nodes`, `members` and `profiles`;
 - `structure`;
-- `diagnostics`, `valid` and `capabilities`.
+- `diagnostics`, `valid` and `capabilities`;
+- `distribution`: the manifest's `distribution`, or `open` when the manifest
+  has none. It is absent when the manifest is missing or fails its schema
+  ([package spec §4.1](moca-package-spec.md#41-properties)).
 
 A **diagnostic** has `code`, `severity` and `message`, and optionally `file`
 and `line`.

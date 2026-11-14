@@ -9,7 +9,7 @@ when it reaches the same conclusions as these cases: package, `search` and
 
 ```text
 conformance/
-├── cases.json          196 cases: target, options, expected conclusions
+├── cases.json          198 cases: target, options, expected conclusions
 ├── fixtures/           the packages, sidecars and .zip archives they read
 └── fixtures/trust-root.json
 ```
@@ -45,6 +45,7 @@ conformance/
 | `expect.codes` | The **set** of diagnostic codes, from the package and the sidecar. Exactly these; extra codes fail. |
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
+| `expect.distribution` | The result's `distribution` ([package spec §4.1](../spec/moca-package-spec.md#41-properties)): `open`, `encrypted-only`, `service-only`, or `null` when the result has none. |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
 | `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
@@ -159,7 +160,7 @@ expected by at least one case or is listed below as untestable.
 | Entry names, collisions, unsafe paths | Contract §3, package spec §6.3 | `path-collision-*`, `unsafe-path*`, `valid-noncharacter-path`, `valid-dotted-i`, `valid-hidden-entries` |
 | Resource limits | Contract §3 | `limit-*`, `structure-deep-chain` |
 | The digest | Package spec §6.4 | every valid package case (`expect.digest`), `digest-v1-package`, `attestations-as-file` |
-| Manifest | Package spec §4 | `manifest-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
+| Manifest | Package spec §4 | `manifest-*`, `distribution-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
 | Versioning | Package spec §14 | `moca-version-*`, `digest-v1-package` |
 | Content and frontmatter | Package spec §5 | `frontmatter-*`, `type-missing`, `reserved-file-invalid`, `log-heading-in-fence`, `link-unresolved`, `resource-bad-escape`, `valid-minimal` |
 | Locales | Package spec §5.4 | `locale-orphan`, `valid-locales`, `search-locale*` |
@@ -205,7 +206,7 @@ standard output.
 
 - Input: `{ "root": "<absolute path of conformance/>", "case": { … } }`.
 - Output for a package case: `{ "valid", "codes", "capabilities", "digest",
-  "sidecarUsable", "evidenceMatched", "envelope" }`, as defined above.
+  "distribution", "sidecarUsable", "evidenceMatched", "envelope" }`, as defined above.
   `envelope` is the package result's `envelope` field for an envelope, and
   absent otherwise.
 - Output for a search case: `{ "codes", "records" }`, where `records` are the

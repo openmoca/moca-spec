@@ -21,6 +21,11 @@ The 0.7.0 Spec Change Proposal:
 - Conformance runner: the `encryption` feature and the adapter's `envelope`
   output.
 - ADR-0023 (age envelope) and ADR-0024 (`distribution`).
+- Package spec §4.1: `distribution` (`open`, `encrypted-only`,
+  `service-only`), the publisher's signed intent; a label only. The manifest
+  schema gains the closed enum, and the Reader interface's package result
+  gains `distribution`. Cases `distribution-encrypted-only` and
+  `distribution-unknown`; the runner compares `expect.distribution`.
 
 ### Changed
 
