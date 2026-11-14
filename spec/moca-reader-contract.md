@@ -79,6 +79,15 @@ follows:
 When an entry cannot be read, the Reader stops with `P002`: it does not go on
 with missing bytes.
 
+**Envelopes.** A Zip archive, given as a path or as bytes, with
+`moca-enc.json` at its root and no `moca.json` is an envelope: an encrypted
+package ([encrypted packages](moca-encrypted-package.md)). Every Reader recognises one. A Reader that
+implements the optional feature `encryption` opens it in the order in
+encrypted packages §5.2. One that does not checks the outer archive and its
+entries (steps 1 and 2), then reports `E001_ENCRYPTED_NO_KEY`. The archive
+rules and limits on this page apply to the envelope, and again to the
+archive inside it.
+
 **Directories.** A Reader MUST NOT follow a symbolic link in a directory
 source, including one that replaces a file after it was listed: the file is
 then unreadable (`P002`).
@@ -93,6 +102,9 @@ be at least those below, which the conformance corpus assumes:
 | --- | --- | --- | --- |
 | Entries in a source | `maxEntries` | 20,000 | `T003` |
 | Uncompressed bytes in a source | `maxBytes` | 512 MiB | `T003` |
+| Decrypted bytes of an envelope's `package.age` or `index.age`, counted as they are produced | `maxBytes` | 512 MiB | `T003` |
+| age scrypt work factor (log2 N) in an envelope | `maxScryptWorkFactor` | 20 | `E006`, without running scrypt |
+| Bytes of one manifest image ([package spec §4.6](moca-package-spec.md#46-images)), or of an envelope's cover copy | `maxImageBytes` | 1 MiB | `M010` for that image (`E005` for a cover copy) |
 | Frontmatter block size | `maxFrontmatterBytes` | 64 KiB | `C002` for that node (`C004` for a reserved file) |
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |
 | Structure file size | `maxStructureBytes` | 4 MiB | `O001` |
@@ -125,8 +137,13 @@ These apply to both classes.
   source, a member resolver, online signature checks, and search backends.
   Nothing in a package can cause a Reader to contact anything. A Reader MUST
   NOT use an address, a model name or a credential that a package supplies.
+  It MUST NOT fetch, resolve or open a URI in `apps`
+  ([package spec §4.9](moca-package-spec.md#49-apps)): an app URI is a name.
 - **No access outside the package.** A Reader MUST NOT read or write outside
   the package while resolving package-relative paths.
+- **No age plugins.** A Reader MUST NOT run an age plugin, or any other
+  program, to open an envelope ([encrypted packages](moca-encrypted-package.md) §4). Key
+  routes come only from the host's key provider.
 - **No required infrastructure.** A Reader MUST NOT require a model, a vector
   database or an agent framework to read a package.
 
@@ -214,7 +231,10 @@ and `profiles`, are left out, as they are in a real record):
   `node.id` with `package.digest` is the key that cannot be forged. A library
   MUST NOT hold two packages with the same `id` and `version` but different
   digests: it keeps the first and refuses the second
-  (`L001_IDENTITY_CONFLICT`).
+  (`L001_IDENTITY_CONFLICT`). When both are issued copies of the same
+  original (both results have `issuedCopy` with the same `originalDigest`),
+  it reports `L002_ISSUED_COPY_DUPLICATE` (info) instead, and still keeps
+  only the first.
   Two representations of a node share `node.ref`; when an application
   records a citation it SHOULD keep `node.locale` with it, and any
   de-duplication is by `node.ref`, `node.locale` and `span` together.
@@ -240,13 +260,24 @@ and `profiles`, are left out, as they are in a real record):
 - `declaredVerified` copies OKF `verified`; `attestedReviews` lists only reviews
   that verified against the trust root and match the current file, the latest
   from each signer, each with `packageVerified` (whether the package is
-  signed). `reviewStatus` is `approved`, `disputed`, `unverified` or `none`
+  signed). In an issued copy, it also lists reviews of the publisher's bytes
+  of a changed file, with `fileChanged: true`; they never count toward
+  `reviewStatus`
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). `reviewStatus` is `approved`, `disputed`, `unverified` or `none`
   ([attestations §4](moca-attestations.md#4-review-attestations)). An
   application SHOULD NOT present a declared verification as an attested one,
   or an `unverified` or `disputed` review as an approval.
 - `stale` is true when now ≥ `stale_after`. `inForce` is false outside the
   validity window ([package spec §4.4](moca-package-spec.md#44-validity-window)).
   The host supplies the clock.
+- **Issued copies.** `package.issuedCopy` is the result's `issuedCopy`
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)),
+  absent for any other package. `node.issuedChange` is `true` when the
+  representation file is in the issued copy's `changedFiles`, and absent
+  otherwise. `package.digest` stays the copy's own digest. A host that shares
+  citations outside the licensee's own use SHOULD use
+  `issuedCopy.originalDigest`, which is the same for every copy and
+  identifies no one.
 - `superseded` and `contested` reflect the relations among the packages the
   Reader has loaded, and the node's `moca.contested_by`
   ([package spec §7.2](moca-package-spec.md#72-relations)).
@@ -332,13 +363,40 @@ A Reader offers one search operation. It has the same signature in every
 language, and the default retrieval policy is applied inside it:
 
 ```text
-search(query, { limit, includeAll, locale, concepts, scope }) -> citation records, each with a score
+search(query, { limit, includeAll, locale, concepts, scope, upTo }) -> citation records, each with a score
 ```
 
 `concepts` keeps records bound to at least one of the given concept IRIs;
 `scope` keeps records bound to the concept or any of its descendants by
 hierarchy or parts (§10). Both refer to the package structure
 ([package spec §5.6](moca-package-spec.md#56-structure)).
+
+`upTo` is the IRI of a concept on a package's reading order
+([package spec §4.10](moca-package-spec.md#410-reading-order)): a member, or
+a descendant of a member by `skos:narrower` or `dcterms:hasPart`. It leaves
+out material that comes after that point:
+
+- **Where the point is.** `upTo` takes its position as any concept does: the
+  first member that is it or contains it. So a descendant limits exactly as
+  that member would.
+- **Which packages.** `upTo` limits only the packages whose reading order
+  places it. Records from other loaded packages, such as reference packages
+  searched beside a course, are not limited by it.
+- **Unresolved.** If no loaded package's reading order places `upTo`, it
+  limits nothing, and the Reader reports `S008_UPTO_UNRESOLVED` (warning)
+  for that search, so it never fails silently.
+- **What passes.** In a limited package, a record passes when every concept
+  it is bound to that is on the reading order has a position at or before
+  the position of `upTo`. The point itself is included.
+- **Records off the reading order.** A record bound to no concept on the
+  reading order is not limited: a glossary, an introduction or reference
+  pages are useful at every point and are not ahead of anything. A caller
+  that wants them out narrows the search with `scope` or `concepts`.
+- `upTo` combines with `concepts` and `scope`: a record must pass each one
+  the caller named. It applies to search only; the structure operations
+  (§10) report the whole structure.
+- `upTo` is a convenience, not access control. A person with the package
+  file can read all of it.
 
 ### 9.1 Backends
 
@@ -401,10 +459,12 @@ Each search runs these steps, in order
    5. when the caller named concepts or a scope, keep only records bound to
       them. Concepts and scope set by an ingress hook narrow the backend's
       search but never bind the gate: the gate follows the caller;
-   6. keep one record per node representation and span: two candidates with
+   6. when the caller named `upTo`, keep only records that pass it (§9). An
+      ingress hook can never set, change or remove `upTo`;
+   7. keep one record per node representation and span: two candidates with
       the same `node.ref`, `node.locale` and `span.start` are one result, the
       first;
-   7. return at most `limit` records. `limit` defaults to 5.
+   8. return at most `limit` records. `limit` defaults to 5.
 
 Hooks are host code, supplied when the host creates the search. A package can
 never supply or select one. A backend without `filterPushdown` can return hits
@@ -456,13 +516,15 @@ the trust root may have changed since ingest.
 
 So a store search takes the host's **package states**: for each loaded
 package, its digest, `id`, `version`, default language, relations, relation
-scopes (§7.2 of the package spec), signers, current reviews and node-level
-`moca.contested_by`. A Reader produces a package's state from the package
-result (`packageState`); it is small, plain JSON that a host keeps beside its
-store. At query time the Reader resolves store hits from their records and
+scopes (§7.2 of the package spec), signers, current reviews, node-level
+`moca.contested_by`, its `issuedCopy`, and, when `readingOrder` resolves,
+its members in order and the position of each concept on it, so a store
+search applies `upTo` as a library search does. A Reader produces a package's state from the package
+result (`packageState`); it is small, plain JSON that a host keeps beside
+its store. At query time the Reader resolves store hits from their records and
 MUST recompute from the states and the clock: `stale` and `inForce`;
 `superseded`, `supersededBy`, `contested` and `contestedBy` from the relations
-among the loaded packages; `package.signed` and `signers`; and
+among the loaded packages; `package.signed`, `signers` and `issuedCopy`; and
 `attestedReviews` and `reviewStatus`. It keeps only records whose package is
 among the states. The host therefore never needs every package in memory to
 search its store, and a package superseded, or a key removed from the trust
@@ -487,6 +549,8 @@ to it:
 | `concepts` | The concepts to search: the caller's, a scope and its descendants, or those an ingress hook chose. |
 
 Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.
+`upTo` adds no filter, because records off the reading order and from other
+packages still pass it; the gate applies it.
 
 ### 9.6 Hybrid backends
 
@@ -589,10 +653,10 @@ A Reader MUST report findings as structured values with `code`, `severity`
 (package-relative) and `line` (1-based). Codes are the contract; message text
 is not, and hosts MUST NOT match on it. A Reader MUST offer a strict mode that
 promotes warnings to errors without changing codes. Validity then follows
-the promoted severities: a `T`, `P`, `M` or `C` warning makes the package
+the promoted severities: a `T`, `P`, `M`, `C` or `E` warning makes the package
 invalid, and a promoted warning in another family affects only its feature.
 
-A package is **valid** when it has no error in the `T`, `P`, `M` or `C`
+A package is **valid** when it has no error in the `T`, `P`, `M`, `C` or `E`
 families. Errors in other families affect only the feature concerned: an
 invalid attestation does not count, a
 mismatched member is not used, an unusable sidecar is ignored. `O` diagnostics
@@ -615,6 +679,11 @@ withhold only the `structured` capability.
 | `M007_UNREGISTERED_URN` | info | The package id uses a URN namespace that is not registered with IANA. |
 | `M008_DIGEST_V1_PACKAGE` | info | The package was written for a `mocaVersion` before 0.4; digests, pins and attestations made then will not match `moca-digest-v2` ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
 | `M009_MOCA_VERSION_NEWER` | warning | The package was written for a newer `mocaVersion` than this Reader implements; it is read under the newest rules this Reader implements ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
+| `M010_IMAGE_INVALID` | warning | A manifest image is missing, over `maxImageBytes`, or does not start with the signature of its `type`. It is left out of the result ([package spec §4.6](moca-package-spec.md#46-images)). |
+| `M011_TRANSLATION_LOCALE_UNDECLARED` | error | A key of `translations` is not a tag in `locales` ([package spec §4.7](moca-package-spec.md#47-translations)). |
+| `M012_TAG_DUPLICATE` | warning | Two tags in one list are equal, compared case-insensitively. The repeat is dropped ([package spec §4.8](moca-package-spec.md#48-tags)). |
+| `M013_ALT_IMAGE_UNKNOWN` | warning | A translated `alt` text names no image in `images`. It is dropped. |
+| `M014_READING_ORDER_UNRESOLVED` | warning | `readingOrder` does not name a `skos:OrderedCollection` with a `skos:memberList` in the package's own `structure.ttl`. It is ignored ([package spec §4.10](moca-package-spec.md#410-reading-order)). |
 | `C001_FRONTMATTER_MISSING` | error | A concept document has no YAML frontmatter (OKF MUST). |
 | `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML or is not a mapping. |
 | `C003_TYPE_MISSING` | error | Frontmatter has no non-empty type (OKF MUST). |
@@ -626,6 +695,12 @@ withhold only the `structured` capability.
 | `C009_LOCALE_ORPHAN` | warning | A locale representation has no default-language file. |
 | `C010_VALIDITY_WINDOW_INVALID` | warning | moca.valid_until is not later than moca.valid_from. |
 | `C011_EVIDENCE_SELECTOR_UNMATCHED` | warning | An evidence selector does not match the text source file it cites inside the package. |
+| `E001_ENCRYPTED_NO_KEY` | error | An envelope was not opened: there is no key provider, it returned no key or a kind of key no stanza uses, or the Reader does not implement `encryption` ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). |
+| `E002_DECRYPTION_FAILED` | error | A key was supplied for an envelope, but it is not a valid key of its kind, unwrapping failed, or the header MAC failed. |
+| `E003_PAYLOAD_CORRUPT` | error | An envelope's encrypted payload failed authentication or was truncated. |
+| `E004_OUTLINE_MISMATCH` | error | An envelope's outline differs from the decrypted manifest, structure or cover. |
+| `E005_ENVELOPE_INVALID` | error | An envelope has a missing, repeated or unexpected entry, an encrypted entry that is not stored, a cover copy over `maxImageBytes`, or an invalid `moca-enc.json`, or a Zip has both `moca.json` and `moca-enc.json` at its root. |
+| `E006_AGE_HEADER_INVALID` | error | An envelope's age header is malformed or unsupported, over 64 KiB, breaks the scrypt rules or the work-factor limit, has no full payload nonce, or has a low-order X25519 share. |
 | `A001_ATTESTATION_MALFORMED` | error | An attestation file is not a parseable envelope and statement. |
 | `A002_ATTESTATION_INVALID` | error | An attestation failed verification or does not match the package. |
 | `A003_ATTESTATION_UNVERIFIABLE` | warning | An attestation could not be checked ([attestations §7](moca-attestations.md#7-verifying-an-attestation) says when). |
@@ -639,6 +714,7 @@ withhold only the `structured` capability.
 | `R003_MEMBER_CYCLE` | error | Members form a cycle. |
 | `R004_RELATION_UNAUTHORISED` | info | A `supersedes` or `conflictsWith` relation is not authorised by a signer of the package, so it has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
 | `L001_IDENTITY_CONFLICT` | error | A library was given a second package with the same `id` and `version` but a different digest; the second is refused (§7). Reported by the library, not the package. |
+| `L002_ISSUED_COPY_DUPLICATE` | info | A library was given a second issued copy of the same original (§7): the same `id` and `version`, another digest, and the same `issuedCopy.originalDigest`. The second is not loaded. Reported by the library. |
 | `F001_PROFILE_UNRECOGNISED` | info | A declared profile is not recognised by this Reader. |
 | `O001_ONTOLOGY_UNPARSEABLE` | warning | `structure.ttl` or a host overlay is over the size or triple limit (§3), or is not parseable Turtle. |
 | `O002_CONCEPT_UNDECLARED` | warning | A relation, ordered collection or node binding uses a concept that is not declared as a `skos:Concept`. |
@@ -651,6 +727,7 @@ withhold only the `structured` capability.
 | `S005_SIDECAR_FORMAT_UNKNOWN` | info | The payload format is not recognised; the sidecar is ignored. |
 | `S006_MODEL_MISMATCH` | warning | The host's embedder does not match the index's model; dense search is refused. |
 | `S007_NO_VECTORS` | warning | A loaded package has no vectors a dense backend can search; that package is not searched. |
+| `S008_UPTO_UNRESOLVED` | warning | A search's `upTo` is on no loaded package's reading order, neither a member nor a descendant of one. It limits nothing (§9). |
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0011](../docs/adr/0011-park-unconsumed-features.md)), `O004_STRUCTURE_VIEW_MISMATCH` ([ADR-0019](../docs/adr/0019-park-structure-json.md)).
 
@@ -704,6 +781,8 @@ it, to a person:
 | Malformed optional frontmatter field | `C005` (warning); node still read. |
 | Unknown relation type | Preserved; no effect. |
 | Unknown attestation predicate | Ignored. |
+| An envelope, with no key provider | Envelope recognised; not opened; `E001` (error). The package is not valid, and nothing inside it is exposed. |
+| An envelope, read by a Reader without the `encryption` feature | Envelope recognised; not opened; `E001` (error), as with no key provider. |
 | No trust root | Attestations unverifiable; package still readable. |
 | No resolver | Members exposed unresolved; no diagnostic. |
 | Unresolvable or mismatched member | That member is not used; the rest usable. |
@@ -717,7 +796,10 @@ it, to a person:
 
 An implementation claiming conformance MUST name its class, the contract
 version, and any **optional features** it does not implement (archives, host
-sources, Sigstore verification, sidecars, profiles). "Optional features" are
+sources, Sigstore verification, sidecars, profiles, `encryption`).
+`encryption` is opening envelopes
+([encrypted packages](moca-encrypted-package.md)). A Reader without it still
+recognises an envelope and reports `E001`. "Optional features" are
 what an implementation does; "capabilities" are what a package has
 ([package spec §11](moca-package-spec.md#11-capabilities)). It MUST pass every
 case in [`conformance/cases.json`](../conformance/cases.json) except those

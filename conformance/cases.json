@@ -11,7 +11,8 @@
         "capabilities": [
           "core"
         ],
-        "digest": "sha256:d38eef8a9aa059faabed7a60aba6b3d18031deabd3be1b7347ac7abfbc66b708"
+        "digest": "sha256:d38eef8a9aa059faabed7a60aba6b3d18031deabd3be1b7347ac7abfbc66b708",
+        "distribution": "open"
       }
     },
     {
@@ -620,6 +621,361 @@
           "reviewed",
           "signed"
         ]
+      }
+    },
+    {
+      "id": "issued-original",
+      "description": "Package spec §4.11: a package that allows issued copies. issuedCopies is a manifest key, read with the rest of the manifest.",
+      "target": "fixtures/issued/original",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "issuedCopy": null,
+        "digest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23"
+      }
+    },
+    {
+      "id": "issued-copy-valid",
+      "description": "Attestations §7.1: an allowed issuer marked an allowed, unreviewed file. The copy's digest differs, but the publisher's attestation verifies against the rebuilt original digest, so the copy is signed and reviewed.",
+      "target": "fixtures/issued/copy-valid",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "issuedCopy": {
+          "originalDigest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23",
+          "issuers": [
+            "MOCA conformance issuer (INSECURE, published private key)"
+          ],
+          "changedFiles": [
+            "content/lessons/one.md"
+          ]
+        },
+        "digest": "sha256:e5050b23cbaa11d5420acb0d16be9dadab47e96be9c7a0a1f6894a43ab008e65"
+      }
+    },
+    {
+      "id": "issued-copy-wrong-original",
+      "description": "Attestations §7.1 step 5: original is not the digest rebuilt from the copy. The attestation is invalid, and the publisher's attestation then fails against the copy's digest (A008).",
+      "target": "fixtures/issued/copy-wrong-original",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-wrong-hash",
+      "description": "Attestations §7.1 step 5: original is right, but one changedFiles hash is wrong, so the rebuilt digest differs.",
+      "target": "fixtures/issued/copy-wrong-hash",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-manifest-listed",
+      "description": "Attestations §3a: changedFiles lists moca.json, which is never changed.",
+      "target": "fixtures/issued/copy-manifest-listed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-unchanged-listed",
+      "description": "Attestations §3a: changedFiles lists a file whose hash in the copy equals its original.",
+      "target": "fixtures/issued/copy-unchanged-listed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-empty-map",
+      "description": "Attestations §3a: changedFiles is empty.",
+      "target": "fixtures/issued/copy-empty-map",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-untrusted-issuer",
+      "description": "Attestations §7: the publisher names the issuer, but the host's trust root does not trust its key. The signature does not verify (A002), as for any untrusted key.",
+      "target": "fixtures/issued/copy-untrusted-issuer",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-outside-ids",
+      "description": "Attestations §7.1 step 2: the issuer's trust-root entry has ids that do not cover the package.",
+      "target": "fixtures/issued/copy-valid",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued-narrow-ids.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-issuer-not-named",
+      "description": "Attestations §7.1 step 3: the host trusts the issuer for issued-copy, but the publisher's issuedCopies does not name it.",
+      "target": "fixtures/issued/copy-issuer-not-named",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-path-not-allowed",
+      "description": "Attestations §7.1 step 4: the issuer changed a file outside issuedCopies.paths. With no valid issued copy, the review of that file is outdated too (A006).",
+      "target": "fixtures/issued/copy-path-not-allowed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A006_REVIEW_OUTDATED",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-no-consent",
+      "description": "Package spec §4.11: the publisher's manifest has no issuedCopies, so it allows no issued copy.",
+      "target": "fixtures/issued/copy-no-consent",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-conflict",
+      "description": "Attestations §7.1: two issued-copy attestations pass but disagree on original and changedFiles. Each is A002 and none is used.",
+      "target": "fixtures/issued/copy-conflict",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-review-changed",
+      "description": "Attestations §7.1: the issuer marked a reviewed file. The copy is signed, the review of the changed file is not outdated and never counts, and the copy is not reviewed.",
+      "target": "fixtures/issued/copy-review-changed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "issuedCopy": {
+          "originalDigest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23",
+          "issuers": [
+            "MOCA conformance issuer (INSECURE, published private key)"
+          ],
+          "changedFiles": [
+            "content/lessons/two.md"
+          ]
+        },
+        "digest": "sha256:662bdca3bb469e3dc52d3a2dccee8973b98711678697db0c4b26185070dd0f6f"
+      }
+    },
+    {
+      "id": "issued-copy-require-signature",
+      "description": "Attestations §7.1: a host that requires a signature accepts an issued copy whose publisher's attestation verifies against the rebuilt original digest.",
+      "target": "fixtures/issued/copy-valid",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z",
+        "requireSignature": true
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "issuedCopy": {
+          "originalDigest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23",
+          "issuers": [
+            "MOCA conformance issuer (INSECURE, published private key)"
+          ],
+          "changedFiles": [
+            "content/lessons/one.md"
+          ]
+        }
+      }
+    },
+    {
+      "id": "issued-copy-no-trust-root",
+      "description": "Without a trust root, every attestation, the issued-copy one included, is unverifiable, and the copy is read as any package.",
+      "target": "fixtures/issued/copy-valid",
+      "options": {
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A003_ATTESTATION_UNVERIFIABLE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-consent-sources",
+      "description": "Package spec §4.11: issuedCopies.paths may only name content/ or media/; sources/ fails the schema.",
+      "target": "fixtures/issued-consent-sources",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "issuedCopy": null
       }
     },
     {
@@ -1603,6 +1959,485 @@
       }
     },
     {
+      "id": "distribution-encrypted-only",
+      "description": "distribution is exposed in the package result. It changes nothing else: the package is read as if it were absent, with no diagnostic.",
+      "target": "fixtures/distribution-encrypted-only",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "distribution": "encrypted-only",
+        "digest": "sha256:29e5c5d498f9b6f0f3e628f242e9de11dd4488902baef74d2350c34fdb35594c"
+      }
+    },
+    {
+      "id": "distribution-unknown",
+      "description": "The distribution enum is closed: an unknown value fails the manifest schema, and the result has no distribution.",
+      "target": "fixtures/distribution-unknown",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "distribution": null
+      }
+    },
+    {
+      "id": "catalogue-valid",
+      "description": "Package spec §4.6–4.8: an icon and two covers (PNG, WebP, JPEG), alt text, tags, and translations for two declared locales with translated tags and alt text. The result exposes them as declared.",
+      "target": "fixtures/catalogue-valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "images": [
+          {
+            "src": "media/icon.png",
+            "role": "icon",
+            "type": "image/png",
+            "sizes": "256x256",
+            "alt": "A blue square"
+          },
+          {
+            "src": "media/cover.webp",
+            "role": "cover",
+            "type": "image/webp",
+            "sizes": "960x540",
+            "alt": "A wide pink banner"
+          },
+          {
+            "src": "media/cover.jpg",
+            "role": "cover",
+            "type": "image/jpeg",
+            "sizes": "960x540"
+          }
+        ],
+        "tags": [
+          "customer support",
+          "refunds",
+          "returns"
+        ],
+        "translations": {
+          "fr": {
+            "title": "Base de connaissances",
+            "description": "Réponses aux questions courantes.",
+            "tags": [
+              "service client",
+              "remboursements",
+              "retours"
+            ],
+            "alt": {
+              "media/cover.webp": "Une large bannière rose"
+            }
+          },
+          "de": {
+            "title": "Wissensdatenbank"
+          }
+        },
+        "digest": "sha256:fa61df6875316edb07e0038014be961ff1ebc6f0efc2974a2a6b87d88d8f520d"
+      }
+    },
+    {
+      "id": "image-src-url",
+      "description": "Package spec §4.6: src is never a URL; the schema refuses it.",
+      "target": "fixtures/image-src-url",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "images": null
+      }
+    },
+    {
+      "id": "image-svg",
+      "description": "Package spec §4.6: only PNG, JPEG and WebP; an SVG type fails the schema.",
+      "target": "fixtures/image-svg",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "images": null
+      }
+    },
+    {
+      "id": "image-too-large",
+      "description": "Package spec §4.6: an image over maxImageBytes is M010 and left out; the package stays valid.",
+      "target": "fixtures/image-too-large",
+      "options": {
+        "limits": {
+          "maxImageBytes": 100
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "images": []
+      }
+    },
+    {
+      "id": "image-missing",
+      "description": "Package spec §4.6: an image whose file is not in the package is M010 and left out; the other image stays.",
+      "target": "fixtures/image-missing",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "images": [
+          {
+            "src": "media/cover.webp",
+            "role": "cover",
+            "type": "image/webp",
+            "sizes": "960x540",
+            "alt": "A wide pink banner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "image-wrong-type",
+      "description": "Package spec §4.6: a PNG file declared as image/jpeg does not start with the JPEG signature: M010, left out.",
+      "target": "fixtures/image-wrong-type",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "images": []
+      }
+    },
+    {
+      "id": "image-alt-empty",
+      "description": "Package spec §4.6: alt is 1 to 250 characters; an empty alt fails the schema.",
+      "target": "fixtures/image-alt-empty",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "image-alt-dropped",
+      "description": "Package spec §4.6: an image dropped with M010 takes its translated alt text with it, without a further diagnostic.",
+      "target": "fixtures/image-alt-dropped",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "translations": {
+          "fr": {
+            "alt": {
+              "media/cover.webp": "Une large bannière rose"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "translation-alt-unknown",
+      "description": "Package spec §4.7: a translated alt text for an image not in images is M013 (warning) and dropped.",
+      "target": "fixtures/translation-alt-unknown",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M013_ALT_IMAGE_UNKNOWN"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "translations": {
+          "fr": {
+            "alt": {
+              "media/icon.png": "Un carré bleu"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "translation-locale-undeclared",
+      "description": "Package spec §4.7: a translation keyed by a tag not in locales is M011 (error); the result has no translations.",
+      "target": "fixtures/translation-locale-undeclared",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M011_TRANSLATION_LOCALE_UNDECLARED"
+        ],
+        "capabilities": [],
+        "translations": null
+      }
+    },
+    {
+      "id": "translation-locale-case",
+      "description": "Package spec §4.7: translation keys match locales case-insensitively, A–Z only; the key is kept as declared.",
+      "target": "fixtures/translation-locale-case",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "translations": {
+          "PT-br": {
+            "title": "Fixture PT"
+          }
+        }
+      }
+    },
+    {
+      "id": "tags-valid",
+      "description": "Package spec §4.8: package tags are exposed as declared.",
+      "target": "fixtures/tags-valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "tags": [
+          "customer support",
+          "refunds"
+        ],
+        "digest": "sha256:718cb6266302cdac060c5b7f0ed4045cefdae1955eca79a3e85cdb744a4221e2"
+      }
+    },
+    {
+      "id": "tags-duplicate",
+      "description": "Package spec §4.8: a case-insensitive repeat is M012 (warning); the first is kept, the repeat dropped, and the package stays valid.",
+      "target": "fixtures/tags-duplicate",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M012_TAG_DUPLICATE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "tags": [
+          "Refunds",
+          "returns"
+        ]
+      }
+    },
+    {
+      "id": "tags-empty",
+      "description": "Package spec §4.8: an empty tag fails the schema.",
+      "target": "fixtures/tags-empty",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "tags": null
+      }
+    },
+    {
+      "id": "tags-padded",
+      "description": "Package spec §4.8: a tag may not start or end with white space.",
+      "target": "fixtures/tags-padded",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "tags-translation",
+      "description": "Package spec §4.8: translated tags follow the same rules in their language; a repeat there is M012 and dropped.",
+      "target": "fixtures/tags-translation",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M012_TAG_DUPLICATE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "tags": [
+          "refunds"
+        ],
+        "translations": {
+          "fr": {
+            "tags": [
+              "remboursements"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "tags-strict",
+      "description": "Contract §11: in strict mode the M012 warning is an error, so the package is invalid and the result has no tags.",
+      "target": "fixtures/tags-duplicate",
+      "options": {
+        "strict": true
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M012_TAG_DUPLICATE"
+        ],
+        "capabilities": [],
+        "tags": null
+      }
+    },
+    {
+      "id": "apps-valid",
+      "description": "Package spec §4.9: a specific app (an https: URI) then an app type. The result exposes apps as declared; the Reader fetches nothing.",
+      "target": "fixtures/apps-valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "apps": [
+          "https://apps.example.com/legal-review",
+          "legal"
+        ],
+        "digest": "sha256:b815dd657ad1cf0aeb2968474e98a2e77eb3dda52eb046815f3b3920652c1acd"
+      }
+    },
+    {
+      "id": "apps-http",
+      "description": "Package spec §4.9: a specific app is an https: URI; http: fails the schema, and the result has no apps.",
+      "target": "fixtures/apps-http",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "apps": null
+      }
+    },
+    {
+      "id": "apps-relative",
+      "description": "Package spec §4.9: a relative URI is neither an https: URI nor a token: M002.",
+      "target": "fixtures/apps-relative",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "apps": null
+      }
+    },
+    {
+      "id": "apps-duplicate",
+      "description": "Package spec §4.9: no two entries are equal: M002.",
+      "target": "fixtures/apps-duplicate",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "apps": null
+      }
+    },
+    {
+      "id": "apps-token-invalid",
+      "description": "Package spec §4.9: an app type is lower-case ASCII letters, digits and hyphens, starting with a letter: M002.",
+      "target": "fixtures/apps-token-invalid",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "apps": null
+      }
+    },
+    {
+      "id": "reading-order-valid",
+      "description": "Package spec §4.10: readingOrder names an ordered collection in the package's own structure.ttl. The result carries the IRI.",
+      "target": "fixtures/reading-order",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "readingOrder": "https://example.org/course#Path"
+      }
+    },
+    {
+      "id": "reading-order-not-collection",
+      "description": "Package spec §4.10: readingOrder names a concept, not an ordered collection. M014, and the result has no readingOrder.",
+      "target": "fixtures/reading-order-not-collection",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M014_READING_ORDER_UNRESOLVED"
+        ],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "readingOrder": null
+      }
+    },
+    {
+      "id": "reading-order-no-structure",
+      "description": "Package spec §4.10: readingOrder in a package with no structure.ttl. M014, and the result has no readingOrder.",
+      "target": "fixtures/reading-order-no-structure",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M014_READING_ORDER_UNRESOLVED"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "readingOrder": null
+      }
+    },
+    {
+      "id": "reading-order-relative",
+      "description": "Package spec §4.10: readingOrder is an absolute IRI; a relative one fails the schema.",
+      "target": "fixtures/reading-order-relative",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "readingOrder": null
+      }
+    },
+    {
       "id": "vendor-key-trailing-newline",
       "description": "Package spec §4.5: a vendor key must match x-<vendor>-<key> exactly. One with a trailing newline is an unknown key (M004).",
       "target": "fixtures/vendor-key-trailing-newline",
@@ -2405,6 +3240,86 @@
           "https://example.com/conformance/search-policy@1.0.0#current.md"
         ],
         "count": 1
+      }
+    },
+    {
+      "id": "search-issued-copy-records",
+      "kind": "search",
+      "description": "Reader contract §7: records of an issued copy carry package.issuedCopy, and a record from a changed file has node.issuedChange.",
+      "packages": [
+        "fixtures/issued/copy-valid"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "trustRoot": "fixtures/trust-root-issued.json"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 3,
+        "issuedChange": {
+          "https://example.com/conformance/issued-original@1.0.0#lessons/one.md": true,
+          "https://example.com/conformance/issued-original@1.0.0#lessons/two.md": false,
+          "https://example.com/conformance/issued-original@1.0.0#intro.md": false
+        },
+        "issuedCopy": {
+          "originalDigest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23",
+          "issuers": [
+            "MOCA conformance issuer (INSECURE, published private key)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-issued-copy-review-changed",
+      "kind": "search",
+      "description": "Attestations §7.1: a review of a changed file is listed with fileChanged and does not count, so the file's review status is none.",
+      "packages": [
+        "fixtures/issued/copy-review-changed"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "trustRoot": "fixtures/trust-root-issued.json"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 3,
+        "fileChanged": {
+          "https://example.com/conformance/issued-original@1.0.0#lessons/two.md": true,
+          "https://example.com/conformance/issued-original@1.0.0#intro.md": false
+        },
+        "reviewStatus": {
+          "https://example.com/conformance/issued-original@1.0.0#lessons/two.md": "none",
+          "https://example.com/conformance/issued-original@1.0.0#intro.md": "approved"
+        }
+      }
+    },
+    {
+      "id": "search-issued-copy-duplicate",
+      "kind": "search",
+      "description": "Reader contract §7: a second issued copy of the same original is noted (L002, info), not refused as a conflict (L001). Only the first is loaded.",
+      "packages": [
+        "fixtures/issued/copy-valid",
+        "fixtures/issued/copy-valid-2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "trustRoot": "fixtures/trust-root-issued.json"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "codes": [
+          "L002_ISSUED_COPY_DUPLICATE"
+        ],
+        "count": 3
       }
     },
     {
@@ -3632,6 +4547,315 @@
       }
     },
     {
+      "id": "search-upto-first",
+      "kind": "search",
+      "description": "Contract §9: upTo at the first member keeps that step, and records off the reading order (a glossary, notes bound to no concept).",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Intro"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-placement",
+      "kind": "search",
+      "description": "Contract §9: upTo at module 1. Basics sits under module 1 and module 3, and takes the first, so it passes. A node bound to module 1 and module 3 does not pass.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Module1"
+      },
+      "expect": {
+        "count": 4,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-middle",
+      "kind": "search",
+      "description": "Contract §9: upTo at module 2 keeps a part of module 2 (dcterms:hasPart) and everything before it; module 3 does not pass.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Module2"
+      },
+      "expect": {
+        "count": 5,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-last",
+      "kind": "search",
+      "description": "Contract §9: upTo at the last member keeps everything.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Module3"
+      },
+      "expect": {
+        "count": 7,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-other-package",
+      "kind": "search",
+      "description": "Contract §9: upTo limits only the packages whose reading order has it as a member. A reference package loaded beside the course is not limited.",
+      "packages": [
+        "fixtures/reading-order",
+        "fixtures/reading-order-reference"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Intro"
+      },
+      "expect": {
+        "count": 4,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md",
+          "https://example.com/conformance/reading-order-reference@1.0.0#reference.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-scope",
+      "kind": "search",
+      "description": "Contract §9: upTo combines with scope. scope keeps module 1 and Basics; upTo at module 1 then drops the node also bound to module 3.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Module1",
+        "scope": "https://example.org/course#Module1"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#basics.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-unresolved",
+      "kind": "search",
+      "description": "Contract §9: an upTo that no loaded reading order places, neither a member nor a descendant, limits nothing, and the Reader reports S008.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Unknown"
+      },
+      "expect": {
+        "codes": [
+          "S008_UPTO_UNRESOLVED"
+        ],
+        "count": 7,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-descendant",
+      "kind": "search",
+      "description": "Contract §9: upTo at Basics, a descendant of module 1 (and of module 3). It is placed at the first member that contains it, so it limits exactly as module 1 does.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Basics"
+      },
+      "expect": {
+        "count": 4,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-hostile-ingress",
+      "kind": "search",
+      "description": "Contract §9.2: an ingress hook that tries to remove upTo. The gate follows the caller.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "hooks": "hostile-ingress"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Intro"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-store",
+      "kind": "search",
+      "description": "Contract §9.4: a store search applies upTo from the package states, as a library search does.",
+      "packages": [
+        "fixtures/reading-order",
+        "fixtures/reading-order-reference"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/reading-order",
+          "fixtures/reading-order-reference"
+        ]
+      },
+      "search": {
+        "query": "lesson",
+        "upTo": "https://example.org/course#Module1"
+      },
+      "expect": {
+        "count": 5,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md",
+          "https://example.com/conformance/reading-order-reference@1.0.0#reference.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
       "id": "search-ontology-guided",
       "kind": "search",
       "description": "The default ontology-guided hooks add the nodes of required concepts; the gate still applies.",
@@ -3774,6 +4998,771 @@
         "exclude": [
           "https://example.com/conformance/search-policy@1.0.0#current.md"
         ]
+      }
+    },
+    {
+      "id": "envelope-no-provider",
+      "description": "Encrypted packages §2, §5.1: an envelope is recognised by its content. With no key provider, or in a Reader without the encryption feature, it is not opened (E001), and nothing inside it is exposed.",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E001_ENCRYPTED_NO_KEY"
+        ],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-x25519",
+      "description": "An envelope for an X25519 recipient, with the default outline (id, version, title). Opened, it is the inner archive, with the same digest.",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-passphrase",
+      "description": "An envelope for a passphrase (one scrypt stanza, work factor 10).",
+      "target": "fixtures/envelopes/passphrase.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "passphrase": "moca-conformance-INSECURE-passphrase"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-no-outline",
+      "description": "An envelope with no outline: moca-enc.json holds only the format.",
+      "target": "fixtures/envelopes/no-outline.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-structure",
+      "description": "An envelope with the opt-in structure copy, outline/structure.ttl, equal to the inner structure.ttl.",
+      "target": "fixtures/envelopes/structure.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "digest": "SAME:structure-procedure",
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-large-plain",
+      "description": "The package inside the envelope-large and envelope-truncated envelopes, read plain.",
+      "target": "fixtures/envelope-large",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:463ca8812ec5833eaf053487fe82593246f7b48bd435b2d91602ace99acab95c"
+      }
+    },
+    {
+      "id": "envelope-large",
+      "description": "An envelope whose payload has more than one age chunk.",
+      "target": "fixtures/envelopes/large.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:envelope-large-plain",
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-wrong-key-type",
+      "description": "Encrypted packages §5.1: a key of a kind no stanza uses (a passphrase for an X25519 file) is E001, not E002.",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "passphrase": "moca-conformance-INSECURE-passphrase"
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E001_ENCRYPTED_NO_KEY"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-wrong-key",
+      "description": "An X25519 identity that is not a recipient (E002).",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-other.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E002_DECRYPTION_FAILED"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-wrong-passphrase",
+      "description": "A wrong passphrase (E002).",
+      "target": "fixtures/envelopes/passphrase.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "passphrase": "moca-conformance-INSECURE-wrong"
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E002_DECRYPTION_FAILED"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-wrong-file-key",
+      "description": "A file key from the host that fails the header MAC (E002).",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "fileKey": "00000000000000000000000000000000"
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E002_DECRYPTION_FAILED"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-truncated",
+      "description": "The payload's final chunk is missing (E003); no plaintext is used.",
+      "target": "fixtures/envelopes/truncated.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E003_PAYLOAD_CORRUPT"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-flipped-byte",
+      "description": "One payload byte changed after encryption (E003).",
+      "target": "fixtures/envelopes/flipped-byte.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E003_PAYLOAD_CORRUPT"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-outline-mismatch",
+      "description": "Encrypted packages §3: the outline's title differs from the inner manifest's (E004). Nothing inside is exposed.",
+      "target": "fixtures/envelopes/outline-mismatch.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-structure-mismatch",
+      "description": "The structure copy differs from the inner structure.ttl by one line (E004).",
+      "target": "fixtures/envelopes/structure-mismatch.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-extra-entry",
+      "description": "Encrypted packages §2: an entry the layout does not name (E005).",
+      "target": "fixtures/envelopes/extra-entry.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-missing-package",
+      "description": "No package.age (E005).",
+      "target": "fixtures/envelopes/missing-package.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-unknown-format",
+      "description": "moca-enc.json names another format (E005).",
+      "target": "fixtures/envelopes/unknown-format.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-both-markers",
+      "description": "A Zip with both moca.json and moca-enc.json at its root (E005).",
+      "target": "fixtures/envelopes/both-markers.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-deflated-package",
+      "description": "package.age is deflated, not stored (E005).",
+      "target": "fixtures/envelopes/deflated-package.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-scrypt-not-alone",
+      "description": "Encrypted packages §4: an scrypt stanza beside an X25519 stanza (E006), found before any key is used.",
+      "target": "fixtures/envelopes/scrypt-not-alone.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E006_AGE_HEADER_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-work-factor",
+      "description": "An scrypt work factor of 21, over the default limit of 20 (E006), refused without running scrypt.",
+      "target": "fixtures/envelopes/work-factor.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "passphrase": "moca-conformance-INSECURE-passphrase"
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E006_AGE_HEADER_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-limit-inner",
+      "description": "Reader contract §3: the limits apply again to the archive inside an envelope. The envelope is small; the inner archive inflates past maxBytes (T003).",
+      "target": "fixtures/envelopes/large.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ],
+        "limits": {
+          "maxBytes": 50000
+        }
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-index",
+      "description": "Encrypted packages §6: index.age is opened through the same key provider and bound to the package from the same envelope.",
+      "target": "fixtures/envelopes/with-index.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ],
+        "envelopeSidecar": true
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "sidecarUsable": true,
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-index-corrupt",
+      "description": "Encrypted packages §6: an index.age whose payload fails authentication is reported by the binding (E003) and is not used. The package stays valid.",
+      "target": "fixtures/envelopes/with-index-corrupt.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ],
+        "envelopeSidecar": true
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "E003_PAYLOAD_CORRUPT"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false,
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-index-deflated",
+      "description": "Encrypted packages §2: an index.age that is deflated, not stored, makes the envelope invalid (E005).",
+      "target": "fixtures/envelopes/with-index-deflated.moca.enc",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover",
+      "description": "Encrypted packages §3: an outline with translations and tags and a cover copy equal to the inner manifest's first cover. It opens.",
+      "target": "fixtures/envelopes/cover.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": true
+        },
+        "digest": "SAME:catalogue-valid",
+        "tags": [
+          "customer support",
+          "refunds",
+          "returns"
+        ]
+      }
+    },
+    {
+      "id": "envelope-cover-differs",
+      "description": "Encrypted packages §3: a cover copy that differs by one byte from the inner cover is E004.",
+      "target": "fixtures/envelopes/cover-differs.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-wrong-extension",
+      "description": "Encrypted packages §3: the copy's extension must match the cover's type; a WebP cover copied as outline/cover.png is E004.",
+      "target": "fixtures/envelopes/cover-wrong-extension.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-no-cover",
+      "description": "Encrypted packages §3: a cover copy when the inner manifest has no cover image is E004.",
+      "target": "fixtures/envelopes/cover-no-cover.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-gif",
+      "description": "Encrypted packages §2: outline/cover.gif is not an allowed entry: E005, before any key is asked for.",
+      "target": "fixtures/envelopes/cover-gif.moca.enc",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-two",
+      "description": "Encrypted packages §2: an envelope has at most one cover copy: E005.",
+      "target": "fixtures/envelopes/cover-two.moca.enc",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-too-large",
+      "description": "Encrypted packages §2: a cover copy over maxImageBytes is E005, before any key is asked for.",
+      "target": "fixtures/envelopes/cover.moca.enc",
+      "options": {
+        "limits": {
+          "maxImageBytes": 16
+        }
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-outline-translation-mismatch",
+      "description": "Encrypted packages §3: an outline whose translated title differs from the decrypted manifest's is E004.",
+      "target": "fixtures/envelopes/outline-translation-mismatch.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-outline-apps",
+      "description": "Encrypted packages §3: apps as an outline property, equal to the inner manifest's. It opens.",
+      "target": "fixtures/envelopes/outline-apps.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": true
+        },
+        "digest": "SAME:apps-valid",
+        "apps": [
+          "https://apps.example.com/legal-review",
+          "legal"
+        ]
+      }
+    },
+    {
+      "id": "envelope-outline-apps-mismatch",
+      "description": "Encrypted packages §3: an outline whose apps differ from the decrypted manifest's (here, in another order) is E004.",
+      "target": "fixtures/envelopes/outline-apps-mismatch.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
       }
     }
   ]

@@ -21,10 +21,10 @@
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"!**/node_modules/**\""
   },
   "devDependencies": {
-    "@openmoca/moca-core": "^0.6.0",
-    "@openmoca/moca-index": "^0.6.0",
-    "@openmoca/moca-lint": "^0.6.0",
-    "@openmoca/moca-sign": "^0.6.0",
+    "@openmoca/moca-core": "file:../moca-reader-typescript",
+    "@openmoca/moca-index": "file:../moca-tools/packages/moca-index",
+    "@openmoca/moca-lint": "file:../moca-tools/packages/moca-lint",
+    "@openmoca/moca-sign": "file:../moca-tools/packages/moca-sign",
     "adm-zip": "^0.6.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",

@@ -1,0 +1,15 @@
+{
+  "id": "https://example.com/conformance/issued-consent-sources",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "issuedCopies": {
+    "issuers": [
+      {
+        "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA94AzjuVWnBMriLi4RO8vfqW1BfpuIicNw20TTunypjs=\n-----END PUBLIC KEY-----\n"
+      }
+    ],
+    "paths": [
+      "sources/"
+    ]
+  }
+}

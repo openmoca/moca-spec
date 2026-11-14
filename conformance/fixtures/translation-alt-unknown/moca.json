@@ -1,0 +1,25 @@
+{
+  "id": "https://example.com/conformance/translation-alt-unknown",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "locales": [
+    "fr"
+  ],
+  "images": [
+    {
+      "src": "media/icon.png",
+      "role": "icon",
+      "type": "image/png",
+      "sizes": "256x256",
+      "alt": "A blue square"
+    }
+  ],
+  "translations": {
+    "fr": {
+      "alt": {
+        "media/icon.png": "Un carré bleu",
+        "media/other.png": "Autre"
+      }
+    }
+  }
+}

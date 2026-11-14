@@ -1,0 +1,55 @@
+{
+  "id": "https://example.com/conformance/catalogue-valid",
+  "version": "1.0.0",
+  "title": "Support knowledge base",
+  "language": "en",
+  "locales": [
+    "fr",
+    "de"
+  ],
+  "description": "Answers to common support questions.",
+  "images": [
+    {
+      "src": "media/icon.png",
+      "role": "icon",
+      "type": "image/png",
+      "sizes": "256x256",
+      "alt": "A blue square"
+    },
+    {
+      "src": "media/cover.webp",
+      "role": "cover",
+      "type": "image/webp",
+      "sizes": "960x540",
+      "alt": "A wide pink banner"
+    },
+    {
+      "src": "media/cover.jpg",
+      "role": "cover",
+      "type": "image/jpeg",
+      "sizes": "960x540"
+    }
+  ],
+  "tags": [
+    "customer support",
+    "refunds",
+    "returns"
+  ],
+  "translations": {
+    "fr": {
+      "title": "Base de connaissances",
+      "description": "Réponses aux questions courantes.",
+      "tags": [
+        "service client",
+        "remboursements",
+        "retours"
+      ],
+      "alt": {
+        "media/cover.webp": "Une large bannière rose"
+      }
+    },
+    "de": {
+      "title": "Wissensdatenbank"
+    }
+  }
+}

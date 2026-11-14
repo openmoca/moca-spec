@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/apps-valid",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "apps": [
+    "https://apps.example.com/legal-review",
+    "legal"
+  ]
+}

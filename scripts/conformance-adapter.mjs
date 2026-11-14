@@ -4,12 +4,15 @@
 // (conformance/README.md). Another Reader provides its own adapter.
 //
 //   echo '{"root": "/abs/conformance", "case": {...}}' | node scripts/conformance-adapter.mjs
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   readPackage, bindSidecar, directoryResolver, Library, Search, LexicalBackend, DenseBackend, MemoryStoreBackend, HybridBackend, ontologyGuided,
-  packageState,
+  packageState, bindEnvelopeSidecar,
 } from '@openmoca/moca-core';
+// The reference Reader implements the optional feature `encryption` through its separate age module.
+import { ageDecryptor } from '@openmoca/moca-core/age';
 
 /** The conformance embedder: the identity a case names, and [1, 0, 0, ...] for every text. */
 function conformanceEmbedder({ name, version, dimensions, queryPrefix, documentPrefix }) {
@@ -47,9 +50,23 @@ function hostileHooks() {
   };
 }
 
+/**
+ * The conformance key provider (encrypted packages §5.1): the identities in the case's identity files, its
+ * passphrase, or its file key (hex). No key options means no key provider.
+ */
+function conformanceKeyProvider(root, o) {
+  if (o.identities) {
+    const identities = o.identities.flatMap((f) => readFileSync(join(root, f), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l.startsWith('AGE-SECRET-KEY-1')));
+    return () => ({ identities });
+  }
+  if (o.passphrase !== undefined) return () => ({ passphrase: o.passphrase });
+  if (o.fileKey !== undefined) return () => ({ fileKey: Uint8Array.from(Buffer.from(o.fileKey, 'hex')) });
+  return undefined;
+}
+
 /** An ingress hook that asks for more than the caller did: the gate must follow the caller. */
 function hostileIngressHooks() {
-  return { ingress: () => ({ includeAll: true, limit: 1000, locale: 'fr' }) };
+  return { ingress: () => ({ includeAll: true, limit: 1000, locale: 'fr', upTo: null }) };
 }
 
 const conceptItem = (x) => x && ({ iri: x.iri, ...(x.label !== undefined ? { label: x.label } : {}), layer: x.layer });
@@ -64,6 +81,8 @@ export async function actualFor(root, c) {
     clock: o.now ? () => new Date(o.now) : undefined,
     requireSignature: o.requireSignature === true,
     strict: o.strict === true,
+    keyProvider: conformanceKeyProvider(root, o),
+    decryptor: ageDecryptor,
   };
   const overlays = (o.overlays ?? []).map((v) => ({ id: v.id, layer: v.layer, path: join(root, v.path) }));
 
@@ -106,7 +125,7 @@ export async function actualFor(root, c) {
       : o.hooks === 'hostile-ingress' ? hostileIngressHooks()
         : o.hooks === 'ontology-guided' ? ontologyGuided() : undefined;
     const s = c.search;
-    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, concepts: s.concepts, scope: s.scope };
+    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, concepts: s.concepts, scope: s.scope, upTo: s.upTo };
     if (o.backend === 'store') {
       // Everything listed is ingested (each package on its own with
       // `ingestSeparately`); only the packages in `allow` are "loaded", and the
@@ -118,7 +137,9 @@ export async function actualFor(root, c) {
         await store.ingest(library);
       }
       const allowed = library.packages.filter(({ result }) => (o.allow ?? []).some((t) => join(root, t) === result.source?.location)).map(({ result }) => packageState(result));
-      const records = await new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true }).search(s.query, searchOptions);
+      const search = new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true });
+      const records = await search.search(s.query, searchOptions);
+      codes.push(...search.diagnostics.map((d) => d.code));
       return { codes, records };
     }
     const dense = () => new DenseBackend(library, { embedder: conformanceEmbedder(o.embedder) });
@@ -129,13 +150,22 @@ export async function actualFor(root, c) {
     codes.push(...(backend.diagnostics ?? []).map((d) => d.code));
     // Library diagnostics (L): for example two digests for one id@version.
     codes.push(...library.diagnostics.items.filter((d) => d.code.startsWith('L')).map((d) => d.code));
-    const records = await new Search(library, { backend, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks }).search(s.query, searchOptions);
+    const search = new Search(library, { backend, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks });
+    const records = await search.search(s.query, searchOptions);
+    // Contract §9: the search's own findings, such as S008.
+    codes.push(...search.diagnostics.map((d) => d.code));
     return { codes, records };
   }
 
   const result = await readPackage(join(root, c.target), readOptions);
   const codes = result.diagnostics.map((d) => d.code);
   let sidecarUsable;
+  // Encrypted packages §6: the envelope's own index.age, through the same key provider.
+  if (o.envelopeSidecar) {
+    const bound = await bindEnvelopeSidecar(join(root, c.target), result, readOptions);
+    codes.push(...bound.diagnostics.map((d) => d.code));
+    sidecarUsable = bound.usable;
+  }
   if (o.sidecar) {
     const bound = bindSidecar(join(root, o.sidecar), result);
     codes.push(...bound.diagnostics.map((d) => d.code));
@@ -147,7 +177,7 @@ export async function actualFor(root, c) {
       if (r.evidence.length > 0) evidenceMatched[r.node.path] = r.evidence.map((e) => e.matched ?? null);
     }
   }
-  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, sidecarUsable, evidenceMatched };
+  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, issuedCopy: result.issuedCopy ?? null, sidecarUsable, evidenceMatched, envelope: result.envelope };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

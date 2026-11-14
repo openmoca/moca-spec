@@ -59,6 +59,7 @@ Everything a Reader touches outside a package's bytes comes from the host
 | Embedder | §5.3. | Dense search. |
 | Retrieval hooks | `ingress` and `egress` (§5.4). | Ontology-guided retrieval strategies. |
 | Audience set | A list of audience labels. | Removing records outside it. |
+| Key provider | Given an envelope's age stanzas, its unverified outline and which file is being opened, returns X25519 identities, a passphrase, a file key, or nothing; MAY be asynchronous ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). | Opening encrypted packages, for a Reader that implements `encryption`. |
 
 A package never supplies any of these.
 
@@ -66,8 +67,8 @@ A package never supplies any of these.
 
 | Operation | Takes | Returns |
 | --- | --- | --- |
-| `readPackage` | A target (a directory, archive path, archive bytes or package source) and options: trust root, member resolver, limits, strict, clock, require signature. | A package result. Never throws for a malformed package. |
-| `bindSidecar` | A sidecar target and a package result. | `{ usable, index, chunks, diagnostics }`. |
+| `readPackage` | A target (a directory, archive path, archive bytes or package source) and options: trust root, member resolver, limits, strict, clock, require signature, key provider (`keyProvider`). | A package result. Never throws for a malformed package. |
+| `bindSidecar` | A sidecar target and a package result; for an envelope's `index.age`, the envelope and the key provider. | `{ usable, index, chunks, diagnostics }`. |
 | `Library(options)` | Clock, overlays, limits. | An empty library. |
 | `Library.add` | A valid package result, and optionally its sidecar chunks and index. | The library, with the package and its resolved members loaded. |
 | `Library.citations` | Options: locale, include text. | Every node's citation record. |
@@ -79,7 +80,30 @@ contract:
 - `manifest`, `digest` and `payloadManifest`;
 - `nodes`, `members` and `profiles`;
 - `structure`;
-- `diagnostics`, `valid` and `capabilities`.
+- `diagnostics`, `valid` and `capabilities`;
+- `distribution`: the manifest's `distribution`, or `open` when the manifest
+  has none. It is absent when the manifest is missing or fails its schema
+  ([package spec §4.1](moca-package-spec.md#41-properties));
+- `images`, `translations` and `tags`, when the package is valid and the
+  manifest has them ([package spec §4.6–4.8](moca-package-spec.md#46-images)):
+  - `images`: the entries that passed their checks, as declared
+    (`src`, `role`, `type`, and `sizes` and `alt` when present). No bytes: a
+    host reads an image from the package as it reads any file.
+  - `translations`: as declared, without `alt` text that was dropped and
+    without repeated tags.
+  - `tags`: as declared, without repeats;
+- `apps`: the manifest's `apps`, as declared, when the manifest passes its
+  schema; absent otherwise ([package spec §4.9](moca-package-spec.md#49-apps)).
+  Advice only: the Reader does nothing else with it;
+- `issuedCopy`: `{ originalDigest, issuers }` for an issued copy that passed
+  verification, absent otherwise
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes));
+- `readingOrder`: the manifest's `readingOrder`, when the manifest passes its
+  schema and the IRI resolves; absent otherwise
+  ([package spec §4.10](moca-package-spec.md#410-reading-order));
+- `envelope`, for an envelope only: `{ format, opened }`, plus the
+  unverified `outline` when it was not opened
+  ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).
 
 A **diagnostic** has `code`, `severity` and `message`, and optionally `file`
 and `line`.
@@ -91,7 +115,8 @@ and `line`.
 | Operation | Takes | Returns |
 | --- | --- | --- |
 | `Search(source, options)` | A library, or, for a store backend, the loaded packages' states (`packageState`) and a clock; then a backend, an audience set and optional hooks. | A search. |
-| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`, `upTo`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.diagnostics` | Nothing. | The findings of the latest `search` call on this search, such as `S008_UPTO_UNRESOLVED`. Empty when it found none. |
 
 Every call follows
 [Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate).

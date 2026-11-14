@@ -43,6 +43,7 @@ MOCA is these documents, released and versioned together (§14):
 | [Sidecar index specification](moca-sidecar-index-spec.md) | Normative | Producers of sidecars, Readers that bind them |
 | [Reader contract](moca-reader-contract.md) | Normative | Readers and Producers (its §2 conformance classes) |
 | [Reader interface](moca-reader-interface.md) | Normative for operation names and inputs; its examples are informative | Readers |
+| [Encrypted packages](moca-encrypted-package.md) | Normative | Producers of encrypted packages, Readers that implement the `encryption` feature |
 | [AG-UI citations](moca-ag-ui-citations.md) | Normative for services and clients that send or show the `moca.citations` event; optional otherwise | AG-UI services and clients |
 | [`schemas/v1/`](../schemas/v1/) | Normative | As the document that names each schema |
 | [Conformance corpus](../conformance/README.md) | Normative test of the Reader contract | Readers and Producers |
@@ -124,6 +125,12 @@ characters (`C007`) after that.
 | Citation record | What a Reader hands on for a node or a chunk: its text, identity, trust and evidence (Reader contract §7). |
 | The gate | The last step of every search: the retrieval policy and audience checks (Reader contract §9.2). |
 | Application | The product built on a Reader: it decides what to do with the signals a package carries. |
+| Encrypted package | A `.moca` archive encrypted inside an envelope ([encrypted packages](moca-encrypted-package.md)). Once opened, it is that archive, with the same digest. |
+| Envelope | The Zip file that holds an encrypted package: a plain format marker, an optional outline and the encrypted archive. |
+| Outline | Manifest properties a Producer chooses to leave readable in an envelope. Unverified until the envelope is opened. |
+| Key provider | The host's function that supplies keys to open an envelope (Reader interface §3). A Reader never finds keys itself. |
+| Issued copy | A copy of a package whose issuer changed some files under `content/` or `media/`, bound to the original by an issued-copy attestation ([attestations §3a](moca-attestations.md#3a-issued-copy-attestations)). |
+| Issuer | Whoever makes and signs an issued copy. A publisher allows its issuers in its manifest (§4.11). |
 
 ## 3. Standards used
 
@@ -160,6 +167,13 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `locales` | No | BCP 47 tags of additional representations (§5.4). |
 | `license` | No | SPDX license expression. |
 | `publisher` | No | Who publishes the package. Informative; identity is proven by attestations, not by this field. |
+| `distribution` | No | How the publisher intends the package to be handed out: `open` (the default), `encrypted-only` or `service-only`. A label, not access control (§13.3). |
+| `images` | No | Pictures of the package for a catalogue or a library: package files under `media/`, each with a role (§4.6). |
+| `translations` | No | The manifest's `title`, `description`, `tags` and image `alt` text in other languages, keyed by a tag in `locales` (§4.7). |
+| `tags` | No | Short plain labels, in the default language, that a catalogue can filter and group by (§4.8). |
+| `apps` | No | Where the publisher suggests the package is opened, beyond conversation: an ordered list of specific apps and app types, the first preferred (§4.9). Advice only (§13.2). |
+| `readingOrder` | No | The IRI of one ordered collection in the package's own `structure.ttl`: the order in which the package is meant to be read (§4.10). |
+| `issuedCopies` | No | The issuers the publisher allows to make issued copies, and the paths they may mark (§4.11). Without it, no issued copy of the package is valid. |
 | `validFrom`, `validUntil` | No | When the package's content is in force (§4.4). |
 | `members` | No | Packages this package is composed of, pinned by digest (§7.1). |
 | `relations` | No | Typed relations to other packages (§7.2). |
@@ -172,6 +186,25 @@ are not supported, so the schema refuses them.
 
 A package MUST contain at least one node under `content/` or at least one
 member.
+
+**Distribution.** `distribution` states the publisher's intent:
+
+- `open`: the package may be handed over in full.
+- `encrypted-only`: the package is handed over only as an encrypted package
+  ([encrypted packages](moca-encrypted-package.md)), to named people, an
+  organisation's keys or one licensee.
+- `service-only`: the package is meant to be read only by a host that
+  returns citation records, not files.
+
+A Reader reads the package exactly as if the property were absent. It
+exposes the value in the package result
+([Reader interface §4](moca-reader-interface.md#4-reading)), so that a host
+or a catalogue can show it, or compare it with how the package was delivered.
+A Reader never refuses a package because of it, and the property never
+configures the Reader (§4.5). The property is covered by the digest, so it is
+the publisher's signed intent; changing it needs a new version. The enum is
+closed: an unknown value fails the schema (`M002`), and a new value needs a
+new minor release ([ADR-0024](../docs/adr/0024-distribution-is-signed-intent.md)).
 
 ### 4.2 Identifiers
 
@@ -202,7 +235,8 @@ before it: a semantic version never contains `@`, though an `id` may.
 - **Patch**: editorial changes only (spelling, formatting, clarifications that
   change no meaning).
 
-Metadata-only changes (licence, description, tags) are patch changes. The
+Metadata-only changes (licence, description, `tags`, `images`,
+`translations`) are patch changes. The
 digest changes with any byte change; the version tells people how much the
 meaning changed.
 
@@ -249,6 +283,247 @@ including an `x-` key that does not match, are reported as
 A manifest never configures its Reader. No key, known or unknown, can make a
 Reader contact a location, load a model or change a setting
 ([Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)).
+
+### 4.6 Images
+
+`images` lists pictures of the package that a catalogue or a library can
+show. The shape follows the `icons` member of the W3C Web App Manifest, with
+a `role` of our own:
+
+```json
+"images": [
+  { "src": "media/icon.png", "role": "icon", "type": "image/png", "sizes": "256x256" },
+  { "src": "media/cover.webp", "role": "cover", "type": "image/webp", "sizes": "1920x1080",
+    "alt": "A support agent at a desk with two screens" }
+]
+```
+
+| Member | Required | Meaning |
+| --- | --- | --- |
+| `src` | Yes | A package path (§5.2) to a regular file under `media/`. Never a URL: no scheme, no leading `/`, no `.` or `..` segment. |
+| `role` | Yes | `icon` (square and small) or `cover` (a wide picture for a tile or a page). |
+| `type` | Yes | `image/png`, `image/jpeg` or `image/webp`. Nothing else: no SVG. |
+| `sizes` | No | Pixel sizes, as in the W3C member (`256x256`, or several separated by single spaces). Informative. |
+| `alt` | No | A short description of the picture, in the default language (`language`), for people who cannot see it. 1 to 250 characters. |
+
+- The file is part of the package, so the digest covers it and a signature
+  signs it. Changing a picture needs a new version.
+- A Reader never fetches anything for an image
+  ([Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)),
+  and never decodes one.
+- At most 16 entries. A URL in `src`, a `type` outside the three, or more
+  entries fails the schema (`M002`).
+- A Reader checks each image once the manifest passes its schema. It reports `M010_IMAGE_INVALID` (warning) and
+  leaves the image out of the result when the file is missing, is larger
+  than `maxImageBytes`
+  ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)), or does
+  not start with the signature of its `type`: PNG `89 50 4E 47 0D 0A 1A 0A`;
+  JPEG `FF D8 FF`; WebP `RIFF`, four bytes, then `WEBP`. The package stays
+  valid. The image's `alt` text, and any translation of it, go with it
+  without a further diagnostic.
+- Several images may share a role. A host chooses among them, for example by
+  `sizes`.
+
+**Shapes.** A `cover` SHOULD be 16:9 and at least 960×540 pixels. An `icon`
+SHOULD be square and at least 256×256 pixels. These are recommendations for
+Producers, not Reader rules. A host that meets another shape centre-crops it
+to the shape it needs (informative).
+
+### 4.7 Translations
+
+`translations` gives the manifest's text in other languages. The shape
+follows the W3C Web App Manifest `translations` incubation: a map from a
+language tag to the translated members.
+
+```json
+"language": "en",
+"locales": ["fr", "de"],
+"title": "Support knowledge base",
+"translations": {
+  "fr": {
+    "title": "Base de connaissances du support",
+    "description": "Réponses aux questions courantes.",
+    "tags": ["service client", "remboursements"],
+    "alt": { "media/cover.webp": "Une agente du support à un bureau avec deux écrans" }
+  },
+  "de": { "title": "Support-Wissensdatenbank" }
+}
+```
+
+- `title`, `description` and `tags` at the top level, and each image's `alt`,
+  stay the default-language text. A translation never replaces them.
+- Each key MUST equal a tag in `locales`, compared case-insensitively, A–Z
+  only (§2). A key that does not is `M011_TRANSLATION_LOCALE_UNDECLARED`
+  (error), so the package is invalid.
+- Each value has any of `title`, `description`, `tags` and `alt`, and nothing
+  else (`M002`). `title` is not empty. `tags` follows §4.8, in that
+  language. `alt` maps an image's `src` to its text in that language, with
+  the same length rule as `alt`.
+- An `alt` key that names no entry in `images` is `M013_ALT_IMAGE_UNKNOWN`
+  (warning). That text is dropped, and the package stays valid.
+- A declared locale with no translation is allowed. A host falls back to the
+  default-language text.
+
+Translations of content are node representations (§5.4). `translations`
+covers the manifest's own text only, so a catalogue can show it without
+reading content.
+
+### 4.8 Tags
+
+`tags` gives short plain labels for a catalogue to filter and group by:
+
+```json
+"tags": ["customer support", "refunds", "returns"]
+```
+
+- At most 32 tags. Each is 1 to 64 characters, with no white space at the
+  start or end (`M002`).
+- No two tags in one list are equal when compared case-insensitively, A–Z
+  only (§2). A repeat is `M012_TAG_DUPLICATE` (warning): the Reader keeps the
+  first, drops the repeat, and the package stays valid.
+- `translations.<tag>.tags` is a translated list, not extra tags. A host shows
+  one list or the other.
+- Tags are labels for people and catalogues. They are not concepts. Pages
+  keep OKF's `tags`, and the firm link from content to a vocabulary stays the
+  concept binding in `structure.ttl` (§5.6).
+
+### 4.9 Apps
+
+`apps` says where the publisher suggests the package is opened, beyond
+conversation:
+
+```json
+"apps": ["https://apps.example.com/legal-review", "legal"]
+```
+
+It works like a CSS `font-family` stack. The first entry is the publisher's
+first choice, and each later entry is a fallback. A host shows or uses the
+first entry it can, and ignores the rest. Each entry is one of two forms:
+
+- **A specific app:** an absolute `https:` URI that names one application,
+  for example `https://apps.example.com/legal-review`. It is a name, not an
+  address to fetch.
+- **An app type:** a token of lower-case ASCII letters, digits and hyphens,
+  starting with a letter, for example `legal` or `tutoring`.
+
+Rules:
+
+- At most 16 entries. A URI is at most 2048 characters, with no white space.
+  A token is at most 64 characters. No two entries are equal. Anything else
+  fails the schema (`M002`).
+- **Conversation is never listed.** Every package can be read, searched and
+  asked about with the open Readers and the MCP server. `apps` names only
+  what goes beyond that, so an entry such as `chat` adds nothing.
+- **Types are open.** Anyone may use a token that no list names. A public,
+  informative list of well-known types, with a line on what each means, is
+  kept on openmoca.org. A type joins it by a pull request to the site, not by
+  a change to this specification.
+- **Advice, never configuration**
+  ([ADR-0022](../docs/adr/0022-applications-get-advice.md), §13.2). A Reader
+  exposes `apps` as declared and does nothing else with it. It MUST NOT
+  fetch, resolve or open a URI in `apps`
+  ([Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)).
+  A host MAY ignore `apps`, show it, or use it to offer an "Open with"
+  choice.
+- The app that receives a package decides whether it can use it. Listing an
+  app does not make the package suitable for it, and not listing an app does
+  not stop that app from opening the package.
+- `apps` names applications only. It never names agents, prompts, models or
+  tools (§8), and it never configures them.
+
+`apps` and profiles (§9) are separate. `apps` says **which** application the
+publisher suggests. A profile says **how** the content is shaped for a use:
+the data an application of that kind needs, which a Reader can check. A
+package may have either, both or neither, and neither implies the other.
+
+### 4.10 Reading order
+
+`readingOrder` names the order in which the package is meant to be read: a
+course, a handbook, a novel, a set of steps. A package may hold several
+ordered collections (a learning path, the steps of each procedure), and
+`readingOrder` says which one is the order of the package as a whole:
+
+```json
+"readingOrder": "https://example.com/moca/course#path"
+```
+
+```turtle
+<https://example.com/moca/course#path> a skos:OrderedCollection ;
+  skos:memberList ( <https://example.com/moca/course#intro>
+                    <https://example.com/moca/course#module-1>
+                    <https://example.com/moca/course#module-2> ) .
+```
+
+The name follows the W3C Publication Manifest, where `readingOrder` is the
+default order in which a publication is read. There it is a list of
+resources. Here it names an ordered collection the package already holds, so
+the order is stated once.
+
+Rules:
+
+- The value is an absolute IRI. Anything else fails the schema (`M002`).
+- It MUST name a `skos:OrderedCollection` with a `skos:memberList` in the
+  package's own `structure.ttl` (§5.6). If the package has no
+  `structure.ttl`, or the IRI is not such a collection there, the Reader
+  reports `M014_READING_ORDER_UNRESOLVED` (warning) and ignores
+  `readingOrder`. An overlay never supplies or changes it.
+- **Steps.** The members of the list, in list order, are the steps along the
+  reading order. A concept's **position** is the first member that is the
+  concept, or has it as a descendant by `skos:narrower` or `dcterms:hasPart`
+  in the package's own `structure.ttl`. A concept with no position is not on
+  the reading order.
+- **Describes, never enforces** (§5.6). `readingOrder` never removes anything
+  from a result and never stops a person reading ahead. Only a caller's
+  `upTo` narrows a search
+  ([Reader contract §9](moca-reader-contract.md#9-search)), and that is a
+  convenience, not access control.
+- The package result carries `readingOrder` when it resolves.
+
+### 4.11 Issued copies
+
+`issuedCopies` is the publisher's consent to issued copies
+([attestations §3a](moca-attestations.md#3a-issued-copy-attestations)): who
+may make them, and which files they may mark.
+
+```json
+"issuedCopies": {
+  "issuers": [
+    { "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA…\n-----END PUBLIC KEY-----\n" },
+    { "sigstore": { "issuer": "https://token.actions.githubusercontent.com",
+                    "subject": "https://github.com/example/issue/.github/workflows/issue.yml@refs/heads/main" } }
+  ],
+  "paths": ["content/lessons/", "media/images/"]
+}
+```
+
+| Member | Required | Meaning |
+| --- | --- | --- |
+| `issuers` | Yes | The issuers the publisher allows: 1 to 32 entries. Each is one Ed25519 key (`publicKey`, PEM) or one Sigstore identity (`sigstore`: `issuer` and `subject`), in the same form as a trust root (attestations §6). |
+| `paths` | Yes | Where an issuer may mark: 1 to 256 entries. Each is a package path to a file, or a directory prefix ending in `/`, under `content/` or `media/`. |
+
+Rules:
+
+- **No key, no issued copies.** A package without `issuedCopies` allows none.
+- **Both the host and the publisher must agree.** The issuer must be trusted
+  by the host's trust root for the role `issued-copy`, with `ids` that cover
+  the package, and listed in `issuers`. The host decides whom it trusts; the
+  publisher decides whom it allows.
+- **Names, not host labels.** Issuers are named by their key or Sigstore
+  identity. A trust root's `keyid` is a label each host chooses, so the
+  manifest never uses one.
+- **Paths** are compared exactly, on NFC paths. A file entry allows that file;
+  a directory entry allows every file under it. An entry outside `content/`
+  or `media/`, or with a segment that starts with `.`, fails the schema
+  (`M002`), as does any other malformed `issuedCopies`.
+- **Signed consent.** `moca.json` is never changed in an issued copy, so
+  `issuedCopies` is covered by the publisher's signature over the original.
+  Changing it needs a new version, signed again. Copies issued from the old
+  version keep the old version's consent.
+- **Independent of `distribution`.** A package may allow issued copies
+  whatever its `distribution` (§4.1).
+- **Not configuration** (§13.2). A Reader matches `issuedCopies` against
+  attestations already in the package. It never contacts anything because of
+  it.
 
 ## 5. Content
 
@@ -361,6 +636,9 @@ the request and `-`, the lowest in code-point order (`pt` finds `pt-BR`); the
 default representation. A locale representation without a
 default-language file is reported as `C009_LOCALE_ORPHAN` (warning).
 
+The manifest's own text (title, description, tags and image `alt` text) is
+translated in `translations` (§4.7), not in node representations.
+
 ### 5.5 Trust fields
 
 MOCA reads OKF's trust fields as OKF defines them, and adds one distinction.
@@ -419,7 +697,7 @@ understand exactly these terms, and ignore any others:
 | Hierarchy | `skos:broader`, `skos:narrower` | A is a kind or subtopic of B. |
 | Association | `skos:related` | A and B are related; symmetric. |
 | Parts | `dcterms:hasPart`, `dcterms:isPartOf` | B is part of A: a chapter of a handbook, a section of an act, a module of a course, a component of an assembly. |
-| Order | `skos:OrderedCollection`, `skos:memberList` | An ordered list of concepts: procedure steps, clause order, a learning path. |
+| Order | `skos:OrderedCollection`, `skos:memberList` | An ordered list of concepts: procedure steps, clause order, a learning path. The manifest's `readingOrder` names the one that orders the whole package (§4.10). |
 | Requires | `dcterms:requires`, `dcterms:isRequiredBy` | A requires B "to support its function, delivery, or coherence": a check before a step, a test before a treatment, a foundation before an advanced topic. |
 | Replaces | `dcterms:replaces`, `dcterms:isReplacedBy` | A supersedes B: an amended clause, a revised procedure. |
 | Deprecated | `owl:deprecated true` | The concept should no longer be used. |
@@ -683,6 +961,8 @@ profile's package-level data. Node-level profile data goes under
 - A profile never defines a capability and never makes a package invalid.
   Structure that every Reader must understand belongs in `structure.ttl`
   (§5.6), not in a profile.
+- A profile says how content is shaped for a use. Which application the
+  publisher suggests is `apps` (§4.9), a separate property.
 
 The registry of profiles is [profiles/README.md](../profiles/README.md).
 
@@ -711,14 +991,14 @@ a package actually has from what it contains and what verifies:
 
 | Capability | Present when |
 | --- | --- |
-| `core` | The package is valid: no error-severity `T`, `P`, `M` or `C` diagnostic. All other capabilities require `core`. |
+| `core` | The package is valid: no error-severity `T`, `P`, `M`, `C` or `E` diagnostic. All other capabilities require `core`. |
 | `composed` | The package lists members. |
 | `located-evidence` | At least one node has `moca.evidence`. |
 | `self-contained-evidence` | The package has `located-evidence`, and every evidence source of every node has a `resource` that resolves, relative to the node file (§5.1), to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it. |
 | `localized` | At least one node has a locale representation. |
 | `structured` | `structure.ttl` is present, parses, and every relation and node binding resolves, with no `O` diagnostic (§5.6). |
-| `signed` | At least one package attestation verifies against the host's trust root. |
-| `reviewed` | The package is `signed`, at least one review attestation verifies and matches a current file, and every reviewed file is approved: at least one current review says `accurate` and none says otherwise ([attestations §4](moca-attestations.md#4-review-attestations)). |
+| `signed` | At least one package attestation verifies against the host's trust root. For an issued copy, against the rebuilt original digest ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |
+| `reviewed` | The package is `signed`, at least one review attestation verifies and matches a current file, and every reviewed file is approved: at least one current review says `accurate` and none says otherwise ([attestations §4](moca-attestations.md#4-review-attestations)). An issued copy whose issuer changed a reviewed file is not `reviewed` ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |
 
 `signed` and `reviewed` depend on the host's trust root: the same
 package can be `signed` for one host and not for another.
@@ -747,6 +1027,11 @@ A package is the same package whether it is:
 
 All three give the same digest.
 
+An **envelope** is not a fourth form. It is a transport for a `.moca`
+archive, encrypted for named recipients. Once opened, the archive inside is
+read under this specification as any other archive, and gives the same
+digest. See [encrypted packages](moca-encrypted-package.md).
+
 ## 13. Security considerations
 
 ### 13.1 Content is untrusted input to a model
@@ -758,6 +1043,11 @@ SHOULD treat package content as untrusted data: deliver it to models as quoted,
 cited reference material, never as system instructions, and never grant tools
 because content asks for them. See
 [Reader contract §12](moca-reader-contract.md#12-handing-content-to-a-model).
+
+Images are untrusted input too. A Reader checks only an image's size and
+its first bytes (§4.6). A host that decodes an image SHOULD use a decoder that
+is kept up to date, and SHOULD treat the picture as content from the
+publisher, not as something it has checked.
 
 Reading a package is bounded as well: every Reader limits the entries, bytes,
 frontmatter, triples and evidence work it accepts from a package
@@ -773,12 +1063,26 @@ No field in a package can make a Reader contact a location, load a model or
 change a setting. This is enforced by the Reader contract, not by a list of
 forbidden key names, which could never be complete.
 
+`apps` (§4.9) is advice to a host. It names applications, never agents,
+prompts, models or tools, and a URI in it is a name, never fetched or opened
+by a Reader.
+
+The same holds for an envelope ([encrypted packages](moca-encrypted-package.md)):
+its age stanzas and its outline are package data. A Reader passes stanzas it
+does not unwrap to the host's key provider, and neither the Reader nor the
+key provider contacts an address taken from them.
+
 ### 13.3 Audience is a label, not access control
 
 `moca.audience` lets a host filter content before retrieval. It does not
 protect anything: anyone with the package can read every file. Content that
 must not reach a group of people must not be in a package that group can
 obtain.
+
+An encrypted package is the one case where a holder cannot read every file:
+only the recipients of its envelope can. Encryption protects confidentiality
+in transit and at rest, not after decryption
+([encrypted packages §7](moca-encrypted-package.md#7-security-considerations)).
 
 ### 13.4 Identifier control
 
@@ -806,6 +1110,11 @@ date and no "latest". So:
   can sign two different digests for the same `id@version`. A Reader reports
   a second digest in one library (`L001`), and an attestation for this
   `id@version` with another digest (`A008`).
+- **Issued copies** are the one expected case of two digests for one version
+  (§4.11). They are recognised only through a valid issued-copy attestation
+  ([attestations §3a](moca-attestations.md#3a-issued-copy-attestations)). A
+  library given a second issued copy of the same original keeps the first
+  and reports `L002_ISSUED_COPY_DUPLICATE` (info), not `L001`.
 - **Requiring a signature.** A host that serves only signed content SHOULD
   read packages with `requireSignature`: a package with no valid package
   attestation is then invalid (`A009`).
@@ -832,6 +1141,13 @@ log. Content and sources may hold more.
   records, queries or answers SHOULD treat them as possibly personal data.
   A Reader never sends them anywhere itself (§13.1,
   [Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)).
+- **An envelope's outline is public.** Its fields are readable without a
+  key, so publishers SHOULD choose them knowing that
+  ([encrypted packages §3](moca-encrypted-package.md#3-the-marker-and-the-outline)).
+- **Manifest text and pictures can be personal data too.** Translated
+  titles and descriptions, tags, `alt` text and images are package data like
+  any other. A picture of a person is personal data. The rules above apply
+  to them.
 
 ## 14. Versioning of this specification
 

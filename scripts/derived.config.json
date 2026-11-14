@@ -1,66 +1,450 @@
 {
   "$comment": "What scripts/refresh-derived.mjs regenerates, in order. Everything listed here is derived from other files and must never be edited by hand.",
   "keys": {
-    "publisher": { "file": "fixtures/signing-keys/INSECURE-publisher.pem", "keyid": "example-publisher-2026" },
-    "reviewer": { "file": "fixtures/signing-keys/INSECURE-reviewer.pem", "keyid": "example-reviewer-2026" },
-    "rogue": { "file": "fixtures/signing-keys/INSECURE-rogue.pem", "keyid": "example-rogue-2026" },
-    "rsa": { "file": "fixtures/signing-keys/INSECURE-rsa.pem", "keyid": "example-rsa-2026" }
+    "publisher": {
+      "file": "fixtures/signing-keys/INSECURE-publisher.pem",
+      "keyid": "example-publisher-2026"
+    },
+    "reviewer": {
+      "file": "fixtures/signing-keys/INSECURE-reviewer.pem",
+      "keyid": "example-reviewer-2026"
+    },
+    "rogue": {
+      "file": "fixtures/signing-keys/INSECURE-rogue.pem",
+      "keyid": "example-rogue-2026"
+    },
+    "rsa": {
+      "file": "fixtures/signing-keys/INSECURE-rsa.pem",
+      "keyid": "example-rsa-2026"
+    },
+    "issuer": {
+      "file": "fixtures/signing-keys/INSECURE-issuer.pem",
+      "keyid": "example-issuer-2026"
+    },
+    "issuer-other": {
+      "file": "fixtures/signing-keys/INSECURE-issuer-other.pem",
+      "keyid": "example-issuer-other-2026"
+    }
   },
   "pins": [
-    { "package": "examples/handbook/handbook", "search": ["examples/handbook"] },
-    { "package": "conformance/fixtures/composed-members/book", "search": ["conformance/fixtures/composed-members"] },
-    { "package": "conformance/fixtures/member-other-version/v2", "search": ["conformance/fixtures/member-other-version"] }
+    {
+      "package": "examples/handbook/handbook",
+      "search": [
+        "examples/handbook"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/composed-members/book",
+      "search": [
+        "conformance/fixtures/composed-members"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/member-other-version/v2",
+      "search": [
+        "conformance/fixtures/member-other-version"
+      ]
+    }
   ],
   "sign": [
-    { "package": "examples/support-kb", "key": "publisher" },
-    { "package": "examples/acme-support", "key": "publisher" },
-    { "package": "conformance/fixtures/signed-reviewed", "key": "publisher" },
-    { "package": "conformance/fixtures/signature-untrusted-key", "key": "rogue" },
-    { "package": "conformance/fixtures/review-wrong-role", "key": "publisher" },
-    { "package": "conformance/fixtures/search-policy/v2", "key": "publisher" },
-    { "package": "conformance/fixtures/search-conflict/rival", "key": "publisher" },
-    { "package": "examples/policy-corpus/retention-2026", "key": "publisher" }
+    {
+      "package": "examples/support-kb",
+      "key": "publisher"
+    },
+    {
+      "package": "examples/acme-support",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/signed-reviewed",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/signature-untrusted-key",
+      "key": "rogue"
+    },
+    {
+      "package": "conformance/fixtures/review-wrong-role",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/search-policy/v2",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/search-conflict/rival",
+      "key": "publisher"
+    },
+    {
+      "package": "examples/policy-corpus/retention-2026",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/issued/original",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/issued/closed",
+      "key": "publisher"
+    }
   ],
   "$comment-signNotEd25519": "Attestations §5 allows only Ed25519 keys, so moca-sign cannot sign these: the script writes the envelope itself, with RSA PKCS#1 v1.5 and SHA-256, which is deterministic.",
   "signNotEd25519": [
-    { "package": "conformance/fixtures/signature-key-not-ed25519", "key": "rsa" }
+    {
+      "package": "conformance/fixtures/signature-key-not-ed25519",
+      "key": "rsa"
+    }
   ],
   "review": [
-    { "package": "examples/support-kb", "key": "reviewer", "nodes": ["refund-window.md"], "reviewer": "human:sam.ortiz", "at": "2026-08-14T00:00:00Z", "scope": "Checked against Acme Customer Terms section 7", "name": "sam-ortiz-2026-08-14" },
-    { "package": "examples/acme-support", "key": "reviewer", "nodes": ["returns/refund-window.md", "returns/refund-window.fr.md", "returns/returns-policy.md", "returns/returns-policy.fr.md"], "reviewer": "human:sam.ortiz", "at": "2026-09-14T00:00:00Z", "scope": "Checked against Acme Customer Terms section 7, in English and French", "name": "sam-ortiz-2026-09-14-returns" },
-    { "package": "examples/acme-support", "key": "reviewer", "nodes": ["delivery/delivery-options-and-times.md", "delivery/delivery-options-and-times.fr.md"], "reviewer": "human:sam.ortiz", "at": "2026-09-14T00:00:00Z", "scope": "Checked against Acme Customer Terms section 5, in English and French", "name": "sam-ortiz-2026-09-14-delivery" },
-    { "package": "conformance/fixtures/signed-reviewed", "key": "reviewer", "nodes": ["policy.md"], "reviewer": "human:reviewer", "at": "2026-09-01T00:00:00Z", "name": "reviewer-2026-09-01" },
-    { "package": "conformance/fixtures/review-wrong-role", "key": "publisher", "nodes": ["hello.md"], "reviewer": "human:publisher", "at": "2026-09-01T00:00:00Z", "name": "publisher-2026-09-01" }
+    {
+      "package": "examples/support-kb",
+      "key": "reviewer",
+      "nodes": [
+        "refund-window.md"
+      ],
+      "reviewer": "human:sam.ortiz",
+      "at": "2026-08-14T00:00:00Z",
+      "scope": "Checked against Acme Customer Terms section 7",
+      "name": "sam-ortiz-2026-08-14"
+    },
+    {
+      "package": "examples/acme-support",
+      "key": "reviewer",
+      "nodes": [
+        "returns/refund-window.md",
+        "returns/refund-window.fr.md",
+        "returns/returns-policy.md",
+        "returns/returns-policy.fr.md"
+      ],
+      "reviewer": "human:sam.ortiz",
+      "at": "2026-09-14T00:00:00Z",
+      "scope": "Checked against Acme Customer Terms section 7, in English and French",
+      "name": "sam-ortiz-2026-09-14-returns"
+    },
+    {
+      "package": "examples/acme-support",
+      "key": "reviewer",
+      "nodes": [
+        "delivery/delivery-options-and-times.md",
+        "delivery/delivery-options-and-times.fr.md"
+      ],
+      "reviewer": "human:sam.ortiz",
+      "at": "2026-09-14T00:00:00Z",
+      "scope": "Checked against Acme Customer Terms section 5, in English and French",
+      "name": "sam-ortiz-2026-09-14-delivery"
+    },
+    {
+      "package": "conformance/fixtures/signed-reviewed",
+      "key": "reviewer",
+      "nodes": [
+        "policy.md"
+      ],
+      "reviewer": "human:reviewer",
+      "at": "2026-09-01T00:00:00Z",
+      "name": "reviewer-2026-09-01"
+    },
+    {
+      "package": "conformance/fixtures/review-wrong-role",
+      "key": "publisher",
+      "nodes": [
+        "hello.md"
+      ],
+      "reviewer": "human:publisher",
+      "at": "2026-09-01T00:00:00Z",
+      "name": "publisher-2026-09-01"
+    },
+    {
+      "package": "conformance/fixtures/issued/original",
+      "key": "reviewer",
+      "nodes": [
+        "intro.md",
+        "lessons/two.md"
+      ],
+      "reviewer": "human:reviewer",
+      "at": "2026-09-01T00:00:00Z",
+      "name": "reviewer-2026-09-01"
+    },
+    {
+      "package": "conformance/fixtures/issued/closed",
+      "key": "reviewer",
+      "nodes": [
+        "intro.md",
+        "lessons/two.md"
+      ],
+      "reviewer": "human:reviewer",
+      "at": "2026-09-01T00:00:00Z",
+      "name": "reviewer-2026-09-01"
+    }
   ],
   "copyAttestations": [
-    { "from": "conformance/fixtures/signed-reviewed", "to": "conformance/fixtures/signature-tampered" }
+    {
+      "from": "conformance/fixtures/signed-reviewed",
+      "to": "conformance/fixtures/signature-tampered"
+    }
   ],
   "sidecars": [
-    { "package": "examples/support-kb", "out": "examples/sidecars/support-kb.moca.idx", "chunk": "headings" },
-    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/sidecars/valid", "chunk": "node", "variants": {
-      "stale": "digest",
-      "item-invalid": "item",
-      "format-unknown": "format",
-      "target-mismatch": "target",
-      "invalid": "schema",
-      "dense": "dense",
-      "dense-json": "dense-json",
-      "vectors-length": "vectors-length",
-      "no-text": "no-text",
-      "dense-prefixed": "dense-prefixed"
-    } },
-    { "package": "conformance/fixtures/search-distance", "out": "conformance/fixtures/sidecars/distance", "chunk": "node", "variants": {
-      "distance-cosine": "distance-cosine",
-      "distance-dot": "distance-dot",
-      "distance-euclidean": "distance-euclidean"
-    } }
+    {
+      "package": "examples/support-kb",
+      "out": "examples/sidecars/support-kb.moca.idx",
+      "chunk": "headings"
+    },
+    {
+      "package": "conformance/fixtures/valid-minimal",
+      "out": "conformance/fixtures/sidecars/valid",
+      "chunk": "node",
+      "variants": {
+        "stale": "digest",
+        "item-invalid": "item",
+        "format-unknown": "format",
+        "target-mismatch": "target",
+        "invalid": "schema",
+        "dense": "dense",
+        "dense-json": "dense-json",
+        "vectors-length": "vectors-length",
+        "no-text": "no-text",
+        "dense-prefixed": "dense-prefixed"
+      }
+    },
+    {
+      "package": "conformance/fixtures/search-distance",
+      "out": "conformance/fixtures/sidecars/distance",
+      "chunk": "node",
+      "variants": {
+        "distance-cosine": "distance-cosine",
+        "distance-dot": "distance-dot",
+        "distance-euclidean": "distance-euclidean"
+      }
+    }
   ],
   "archives": [
-    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/archive-minimal.zip" },
-    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/archive-noncharacter.zip", "rename": { "content/hello.md": "content/hello\ufffe.md" } },
-    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/archive-collision-nfc.zip", "rename": { "content/hello.md": "content/caf\u00e9.md" }, "add": { "content/cafe\u0301.md": "content/hello.md" } },
-    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/archive-collision-case.zip", "rename": { "content/hello.md": "content/Hello.md" }, "add": { "content/hello.md": "content/hello.md" } },
-    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/archive-collision-simple-lowercase.zip", "rename": { "content/hello.md": "content/\u0130.md" }, "add": { "content/i.md": "content/hello.md" } },
-    { "package": "conformance/fixtures/valid-minimal", "out": "conformance/fixtures/archive-dotted-i.zip", "rename": { "content/hello.md": "content/\u0130.md" }, "add": { "content/i\u0307.md": "content/hello.md" } }
+    {
+      "package": "conformance/fixtures/valid-minimal",
+      "out": "conformance/fixtures/archive-minimal.zip"
+    },
+    {
+      "package": "conformance/fixtures/valid-minimal",
+      "out": "conformance/fixtures/archive-noncharacter.zip",
+      "rename": {
+        "content/hello.md": "content/hello￾.md"
+      }
+    },
+    {
+      "package": "conformance/fixtures/valid-minimal",
+      "out": "conformance/fixtures/archive-collision-nfc.zip",
+      "rename": {
+        "content/hello.md": "content/café.md"
+      },
+      "add": {
+        "content/café.md": "content/hello.md"
+      }
+    },
+    {
+      "package": "conformance/fixtures/valid-minimal",
+      "out": "conformance/fixtures/archive-collision-case.zip",
+      "rename": {
+        "content/hello.md": "content/Hello.md"
+      },
+      "add": {
+        "content/hello.md": "content/hello.md"
+      }
+    },
+    {
+      "package": "conformance/fixtures/valid-minimal",
+      "out": "conformance/fixtures/archive-collision-simple-lowercase.zip",
+      "rename": {
+        "content/hello.md": "content/İ.md"
+      },
+      "add": {
+        "content/i.md": "content/hello.md"
+      }
+    },
+    {
+      "package": "conformance/fixtures/valid-minimal",
+      "out": "conformance/fixtures/archive-dotted-i.zip",
+      "rename": {
+        "content/hello.md": "content/İ.md"
+      },
+      "add": {
+        "content/i̇.md": "content/hello.md"
+      }
+    }
+  ],
+  "$comment-issued": "Issued copies (attestations §3a): each is a copy of `from` with `mark` appended to files, and issued-copy attestations signed with `key`. `changed` adds or overrides changedFiles entries (CURRENT means the file's hash in the copy); `original` overrides original; `rebuild` sets original to the digest rebuilt from changedFiles.",
+  "issued": [
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-valid",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer"
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-valid-2",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 2.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer"
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-wrong-original",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer",
+          "original": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-wrong-hash",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer",
+          "changed": {
+            "content/lessons/one.md": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          }
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-manifest-listed",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer",
+          "changed": {
+            "moca.json": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-unchanged-listed",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer",
+          "changed": {
+            "content/lessons/two.md": "CURRENT"
+          }
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-empty-map",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer",
+          "empty": true
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-untrusted-issuer",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "rogue"
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-issuer-not-named",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer-other"
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-path-not-allowed",
+      "mark": {
+        "content/intro.md": "\nMarked.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer"
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/closed",
+      "out": "conformance/fixtures/issued/copy-no-consent",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer"
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-conflict",
+      "mark": {
+        "content/lessons/one.md": "\nMarked for copy 1.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer"
+        },
+        {
+          "key": "issuer",
+          "name": "issued.example-issuer-2026.second",
+          "changed": {
+            "content/lessons/two.md": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          },
+          "rebuild": true
+        }
+      ]
+    },
+    {
+      "from": "conformance/fixtures/issued/original",
+      "out": "conformance/fixtures/issued/copy-review-changed",
+      "mark": {
+        "content/lessons/two.md": "\nMarked.\n"
+      },
+      "attestations": [
+        {
+          "key": "issuer"
+        }
+      ]
+    }
   ]
 }

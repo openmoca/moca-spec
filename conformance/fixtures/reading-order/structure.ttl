@@ -1,0 +1,15 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix c: <https://example.org/course#> .
+
+c:Path a skos:OrderedCollection ;
+  skos:prefLabel "Course path"@en ;
+  skos:memberList ( c:Intro c:Module1 c:Module2 c:Module3 ) .
+
+c:Intro a skos:Concept ; skos:prefLabel "Introduction"@en .
+c:Module1 a skos:Concept ; skos:prefLabel "Module 1"@en ; skos:narrower c:Basics .
+c:Basics a skos:Concept ; skos:prefLabel "Basics"@en .
+c:Module2 a skos:Concept ; skos:prefLabel "Module 2"@en ; dct:hasPart c:Practice .
+c:Practice a skos:Concept ; skos:prefLabel "Practice"@en .
+c:Module3 a skos:Concept ; skos:prefLabel "Module 3"@en ; skos:narrower c:Basics .
+c:Glossary a skos:Concept ; skos:prefLabel "Glossary"@en .

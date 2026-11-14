@@ -32,5 +32,11 @@ carried over.
 | [0020](0020-structure-never-hides-content.md) | Structure never hides content |
 | [0021](0021-digests-do-not-name-their-algorithm.md) | Digests do not name their algorithm |
 | [0022](0022-applications-get-advice.md) | Rules for applications are advice |
+| [0023](0023-encrypted-packages-in-an-age-envelope.md) | Encrypt packages in an age envelope |
+| [0024](0024-distribution-is-signed-intent.md) | `distribution` is the publisher's signed intent, not access control |
+| [0025](0025-catalogue-fields-travel-in-the-manifest.md) | Images, translated titles and tags travel in the manifest |
+| [0026](0026-apps-is-a-hint.md) | `apps` is a hint, never configuration |
+| [0027](0027-reading-order-names-a-collection.md) | The reading order names a collection, and `upTo` is the caller's |
+| [0028](0028-issued-copies.md) | Issued copies are bound to the publisher's package, with its consent |
 
 New records use the template in [0000-template.md](0000-template.md).

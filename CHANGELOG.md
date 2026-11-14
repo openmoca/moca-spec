@@ -4,6 +4,124 @@ All notable changes to the MOCA specification, schemas, profiles and
 conformance corpus. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
 [the versioning policy](docs/versioning-and-release.md).
 
+## [Unreleased]
+
+The 0.7.0 Spec Change Proposal:
+[distribution tiers, encrypted packages and issued copies](https://github.com/openmoca/moca-spec/issues/5).
+Also [package images, translated titles and tags](https://github.com/openmoca/moca-spec/issues/7),
+[an apps hint](https://github.com/openmoca/moca-spec/issues/8), and
+[a reading order, and search up to a point](https://github.com/openmoca/moca-spec/issues/9).
+
+### Added
+
+- A new document, [encrypted packages](spec/moca-encrypted-package.md): a
+  `.moca` archive encrypted with age v1 inside an envelope.
+- Package spec §2: the terms envelope, encrypted package, outline, key
+  provider, issued copy and issuer. §12: an envelope is a transport, not a
+  fourth form.
+- Reader contract §14: the optional feature `encryption`. §13: what a Reader
+  does with an envelope it cannot open.
+- Conformance runner: the `encryption` feature and the adapter's `envelope`
+  output.
+- ADR-0023 (age envelope), ADR-0024 (`distribution`), ADR-0025 (images,
+  translations, tags), ADR-0026 (`apps`), ADR-0027 (reading order) and
+  ADR-0028 (issued copies).
+- Package spec §4.1: `distribution` (`open`, `encrypted-only`,
+  `service-only`), the publisher's signed intent; a label only. The manifest
+  schema gains the closed enum, and the Reader interface's package result
+  gains `distribution`. Cases `distribution-encrypted-only` and
+  `distribution-unknown`; the runner compares `expect.distribution`.
+
+- [Encrypted packages](spec/moca-encrypted-package.md) in full: the
+  envelope layout, the `moca-enc.json` marker and the unverified outline,
+  age v1 with X25519 and scrypt recipients and no plugins, the key provider,
+  the opening order, the result, derived data (`index.age`) and security
+  considerations. Schema `moca-enc.schema.json`.
+- Reader contract: envelopes in §3, with the limit `maxScryptWorkFactor`
+  (20) and decrypted bytes counted against `maxBytes`; §4 no age plugins;
+  §11 the `E` family, `E001`–`E006`.
+- Reader interface: the key provider (§3), `keyProvider` and the `envelope`
+  result (§4).
+- Package spec §13.2, §13.3 and §13.6, and sidecar spec §2 and §5.2:
+  envelopes, and indexes inside them.
+- 23 `envelope-*` cases, with fixtures made by the reference age tool
+  (`scripts/envelope-fixtures.py`). The runner protocol gains
+  `options.identities`, `options.passphrase` and `options.fileKey`, and
+  compares `expect.envelope`.
+
+- Encrypted packages §5.1–§5.2 and Reader contract §11: a missing or short
+  payload nonce, and a low-order X25519 share, are `E006`; an identity
+  string that is not a valid key is `E002`. This matches the C2SP age test
+  kit and all three Readers.
+- Cases `envelope-index`, `envelope-index-corrupt` and
+  `envelope-index-deflated` for `index.age`, and the runner option
+  `options.envelopeSidecar`. Their fixtures come from
+  `scripts/envelope-fixtures.py --only index`, which leaves the other
+  envelopes untouched.
+- The reference adapter passes the reference Reader's age decryptor
+  (`@openmoca/moca-core/age`), so the corpus runs the `encryption` cases
+  against it.
+
+- Package spec §4.6–4.8 ([#7](https://github.com/openmoca/moca-spec/issues/7)):
+  the manifest properties `images` (an icon or a cover under `media/`, PNG,
+  JPEG or WebP, with optional `sizes` and `alt` text), `translations` (the
+  manifest's title, description, tags and alt text per declared locale) and
+  `tags`. Shapes are recommended for covers (16:9, at least 960×540) and
+  icons (square, at least 256×256). The manifest schema gains all three.
+- Reader contract: the limit `maxImageBytes` (1 MiB), and the codes
+  `M010_IMAGE_INVALID`, `M011_TRANSLATION_LOCALE_UNDECLARED`,
+  `M012_TAG_DUPLICATE` and `M013_ALT_IMAGE_UNKNOWN`. The Reader interface's
+  package result gains `images`, `translations` and `tags`.
+- Encrypted packages §2–3: an opt-in plain cover copy
+  (`outline/cover.png`, `.jpg` or `.webp`), checked against the inner cover;
+  `translations` and `tags` as opt-in outline properties.
+- 17 cases for images, translations and tags, and 8 `envelope-*` cases for
+  the cover copy and the outline. The runner compares `expect.images`,
+  `expect.translations` and `expect.tags`. The envelope fixtures come from
+  `scripts/envelope-fixtures.py --only cover`.
+
+- Package spec §4.9 ([#8](https://github.com/openmoca/moca-spec/issues/8)):
+  `apps`, an ordered list of `https:` URIs naming apps and app-type tokens,
+  where the publisher suggests the package is opened beyond conversation.
+  Advice only: Reader contract §4 forbids fetching, resolving or opening an
+  app URI. The Reader interface's result gains `apps`; the envelope outline
+  may carry it. §9 and §13.2 say how `apps` differs from profiles and
+  configuration. 5 `apps-*` cases and 2 `envelope-outline-apps*` cases; the
+  runner compares `expect.apps`.
+- Issued copies ([#5](https://github.com/openmoca/moca-spec/issues/5), part
+  C). Attestations §3a: the issued-copy predicate
+  (`https://w3id.org/moca/attestation/issued-copy/v1`). §6: the trust-root
+  role `issued-copy`, which requires `ids`. §7.1: two-pass verification; the
+  publisher's attestations are checked against the digest rebuilt from the
+  copy and the original hashes of the changed files; reviews of changed
+  files are listed with `fileChanged` and never count. §8: what an issued
+  copy proves. Package spec §4.11: `issuedCopies`, the publisher's consent
+  (issuers by key or Sigstore identity, and the paths they may mark). Reader
+  contract §7: `package.issuedCopy` and `node.issuedChange` in citation
+  records, and `L002_ISSUED_COPY_DUPLICATE` (info). The package result gains
+  `issuedCopy`. Schemas: `issuedCopies` in the manifest, `issued-copy` in the
+  trust root, and the citation-record fields. 17 `issued-*` cases and 3
+  `search-issued-copy-*` cases; `refresh:derived` builds the copies from
+  `scripts/derived.config.json`; two more insecure test keys (issuers).
+- Package spec §4.10 ([#9](https://github.com/openmoca/moca-spec/issues/9)):
+  `readingOrder`, the IRI of the ordered collection in the package's own
+  `structure.ttl` that orders the whole package; `M014` (warning) when it
+  does not resolve. Reader contract §9: the search option `upTo`, applied in
+  the gate (§9.2 step 6), limiting only packages whose reading order places
+  it (a member, or a descendant placed at its first member) and never
+  records off the reading order; `S008` (warning) when no loaded reading
+  order places it. §9.4: package states carry the reading order. The Reader
+  interface's result gains `readingOrder`, and a search gains `diagnostics`.
+  4 `reading-order-*` cases and 10 `search-upto-*` cases; the runner
+  compares `expect.readingOrder` and passes `search.upTo`.
+
+### Changed
+
+- Reader contract §11 and package spec §11 (`core`): the `E` family counts
+  for validity.
+- Package spec §4.3: "metadata-only changes" now name the real properties
+  `tags`, `images` and `translations`.
+
 ## [0.6.0] - 2026-11-11
 
 Hardening from the 10 November 2026 specification review. 0.5.0 was a soft
