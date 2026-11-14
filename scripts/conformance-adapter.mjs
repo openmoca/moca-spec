@@ -137,7 +137,9 @@ export async function actualFor(root, c) {
         await store.ingest(library);
       }
       const allowed = library.packages.filter(({ result }) => (o.allow ?? []).some((t) => join(root, t) === result.source?.location)).map(({ result }) => packageState(result));
-      const records = await new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true }).search(s.query, searchOptions);
+      const search = new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true });
+      const records = await search.search(s.query, searchOptions);
+      codes.push(...search.diagnostics.map((d) => d.code));
       return { codes, records };
     }
     const dense = () => new DenseBackend(library, { embedder: conformanceEmbedder(o.embedder) });
@@ -148,7 +150,10 @@ export async function actualFor(root, c) {
     codes.push(...(backend.diagnostics ?? []).map((d) => d.code));
     // Library diagnostics (L): for example two digests for one id@version.
     codes.push(...library.diagnostics.items.filter((d) => d.code.startsWith('L')).map((d) => d.code));
-    const records = await new Search(library, { backend, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks }).search(s.query, searchOptions);
+    const search = new Search(library, { backend, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks });
+    const records = await search.search(s.query, searchOptions);
+    // Contract §9: the search's own findings, such as S008.
+    codes.push(...search.diagnostics.map((d) => d.code));
     return { codes, records };
   }
 

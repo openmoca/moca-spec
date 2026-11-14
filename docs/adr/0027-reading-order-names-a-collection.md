@@ -38,9 +38,15 @@ Option 3 ([package spec §4.10](../../spec/moca-package-spec.md#410-reading-orde
 - Records off the reading order pass: a glossary, an introduction or
   reference pages are useful at every point. `scope` and `concepts` remove
   them when a caller wants.
-- `upTo` limits only the packages whose reading order has it as a member.
-  Reference packages searched beside a course still answer. A search never
-  returns nothing just because a package lacks the point.
+- `upTo` may be a member or a descendant of one. It is placed as any
+  concept is, at the first member that contains it, so a descendant limits
+  exactly as that member would.
+- `upTo` limits only the packages whose reading order places it. Reference
+  packages searched beside a course still answer. A search never returns
+  nothing just because a package lacks the point.
+- An `upTo` that no loaded reading order places limits nothing, and the
+  Reader reports `S008_UPTO_UNRESOLVED` (warning), so a mistyped point never
+  fails silently.
 - `upTo` runs in the gate and follows the caller. An ingress hook cannot set,
   change or remove it. It adds no pushdown filter.
 - Structure describes; it never hides content
@@ -49,7 +55,9 @@ Option 3 ([package spec §4.10](../../spec/moca-package-spec.md#410-reading-orde
 
 ## Consequences
 
-- One new warning, `M014_READING_ORDER_UNRESOLVED`, and no new capability.
+- Two new warnings, `M014_READING_ORDER_UNRESOLVED` and
+  `S008_UPTO_UNRESOLVED`, and no new capability. A search now has
+  diagnostics of its own (`Search.diagnostics`).
 - Package states grow by the reading order's members and positions.
 - A backend with `filterPushdown` may return hits the gate then drops for
   `upTo`; the Reader asks for more hits, as it already does without pushdown.

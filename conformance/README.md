@@ -89,8 +89,8 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `options.allowUnsignedRelations` | `true`: the library applies relations from unsigned or unscoped packages ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). Absent means false. |
 | `options.sidecar` | A sidecar offered to every loaded package. A package it does not match reports the binding code (for example `S002`) and is searched without it. |
 | `options.embedder` | The conformance embedder's identity: `name`, optional `version`, `dimensions`, and optional `queryPrefix` and `documentPrefix` it declares. It returns `[1, 0, …, 0]` of that length for every text, whatever the role. |
-| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a member of a reading order, contract §9). |
-| `expect.codes` | The set of diagnostic codes from sidecars, the backend and the library (`L` codes). |
+| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a concept on a reading order, contract §9). |
+| `expect.codes` | The set of diagnostic codes from sidecars, the backend, the library (`L` codes) and the search itself (`Search.diagnostics`, such as `S008`). |
 | `expect.include` | Results that must be returned. |
 | `expect.exclude` | Results that must never be returned. |
 | `expect.count` | The exact number of results, when given. |

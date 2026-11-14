@@ -91,11 +91,13 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `readingOrder`, the IRI of the ordered collection in the package's own
   `structure.ttl` that orders the whole package; `M014` (warning) when it
   does not resolve. Reader contract §9: the search option `upTo`, applied in
-  the gate (§9.2 step 6), limiting only packages whose reading order has it
-  as a member and never records off the reading order. §9.4: package states
-  carry the reading order. The Reader interface's result gains
-  `readingOrder`. 4 `reading-order-*` cases and 10 `search-upto-*` cases;
-  the runner compares `expect.readingOrder` and passes `search.upTo`.
+  the gate (§9.2 step 6), limiting only packages whose reading order places
+  it (a member, or a descendant placed at its first member) and never
+  records off the reading order; `S008` (warning) when no loaded reading
+  order places it. §9.4: package states carry the reading order. The Reader
+  interface's result gains `readingOrder`, and a search gains `diagnostics`.
+  4 `reading-order-*` cases and 10 `search-upto-*` cases; the runner
+  compares `expect.readingOrder` and passes `search.upTo`.
 
 ### Changed
 

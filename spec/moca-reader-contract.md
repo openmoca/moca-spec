@@ -357,14 +357,20 @@ search(query, { limit, includeAll, locale, concepts, scope, upTo }) -> citation 
 hierarchy or parts (§10). Both refer to the package structure
 ([package spec §5.6](moca-package-spec.md#56-structure)).
 
-`upTo` is the IRI of a member of a package's reading order
-([package spec §4.10](moca-package-spec.md#410-reading-order)). It leaves
+`upTo` is the IRI of a concept on a package's reading order
+([package spec §4.10](moca-package-spec.md#410-reading-order)): a member, or
+a descendant of a member by `skos:narrower` or `dcterms:hasPart`. It leaves
 out material that comes after that point:
 
+- **Where the point is.** `upTo` takes its position as any concept does: the
+  first member that is it or contains it. So a descendant limits exactly as
+  that member would.
 - **Which packages.** `upTo` limits only the packages whose reading order
-  has `upTo` as a member. Records from other loaded packages, such as
-  reference packages searched beside a course, are not limited by it. If no
-  loaded package's reading order has it, `upTo` limits nothing.
+  places it. Records from other loaded packages, such as reference packages
+  searched beside a course, are not limited by it.
+- **Unresolved.** If no loaded package's reading order places `upTo`, it
+  limits nothing, and the Reader reports `S008_UPTO_UNRESOLVED` (warning)
+  for that search, so it never fails silently.
 - **What passes.** In a limited package, a record passes when every concept
   it is bound to that is on the reading order has a position at or before
   the position of `upTo`. The point itself is included.
@@ -706,6 +712,7 @@ withhold only the `structured` capability.
 | `S005_SIDECAR_FORMAT_UNKNOWN` | info | The payload format is not recognised; the sidecar is ignored. |
 | `S006_MODEL_MISMATCH` | warning | The host's embedder does not match the index's model; dense search is refused. |
 | `S007_NO_VECTORS` | warning | A loaded package has no vectors a dense backend can search; that package is not searched. |
+| `S008_UPTO_UNRESOLVED` | warning | A search's `upTo` is on no loaded package's reading order, neither a member nor a descendant of one. It limits nothing (§9). |
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0011](../docs/adr/0011-park-unconsumed-features.md)), `O004_STRUCTURE_VIEW_MISMATCH` ([ADR-0019](../docs/adr/0019-park-structure-json.md)).
 

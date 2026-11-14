@@ -113,6 +113,7 @@ and `line`.
 | --- | --- | --- |
 | `Search(source, options)` | A library, or, for a store backend, the loaded packages' states (`packageState`) and a clock; then a backend, an audience set and optional hooks. | A search. |
 | `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`, `upTo`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.diagnostics` | Nothing. | The findings of the latest `search` call on this search, such as `S008_UPTO_UNRESOLVED`. Empty when it found none. |
 
 Every call follows
 [Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate).

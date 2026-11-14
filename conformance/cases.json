@@ -4293,9 +4293,9 @@
       }
     },
     {
-      "id": "search-upto-unknown",
+      "id": "search-upto-unresolved",
       "kind": "search",
-      "description": "Contract §9: upTo that no loaded reading order has limits nothing.",
+      "description": "Contract §9: an upTo that no loaded reading order places, neither a member nor a descendant, limits nothing, and the Reader reports S008.",
       "packages": [
         "fixtures/reading-order"
       ],
@@ -4308,6 +4308,9 @@
         "upTo": "https://example.org/course#Unknown"
       },
       "expect": {
+        "codes": [
+          "S008_UPTO_UNRESOLVED"
+        ],
         "count": 7,
         "include": [
           "https://example.com/conformance/reading-order@1.0.0#intro.md",
@@ -4321,9 +4324,9 @@
       }
     },
     {
-      "id": "search-upto-not-member",
+      "id": "search-upto-descendant",
       "kind": "search",
-      "description": "Contract §9: upTo must be a member of the reading order. Basics is only a descendant of members, so it limits nothing.",
+      "description": "Contract §9: upTo at Basics, a descendant of module 1 (and of module 3). It is placed at the first member that contains it, so it limits exactly as module 1 does.",
       "packages": [
         "fixtures/reading-order"
       ],
@@ -4336,15 +4339,17 @@
         "upTo": "https://example.org/course#Basics"
       },
       "expect": {
-        "count": 7,
+        "count": 4,
         "include": [
           "https://example.com/conformance/reading-order@1.0.0#intro.md",
           "https://example.com/conformance/reading-order@1.0.0#basics.md",
-          "https://example.com/conformance/reading-order@1.0.0#practice.md",
-          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
-          "https://example.com/conformance/reading-order@1.0.0#mixed.md",
           "https://example.com/conformance/reading-order@1.0.0#glossary.md",
           "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
         ]
       }
     },
