@@ -27,6 +27,7 @@ Modular Ontology, Content & Attestation.
 | [Authoring packages](guides/authoring.md) | Content, evidence, validity, versions, members, relations |
 | [Structure](guides/structure.md) | `structure.ttl`, concept bindings, structure operations, overlays, retrieval strategies |
 | [Signing and review](guides/signing-and-review.md) | Publisher and review attestations, trust roots |
+| [Encrypt a package](guides/encryption.md) | Encrypted packages, key providers, what encryption does not do, issued copies |
 | [Consuming packages](guides/consuming.md) | Use a Reader in TypeScript, .NET or Python: read and verify, search, citation records, your own store, MCP |
 | [Search and sidecar indexes](guides/search-and-indexes.md) | One search, backends, scope, hooks, sidecars, vector stores |
 | [Capabilities](guides/capabilities.md) | Which features your use needs |

@@ -114,6 +114,13 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   interface's result gains `readingOrder`, and a search gains `diagnostics`.
   4 `reading-order-*` cases and 10 `search-upto-*` cases; the runner
   compares `expect.readingOrder` and passes `search.upTo`.
+- MIGRATIONS.md: from 0.6.0 to 0.7.0, for packages, Producers, Readers and
+  hosts, and what 0.6 Readers do with 0.7 packages.
+- SECURITY.md: encrypted packages (envelope parsing, limits, the outline
+  check), issued copies and manifest images are in scope; the security model
+  says what encryption and issued copies do not do.
+- Guides: "Encrypt a package" (new), catalogue fields in "Authoring
+  packages", and "Search up to a point" in "Search and sidecar indexes".
 
 ### Changed
 

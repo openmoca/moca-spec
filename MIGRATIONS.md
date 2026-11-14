@@ -2,6 +2,47 @@
 
 How to move packages and Readers between versions of the specification.
 
+## From 0.6.0 to 0.7.0
+
+Packages written for `mocaVersion` `0.6` read exactly as before, with the same digests, and need no change. Every
+addition is optional. New packages that use one declare `mocaVersion` `0.7`. Trust roots that list the new role
+`issued-copy` cannot be read by 0.6 Readers.
+
+### Packages and Producers
+
+| Change | Codes | What to do |
+| --- | --- | --- |
+| `distribution`: `open` (the default), `encrypted-only` or `service-only`. The publisher's signed intent, never access control (package spec §4.1, [ADR-0024](docs/adr/0024-distribution-is-signed-intent.md)) | `M002` for any other value | Nothing, unless you want to state an intent. Sign after setting it. `moca-lint pack` warns when it packs an `encrypted-only` package plain. |
+| Encrypted packages: a `.moca.enc` envelope, an archive encrypted with age v1 to X25519 recipients or a passphrase, with an optional readable outline ([encrypted packages](spec/moca-encrypted-package.md), [ADR-0023](docs/adr/0023-encrypted-packages-in-an-age-envelope.md)) | `E001`–`E006` | Sign first, then `moca-sign encrypt`. Choose the outline fields with care: they are public. Encryption gives confidentiality only (encrypted packages §7). |
+| `images`, `translations` and `tags` in the manifest ([ADR-0025](docs/adr/0025-catalogue-fields-travel-in-the-manifest.md)). Images are PNG, JPEG or WebP files under `media/`, at most `maxImageBytes` (1 MiB) each | `M010`–`M013` | Optional. Run `moca-lint lint` for the image shape, size and alt-text checks. |
+| `apps`: where the publisher suggests the package is opened, as `https:` URIs and app-type tokens ([ADR-0026](docs/adr/0026-apps-is-a-hint.md)). A list of well-known types is on openmoca.org | `M002` for a bad entry | Optional. Never list conversation. |
+| `readingOrder`: the IRI of the ordered collection in your own `structure.ttl` that orders the package ([ADR-0027](docs/adr/0027-reading-order-names-a-collection.md)) | `M014` (warning) when it does not resolve | Optional. Name a `skos:OrderedCollection` with a `skos:memberList`. |
+| Issued copies: an issuer marks a licensee's copy and binds it to your package with an issued-copy attestation ([ADR-0028](docs/adr/0028-issued-copies.md)). Without `issuedCopies` in your manifest, no copy is accepted | `A002` for a copy you did not allow | Publishers: add `issuedCopies` (issuers by key or Sigstore identity, and the paths they may mark under `content/` or `media/`) and publish a new version. Issuers: `moca-sign issue`, with a DSSE key. |
+| A sidecar index is bound to a package digest, and every issued copy has its own | `S003` on a copy | Issuers: build the sidecar for each copy (`moca-index build`) after marking it. |
+
+### Readers and hosts
+
+| Change | Codes | What to do |
+| --- | --- | --- |
+| Validity: a package is valid when it has no error in the `T`, `P`, `M`, `C` or `E` families (Reader contract §11) | `E001`–`E006` | Treat an envelope that does not open as invalid. |
+| Result fields: `distribution`, `envelope`, `images`, `translations`, `tags`, `apps`, `readingOrder` and `issuedCopy` (Reader interface §4) | — | Read them if you need them. `apps` and `distribution` are advice: never fetch, open or enforce them. |
+| The optional feature `encryption` (Reader contract §14): a key provider, age for X25519 and scrypt, and the limits `maxScryptWorkFactor` (20) and the decrypted `maxBytes` | `E001` with no key provider | Hosts that open envelopes supply a key provider (encrypted packages §5.1). In .NET, add `OpenMoca.Reader.Age`; in TypeScript, `@openmoca/moca-core/age`. |
+| Trust roots gain the role `issued-copy`, which requires `ids` (attestations §6) | — (the trust root is refused when `ids` is missing) | Give the role only to issuers you trust to put a publisher's name on changed bytes, with `ids` that cover those publishers' packages. `moca-sign trust add --roles issued-copy --ids …`. |
+| Issued copies are verified in two passes: the publisher's attestations against the rebuilt original digest (attestations §7.1). Records carry `package.issuedCopy` and `node.issuedChange`; reviews of changed files are listed with `fileChanged` and never count | `A002` | Applications: show that a record comes from a changed file. Share `issuedCopy.originalDigest`, not the copy's digest, outside the licensee's own use. |
+| A library keeps the first of two issued copies of one original and notes the second | `L002_ISSUED_COPY_DUPLICATE` (info) | None. It replaces `L001` for this case only. |
+| Search takes `upTo`, a point on a package's reading order; a search has `diagnostics` for its latest call (Reader contract §9) | `S008_UPTO_UNRESOLVED` (warning) | Optional. Store searches: rebuild your package states (`packageState`), which now carry the reading order and the issued copy. |
+| Citation records may carry new fields | — | Consumers ignore fields they do not know (Reader contract §7). |
+
+### What 0.6 Readers do with 0.7 packages
+
+- **An envelope** has no `moca.json` at its root: `T002_MANIFEST_NOT_FOUND`.
+- **An issued copy** reads as a changed package: the publisher's attestation is `A008`, and the copy is refused
+  under `requireSignature`. That fails safe.
+- **A trust root that lists `issued-copy`** is refused, because the `roles` enum is closed.
+- **New manifest keys** (`distribution`, `images`, `translations`, `tags`, `apps`, `readingOrder`,
+  `issuedCopies`) are unknown keys (`M004`, info) and are ignored.
+- **`mocaVersion` `0.7`** is newer than the Reader (`M009`, warning); the package is read on a best-effort basis.
+
 ## From 0.5.0 to 0.6.0
 
 Packages written for `mocaVersion` `0.5` read as before, with the same digests,

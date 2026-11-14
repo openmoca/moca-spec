@@ -398,6 +398,45 @@ it contains:
 with members is `composed`; see
 [`examples/handbook`](../../examples/handbook).
 
+## How the package appears in a catalogue
+
+Libraries and catalogues list packages by their manifest. A few optional
+fields help them show yours well (package spec §4.6–4.10):
+
+```json
+"images": [
+  { "src": "media/cover.png", "role": "cover", "type": "image/png", "sizes": "1920x1080",
+    "alt": "A support agent at a desk" },
+  { "src": "media/icon.png", "role": "icon", "type": "image/png", "sizes": "512x512", "alt": "Acme logo" }
+],
+"tags": ["refunds", "returns"],
+"translations": {
+  "fr": { "title": "Base de connaissances du support Acme", "tags": ["remboursements"] }
+},
+"apps": ["support-desk"],
+"readingOrder": "https://example.com/moca/support-kb#path"
+```
+
+- **`images`**: PNG, JPEG or WebP files under `media/`, at most 1 MiB each.
+  A cover is 16:9; an icon is square. Give every image `alt` text.
+  `moca-lint lint` checks the shapes and sizes from the file headers.
+- **`tags`**: a few plain labels for the whole package. The firm link to a
+  vocabulary is still the concept binding in `structure.ttl`; `moca-lint lint
+  --vocabulary <file>` shows how your tags line up with one.
+- **`translations`**: the title, description, tags and alt text in each
+  language in `locales`.
+- **`apps`**: where you suggest the package is opened, beyond conversation: a
+  specific app as an `https:` address, or a kind of app. A host may offer
+  "Open with"; it never has to. Well-known kinds are listed on
+  [openmoca.org](https://openmoca.org/spec/app-types/).
+- **`readingOrder`**: the ordered collection in your `structure.ttl` that the
+  package is meant to be read in ([structure](structure.md)). It lets a search
+  stay within what a reader has reached
+  ([search up to a point](search-and-indexes.md#search-up-to-a-point)).
+
+Every field is signed with the rest of the manifest. None of them changes how
+a Reader treats the content.
+
 ## Next
 
 - [Structure](structure.md): topics, parts, order and what requires what.

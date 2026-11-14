@@ -305,6 +305,24 @@ add what each result requires. Both work with every backend. Your application
 can also plug in its own retrieval hooks, before and after the backend
 ([write your own hooks](structure.md#7-write-your-own-hooks)).
 
+## Search up to a point
+
+When a package names a `readingOrder` (package spec §4.10), a search can
+leave out what comes after a point in it: `upTo`. A learner on module 2 gets
+answers from the introduction, module 1 and module 2, and not from the
+module 5 exercises. Pages that are not on the reading order, such as a
+glossary, still answer, and so do other packages loaded beside the course.
+
+```js
+await search.search('which form do I use', { upTo: 'https://example.com/moca/course#module-2' });
+```
+
+`upTo` can be a member of the reading order or anything under one. If no
+loaded package's reading order has it, it limits nothing and the search
+reports `S008_UPTO_UNRESOLVED` in `search.diagnostics`. It is a convenience,
+not access control: anyone with the file can read all of it
+([Reader contract §9](../../spec/moca-reader-contract.md#9-search)).
+
 ## Next
 
 - [Structure](structure.md): search within a topic, and what each topic
