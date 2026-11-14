@@ -1,0 +1,21 @@
+{
+  "id": "https://example.com/conformance/image-missing",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "images": [
+    {
+      "src": "media/missing.png",
+      "role": "icon",
+      "type": "image/png",
+      "sizes": "256x256",
+      "alt": "A blue square"
+    },
+    {
+      "src": "media/cover.webp",
+      "role": "cover",
+      "type": "image/webp",
+      "sizes": "960x540",
+      "alt": "A wide pink banner"
+    }
+  ]
+}

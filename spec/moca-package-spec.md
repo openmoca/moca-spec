@@ -168,6 +168,9 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `license` | No | SPDX license expression. |
 | `publisher` | No | Who publishes the package. Informative; identity is proven by attestations, not by this field. |
 | `distribution` | No | How the publisher intends the package to be handed out: `open` (the default), `encrypted-only` or `service-only`. A label, not access control (§13.3). |
+| `images` | No | Pictures of the package for a catalogue or a library: package files under `media/`, each with a role (§4.6). |
+| `translations` | No | The manifest's `title`, `description`, `tags` and image `alt` text in other languages, keyed by a tag in `locales` (§4.7). |
+| `tags` | No | Short plain labels, in the default language, that a catalogue can filter and group by (§4.8). |
 | `validFrom`, `validUntil` | No | When the package's content is in force (§4.4). |
 | `members` | No | Packages this package is composed of, pinned by digest (§7.1). |
 | `relations` | No | Typed relations to other packages (§7.2). |
@@ -229,7 +232,8 @@ before it: a semantic version never contains `@`, though an `id` may.
 - **Patch**: editorial changes only (spelling, formatting, clarifications that
   change no meaning).
 
-Metadata-only changes (licence, description, tags) are patch changes. The
+Metadata-only changes (licence, description, `tags`, `images`,
+`translations`) are patch changes. The
 digest changes with any byte change; the version tells people how much the
 meaning changed.
 
@@ -276,6 +280,109 @@ including an `x-` key that does not match, are reported as
 A manifest never configures its Reader. No key, known or unknown, can make a
 Reader contact a location, load a model or change a setting
 ([Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)).
+
+### 4.6 Images
+
+`images` lists pictures of the package that a catalogue or a library can
+show. The shape follows the `icons` member of the W3C Web App Manifest, with
+a `role` of our own:
+
+```json
+"images": [
+  { "src": "media/icon.png", "role": "icon", "type": "image/png", "sizes": "256x256" },
+  { "src": "media/cover.webp", "role": "cover", "type": "image/webp", "sizes": "1920x1080",
+    "alt": "A support agent at a desk with two screens" }
+]
+```
+
+| Member | Required | Meaning |
+| --- | --- | --- |
+| `src` | Yes | A package path (§5.2) to a regular file under `media/`. Never a URL: no scheme, no leading `/`, no `.` or `..` segment. |
+| `role` | Yes | `icon` (square and small) or `cover` (a wide picture for a tile or a page). |
+| `type` | Yes | `image/png`, `image/jpeg` or `image/webp`. Nothing else: no SVG. |
+| `sizes` | No | Pixel sizes, as in the W3C member (`256x256`, or several separated by single spaces). Informative. |
+| `alt` | No | A short description of the picture, in the default language (`language`), for people who cannot see it. 1 to 250 characters. |
+
+- The file is part of the package, so the digest covers it and a signature
+  signs it. Changing a picture needs a new version.
+- A Reader never fetches anything for an image
+  ([Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)),
+  and never decodes one.
+- At most 16 entries. A URL in `src`, a `type` outside the three, or more
+  entries fails the schema (`M002`).
+- A Reader checks each image once the manifest passes its schema. It reports `M010_IMAGE_INVALID` (warning) and
+  leaves the image out of the result when the file is missing, is larger
+  than `maxImageBytes`
+  ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)), or does
+  not start with the signature of its `type`: PNG `89 50 4E 47 0D 0A 1A 0A`;
+  JPEG `FF D8 FF`; WebP `RIFF`, four bytes, then `WEBP`. The package stays
+  valid. The image's `alt` text, and any translation of it, go with it
+  without a further diagnostic.
+- Several images may share a role. A host chooses among them, for example by
+  `sizes`.
+
+**Shapes.** A `cover` SHOULD be 16:9 and at least 960×540 pixels. An `icon`
+SHOULD be square and at least 256×256 pixels. These are recommendations for
+Producers, not Reader rules. A host that meets another shape centre-crops it
+to the shape it needs (informative).
+
+### 4.7 Translations
+
+`translations` gives the manifest's text in other languages. The shape
+follows the W3C Web App Manifest `translations` incubation: a map from a
+language tag to the translated members.
+
+```json
+"language": "en",
+"locales": ["fr", "de"],
+"title": "Support knowledge base",
+"translations": {
+  "fr": {
+    "title": "Base de connaissances du support",
+    "description": "Réponses aux questions courantes.",
+    "tags": ["service client", "remboursements"],
+    "alt": { "media/cover.webp": "Une agente du support à un bureau avec deux écrans" }
+  },
+  "de": { "title": "Support-Wissensdatenbank" }
+}
+```
+
+- `title`, `description` and `tags` at the top level, and each image's `alt`,
+  stay the default-language text. A translation never replaces them.
+- Each key MUST equal a tag in `locales`, compared case-insensitively, A–Z
+  only (§2). A key that does not is `M011_TRANSLATION_LOCALE_UNDECLARED`
+  (error), so the package is invalid.
+- Each value has any of `title`, `description`, `tags` and `alt`, and nothing
+  else (`M002`). `title` is not empty. `tags` follows §4.8, in that
+  language. `alt` maps an image's `src` to its text in that language, with
+  the same length rule as `alt`.
+- An `alt` key that names no entry in `images` is `M013_ALT_IMAGE_UNKNOWN`
+  (warning). That text is dropped, and the package stays valid.
+- A declared locale with no translation is allowed. A host falls back to the
+  default-language text.
+
+Translations of content are node representations (§5.4). `translations`
+covers the manifest's own text only, so a catalogue can show it without
+reading content.
+
+### 4.8 Tags
+
+`tags` gives short plain labels for a catalogue to filter and group by:
+
+```json
+"tags": ["customer support", "refunds", "returns"]
+```
+
+- At most 32 tags. Each is 1 to 64 characters, with no white space at the
+  start or end (`M002`).
+- No two tags in one list are equal when compared case-insensitively, A–Z
+  only (§2). A repeat is `M012_TAG_DUPLICATE` (warning): the Reader keeps the
+  first, drops the repeat, and the package stays valid.
+- `translations.<tag>.tags` is a translated list, not extra tags. A host shows
+  one list or the other.
+- Tags are labels for people and catalogues. They are not concepts. Pages
+  keep OKF's `tags`, and the firm link from content to a vocabulary stays the
+  concept binding in `structure.ttl` (§5.6).
 
 ## 5. Content
 
@@ -387,6 +494,9 @@ equals the request; the request truncated, one subtag at a time, as RFC 4647
 the request and `-`, the lowest in code-point order (`pt` finds `pt-BR`); the
 default representation. A locale representation without a
 default-language file is reported as `C009_LOCALE_ORPHAN` (warning).
+
+The manifest's own text (title, description, tags and image `alt` text) is
+translated in `translations` (§4.7), not in node representations.
 
 ### 5.5 Trust fields
 
@@ -791,6 +901,11 @@ cited reference material, never as system instructions, and never grant tools
 because content asks for them. See
 [Reader contract §12](moca-reader-contract.md#12-handing-content-to-a-model).
 
+Images are untrusted input too. A Reader checks only an image's size and
+its first bytes (§4.6). A host that decodes an image SHOULD use a decoder that
+is kept up to date, and SHOULD treat the picture as content from the
+publisher, not as something it has checked.
+
 Reading a package is bounded as well: every Reader limits the entries, bytes,
 frontmatter, triples and evidence work it accepts from a package
 ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)).
@@ -877,6 +992,10 @@ log. Content and sources may hold more.
 - **An envelope's outline is public.** Its fields are readable without a
   key, so publishers SHOULD choose them knowing that
   ([encrypted packages §3](moca-encrypted-package.md#3-the-marker-and-the-outline)).
+- **Manifest text and pictures can be personal data too.** Translated
+  titles and descriptions, tags, `alt` text and images are package data like
+  any other. A picture of a person is personal data. The rules above apply
+  to them.
 
 ## 14. Versioning of this specification
 

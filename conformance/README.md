@@ -9,7 +9,7 @@ when it reaches the same conclusions as these cases: package, `search` and
 
 ```text
 conformance/
-├── cases.json          224 cases: target, options, expected conclusions
+├── cases.json          249 cases: target, options, expected conclusions
 ├── fixtures/           the packages, sidecars and .zip archives they read
 └── fixtures/trust-root.json
 ```
@@ -50,6 +50,7 @@ conformance/
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
 | `expect.distribution` | The result's `distribution` ([package spec §4.1](../spec/moca-package-spec.md#41-properties)): `open`, `encrypted-only`, `service-only`, or `null` when the result has none. |
+| `expect.images`, `expect.translations`, `expect.tags` | The result's `images`, `translations` and `tags` ([package spec §4.6–4.8](../spec/moca-package-spec.md#46-images)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
 | `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |

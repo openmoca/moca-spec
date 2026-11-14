@@ -1631,6 +1631,331 @@
       }
     },
     {
+      "id": "catalogue-valid",
+      "description": "Package spec §4.6–4.8: an icon and two covers (PNG, WebP, JPEG), alt text, tags, and translations for two declared locales with translated tags and alt text. The result exposes them as declared.",
+      "target": "fixtures/catalogue-valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "images": [
+          {
+            "src": "media/icon.png",
+            "role": "icon",
+            "type": "image/png",
+            "sizes": "256x256",
+            "alt": "A blue square"
+          },
+          {
+            "src": "media/cover.webp",
+            "role": "cover",
+            "type": "image/webp",
+            "sizes": "960x540",
+            "alt": "A wide pink banner"
+          },
+          {
+            "src": "media/cover.jpg",
+            "role": "cover",
+            "type": "image/jpeg",
+            "sizes": "960x540"
+          }
+        ],
+        "tags": [
+          "customer support",
+          "refunds",
+          "returns"
+        ],
+        "translations": {
+          "fr": {
+            "title": "Base de connaissances",
+            "description": "Réponses aux questions courantes.",
+            "tags": [
+              "service client",
+              "remboursements",
+              "retours"
+            ],
+            "alt": {
+              "media/cover.webp": "Une large bannière rose"
+            }
+          },
+          "de": {
+            "title": "Wissensdatenbank"
+          }
+        },
+        "digest": "sha256:fa61df6875316edb07e0038014be961ff1ebc6f0efc2974a2a6b87d88d8f520d"
+      }
+    },
+    {
+      "id": "image-src-url",
+      "description": "Package spec §4.6: src is never a URL; the schema refuses it.",
+      "target": "fixtures/image-src-url",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "images": null
+      }
+    },
+    {
+      "id": "image-svg",
+      "description": "Package spec §4.6: only PNG, JPEG and WebP; an SVG type fails the schema.",
+      "target": "fixtures/image-svg",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "images": null
+      }
+    },
+    {
+      "id": "image-too-large",
+      "description": "Package spec §4.6: an image over maxImageBytes is M010 and left out; the package stays valid.",
+      "target": "fixtures/image-too-large",
+      "options": {
+        "limits": {
+          "maxImageBytes": 100
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "images": []
+      }
+    },
+    {
+      "id": "image-missing",
+      "description": "Package spec §4.6: an image whose file is not in the package is M010 and left out; the other image stays.",
+      "target": "fixtures/image-missing",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "images": [
+          {
+            "src": "media/cover.webp",
+            "role": "cover",
+            "type": "image/webp",
+            "sizes": "960x540",
+            "alt": "A wide pink banner"
+          }
+        ]
+      }
+    },
+    {
+      "id": "image-wrong-type",
+      "description": "Package spec §4.6: a PNG file declared as image/jpeg does not start with the JPEG signature: M010, left out.",
+      "target": "fixtures/image-wrong-type",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "images": []
+      }
+    },
+    {
+      "id": "image-alt-empty",
+      "description": "Package spec §4.6: alt is 1 to 250 characters; an empty alt fails the schema.",
+      "target": "fixtures/image-alt-empty",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "image-alt-dropped",
+      "description": "Package spec §4.6: an image dropped with M010 takes its translated alt text with it, without a further diagnostic.",
+      "target": "fixtures/image-alt-dropped",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "translations": {
+          "fr": {
+            "alt": {
+              "media/cover.webp": "Une large bannière rose"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "translation-alt-unknown",
+      "description": "Package spec §4.7: a translated alt text for an image not in images is M013 (warning) and dropped.",
+      "target": "fixtures/translation-alt-unknown",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M013_ALT_IMAGE_UNKNOWN"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "translations": {
+          "fr": {
+            "alt": {
+              "media/icon.png": "Un carré bleu"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "translation-locale-undeclared",
+      "description": "Package spec §4.7: a translation keyed by a tag not in locales is M011 (error); the result has no translations.",
+      "target": "fixtures/translation-locale-undeclared",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M011_TRANSLATION_LOCALE_UNDECLARED"
+        ],
+        "capabilities": [],
+        "translations": null
+      }
+    },
+    {
+      "id": "translation-locale-case",
+      "description": "Package spec §4.7: translation keys match locales case-insensitively, A–Z only; the key is kept as declared.",
+      "target": "fixtures/translation-locale-case",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "translations": {
+          "PT-br": {
+            "title": "Fixture PT"
+          }
+        }
+      }
+    },
+    {
+      "id": "tags-valid",
+      "description": "Package spec §4.8: package tags are exposed as declared.",
+      "target": "fixtures/tags-valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "tags": [
+          "customer support",
+          "refunds"
+        ],
+        "digest": "sha256:718cb6266302cdac060c5b7f0ed4045cefdae1955eca79a3e85cdb744a4221e2"
+      }
+    },
+    {
+      "id": "tags-duplicate",
+      "description": "Package spec §4.8: a case-insensitive repeat is M012 (warning); the first is kept, the repeat dropped, and the package stays valid.",
+      "target": "fixtures/tags-duplicate",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M012_TAG_DUPLICATE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "tags": [
+          "Refunds",
+          "returns"
+        ]
+      }
+    },
+    {
+      "id": "tags-empty",
+      "description": "Package spec §4.8: an empty tag fails the schema.",
+      "target": "fixtures/tags-empty",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "tags": null
+      }
+    },
+    {
+      "id": "tags-padded",
+      "description": "Package spec §4.8: a tag may not start or end with white space.",
+      "target": "fixtures/tags-padded",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "tags-translation",
+      "description": "Package spec §4.8: translated tags follow the same rules in their language; a repeat there is M012 and dropped.",
+      "target": "fixtures/tags-translation",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M012_TAG_DUPLICATE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "tags": [
+          "refunds"
+        ],
+        "translations": {
+          "fr": {
+            "tags": [
+              "remboursements"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "tags-strict",
+      "description": "Contract §11: in strict mode the M012 warning is an error, so the package is invalid and the result has no tags.",
+      "target": "fixtures/tags-duplicate",
+      "options": {
+        "strict": true
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M012_TAG_DUPLICATE"
+        ],
+        "capabilities": [],
+        "tags": null
+      }
+    },
+    {
       "id": "vendor-key-trailing-newline",
       "description": "Package spec §4.5: a vendor key must match x-<vendor>-<key> exactly. One with a trailing newline is an unknown key (M004).",
       "target": "fixtures/vendor-key-trailing-newline",
@@ -4337,6 +4662,179 @@
         "valid": false,
         "codes": [
           "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover",
+      "description": "Encrypted packages §3: an outline with translations and tags and a cover copy equal to the inner manifest's first cover. It opens.",
+      "target": "fixtures/envelopes/cover.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": true
+        },
+        "digest": "SAME:catalogue-valid",
+        "tags": [
+          "customer support",
+          "refunds",
+          "returns"
+        ]
+      }
+    },
+    {
+      "id": "envelope-cover-differs",
+      "description": "Encrypted packages §3: a cover copy that differs by one byte from the inner cover is E004.",
+      "target": "fixtures/envelopes/cover-differs.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-wrong-extension",
+      "description": "Encrypted packages §3: the copy's extension must match the cover's type; a WebP cover copied as outline/cover.png is E004.",
+      "target": "fixtures/envelopes/cover-wrong-extension.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-no-cover",
+      "description": "Encrypted packages §3: a cover copy when the inner manifest has no cover image is E004.",
+      "target": "fixtures/envelopes/cover-no-cover.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-gif",
+      "description": "Encrypted packages §2: outline/cover.gif is not an allowed entry: E005, before any key is asked for.",
+      "target": "fixtures/envelopes/cover-gif.moca.enc",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-two",
+      "description": "Encrypted packages §2: an envelope has at most one cover copy: E005.",
+      "target": "fixtures/envelopes/cover-two.moca.enc",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-cover-too-large",
+      "description": "Encrypted packages §2: a cover copy over maxImageBytes is E005, before any key is asked for.",
+      "target": "fixtures/envelopes/cover.moca.enc",
+      "options": {
+        "limits": {
+          "maxImageBytes": 16
+        }
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-outline-translation-mismatch",
+      "description": "Encrypted packages §3: an outline whose translated title differs from the decrypted manifest's is E004.",
+      "target": "fixtures/envelopes/outline-translation-mismatch.moca.enc",
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "requires": [
+        "encryption"
+      ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
         ],
         "capabilities": [],
         "envelope": {

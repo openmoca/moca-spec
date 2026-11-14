@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/tags-valid",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "tags": [
+    "customer support",
+    "refunds"
+  ]
+}

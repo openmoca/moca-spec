@@ -37,6 +37,13 @@ async function run(c) {
   return JSON.parse(out.stdout);
 }
 
+/** A JSON value with object members sorted, so member order is never compared (arrays keep their order). */
+function canonical(v) {
+  if (Array.isArray(v)) return v.map(canonical);
+  if (v && typeof v === 'object') return Object.fromEntries(Object.keys(v).sort().map((k) => [k, canonical(v[k])]));
+  return v;
+}
+
 function checkPackage(e, actual) {
   const problems = [];
   if (e.valid !== actual.valid) problems.push(`valid: expected ${e.valid}, got ${actual.valid}`);
@@ -49,6 +56,12 @@ function checkPackage(e, actual) {
   // Package spec §4.1: null means the result has no distribution (an invalid manifest).
   if (e.distribution !== undefined && e.distribution !== (actual.distribution ?? null)) {
     problems.push(`distribution: expected ${e.distribution}, got ${actual.distribution ?? null}`);
+  }
+  // Package spec §4.6–4.8: images, translations and tags as the result exposes them; null means absent.
+  for (const field of ['images', 'translations', 'tags']) {
+    if (e[field] === undefined) continue;
+    const got = actual[field] ?? null;
+    if (JSON.stringify(canonical(got)) !== JSON.stringify(canonical(e[field]))) problems.push(`${field}: expected ${JSON.stringify(e[field])}, got ${JSON.stringify(got)}`);
   }
   // Encrypted packages §5.3: the fields of envelope the case gives are compared exactly.
   for (const [field, want] of Object.entries(e.envelope ?? {})) {

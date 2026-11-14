@@ -104,6 +104,7 @@ be at least those below, which the conformance corpus assumes:
 | Uncompressed bytes in a source | `maxBytes` | 512 MiB | `T003` |
 | Decrypted bytes of an envelope's `package.age` or `index.age`, counted as they are produced | `maxBytes` | 512 MiB | `T003` |
 | age scrypt work factor (log2 N) in an envelope | `maxScryptWorkFactor` | 20 | `E006`, without running scrypt |
+| Bytes of one manifest image ([package spec §4.6](moca-package-spec.md#46-images)), or of an envelope's cover copy | `maxImageBytes` | 1 MiB | `M010` for that image (`E005` for a cover copy) |
 | Frontmatter block size | `maxFrontmatterBytes` | 64 KiB | `C002` for that node (`C004` for a reserved file) |
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |
 | Structure file size | `maxStructureBytes` | 4 MiB | `O001` |
@@ -629,6 +630,10 @@ withhold only the `structured` capability.
 | `M007_UNREGISTERED_URN` | info | The package id uses a URN namespace that is not registered with IANA. |
 | `M008_DIGEST_V1_PACKAGE` | info | The package was written for a `mocaVersion` before 0.4; digests, pins and attestations made then will not match `moca-digest-v2` ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
 | `M009_MOCA_VERSION_NEWER` | warning | The package was written for a newer `mocaVersion` than this Reader implements; it is read under the newest rules this Reader implements ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
+| `M010_IMAGE_INVALID` | warning | A manifest image is missing, over `maxImageBytes`, or does not start with the signature of its `type`. It is left out of the result ([package spec §4.6](moca-package-spec.md#46-images)). |
+| `M011_TRANSLATION_LOCALE_UNDECLARED` | error | A key of `translations` is not a tag in `locales` ([package spec §4.7](moca-package-spec.md#47-translations)). |
+| `M012_TAG_DUPLICATE` | warning | Two tags in one list are equal, compared case-insensitively. The repeat is dropped ([package spec §4.8](moca-package-spec.md#48-tags)). |
+| `M013_ALT_IMAGE_UNKNOWN` | warning | A translated `alt` text names no image in `images`. It is dropped. |
 | `C001_FRONTMATTER_MISSING` | error | A concept document has no YAML frontmatter (OKF MUST). |
 | `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML or is not a mapping. |
 | `C003_TYPE_MISSING` | error | Frontmatter has no non-empty type (OKF MUST). |
@@ -643,8 +648,8 @@ withhold only the `structured` capability.
 | `E001_ENCRYPTED_NO_KEY` | error | An envelope was not opened: there is no key provider, it returned no key or a kind of key no stanza uses, or the Reader does not implement `encryption` ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). |
 | `E002_DECRYPTION_FAILED` | error | A key was supplied for an envelope, but it is not a valid key of its kind, unwrapping failed, or the header MAC failed. |
 | `E003_PAYLOAD_CORRUPT` | error | An envelope's encrypted payload failed authentication or was truncated. |
-| `E004_OUTLINE_MISMATCH` | error | An envelope's outline differs from the decrypted manifest or structure. |
-| `E005_ENVELOPE_INVALID` | error | An envelope has a missing, repeated or unexpected entry, an encrypted entry that is not stored, or an invalid `moca-enc.json`, or a Zip has both `moca.json` and `moca-enc.json` at its root. |
+| `E004_OUTLINE_MISMATCH` | error | An envelope's outline differs from the decrypted manifest, structure or cover. |
+| `E005_ENVELOPE_INVALID` | error | An envelope has a missing, repeated or unexpected entry, an encrypted entry that is not stored, a cover copy over `maxImageBytes`, or an invalid `moca-enc.json`, or a Zip has both `moca.json` and `moca-enc.json` at its root. |
 | `E006_AGE_HEADER_INVALID` | error | An envelope's age header is malformed or unsupported, over 64 KiB, breaks the scrypt rules or the work-factor limit, has no full payload nonce, or has a low-order X25519 share. |
 | `A001_ATTESTATION_MALFORMED` | error | An attestation file is not a parseable envelope and statement. |
 | `A002_ATTESTATION_INVALID` | error | An attestation failed verification or does not match the package. |

@@ -8,6 +8,7 @@ conformance corpus. The format follows [Keep a Changelog](https://keepachangelog
 
 The 0.7.0 Spec Change Proposal:
 [distribution tiers, encrypted packages and issued copies](https://github.com/openmoca/moca-spec/issues/5).
+Also [package images, translated titles and tags](https://github.com/openmoca/moca-spec/issues/7).
 
 ### Added
 
@@ -57,10 +58,30 @@ The 0.7.0 Spec Change Proposal:
   (`@openmoca/moca-core/age`), so the corpus runs the `encryption` cases
   against it.
 
+- Package spec §4.6–4.8 ([#7](https://github.com/openmoca/moca-spec/issues/7)):
+  the manifest properties `images` (an icon or a cover under `media/`, PNG,
+  JPEG or WebP, with optional `sizes` and `alt` text), `translations` (the
+  manifest's title, description, tags and alt text per declared locale) and
+  `tags`. Shapes are recommended for covers (16:9, at least 960×540) and
+  icons (square, at least 256×256). The manifest schema gains all three.
+- Reader contract: the limit `maxImageBytes` (1 MiB), and the codes
+  `M010_IMAGE_INVALID`, `M011_TRANSLATION_LOCALE_UNDECLARED`,
+  `M012_TAG_DUPLICATE` and `M013_ALT_IMAGE_UNKNOWN`. The Reader interface's
+  package result gains `images`, `translations` and `tags`.
+- Encrypted packages §2–3: an opt-in plain cover copy
+  (`outline/cover.png`, `.jpg` or `.webp`), checked against the inner cover;
+  `translations` and `tags` as opt-in outline properties.
+- 17 cases for images, translations and tags, and 8 `envelope-*` cases for
+  the cover copy and the outline. The runner compares `expect.images`,
+  `expect.translations` and `expect.tags`. The envelope fixtures come from
+  `scripts/envelope-fixtures.py --only cover`.
+
 ### Changed
 
 - Reader contract §11 and package spec §11 (`core`): the `E` family counts
   for validity.
+- Package spec §4.3: "metadata-only changes" now name the real properties
+  `tags`, `images` and `translations`.
 
 ## [0.6.0] - 2026-11-11
 

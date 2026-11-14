@@ -216,10 +216,44 @@ def index_fixtures() -> None:
     print("ok   with-index, with-index-deflated, with-index-corrupt  (index.age decrypts to the sidecar)")
 
 
+def cover_fixtures() -> None:
+    """The envelopes with a cover copy or a catalogue outline (encrypted packages §3), added in 0.7.0 WP6b.
+
+    The inner package is fixtures/catalogue-valid, whose first cover is media/cover.webp; valid-minimal has none.
+    """
+    test = keypair("test")
+    catalogue = ROOT / "catalogue-valid"
+    manifest = json.loads((catalogue / "moca.json").read_text())
+    outline = {k: manifest[k] for k in ("id", "version", "title", "translations", "tags")}
+    cover = (catalogue / "media" / "cover.webp").read_bytes()
+    inner = pack(catalogue)
+    package_age = age_x25519(inner, test)
+    base = {"moca-enc.json": marker(outline), "package.age": package_age}
+    envelope("cover", {**base, "outline/cover.webp": cover})
+    flipped = bytearray(cover)
+    flipped[-1] ^= 0x01
+    envelope("cover-differs", {**base, "outline/cover.webp": bytes(flipped)})
+    envelope("cover-wrong-extension", {**base, "outline/cover.png": cover})
+    envelope("cover-gif", {**base, "outline/cover.gif": b"GIF89a"})
+    envelope("cover-two", {**base, "outline/cover.webp": cover, "outline/cover.png": (catalogue / "media" / "icon.png").read_bytes()})
+    changed = json.loads(json.dumps(outline))
+    changed["translations"]["fr"]["title"] = "Un autre titre"
+    envelope("outline-translation-mismatch", {"moca-enc.json": marker(changed), "package.age": package_age})
+    minimal = pack(ROOT / "valid-minimal")
+    minimal_outline = {"id": "https://example.com/conformance/minimal", "version": "1.0.0", "title": "Fixture"}
+    envelope("cover-no-cover", {"moca-enc.json": marker(minimal_outline), "package.age": age_x25519(minimal, test), "outline/cover.webp": cover})
+    for name in ("cover", "cover-differs", "cover-wrong-extension", "cover-gif", "cover-two", "outline-translation-mismatch"):
+        check(name, True, inner, identity="test")
+    check("cover-no-cover", True, minimal, identity="test")
+
+
 if __name__ == "__main__":
-    # `--only index` writes only the index.age fixtures, so the committed envelopes are never re-encrypted.
+    # `--only index` and `--only cover` write only those fixtures, so the committed envelopes are never re-encrypted.
     if sys.argv[1:] == ["--only", "index"]:
         index_fixtures()
+    elif sys.argv[1:] == ["--only", "cover"]:
+        cover_fixtures()
     else:
         main()
         index_fixtures()
+        cover_fixtures()

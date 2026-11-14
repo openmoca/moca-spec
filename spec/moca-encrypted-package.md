@@ -39,12 +39,14 @@ it, with the same codes. It contains only these entries:
 | `moca-enc.json` | Plain | Yes | The format marker and the optional outline (§3), valid against [`moca-enc.schema.json`](../schemas/v1/moca-enc.schema.json). |
 | `package.age` | Encrypted | Yes | The `.moca` archive, encrypted with age v1 (§4). Stored, not deflated. |
 | `outline/structure.ttl` | Plain | No | A byte-for-byte copy of the inner `structure.ttl` (§3). |
+| `outline/cover.png`, `outline/cover.jpg` or `outline/cover.webp` | Plain | No | A byte-for-byte copy of the inner package's cover image (§3). At most one. |
 | `index.age` | Encrypted | No | A sidecar index in its Zip form, encrypted with age v1 to the same recipients (§6). Stored, not deflated. |
 
 - Directory entries are ignored.
 - Any other entry, including a hidden one, makes the envelope invalid.
 - So does a missing or repeated required entry, a `package.age` or
-  `index.age` that is not stored, and a `moca-enc.json` that is not UTF-8
+  `index.age` that is not stored, more than one cover copy, a cover copy
+  larger than `maxImageBytes`, and a `moca-enc.json` that is not UTF-8
   JSON, repeats a member name, or fails its schema.
 - All of these are `E005_ENVELOPE_INVALID` (error).
 
@@ -71,12 +73,28 @@ today.
   changes only when this format breaks (§8).
 - `outline` is OPTIONAL. It may carry any of these inner manifest properties,
   copied as JSON values: `id`, `version`, `title`, `description`, `language`,
-  `license`, `publisher`, `mocaVersion`, `distribution`. Any other property is
-  `E005`.
+  `license`, `publisher`, `mocaVersion`, `distribution`, `translations`,
+  `tags`. Any other property is `E005`.
 - A Producer includes only what the publisher chooses. The default, and the
   minimum that tools write, is `id`, `version` and `title`. A Producer MAY
   write no outline at all.
 - `outline/structure.ttl` is opt-in. It reveals the package's concept graph.
+- `translations` and `tags` are opt-in, so a catalogue can show translated
+  titles, descriptions, tags and `alt` text without the key. Tools never write
+  them by default.
+
+**The cover copy.** A Producer MAY leave a copy of the package's cover readable,
+so a catalogue can show a picture before the envelope is opened. It is
+opt-in, and tools never write it by default.
+
+- It is a byte-for-byte copy of the file of the inner manifest's first
+  `images` entry with role `cover`
+  ([package spec §4.6](moca-package-spec.md#46-images)).
+- Its extension gives the type a host may assume before opening: `.png` is
+  `image/png`, `.jpg` is `image/jpeg`, `.webp` is `image/webp`. Any other
+  `outline/cover.*` entry is `E005` (§2).
+- It is unverified until the envelope is opened, like the outline. A host
+  that shows it before opening SHOULD mark it as unverified.
 
 **The outline is unverified until the envelope is opened.** Nothing signs it.
 Before opening, a host MAY show it, and if it does it SHOULD mark it as
@@ -90,7 +108,11 @@ members, in any order; arrays with equal items in the same order. A property
 in the outline that is absent from the manifest, or has another value, is
 `E004_OUTLINE_MISMATCH` (error). So is an `outline/structure.ttl` that is not
 byte-for-byte equal to the inner `structure.ttl`, or one present when the
-inner file is not.
+inner file is not. So is a cover copy when the inner manifest has no `images`
+entry with role `cover`, when the first such entry fails its checks
+([package spec §4.6](moca-package-spec.md#46-images)), when the copy is not
+byte-for-byte equal to that entry's file, or when its extension does not
+match that entry's `type`.
 
 ## 4. Encryption
 
@@ -240,8 +262,8 @@ SHOULD read with `requireSignature`.
   publisher's signature no longer verifies. The copy is still readable
   unsigned.
 - The plain part is public: `moca-enc.json`, the outline if any,
-  `outline/structure.ttl` if included, and the approximate size of the
-  package.
+  `outline/structure.ttl` and the cover copy if included, and the
+  approximate size of the package.
 - age hides who the recipients are, but not how many there are.
 - age cannot withdraw access to a file already delivered. Removing a
   recipient means a new file. Copies already held stay readable.

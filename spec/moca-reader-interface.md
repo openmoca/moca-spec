@@ -84,6 +84,14 @@ contract:
 - `distribution`: the manifest's `distribution`, or `open` when the manifest
   has none. It is absent when the manifest is missing or fails its schema
   ([package spec §4.1](moca-package-spec.md#41-properties));
+- `images`, `translations` and `tags`, when the package is valid and the
+  manifest has them ([package spec §4.6–4.8](moca-package-spec.md#46-images)):
+  - `images`: the entries that passed their checks, as declared
+    (`src`, `role`, `type`, and `sizes` and `alt` when present). No bytes: a
+    host reads an image from the package as it reads any file.
+  - `translations`: as declared, without `alt` text that was dropped and
+    without repeated tags.
+  - `tags`: as declared, without repeats;
 - `envelope`, for an envelope only: `{ format, opened }`, plus the
   unverified `outline` when it was not opened
   ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).
