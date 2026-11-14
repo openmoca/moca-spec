@@ -114,6 +114,15 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   interface's result gains `readingOrder`, and a search gains `diagnostics`.
   4 `reading-order-*` cases and 10 `search-upto-*` cases; the runner
   compares `expect.readingOrder` and passes `search.upTo`.
+- Encrypted packages, hardening: `maxScryptWorkFactor` is an integer from 1
+  to 22 (a host error otherwise), and its memory cost is stated; at most 256
+  recipient stanzas (`E006`); "over 64 KiB" is defined to the byte; the
+  plaintext length is computed from the payload's length before decrypting
+  (`T003`, `E003`); a key provider's result may hold several kinds, tried
+  identities, passphrase, file key; bindings may use idiomatic member names;
+  a provider's error text never reaches a diagnostic, and nothing else is
+  thrown to the caller. Cases `envelope-header-64k` and
+  `envelope-header-over-64k`.
 - MIGRATIONS.md: from 0.6.0 to 0.7.0, for packages, Producers, Readers and
   hosts, and what 0.6 Readers do with 0.7 packages.
 - SECURITY.md: encrypted packages (envelope parsing, limits, the outline

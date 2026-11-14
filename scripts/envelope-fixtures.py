@@ -261,14 +261,97 @@ def apps_fixtures() -> None:
         check(name, True, inner, identity="test")
 
 
+def _bech32_secret(text: str) -> bytes:
+    """The 32-byte scalar of an AGE-SECRET-KEY-1 identity (BIP 173 Bech32)."""
+    charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+    data = [charset.index(c) for c in text.lower().rsplit("1", 1)[1]][:-6]
+    acc, bits, out = 0, 0, bytearray()
+    for v in data:
+        acc, bits = (acc << 5) | v, bits + 5
+        if bits >= 8:
+            bits -= 8
+            out.append((acc >> bits) & 0xFF)
+    return bytes(out)
+
+
+def craft_padded(plain: bytes, identity_file: Path, header_length: int) -> bytes:
+    """An age v1 file to the identity's X25519 recipient, with one extra stanza of another type (data to a Reader)
+    that pads the header, from the version line to the MAC line's newline, to exactly `header_length` bytes.
+
+    The age CLI cannot write a stanza type of our choosing, so this file is made here, with the `cryptography`
+    package, following https://c2sp.org/age; `check` then decrypts it with the Go age CLI, like every other fixture.
+    """
+    import base64
+    import hashlib
+    import hmac
+
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
+    from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
+    from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
+    def hkdf(ikm: bytes, salt: bytes, info: bytes) -> bytes:
+        return HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=info).derive(ikm)
+
+    def b64(data: bytes) -> str:
+        return base64.b64encode(data).decode().rstrip("=")
+
+    def raw(key) -> bytes:
+        return key.public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
+
+    secret = next(line for line in identity_file.read_text().splitlines() if line.startswith("AGE-SECRET-KEY-1"))
+    recipient = raw(X25519PrivateKey.from_private_bytes(_bech32_secret(secret)).public_key())
+    file_key = os.urandom(16)
+    ephemeral = X25519PrivateKey.generate()
+    share = raw(ephemeral.public_key())
+    wrap_key = hkdf(ephemeral.exchange(X25519PrivateKey.from_private_bytes(_bech32_secret(secret)).public_key()), share + recipient, b"age-encryption.org/v1/X25519")
+    wrapped = ChaCha20Poly1305(wrap_key).encrypt(bytes(12), file_key, None)
+    head = f"age-encryption.org/v1\n-> X25519 {b64(share)}\n{b64(wrapped)}\n"
+    fixed = len(head) + len("--- ") + 43 + 1
+    room = header_length - fixed
+    # The pad stanza: "-> moca-pad <arg>\n", then the body in 64-column lines and a shorter final line.
+    for n in range(room, 0, -1):
+        body = b64(bytes(n))
+        lines = "".join(body[i:i + 64] + "\n" for i in range(0, len(body) - len(body) % 64, 64)) + body[len(body) - len(body) % 64:] + "\n"
+        arg = room - len("-> moca-pad ") - 1 - len(lines)
+        if 1 <= arg <= 60:
+            break
+    else:
+        sys.exit("cannot pad the header to that length")
+    header = head + f"-> moca-pad {'x' * arg}\n" + lines + "---"
+    mac = hmac.new(hkdf(file_key, b"", b"header"), header.encode(), hashlib.sha256).digest()
+    header_bytes = (header + f" {b64(mac)}\n").encode()
+    assert len(header_bytes) == header_length, len(header_bytes)
+    nonce = os.urandom(16)
+    aead = ChaCha20Poly1305(hkdf(file_key, nonce, b"payload"))
+    chunks = [plain[i:i + 65536] for i in range(0, len(plain), 65536)] or [b""]
+    payload = b"".join(aead.encrypt(i.to_bytes(11, "big") + (b"\x01" if i == len(chunks) - 1 else b"\x00"), c, None) for i, c in enumerate(chunks))
+    return header_bytes + nonce + payload
+
+
+def header_size_fixtures() -> None:
+    """A header of exactly 64 KiB (opens) and one byte over (E006), added in 0.7.0 WP8b. Inner package: valid-minimal.
+
+    Needs the `cryptography` package, for example: uv run --with cryptography python3 scripts/envelope-fixtures.py --only header-size
+    """
+    minimal = pack(ROOT / "valid-minimal")
+    outline = {"id": "https://example.com/conformance/minimal", "version": "1.0.0", "title": "Fixture"}
+    for name, length in (("header-64k", 64 * 1024), ("header-over-64k", 64 * 1024 + 1)):
+        envelope(name, {"moca-enc.json": marker(outline), "package.age": craft_padded(minimal, KEYS / "INSECURE-test.txt", length)})
+        # Go age has no 64 KiB header limit, so both decrypt there; a MOCA Reader refuses the second (E006).
+        check(name, True, minimal, identity="test")
+
+
 if __name__ == "__main__":
-    # `--only index`, `--only cover` and `--only apps` write only those fixtures, so the committed envelopes are never re-encrypted.
+    # `--only index`, `--only cover`, `--only apps` and `--only header-size` write only those fixtures, so the committed envelopes are never re-encrypted.
     if sys.argv[1:] == ["--only", "index"]:
         index_fixtures()
     elif sys.argv[1:] == ["--only", "cover"]:
         cover_fixtures()
     elif sys.argv[1:] == ["--only", "apps"]:
         apps_fixtures()
+    elif sys.argv[1:] == ["--only", "header-size"]:
+        header_size_fixtures()
     else:
         main()
         index_fixtures()

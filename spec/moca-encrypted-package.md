@@ -133,7 +133,9 @@ match that entry's `type`.
 - **Work factor.** An `scrypt` stanza names its own work factor (log2 N). A
   Reader MUST refuse one above `maxScryptWorkFactor`
   ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)) without
-  running scrypt.
+  running scrypt. The limit is an integer from 1 to 22; a Reader refuses any
+  other value as a host error, and never reads one as "no limit". scrypt at
+  work factor 20 needs about 1 GiB of memory.
 
 ## 5. Opening an envelope
 
@@ -147,22 +149,33 @@ itself.
 ```text
 keyProvider(request) → result, or nothing; MAY be asynchronous
   request: { stanzas: [{ type, args: [string], body: bytes }], outline: object | absent, file: "package" | "index" }
-  result:  { identities: [string] }   age X25519 secret keys ("AGE-SECRET-KEY-1…")
-         | { passphrase: string }
-         | { fileKey: bytes(16) }     a file key the host unwrapped itself
+  result:  { identities?: [string],   age X25519 secret keys ("AGE-SECRET-KEY-1…")
+             passphrase?: string,
+             fileKey?: bytes(16) }    a file key the host unwrapped itself
 ```
 
 - The provider may be called once per encrypted entry.
-- `E001_ENCRYPTED_NO_KEY` (error): there is no key provider, it returns
-  nothing or throws, or it returns a kind of key that no stanza in the file
-  uses (identities for a file with no `X25519` stanza, a passphrase for a
-  file with no `scrypt` stanza).
+- **Several kinds.** A result may hold more than one kind of key. The Reader
+  tries them in this order: identities, then the passphrase, then the file
+  key. It uses the first whose file key verifies the header MAC.
+- **Names.** A binding MAY name the members in its language's style (in
+  Python, `file_key`), and MUST also accept the names above.
+- `E001_ENCRYPTED_NO_KEY` (error): there is no key provider; it returns
+  nothing, or something that is not an object, or throws; or no kind of key
+  it returns is one the file uses (identities for a file with no `X25519`
+  stanza, a passphrase for a file with no `scrypt` stanza).
 - `E002_DECRYPTION_FAILED` (error): a key of a kind the file uses was
   supplied, but it failed. That covers identities that unwrap no stanza, an
   identity string that is not a valid `AGE-SECRET-KEY-1…` key, a wrong
-  passphrase, and a header MAC that does not verify, including against a
-  returned `fileKey`.
-- An exception from the provider is never thrown to the caller.
+  passphrase, a file key that is not 16 bytes, a member of the wrong type,
+  and a header MAC that does not verify, including against a returned
+  `fileKey`.
+- An exception from the provider is never thrown to the caller, and its
+  message never appears in a diagnostic: it may carry a token or an
+  address. A diagnostic names at most the error's type.
+- Nothing else that goes wrong while opening an envelope is thrown to the
+  caller either, except cancellation by the host. An unexpected failure
+  while parsing the header is `E006`; after it, `E002`.
 - The outline in the request is unverified. A key provider SHOULD choose a
   key by stanza type and host configuration, not by the outline alone.
 - A key provider MUST NOT contact, or send credentials to, an address taken
@@ -179,8 +192,10 @@ first failure ends the read with its code.
 2. **Entries.** Check the entry set and `moca-enc.json` (§2, §3) (`E005`).
 3. **age header.** Parse the header of `package.age`. A malformed or
    unsupported header, an `scrypt` stanza that is not alone, a work factor
-   over the limit, a header over 64 KiB, or a payload nonce that is missing or
-   shorter than 16 bytes is `E006_AGE_HEADER_INVALID` (error). So is an
+   over the limit, more than 256 recipient stanzas, a header over 64 KiB
+   (65,536 bytes from the version line to the newline that ends the MAC
+   line), or a payload nonce that is missing or shorter than 16 bytes is
+   `E006_AGE_HEADER_INVALID` (error). So is an
    `X25519` share that is a low-order point (the shared secret is all zero),
    although it is found while unwrapping in step 4. The C2SP age test kit
    classes both as header failures.
@@ -190,7 +205,10 @@ first failure ends the read with its code.
    final chunk, before using any of it.
    - A failed chunk, a truncated stream or a missing final chunk is
      `E003_PAYLOAD_CORRUPT` (error), and no plaintext is used.
-   - Decrypted bytes count against `maxBytes` as they are produced (`T003`).
+   - The plaintext's length follows from the payload's length (every chunk
+     but the last is 64 KiB of plaintext and a 16-byte tag). The Reader
+     computes it first: over `maxBytes` is `T003`, and a length no payload
+     can have is `E003`, both before any chunk is decrypted.
 7. **Inner archive.** Read the decrypted bytes as a `.moca` archive under
    Reader contract §3 and §5, with the same limits.
 8. **Outline check.** Compare the outline (§3) (`E004`).

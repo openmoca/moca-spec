@@ -102,8 +102,9 @@ be at least those below, which the conformance corpus assumes:
 | --- | --- | --- | --- |
 | Entries in a source | `maxEntries` | 20,000 | `T003` |
 | Uncompressed bytes in a source | `maxBytes` | 512 MiB | `T003` |
-| Decrypted bytes of an envelope's `package.age` or `index.age`, counted as they are produced | `maxBytes` | 512 MiB | `T003` |
-| age scrypt work factor (log2 N) in an envelope | `maxScryptWorkFactor` | 20 | `E006`, without running scrypt |
+| Decrypted bytes of an envelope's `package.age` or `index.age`, computed from the encrypted payload's length before any of it is decrypted | `maxBytes` | 512 MiB | `T003` |
+| age scrypt work factor (log2 N) in an envelope: an integer from 1 to 22. Any other value is a host error, and the Reader refuses it. The default, 20, needs about 1 GiB of memory for each encrypted entry, and a package and its index can both need it, so a server may set it lower | `maxScryptWorkFactor` | 20 | `E006`, without running scrypt |
+| Recipient stanzas in an envelope's age header | — | 256 | `E006` |
 | Bytes of one manifest image ([package spec §4.6](moca-package-spec.md#46-images)), or of an envelope's cover copy | `maxImageBytes` | 1 MiB | `M010` for that image (`E005` for a cover copy) |
 | Frontmatter block size | `maxFrontmatterBytes` | 64 KiB | `C002` for that node (`C004` for a reserved file) |
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |

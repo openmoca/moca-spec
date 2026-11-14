@@ -5447,6 +5447,60 @@
       }
     },
     {
+      "id": "envelope-header-64k",
+      "description": "Encrypted packages §5.2 step 3: an age header of exactly 64 KiB, padded by a stanza of another type (data, passed to the key provider), is within the limit and opens.",
+      "target": "fixtures/envelopes/header-64k.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-header-over-64k",
+      "description": "Encrypted packages §5.2 step 3: the same header one byte longer, over 64 KiB, is refused (E006) before the key provider is called.",
+      "target": "fixtures/envelopes/header-over-64k.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E006_AGE_HEADER_INVALID"
+        ],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": false,
+          "outline": {
+            "id": "https://example.com/conformance/minimal",
+            "version": "1.0.0",
+            "title": "Fixture"
+          }
+        }
+      }
+    },
+    {
       "id": "envelope-limit-inner",
       "description": "Reader contract §3: the limits apply again to the archive inside an envelope. The envelope is small; the inner archive inflates past maxBytes (T003).",
       "target": "fixtures/envelopes/large.moca.enc",
