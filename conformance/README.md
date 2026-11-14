@@ -50,7 +50,7 @@ conformance/
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
 | `expect.distribution` | The result's `distribution` ([package spec §4.1](../spec/moca-package-spec.md#41-properties)): `open`, `encrypted-only`, `service-only`, or `null` when the result has none. |
-| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps`, `expect.readingOrder` | The result's `images`, `translations`, `tags`, `apps` and `readingOrder` ([package spec §4.6–4.10](../spec/moca-package-spec.md#46-images)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
+| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps`, `expect.readingOrder`, `expect.issuedCopy` | The result's `images`, `translations`, `tags`, `apps`, `readingOrder` ([package spec §4.6–4.10](../spec/moca-package-spec.md#46-images)) and `issuedCopy` (`{ originalDigest, issuers, changedFiles }`, [attestations §7.1](../spec/moca-attestations.md#71-issued-copies-two-passes)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
 | `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
@@ -95,6 +95,9 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `expect.exclude` | Results that must never be returned. |
 | `expect.count` | The exact number of results, when given. |
 | `expect.reviewStatus` | For each listed result, its `trust.reviewStatus` ([contract §7](../spec/moca-reader-contract.md#7-citation-records)). |
+| `expect.issuedChange` | For each listed result, whether `node.issuedChange` is `true` ([contract §7](../spec/moca-reader-contract.md#7-citation-records)). |
+| `expect.fileChanged` | For each listed result, whether one of its `trust.attestedReviews` has `fileChanged: true`. |
+| `expect.issuedCopy` | Every result's `package.issuedCopy` (`{ originalDigest, issuers }`), or `null` for none. |
 | `expect.contested` | For each listed result, whether `trust.contested` is true ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). |
 | `expect.locales` | The `node.locale` a result must have. |
 
@@ -171,6 +174,7 @@ expected by at least one case or is listed below as untestable.
 | Manifest | Package spec §4 | `manifest-*`, `distribution-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
 | Images, translations, tags and apps | Package spec §4.6–4.9 | `catalogue-valid`, `image-*`, `translation-*`, `tags-*`, `apps-*` |
 | Reading order and `upTo` | Package spec §4.10, contract §9 | `reading-order-*`, `search-upto-*` |
+| Issued copies: consent, the two passes, records and libraries | Package spec §4.11, attestations §3a and §7.1, contract §7 | `issued-*`, `search-issued-copy-*` |
 | Versioning | Package spec §14 | `moca-version-*`, `digest-v1-package` |
 | Content and frontmatter | Package spec §5 | `frontmatter-*`, `type-missing`, `reserved-file-invalid`, `log-heading-in-fence`, `link-unresolved`, `resource-bad-escape`, `valid-minimal` |
 | Locales | Package spec §5.4 | `locale-orphan`, `valid-locales`, `search-locale*` |

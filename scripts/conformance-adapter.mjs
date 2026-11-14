@@ -177,7 +177,7 @@ export async function actualFor(root, c) {
       if (r.evidence.length > 0) evidenceMatched[r.node.path] = r.evidence.map((e) => e.matched ?? null);
     }
   }
-  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, sidecarUsable, evidenceMatched, envelope: result.envelope };
+  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, issuedCopy: result.issuedCopy ?? null, sidecarUsable, evidenceMatched, envelope: result.envelope };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

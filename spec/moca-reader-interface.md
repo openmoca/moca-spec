@@ -95,6 +95,9 @@ contract:
 - `apps`: the manifest's `apps`, as declared, when the manifest passes its
   schema; absent otherwise ([package spec §4.9](moca-package-spec.md#49-apps)).
   Advice only: the Reader does nothing else with it;
+- `issuedCopy`: `{ originalDigest, issuers }` for an issued copy that passed
+  verification, absent otherwise
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes));
 - `readingOrder`: the manifest's `readingOrder`, when the manifest passes its
   schema and the IRI resolves; absent otherwise
   ([package spec §4.10](moca-package-spec.md#410-reading-order));

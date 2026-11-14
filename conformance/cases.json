@@ -624,6 +624,361 @@
       }
     },
     {
+      "id": "issued-original",
+      "description": "Package spec §4.11: a package that allows issued copies. issuedCopies is a manifest key, read with the rest of the manifest.",
+      "target": "fixtures/issued/original",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "issuedCopy": null,
+        "digest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23"
+      }
+    },
+    {
+      "id": "issued-copy-valid",
+      "description": "Attestations §7.1: an allowed issuer marked an allowed, unreviewed file. The copy's digest differs, but the publisher's attestation verifies against the rebuilt original digest, so the copy is signed and reviewed.",
+      "target": "fixtures/issued/copy-valid",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "issuedCopy": {
+          "originalDigest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23",
+          "issuers": [
+            "MOCA conformance issuer (INSECURE, published private key)"
+          ],
+          "changedFiles": [
+            "content/lessons/one.md"
+          ]
+        },
+        "digest": "sha256:e5050b23cbaa11d5420acb0d16be9dadab47e96be9c7a0a1f6894a43ab008e65"
+      }
+    },
+    {
+      "id": "issued-copy-wrong-original",
+      "description": "Attestations §7.1 step 5: original is not the digest rebuilt from the copy. The attestation is invalid, and the publisher's attestation then fails against the copy's digest (A008).",
+      "target": "fixtures/issued/copy-wrong-original",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-wrong-hash",
+      "description": "Attestations §7.1 step 5: original is right, but one changedFiles hash is wrong, so the rebuilt digest differs.",
+      "target": "fixtures/issued/copy-wrong-hash",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-manifest-listed",
+      "description": "Attestations §3a: changedFiles lists moca.json, which is never changed.",
+      "target": "fixtures/issued/copy-manifest-listed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-unchanged-listed",
+      "description": "Attestations §3a: changedFiles lists a file whose hash in the copy equals its original.",
+      "target": "fixtures/issued/copy-unchanged-listed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-empty-map",
+      "description": "Attestations §3a: changedFiles is empty.",
+      "target": "fixtures/issued/copy-empty-map",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-untrusted-issuer",
+      "description": "Attestations §7: the publisher names the issuer, but the host's trust root does not trust its key. The signature does not verify (A002), as for any untrusted key.",
+      "target": "fixtures/issued/copy-untrusted-issuer",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-outside-ids",
+      "description": "Attestations §7.1 step 2: the issuer's trust-root entry has ids that do not cover the package.",
+      "target": "fixtures/issued/copy-valid",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued-narrow-ids.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-issuer-not-named",
+      "description": "Attestations §7.1 step 3: the host trusts the issuer for issued-copy, but the publisher's issuedCopies does not name it.",
+      "target": "fixtures/issued/copy-issuer-not-named",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-path-not-allowed",
+      "description": "Attestations §7.1 step 4: the issuer changed a file outside issuedCopies.paths. With no valid issued copy, the review of that file is outdated too (A006).",
+      "target": "fixtures/issued/copy-path-not-allowed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A006_REVIEW_OUTDATED",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-no-consent",
+      "description": "Package spec §4.11: the publisher's manifest has no issuedCopies, so it allows no issued copy.",
+      "target": "fixtures/issued/copy-no-consent",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-conflict",
+      "description": "Attestations §7.1: two issued-copy attestations pass but disagree on original and changedFiles. Each is A002 and none is used.",
+      "target": "fixtures/issued/copy-conflict",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-copy-review-changed",
+      "description": "Attestations §7.1: the issuer marked a reviewed file. The copy is signed, the review of the changed file is not outdated and never counts, and the copy is not reviewed.",
+      "target": "fixtures/issued/copy-review-changed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "issuedCopy": {
+          "originalDigest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23",
+          "issuers": [
+            "MOCA conformance issuer (INSECURE, published private key)"
+          ],
+          "changedFiles": [
+            "content/lessons/two.md"
+          ]
+        },
+        "digest": "sha256:662bdca3bb469e3dc52d3a2dccee8973b98711678697db0c4b26185070dd0f6f"
+      }
+    },
+    {
+      "id": "issued-copy-require-signature",
+      "description": "Attestations §7.1: a host that requires a signature accepts an issued copy whose publisher's attestation verifies against the rebuilt original digest.",
+      "target": "fixtures/issued/copy-valid",
+      "options": {
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z",
+        "requireSignature": true
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ],
+        "issuedCopy": {
+          "originalDigest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23",
+          "issuers": [
+            "MOCA conformance issuer (INSECURE, published private key)"
+          ],
+          "changedFiles": [
+            "content/lessons/one.md"
+          ]
+        }
+      }
+    },
+    {
+      "id": "issued-copy-no-trust-root",
+      "description": "Without a trust root, every attestation, the issued-copy one included, is unverifiable, and the copy is read as any package.",
+      "target": "fixtures/issued/copy-valid",
+      "options": {
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A003_ATTESTATION_UNVERIFIABLE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "issuedCopy": null
+      }
+    },
+    {
+      "id": "issued-consent-sources",
+      "description": "Package spec §4.11: issuedCopies.paths may only name content/ or media/; sources/ fails the schema.",
+      "target": "fixtures/issued-consent-sources",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "issuedCopy": null
+      }
+    },
+    {
       "id": "signature-untrusted-key",
       "description": "Signed with a key the trust root does not list.",
       "target": "fixtures/signature-untrusted-key",
@@ -2885,6 +3240,86 @@
           "https://example.com/conformance/search-policy@1.0.0#current.md"
         ],
         "count": 1
+      }
+    },
+    {
+      "id": "search-issued-copy-records",
+      "kind": "search",
+      "description": "Reader contract §7: records of an issued copy carry package.issuedCopy, and a record from a changed file has node.issuedChange.",
+      "packages": [
+        "fixtures/issued/copy-valid"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "trustRoot": "fixtures/trust-root-issued.json"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 3,
+        "issuedChange": {
+          "https://example.com/conformance/issued-original@1.0.0#lessons/one.md": true,
+          "https://example.com/conformance/issued-original@1.0.0#lessons/two.md": false,
+          "https://example.com/conformance/issued-original@1.0.0#intro.md": false
+        },
+        "issuedCopy": {
+          "originalDigest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23",
+          "issuers": [
+            "MOCA conformance issuer (INSECURE, published private key)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-issued-copy-review-changed",
+      "kind": "search",
+      "description": "Attestations §7.1: a review of a changed file is listed with fileChanged and does not count, so the file's review status is none.",
+      "packages": [
+        "fixtures/issued/copy-review-changed"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "trustRoot": "fixtures/trust-root-issued.json"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 3,
+        "fileChanged": {
+          "https://example.com/conformance/issued-original@1.0.0#lessons/two.md": true,
+          "https://example.com/conformance/issued-original@1.0.0#intro.md": false
+        },
+        "reviewStatus": {
+          "https://example.com/conformance/issued-original@1.0.0#lessons/two.md": "none",
+          "https://example.com/conformance/issued-original@1.0.0#intro.md": "approved"
+        }
+      }
+    },
+    {
+      "id": "search-issued-copy-duplicate",
+      "kind": "search",
+      "description": "Reader contract §7: a second issued copy of the same original is noted (L002, info), not refused as a conflict (L001). Only the first is loaded.",
+      "packages": [
+        "fixtures/issued/copy-valid",
+        "fixtures/issued/copy-valid-2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "trustRoot": "fixtures/trust-root-issued.json"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "codes": [
+          "L002_ISSUED_COPY_DUPLICATE"
+        ],
+        "count": 3
       }
     },
     {

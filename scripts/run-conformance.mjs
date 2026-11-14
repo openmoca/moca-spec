@@ -57,8 +57,8 @@ function checkPackage(e, actual) {
   if (e.distribution !== undefined && e.distribution !== (actual.distribution ?? null)) {
     problems.push(`distribution: expected ${e.distribution}, got ${actual.distribution ?? null}`);
   }
-  // Package spec §4.6–4.10: images, translations, tags, apps and readingOrder as the result exposes them; null means absent.
-  for (const field of ['images', 'translations', 'tags', 'apps', 'readingOrder']) {
+  // Package spec §4.6–4.10, attestations §7.1: result fields compared as JSON values; null means absent.
+  for (const field of ['images', 'translations', 'tags', 'apps', 'readingOrder', 'issuedCopy']) {
     if (e[field] === undefined) continue;
     const got = actual[field] ?? null;
     if (JSON.stringify(canonical(got)) !== JSON.stringify(canonical(e[field]))) problems.push(`${field}: expected ${JSON.stringify(e[field])}, got ${JSON.stringify(got)}`);
@@ -98,6 +98,20 @@ function checkSearch(e, actual) {
   for (const [k, locale] of Object.entries(e.locales ?? {})) {
     const got = records.filter((r) => keyOf(r) === k).map((r) => r.node.locale);
     if (got.length === 0 || got.some((l) => l !== locale)) problems.push(`${k}: expected locale ${locale}, got [${got}]`);
+  }
+  // Attestations §7.1: the issued-copy fields of each listed result.
+  for (const [k, want] of Object.entries(e.issuedChange ?? {})) {
+    const got = records.filter((r) => keyOf(r) === k).map((r) => r.node.issuedChange === true);
+    if (got.length === 0 || got.some((x) => x !== want)) problems.push(`${k}: expected issuedChange ${want}, got [${got}]`);
+  }
+  for (const [k, want] of Object.entries(e.fileChanged ?? {})) {
+    const got = records.filter((r) => keyOf(r) === k).map((r) => (r.trust.attestedReviews ?? []).some((x) => x.fileChanged === true));
+    if (got.length === 0 || got.some((x) => x !== want)) problems.push(`${k}: expected a fileChanged review ${want}, got [${got}]`);
+  }
+  if (e.issuedCopy !== undefined) {
+    for (const r of records) {
+      if (JSON.stringify(r.package.issuedCopy ?? null) !== JSON.stringify(e.issuedCopy)) problems.push(`${keyOf(r)}: expected package.issuedCopy ${JSON.stringify(e.issuedCopy)}, got ${JSON.stringify(r.package.issuedCopy ?? null)}`);
+    }
   }
   for (const r of records) {
     const errors = validateAgainst('citationRecord', r);

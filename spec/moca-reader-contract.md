@@ -231,7 +231,10 @@ and `profiles`, are left out, as they are in a real record):
   `node.id` with `package.digest` is the key that cannot be forged. A library
   MUST NOT hold two packages with the same `id` and `version` but different
   digests: it keeps the first and refuses the second
-  (`L001_IDENTITY_CONFLICT`).
+  (`L001_IDENTITY_CONFLICT`). When both are issued copies of the same
+  original (both results have `issuedCopy` with the same `originalDigest`),
+  it reports `L002_ISSUED_COPY_DUPLICATE` (info) instead, and still keeps
+  only the first.
   Two representations of a node share `node.ref`; when an application
   records a citation it SHOULD keep `node.locale` with it, and any
   de-duplication is by `node.ref`, `node.locale` and `span` together.
@@ -257,13 +260,24 @@ and `profiles`, are left out, as they are in a real record):
 - `declaredVerified` copies OKF `verified`; `attestedReviews` lists only reviews
   that verified against the trust root and match the current file, the latest
   from each signer, each with `packageVerified` (whether the package is
-  signed). `reviewStatus` is `approved`, `disputed`, `unverified` or `none`
+  signed). In an issued copy, it also lists reviews of the publisher's bytes
+  of a changed file, with `fileChanged: true`; they never count toward
+  `reviewStatus`
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). `reviewStatus` is `approved`, `disputed`, `unverified` or `none`
   ([attestations §4](moca-attestations.md#4-review-attestations)). An
   application SHOULD NOT present a declared verification as an attested one,
   or an `unverified` or `disputed` review as an approval.
 - `stale` is true when now ≥ `stale_after`. `inForce` is false outside the
   validity window ([package spec §4.4](moca-package-spec.md#44-validity-window)).
   The host supplies the clock.
+- **Issued copies.** `package.issuedCopy` is the result's `issuedCopy`
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)),
+  absent for any other package. `node.issuedChange` is `true` when the
+  representation file is in the issued copy's `changedFiles`, and absent
+  otherwise. `package.digest` stays the copy's own digest. A host that shares
+  citations outside the licensee's own use SHOULD use
+  `issuedCopy.originalDigest`, which is the same for every copy and
+  identifies no one.
 - `superseded` and `contested` reflect the relations among the packages the
   Reader has loaded, and the node's `moca.contested_by`
   ([package spec §7.2](moca-package-spec.md#72-relations)).
@@ -503,14 +517,14 @@ the trust root may have changed since ingest.
 So a store search takes the host's **package states**: for each loaded
 package, its digest, `id`, `version`, default language, relations, relation
 scopes (§7.2 of the package spec), signers, current reviews, node-level
-`moca.contested_by`, and, when `readingOrder` resolves, its members in order
-and the position of each concept on it, so a store search applies `upTo` as
-a library search does. A Reader produces a package's state from the package
+`moca.contested_by`, its `issuedCopy`, and, when `readingOrder` resolves,
+its members in order and the position of each concept on it, so a store
+search applies `upTo` as a library search does. A Reader produces a package's state from the package
 result (`packageState`); it is small, plain JSON that a host keeps beside
 its store. At query time the Reader resolves store hits from their records and
 MUST recompute from the states and the clock: `stale` and `inForce`;
 `superseded`, `supersededBy`, `contested` and `contestedBy` from the relations
-among the loaded packages; `package.signed` and `signers`; and
+among the loaded packages; `package.signed`, `signers` and `issuedCopy`; and
 `attestedReviews` and `reviewStatus`. It keeps only records whose package is
 among the states. The host therefore never needs every package in memory to
 search its store, and a package superseded, or a key removed from the trust
@@ -700,6 +714,7 @@ withhold only the `structured` capability.
 | `R003_MEMBER_CYCLE` | error | Members form a cycle. |
 | `R004_RELATION_UNAUTHORISED` | info | A `supersedes` or `conflictsWith` relation is not authorised by a signer of the package, so it has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
 | `L001_IDENTITY_CONFLICT` | error | A library was given a second package with the same `id` and `version` but a different digest; the second is refused (§7). Reported by the library, not the package. |
+| `L002_ISSUED_COPY_DUPLICATE` | info | A library was given a second issued copy of the same original (§7): the same `id` and `version`, another digest, and the same `issuedCopy.originalDigest`. The second is not loaded. Reported by the library. |
 | `F001_PROFILE_UNRECOGNISED` | info | A declared profile is not recognised by this Reader. |
 | `O001_ONTOLOGY_UNPARSEABLE` | warning | `structure.ttl` or a host overlay is over the size or triple limit (§3), or is not parseable Turtle. |
 | `O002_CONCEPT_UNDECLARED` | warning | A relation, ordered collection or node binding uses a concept that is not declared as a `skos:Concept`. |

@@ -37,5 +37,6 @@ carried over.
 | [0025](0025-catalogue-fields-travel-in-the-manifest.md) | Images, translated titles and tags travel in the manifest |
 | [0026](0026-apps-is-a-hint.md) | `apps` is a hint, never configuration |
 | [0027](0027-reading-order-names-a-collection.md) | The reading order names a collection, and `upTo` is the caller's |
+| [0028](0028-issued-copies.md) | Issued copies are bound to the publisher's package, with its consent |
 
 New records use the template in [0000-template.md](0000-template.md).

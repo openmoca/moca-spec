@@ -29,9 +29,10 @@ which the digest excludes. Each file holds one envelope:
 
 The envelope's `payloadType` MUST be `application/vnd.in-toto+json` and its
 payload an in-toto v1 Statement. Conventional names are
-`attestations/package.<signer>.dsse.json`, `attestations/package.sigstore.json`
-and `attestations/reviews/<reviewer>-<date>.<dsse|sigstore>.json`; Readers
-MUST NOT depend on names beyond the suffix.
+`attestations/package.<signer>.dsse.json`, `attestations/package.sigstore.json`,
+`attestations/reviews/<reviewer>-<date>.<dsse|sigstore>.json` and
+`attestations/issued.<issuer>.dsse.json`; Readers MUST NOT depend on names
+beyond the suffix.
 
 A Reader MUST ignore statements with a predicate type it does not know.
 
@@ -69,6 +70,63 @@ content changed after it was signed, and is reported as
 
 Several package attestations MAY be present, for example a publisher and a
 distributor. Each valid one names a signer.
+
+## 3a. Issued-copy attestations
+
+Predicate type: `https://w3id.org/moca/attestation/issued-copy/v1`
+
+An issuer may **mark** a licensee's copy: it changes the body text of some
+files under `content/` or `media/`, so that it can recognise the copy later
+([ADR-0028](../docs/adr/0028-issued-copies.md)). Any change alters the file
+hashes and the package digest, so the publisher's package attestation would
+no longer match. An issued-copy attestation binds the copy to the publisher's
+package, and the Reader checks the binding itself.
+
+```json
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    { "name": "https://example.com/moca/course@2.1.0",
+      "digest": { "sha256": "<digest of this issued copy>" } }
+  ],
+  "predicateType": "https://w3id.org/moca/attestation/issued-copy/v1",
+  "predicate": {
+    "original": { "sha256": "<digest of the publisher's package>" },
+    "changedFiles": {
+      "content/lesson-3.md": { "original": "<sha256 of the publisher's bytes>" }
+    }
+  }
+}
+```
+
+**The statement.**
+
+- It has exactly one subject. Its `name` is `<id>@<version>` from `moca.json`,
+  and its `sha256` is the copy's computed digest, without the `sha256:`
+  prefix. `original.sha256` is the publisher's package digest, in the same
+  form. The two MUST differ.
+- `changedFiles` MUST be non-empty. Each key is a package path in NFC, under
+  `content/` or `media/`, of a file in the copy. It MUST NOT be a hidden
+  entry (a segment starting with `.`) or a file a profile the Reader
+  recognises defines (package spec §9). Each value's `original` is the
+  SHA-256 of the publisher's bytes, as 64 lower-case hex digits, and MUST
+  differ from the file's hash in the copy.
+- The copy has the same set of paths as the original: no file is added,
+  removed or renamed. `moca.json`, `structure.ttl`, `sources/` and every file
+  not in `changedFiles` are the publisher's bytes.
+- An issuer MUST NOT change a node's frontmatter, which carries the audience,
+  status, validity and evidence the default policy reads. A Reader cannot
+  check this, so trusting an issuer means trusting it on this (§8).
+- The statement names no licensee. The issuer keeps its own record of which
+  copy, by subject digest, went to whom.
+
+**Publisher consent.** An issued copy counts only when the publisher allowed
+it in `issuedCopies` (package spec §4.11), and the host trusts the issuer for
+the role `issued-copy` (§6). Neither alone is enough.
+
+**Verification** has two passes (§7.1). An issued copy that passes them is
+`signed` by its publisher, and the result says which files the issuer changed
+and who the issuer is.
 
 ## 4. Review attestations
 
@@ -207,8 +265,16 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
   against the schema: that is a host error, not a package diagnostic.
 - `publicKey` is an Ed25519 public key (§5).
 - `roles` is REQUIRED on every key and identity, and lists what it may
-  attest: `package`, `review` or both. An empty list trusts it for nothing,
-  which is how a host disables an entry without removing it.
+  attest: `package`, `review`, `issued-copy`, or several. An empty list
+  trusts it for nothing, which is how a host disables an entry without
+  removing it.
+- **`issued-copy`** lets an entry sign issued-copy attestations (§3a). For an
+  entry with this role, `ids` is REQUIRED (the schema refuses an entry
+  without it), and it covers the packages whose copies the entry may issue.
+  This is the reverse of `package`, where a missing `ids` only removes
+  relation authority. An issued-copy attestation lets its signer put another
+  publisher's name on changed bytes, so the role is granted separately from
+  `package`.
 - `ids` is OPTIONAL: the package ids a key or identity may speak for when a
   package it signed supersedes or contests another
   ([package spec §7.2](moca-package-spec.md#72-relations)). Without `ids`, a
@@ -262,10 +328,10 @@ that fails ends the verification of that file with the outcome named.
    produce, makes it **malformed**. The decoded bytes are a JSON object with
    `_type` equal to `https://in-toto.io/Statement/v1`, an array `subject`,
    and a string `predicateType`. Otherwise: **malformed**.
-5. **Predicate type.** A statement whose `predicateType` is neither the
-   package (§3) nor the review (§4) predicate is ignored: no diagnostic, and
-   it attests nothing. Otherwise the predicate type sets the **role**:
-   `package` or `review`.
+5. **Predicate type.** A statement whose `predicateType` is not the package
+   (§3), review (§4) or issued-copy (§3a) predicate is ignored: no
+   diagnostic, and it attests nothing. Otherwise the predicate type sets the
+   **role**: `package`, `review` or `issued-copy`.
 6. **Trust root.** With no trust root: **unverifiable**. For Sigstore, with no
    Sigstore identities in the trust root, with no trust material to verify
    against (§6), or in a Reader that does not implement Sigstore
@@ -290,7 +356,8 @@ that fails ends the verification of that file with the outcome named.
 8. **Statement.** A package attestation's statement MUST match the package
    (§3); a review's predicate MUST be valid, MUST name the package's `id`, and
    every subject MUST have a string `name` and a string `sha256` digest (§4).
-   Otherwise: **invalid**.
+   An issued-copy attestation MUST pass pass 1 (§7.1). Otherwise:
+   **invalid**.
 
 An attestation that passes every step is **valid**. Its **signer** is the
 trust-root key's `identity`, or its `keyid` when it has no `identity`; for
@@ -317,6 +384,55 @@ Only **valid** attestations count. Every other outcome is reported and
 otherwise treated as if the attestation were absent. None of them makes the
 rest of the package invalid.
 
+### 7.1 Issued copies: two passes
+
+A Reader verifies issued-copy attestations first, then the others.
+
+**Pass 1: the issued-copy attestations.** Each is verified with role
+`issued-copy` (steps 1–7), then:
+
+1. its statement has the form in §3a, and its subject matches the copy's
+   `id@version` and computed digest;
+2. the trust-root entry that verified it has `ids` that cover the package's
+   `id`, as `ids` covers a relation target
+   ([package spec §7.2](moca-package-spec.md#72-relations));
+3. the manifest has `issuedCopies`, and its `issuers` list the signer: a DSSE
+   key matches a `publicKey` entry when the two decode to the same Ed25519
+   key (the bytes are compared, not the PEM text); a Sigstore identity
+   matches a `sigstore` entry when `issuer` and `subject` are equal, exactly
+   and case-sensitively;
+4. every key of `changedFiles` follows §3a and is allowed by
+   `issuedCopies.paths`: it equals a file entry, or starts with a directory
+   entry (one ending in `/`), compared exactly on NFC paths;
+5. the Reader rebuilds the digest manifest (package spec §6.4), using each
+   changed file's `original` hash in place of its hash in the copy. The
+   digest of the rebuilt manifest MUST equal `original`.
+
+A failure makes that attestation invalid (`A002`). When several issued-copy
+attestations pass but disagree on `original` or `changedFiles`, each is
+`A002` and none is used.
+
+**Pass 2: the other attestations.** With at least one issued-copy attestation
+that passed, and none that disagree:
+
+- package attestations are compared with the rebuilt **original** digest,
+  not the copy's. `A008` applies only to a mismatch with it. `signed` holds
+  when a package attestation verifies against it, and `signers` names the
+  publisher. `requireSignature` (§8) is met the same way;
+- a review subject for a changed file whose `sha256` equals that file's
+  `original` hash never counts. It is not outdated (`A006`): it is listed in
+  `attestedReviews` with `fileChanged: true`, and the file's review status
+  ignores it. A copy with such a review is not `reviewed`
+  (package spec §11);
+- the result has `issuedCopy: { originalDigest, issuers }`: the rebuilt
+  digest, and the signers of the issued-copy attestations that passed, in
+  file-name order. Citation records carry it in `package`, and a record from
+  a changed file has `node.issuedChange: true`
+  ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
+
+Without an issued-copy attestation that passed, the other attestations are
+verified against the copy's own digest, as for any package.
+
 ## 8. What attestations do not prove
 
 A valid package attestation proves who published the bytes. A valid review
@@ -330,3 +446,26 @@ content reads with `requireSignature`: a package with no valid package
 attestation is then invalid (`A009_SIGNATURE_REQUIRED`), so a tampered or
 unsigned package is refused rather than served unsigned. See also
 [package spec §13.5](moca-package-spec.md#135-old-versions-frozen-copies-and-forged-copies).
+
+**Issued copies** (§3a). The Reader proves that the copy differs from the
+publisher's package only in the listed files, all under `content/` or
+`media/`, and that the publisher allowed the issuer and the paths. It cannot
+prove that those files changed only by marks in the body, or that the marked
+text means the same as the original. That is the issuer's assertion alone:
+every record from a changed file has `issuedChange` and the copy names its
+issuers, so an application can tell "the publisher's bytes" from "the
+publisher's bytes as changed by the issuer".
+
+- Marks may let an issuer recognise a copy that leaks unaltered. They do not
+  survive deliberate removal, especially by someone who compares two copies,
+  and they are lost in paraphrase or extracted text. They identify a copy,
+  not a person.
+- The `original` hashes let the holder of a copy confirm a guess at the
+  original bytes. Hiding them would stop the Reader rebuilding the digest.
+  The trade-off is accepted.
+- How marks are made is out of scope. This document defines only the
+  binding.
+- Issuers SHOULD sign with a DSSE key: keyless Sigstore signing would put
+  each issue in a public log. When an issuer's key expires, every copy it
+  issued stops being bound to the publisher, so issuers re-issue before keys
+  expire, as publishers re-sign.

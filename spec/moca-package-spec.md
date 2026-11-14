@@ -129,8 +129,8 @@ characters (`C007`) after that.
 | Envelope | The Zip file that holds an encrypted package: a plain format marker, an optional outline and the encrypted archive. |
 | Outline | Manifest properties a Producer chooses to leave readable in an envelope. Unverified until the envelope is opened. |
 | Key provider | The host's function that supplies keys to open an envelope (Reader interface §3). A Reader never finds keys itself. |
-| Issued copy | A copy of a package whose issuer changed some files under `content/` or `media/`, bound to the original by an issued-copy attestation (attestations §3a). |
-| Issuer | Whoever makes and signs an issued copy. A publisher allows its issuers in its manifest. |
+| Issued copy | A copy of a package whose issuer changed some files under `content/` or `media/`, bound to the original by an issued-copy attestation ([attestations §3a](moca-attestations.md#3a-issued-copy-attestations)). |
+| Issuer | Whoever makes and signs an issued copy. A publisher allows its issuers in its manifest (§4.11). |
 
 ## 3. Standards used
 
@@ -173,6 +173,7 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `tags` | No | Short plain labels, in the default language, that a catalogue can filter and group by (§4.8). |
 | `apps` | No | Where the publisher suggests the package is opened, beyond conversation: an ordered list of specific apps and app types, the first preferred (§4.9). Advice only (§13.2). |
 | `readingOrder` | No | The IRI of one ordered collection in the package's own `structure.ttl`: the order in which the package is meant to be read (§4.10). |
+| `issuedCopies` | No | The issuers the publisher allows to make issued copies, and the paths they may mark (§4.11). Without it, no issued copy of the package is valid. |
 | `validFrom`, `validUntil` | No | When the package's content is in force (§4.4). |
 | `members` | No | Packages this package is composed of, pinned by digest (§7.1). |
 | `relations` | No | Typed relations to other packages (§7.2). |
@@ -477,6 +478,52 @@ Rules:
   ([Reader contract §9](moca-reader-contract.md#9-search)), and that is a
   convenience, not access control.
 - The package result carries `readingOrder` when it resolves.
+
+### 4.11 Issued copies
+
+`issuedCopies` is the publisher's consent to issued copies
+([attestations §3a](moca-attestations.md#3a-issued-copy-attestations)): who
+may make them, and which files they may mark.
+
+```json
+"issuedCopies": {
+  "issuers": [
+    { "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA…\n-----END PUBLIC KEY-----\n" },
+    { "sigstore": { "issuer": "https://token.actions.githubusercontent.com",
+                    "subject": "https://github.com/example/issue/.github/workflows/issue.yml@refs/heads/main" } }
+  ],
+  "paths": ["content/lessons/", "media/images/"]
+}
+```
+
+| Member | Required | Meaning |
+| --- | --- | --- |
+| `issuers` | Yes | The issuers the publisher allows: 1 to 32 entries. Each is one Ed25519 key (`publicKey`, PEM) or one Sigstore identity (`sigstore`: `issuer` and `subject`), in the same form as a trust root (attestations §6). |
+| `paths` | Yes | Where an issuer may mark: 1 to 256 entries. Each is a package path to a file, or a directory prefix ending in `/`, under `content/` or `media/`. |
+
+Rules:
+
+- **No key, no issued copies.** A package without `issuedCopies` allows none.
+- **Both the host and the publisher must agree.** The issuer must be trusted
+  by the host's trust root for the role `issued-copy`, with `ids` that cover
+  the package, and listed in `issuers`. The host decides whom it trusts; the
+  publisher decides whom it allows.
+- **Names, not host labels.** Issuers are named by their key or Sigstore
+  identity. A trust root's `keyid` is a label each host chooses, so the
+  manifest never uses one.
+- **Paths** are compared exactly, on NFC paths. A file entry allows that file;
+  a directory entry allows every file under it. An entry outside `content/`
+  or `media/`, or with a segment that starts with `.`, fails the schema
+  (`M002`), as does any other malformed `issuedCopies`.
+- **Signed consent.** `moca.json` is never changed in an issued copy, so
+  `issuedCopies` is covered by the publisher's signature over the original.
+  Changing it needs a new version, signed again. Copies issued from the old
+  version keep the old version's consent.
+- **Independent of `distribution`.** A package may allow issued copies
+  whatever its `distribution` (§4.1).
+- **Not configuration** (§13.2). A Reader matches `issuedCopies` against
+  attestations already in the package. It never contacts anything because of
+  it.
 
 ## 5. Content
 
@@ -950,8 +997,8 @@ a package actually has from what it contains and what verifies:
 | `self-contained-evidence` | The package has `located-evidence`, and every evidence source of every node has a `resource` that resolves, relative to the node file (§5.1), to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it. |
 | `localized` | At least one node has a locale representation. |
 | `structured` | `structure.ttl` is present, parses, and every relation and node binding resolves, with no `O` diagnostic (§5.6). |
-| `signed` | At least one package attestation verifies against the host's trust root. |
-| `reviewed` | The package is `signed`, at least one review attestation verifies and matches a current file, and every reviewed file is approved: at least one current review says `accurate` and none says otherwise ([attestations §4](moca-attestations.md#4-review-attestations)). |
+| `signed` | At least one package attestation verifies against the host's trust root. For an issued copy, against the rebuilt original digest ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |
+| `reviewed` | The package is `signed`, at least one review attestation verifies and matches a current file, and every reviewed file is approved: at least one current review says `accurate` and none says otherwise ([attestations §4](moca-attestations.md#4-review-attestations)). An issued copy whose issuer changed a reviewed file is not `reviewed` ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |
 
 `signed` and `reviewed` depend on the host's trust root: the same
 package can be `signed` for one host and not for another.
@@ -1063,6 +1110,11 @@ date and no "latest". So:
   can sign two different digests for the same `id@version`. A Reader reports
   a second digest in one library (`L001`), and an attestation for this
   `id@version` with another digest (`A008`).
+- **Issued copies** are the one expected case of two digests for one version
+  (§4.11). They are recognised only through a valid issued-copy attestation
+  ([attestations §3a](moca-attestations.md#3a-issued-copy-attestations)). A
+  library given a second issued copy of the same original keeps the first
+  and reports `L002_ISSUED_COPY_DUPLICATE` (info), not `L001`.
 - **Requiring a signature.** A host that serves only signed content SHOULD
   read packages with `requireSignature`: a package with no valid package
   attestation is then invalid (`A009`).

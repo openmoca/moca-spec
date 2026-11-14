@@ -24,7 +24,8 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Conformance runner: the `encryption` feature and the adapter's `envelope`
   output.
 - ADR-0023 (age envelope), ADR-0024 (`distribution`), ADR-0025 (images,
-  translations, tags), ADR-0026 (`apps`) and ADR-0027 (reading order).
+  translations, tags), ADR-0026 (`apps`), ADR-0027 (reading order) and
+  ADR-0028 (issued copies).
 - Package spec §4.1: `distribution` (`open`, `encrypted-only`,
   `service-only`), the publisher's signed intent; a label only. The manifest
   schema gains the closed enum, and the Reader interface's package result
@@ -87,6 +88,21 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   may carry it. §9 and §13.2 say how `apps` differs from profiles and
   configuration. 5 `apps-*` cases and 2 `envelope-outline-apps*` cases; the
   runner compares `expect.apps`.
+- Issued copies ([#5](https://github.com/openmoca/moca-spec/issues/5), part
+  C). Attestations §3a: the issued-copy predicate
+  (`https://w3id.org/moca/attestation/issued-copy/v1`). §6: the trust-root
+  role `issued-copy`, which requires `ids`. §7.1: two-pass verification; the
+  publisher's attestations are checked against the digest rebuilt from the
+  copy and the original hashes of the changed files; reviews of changed
+  files are listed with `fileChanged` and never count. §8: what an issued
+  copy proves. Package spec §4.11: `issuedCopies`, the publisher's consent
+  (issuers by key or Sigstore identity, and the paths they may mark). Reader
+  contract §7: `package.issuedCopy` and `node.issuedChange` in citation
+  records, and `L002_ISSUED_COPY_DUPLICATE` (info). The package result gains
+  `issuedCopy`. Schemas: `issuedCopies` in the manifest, `issued-copy` in the
+  trust root, and the citation-record fields. 17 `issued-*` cases and 3
+  `search-issued-copy-*` cases; `refresh:derived` builds the copies from
+  `scripts/derived.config.json`; two more insecure test keys (issuers).
 - Package spec §4.10 ([#9](https://github.com/openmoca/moca-spec/issues/9)):
   `readingOrder`, the IRI of the ordered collection in the package's own
   `structure.ttl` that orders the whole package; `M014` (warning) when it
