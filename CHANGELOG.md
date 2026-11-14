@@ -22,7 +22,8 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   does with an envelope it cannot open.
 - Conformance runner: the `encryption` feature and the adapter's `envelope`
   output.
-- ADR-0023 (age envelope) and ADR-0024 (`distribution`).
+- ADR-0023 (age envelope), ADR-0024 (`distribution`), ADR-0025 (images,
+  translations, tags) and ADR-0026 (`apps`).
 - Package spec §4.1: `distribution` (`open`, `encrypted-only`,
   `service-only`), the publisher's signed intent; a label only. The manifest
   schema gains the closed enum, and the Reader interface's package result

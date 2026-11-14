@@ -34,5 +34,7 @@ carried over.
 | [0022](0022-applications-get-advice.md) | Rules for applications are advice |
 | [0023](0023-encrypted-packages-in-an-age-envelope.md) | Encrypt packages in an age envelope |
 | [0024](0024-distribution-is-signed-intent.md) | `distribution` is the publisher's signed intent, not access control |
+| [0025](0025-catalogue-fields-travel-in-the-manifest.md) | Images, translated titles and tags travel in the manifest |
+| [0026](0026-apps-is-a-hint.md) | `apps` is a hint, never configuration |
 
 New records use the template in [0000-template.md](0000-template.md).
