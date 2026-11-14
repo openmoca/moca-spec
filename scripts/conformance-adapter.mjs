@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   readPackage, bindSidecar, directoryResolver, Library, Search, LexicalBackend, DenseBackend, MemoryStoreBackend, HybridBackend, ontologyGuided,
-  packageState,
+  packageState, bindEnvelopeSidecar,
 } from '@openmoca/moca-core';
 // The reference Reader implements the optional feature `encryption` through its separate age module.
 import { ageDecryptor } from '@openmoca/moca-core/age';
@@ -155,6 +155,12 @@ export async function actualFor(root, c) {
   const result = await readPackage(join(root, c.target), readOptions);
   const codes = result.diagnostics.map((d) => d.code);
   let sidecarUsable;
+  // Encrypted packages §6: the envelope's own index.age, through the same key provider.
+  if (o.envelopeSidecar) {
+    const bound = await bindEnvelopeSidecar(join(root, c.target), result, readOptions);
+    codes.push(...bound.diagnostics.map((d) => d.code));
+    sidecarUsable = bound.usable;
+  }
   if (o.sidecar) {
     const bound = bindSidecar(join(root, o.sidecar), result);
     codes.push(...bound.diagnostics.map((d) => d.code));

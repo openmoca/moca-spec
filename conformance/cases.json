@@ -4275,6 +4275,74 @@
           "opened": false
         }
       }
+    },
+    {
+      "id": "envelope-index",
+      "description": "Encrypted packages §6: index.age is opened through the same key provider and bound to the package from the same envelope.",
+      "target": "fixtures/envelopes/with-index.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ],
+        "envelopeSidecar": true
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "sidecarUsable": true,
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-index-corrupt",
+      "description": "Encrypted packages §6: an index.age whose payload fails authentication is reported by the binding (E003) and is not used. The package stays valid.",
+      "target": "fixtures/envelopes/with-index-corrupt.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ],
+        "envelopeSidecar": true
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "E003_PAYLOAD_CORRUPT"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false,
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-index-deflated",
+      "description": "Encrypted packages §2: an index.age that is deflated, not stored, makes the envelope invalid (E005).",
+      "target": "fixtures/envelopes/with-index-deflated.moca.enc",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
     }
   ]
 }

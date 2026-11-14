@@ -183,5 +183,43 @@ def main() -> None:
     check("work-factor", True, minimal, passphrase=PASSPHRASE)
 
 
+
+def index_fixtures() -> None:
+    """The envelopes with an index.age (encrypted packages §6), added in 0.7.0 WP6 without touching the others.
+
+    package.age is the committed x25519 fixture's, byte for byte. index.age is the Zip form of the valid-minimal
+    sidecar (fixtures/sidecars/valid), encrypted by the Go age CLI to the test key.
+    """
+    test = keypair("test")
+    with zipfile.ZipFile(OUT / "x25519.moca.enc") as z:
+        x25519 = z.read("package.age")
+        marker_bytes = z.read("moca-enc.json")
+    root = ROOT / "sidecars" / "valid"
+    with tempfile.TemporaryFile() as f:
+        with zipfile.ZipFile(f, "w") as z:
+            for p in sorted(p for p in root.rglob("*") if p.is_file()):
+                info = zipfile.ZipInfo(p.relative_to(root).as_posix(), FIXED_TIME)
+                info.compress_type = zipfile.ZIP_DEFLATED
+                z.writestr(info, p.read_bytes())
+        f.seek(0)
+        sidecar = f.read()
+    index_age = age_x25519(sidecar, test)
+    envelope("with-index", {"moca-enc.json": marker_bytes, "package.age": x25519, "index.age": index_age})
+    envelope("with-index-deflated", {"moca-enc.json": marker_bytes, "package.age": x25519, "index.age": index_age}, stored=("package.age",))
+    header, payload = split_header(index_age)
+    flipped = bytearray(payload)
+    flipped[len(flipped) // 2] ^= 0x01
+    envelope("with-index-corrupt", {"moca-enc.json": marker_bytes, "package.age": x25519, "index.age": header + bytes(flipped)})
+    out = subprocess.run(["age", "--decrypt", "-i", str(KEYS / "INSECURE-test.txt")], input=index_age, capture_output=True)
+    if out.returncode != 0 or out.stdout != sidecar:
+        sys.exit("with-index: age --decrypt does not give the sidecar back")
+    print("ok   with-index, with-index-deflated, with-index-corrupt  (index.age decrypts to the sidecar)")
+
+
 if __name__ == "__main__":
-    main()
+    # `--only index` writes only the index.age fixtures, so the committed envelopes are never re-encrypted.
+    if sys.argv[1:] == ["--only", "index"]:
+        index_fixtures()
+    else:
+        main()
+        index_fixtures()
