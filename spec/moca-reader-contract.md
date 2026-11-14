@@ -79,6 +79,15 @@ follows:
 When an entry cannot be read, the Reader stops with `P002`: it does not go on
 with missing bytes.
 
+**Envelopes.** A Zip archive, given as a path or as bytes, with
+`moca-enc.json` at its root and no `moca.json` is an envelope: an encrypted
+package ([encrypted packages](moca-encrypted-package.md)). Every Reader recognises one. A Reader that
+implements the optional feature `encryption` opens it in the order in
+encrypted packages §5.2. One that does not checks the outer archive and its
+entries (steps 1 and 2), then reports `E001_ENCRYPTED_NO_KEY`. The archive
+rules and limits on this page apply to the envelope, and again to the
+archive inside it.
+
 **Directories.** A Reader MUST NOT follow a symbolic link in a directory
 source, including one that replaces a file after it was listed: the file is
 then unreadable (`P002`).
@@ -93,6 +102,8 @@ be at least those below, which the conformance corpus assumes:
 | --- | --- | --- | --- |
 | Entries in a source | `maxEntries` | 20,000 | `T003` |
 | Uncompressed bytes in a source | `maxBytes` | 512 MiB | `T003` |
+| Decrypted bytes of an envelope's `package.age` or `index.age`, counted as they are produced | `maxBytes` | 512 MiB | `T003` |
+| age scrypt work factor (log2 N) in an envelope | `maxScryptWorkFactor` | 20 | `E006`, without running scrypt |
 | Frontmatter block size | `maxFrontmatterBytes` | 64 KiB | `C002` for that node (`C004` for a reserved file) |
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |
 | Structure file size | `maxStructureBytes` | 4 MiB | `O001` |
@@ -127,6 +138,9 @@ These apply to both classes.
   NOT use an address, a model name or a credential that a package supplies.
 - **No access outside the package.** A Reader MUST NOT read or write outside
   the package while resolving package-relative paths.
+- **No age plugins.** A Reader MUST NOT run an age plugin, or any other
+  program, to open an envelope ([encrypted packages](moca-encrypted-package.md) §4). Key
+  routes come only from the host's key provider.
 - **No required infrastructure.** A Reader MUST NOT require a model, a vector
   database or an agent framework to read a package.
 
@@ -626,6 +640,12 @@ withhold only the `structured` capability.
 | `C009_LOCALE_ORPHAN` | warning | A locale representation has no default-language file. |
 | `C010_VALIDITY_WINDOW_INVALID` | warning | moca.valid_until is not later than moca.valid_from. |
 | `C011_EVIDENCE_SELECTOR_UNMATCHED` | warning | An evidence selector does not match the text source file it cites inside the package. |
+| `E001_ENCRYPTED_NO_KEY` | error | An envelope was not opened: there is no key provider, it returned no key or a kind of key no stanza uses, or the Reader does not implement `encryption` ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). |
+| `E002_DECRYPTION_FAILED` | error | A key was supplied for an envelope, but unwrapping or the header MAC failed. |
+| `E003_PAYLOAD_CORRUPT` | error | An envelope's encrypted payload failed authentication or was truncated. |
+| `E004_OUTLINE_MISMATCH` | error | An envelope's outline differs from the decrypted manifest or structure. |
+| `E005_ENVELOPE_INVALID` | error | An envelope has a missing, repeated or unexpected entry, an encrypted entry that is not stored, or an invalid `moca-enc.json`, or a Zip has both `moca.json` and `moca-enc.json` at its root. |
+| `E006_AGE_HEADER_INVALID` | error | An envelope's age header is malformed or unsupported, over 64 KiB, or breaks the scrypt rules or the work-factor limit. |
 | `A001_ATTESTATION_MALFORMED` | error | An attestation file is not a parseable envelope and statement. |
 | `A002_ATTESTATION_INVALID` | error | An attestation failed verification or does not match the package. |
 | `A003_ATTESTATION_UNVERIFIABLE` | warning | An attestation could not be checked ([attestations §7](moca-attestations.md#7-verifying-an-attestation) says when). |

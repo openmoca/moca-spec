@@ -3803,6 +3803,478 @@
           "https://example.com/conformance/search-policy@1.0.0#current.md"
         ]
       }
+    },
+    {
+      "id": "envelope-no-provider",
+      "description": "Encrypted packages §2, §5.1: an envelope is recognised by its content. With no key provider, or in a Reader without the encryption feature, it is not opened (E001), and nothing inside it is exposed.",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E001_ENCRYPTED_NO_KEY"
+        ],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-x25519",
+      "description": "An envelope for an X25519 recipient, with the default outline (id, version, title). Opened, it is the inner archive, with the same digest.",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-passphrase",
+      "description": "An envelope for a passphrase (one scrypt stanza, work factor 10).",
+      "target": "fixtures/envelopes/passphrase.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "passphrase": "moca-conformance-INSECURE-passphrase"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-no-outline",
+      "description": "An envelope with no outline: moca-enc.json holds only the format.",
+      "target": "fixtures/envelopes/no-outline.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-structure",
+      "description": "An envelope with the opt-in structure copy, outline/structure.ttl, equal to the inner structure.ttl.",
+      "target": "fixtures/envelopes/structure.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "digest": "SAME:structure-procedure",
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-large-plain",
+      "description": "The package inside the envelope-large and envelope-truncated envelopes, read plain.",
+      "target": "fixtures/envelope-large",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:463ca8812ec5833eaf053487fe82593246f7b48bd435b2d91602ace99acab95c"
+      }
+    },
+    {
+      "id": "envelope-large",
+      "description": "An envelope whose payload has more than one age chunk.",
+      "target": "fixtures/envelopes/large.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:envelope-large-plain",
+        "envelope": {
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-wrong-key-type",
+      "description": "Encrypted packages §5.1: a key of a kind no stanza uses (a passphrase for an X25519 file) is E001, not E002.",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "passphrase": "moca-conformance-INSECURE-passphrase"
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E001_ENCRYPTED_NO_KEY"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-wrong-key",
+      "description": "An X25519 identity that is not a recipient (E002).",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-other.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E002_DECRYPTION_FAILED"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-wrong-passphrase",
+      "description": "A wrong passphrase (E002).",
+      "target": "fixtures/envelopes/passphrase.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "passphrase": "moca-conformance-INSECURE-wrong"
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E002_DECRYPTION_FAILED"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-wrong-file-key",
+      "description": "A file key from the host that fails the header MAC (E002).",
+      "target": "fixtures/envelopes/x25519.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "fileKey": "00000000000000000000000000000000"
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E002_DECRYPTION_FAILED"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-truncated",
+      "description": "The payload's final chunk is missing (E003); no plaintext is used.",
+      "target": "fixtures/envelopes/truncated.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E003_PAYLOAD_CORRUPT"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-flipped-byte",
+      "description": "One payload byte changed after encryption (E003).",
+      "target": "fixtures/envelopes/flipped-byte.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E003_PAYLOAD_CORRUPT"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-outline-mismatch",
+      "description": "Encrypted packages §3: the outline's title differs from the inner manifest's (E004). Nothing inside is exposed.",
+      "target": "fixtures/envelopes/outline-mismatch.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-structure-mismatch",
+      "description": "The structure copy differs from the inner structure.ttl by one line (E004).",
+      "target": "fixtures/envelopes/structure-mismatch.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-extra-entry",
+      "description": "Encrypted packages §2: an entry the layout does not name (E005).",
+      "target": "fixtures/envelopes/extra-entry.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-missing-package",
+      "description": "No package.age (E005).",
+      "target": "fixtures/envelopes/missing-package.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-unknown-format",
+      "description": "moca-enc.json names another format (E005).",
+      "target": "fixtures/envelopes/unknown-format.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-both-markers",
+      "description": "A Zip with both moca.json and moca-enc.json at its root (E005).",
+      "target": "fixtures/envelopes/both-markers.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-deflated-package",
+      "description": "package.age is deflated, not stored (E005).",
+      "target": "fixtures/envelopes/deflated-package.moca.enc",
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E005_ENVELOPE_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-scrypt-not-alone",
+      "description": "Encrypted packages §4: an scrypt stanza beside an X25519 stanza (E006), found before any key is used.",
+      "target": "fixtures/envelopes/scrypt-not-alone.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E006_AGE_HEADER_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-work-factor",
+      "description": "An scrypt work factor of 21, over the default limit of 20 (E006), refused without running scrypt.",
+      "target": "fixtures/envelopes/work-factor.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "passphrase": "moca-conformance-INSECURE-passphrase"
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "E006_AGE_HEADER_INVALID"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-limit-inner",
+      "description": "Reader contract §3: the limits apply again to the archive inside an envelope. The envelope is small; the inner archive inflates past maxBytes (T003).",
+      "target": "fixtures/envelopes/large.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ],
+        "limits": {
+          "maxBytes": 50000
+        }
+      },
+      "expect": {
+        "valid": false,
+        "capabilities": [],
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "envelope": {
+          "opened": false
+        }
+      }
     }
   ]
 }

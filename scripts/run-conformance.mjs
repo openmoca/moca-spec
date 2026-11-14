@@ -50,6 +50,12 @@ function checkPackage(e, actual) {
   if (e.distribution !== undefined && e.distribution !== (actual.distribution ?? null)) {
     problems.push(`distribution: expected ${e.distribution}, got ${actual.distribution ?? null}`);
   }
+  // Encrypted packages §5.3: the fields of envelope the case gives are compared exactly.
+  for (const [field, want] of Object.entries(e.envelope ?? {})) {
+    const got = actual.envelope?.[field];
+    if (JSON.stringify(got) !== JSON.stringify(want)) problems.push(`envelope.${field}: expected ${JSON.stringify(want)}, got ${JSON.stringify(got)}`);
+  }
+  if (e.envelope === undefined && actual.envelope !== undefined && actual.envelope !== null) problems.push('envelope: expected none, got one');
   if (e.sidecarUsable !== undefined && e.sidecarUsable !== actual.sidecarUsable) {
     problems.push(`sidecarUsable: expected ${e.sidecarUsable}, got ${actual.sidecarUsable}`);
   }

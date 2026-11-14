@@ -33,6 +33,10 @@ support-kb.moca.idx/
     └── items.jsonl
 ```
 
+For an encrypted package, a Producer SHOULD put the sidecar inside the
+envelope instead, in its Zip form, as `index.age`
+([encrypted packages §6](moca-encrypted-package.md#6-derived-data)).
+
 ## 3. `index.json`
 
 Valid against [`sidecar-index.schema.json`](../schemas/v1/sidecar-index.schema.json):
@@ -131,6 +135,10 @@ and MUST NOT apply a prefix a sidecar gives.
   only sidecars it built or trusts, or search the package directly.
 - **A sidecar archive is untrusted input.** It follows the same archive rules
   and limits as a package ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)).
+- **A sidecar reveals content.** Its chunk text and vectors are derived from
+  the package. For an encrypted package, a plain sidecar undoes the
+  encryption; it belongs inside the envelope as `index.age`
+  ([encrypted packages §6](moca-encrypted-package.md#6-derived-data)).
 - **Chunk text reaches models** like any package text, and follows
   [Reader contract §12](moca-reader-contract.md#12-handing-content-to-a-model).
 

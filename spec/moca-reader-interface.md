@@ -59,6 +59,7 @@ Everything a Reader touches outside a package's bytes comes from the host
 | Embedder | §5.3. | Dense search. |
 | Retrieval hooks | `ingress` and `egress` (§5.4). | Ontology-guided retrieval strategies. |
 | Audience set | A list of audience labels. | Removing records outside it. |
+| Key provider | Given an envelope's age stanzas, its unverified outline and which file is being opened, returns X25519 identities, a passphrase, a file key, or nothing; MAY be asynchronous ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). | Opening encrypted packages, for a Reader that implements `encryption`. |
 
 A package never supplies any of these.
 
@@ -66,8 +67,8 @@ A package never supplies any of these.
 
 | Operation | Takes | Returns |
 | --- | --- | --- |
-| `readPackage` | A target (a directory, archive path, archive bytes or package source) and options: trust root, member resolver, limits, strict, clock, require signature. | A package result. Never throws for a malformed package. |
-| `bindSidecar` | A sidecar target and a package result. | `{ usable, index, chunks, diagnostics }`. |
+| `readPackage` | A target (a directory, archive path, archive bytes or package source) and options: trust root, member resolver, limits, strict, clock, require signature, key provider (`keyProvider`). | A package result. Never throws for a malformed package. |
+| `bindSidecar` | A sidecar target and a package result; for an envelope's `index.age`, the envelope and the key provider. | `{ usable, index, chunks, diagnostics }`. |
 | `Library(options)` | Clock, overlays, limits. | An empty library. |
 | `Library.add` | A valid package result, and optionally its sidecar chunks and index. | The library, with the package and its resolved members loaded. |
 | `Library.citations` | Options: locale, include text. | Every node's citation record. |
@@ -82,7 +83,10 @@ contract:
 - `diagnostics`, `valid` and `capabilities`;
 - `distribution`: the manifest's `distribution`, or `open` when the manifest
   has none. It is absent when the manifest is missing or fails its schema
-  ([package spec §4.1](moca-package-spec.md#41-properties)).
+  ([package spec §4.1](moca-package-spec.md#41-properties));
+- `envelope`, for an envelope only: `{ format, opened }`, plus the
+  unverified `outline` when it was not opened
+  ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).
 
 A **diagnostic** has `code`, `severity` and `message`, and optionally `file`
 and `line`.

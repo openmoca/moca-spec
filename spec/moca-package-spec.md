@@ -805,12 +805,22 @@ No field in a package can make a Reader contact a location, load a model or
 change a setting. This is enforced by the Reader contract, not by a list of
 forbidden key names, which could never be complete.
 
+The same holds for an envelope ([encrypted packages](moca-encrypted-package.md)):
+its age stanzas and its outline are package data. A Reader passes stanzas it
+does not unwrap to the host's key provider, and neither the Reader nor the
+key provider contacts an address taken from them.
+
 ### 13.3 Audience is a label, not access control
 
 `moca.audience` lets a host filter content before retrieval. It does not
 protect anything: anyone with the package can read every file. Content that
 must not reach a group of people must not be in a package that group can
 obtain.
+
+An encrypted package is the one case where a holder cannot read every file:
+only the recipients of its envelope can. Encryption protects confidentiality
+in transit and at rest, not after decryption
+([encrypted packages §7](moca-encrypted-package.md#7-security-considerations)).
 
 ### 13.4 Identifier control
 
@@ -864,6 +874,9 @@ log. Content and sources may hold more.
   records, queries or answers SHOULD treat them as possibly personal data.
   A Reader never sends them anywhere itself (§13.1,
   [Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)).
+- **An envelope's outline is public.** Its fields are readable without a
+  key, so publishers SHOULD choose them knowing that
+  ([encrypted packages §3](moca-encrypted-package.md#3-the-marker-and-the-outline)).
 
 ## 14. Versioning of this specification
 

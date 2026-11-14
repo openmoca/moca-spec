@@ -2,3 +2,4 @@
 # have the same line endings on every platform.
 * text=auto eol=lf
 *.zip binary
+*.enc binary

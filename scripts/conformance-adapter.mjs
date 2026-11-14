@@ -4,6 +4,7 @@
 // (conformance/README.md). Another Reader provides its own adapter.
 //
 //   echo '{"root": "/abs/conformance", "case": {...}}' | node scripts/conformance-adapter.mjs
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -47,6 +48,20 @@ function hostileHooks() {
   };
 }
 
+/**
+ * The conformance key provider (encrypted packages §5.1): the identities in the case's identity files, its
+ * passphrase, or its file key (hex). No key options means no key provider.
+ */
+function conformanceKeyProvider(root, o) {
+  if (o.identities) {
+    const identities = o.identities.flatMap((f) => readFileSync(join(root, f), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l.startsWith('AGE-SECRET-KEY-1')));
+    return () => ({ identities });
+  }
+  if (o.passphrase !== undefined) return () => ({ passphrase: o.passphrase });
+  if (o.fileKey !== undefined) return () => ({ fileKey: Uint8Array.from(Buffer.from(o.fileKey, 'hex')) });
+  return undefined;
+}
+
 /** An ingress hook that asks for more than the caller did: the gate must follow the caller. */
 function hostileIngressHooks() {
   return { ingress: () => ({ includeAll: true, limit: 1000, locale: 'fr' }) };
@@ -64,6 +79,7 @@ export async function actualFor(root, c) {
     clock: o.now ? () => new Date(o.now) : undefined,
     requireSignature: o.requireSignature === true,
     strict: o.strict === true,
+    keyProvider: conformanceKeyProvider(root, o),
   };
   const overlays = (o.overlays ?? []).map((v) => ({ id: v.id, layer: v.layer, path: join(root, v.path) }));
 
@@ -147,7 +163,7 @@ export async function actualFor(root, c) {
       if (r.evidence.length > 0) evidenceMatched[r.node.path] = r.evidence.map((e) => e.matched ?? null);
     }
   }
-  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, sidecarUsable, evidenceMatched };
+  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, sidecarUsable, evidenceMatched, envelope: result.envelope };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

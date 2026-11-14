@@ -27,6 +27,23 @@ The 0.7.0 Spec Change Proposal:
   gains `distribution`. Cases `distribution-encrypted-only` and
   `distribution-unknown`; the runner compares `expect.distribution`.
 
+- [Encrypted packages](spec/moca-encrypted-package.md) in full: the
+  envelope layout, the `moca-enc.json` marker and the unverified outline,
+  age v1 with X25519 and scrypt recipients and no plugins, the key provider,
+  the opening order, the result, derived data (`index.age`) and security
+  considerations. Schema `moca-enc.schema.json`.
+- Reader contract: envelopes in §3, with the limit `maxScryptWorkFactor`
+  (20) and decrypted bytes counted against `maxBytes`; §4 no age plugins;
+  §11 the `E` family, `E001`–`E006`.
+- Reader interface: the key provider (§3), `keyProvider` and the `envelope`
+  result (§4).
+- Package spec §13.2, §13.3 and §13.6, and sidecar spec §2 and §5.2:
+  envelopes, and indexes inside them.
+- 23 `envelope-*` cases, with fixtures made by the reference age tool
+  (`scripts/envelope-fixtures.py`). The runner protocol gains
+  `options.identities`, `options.passphrase` and `options.fileKey`, and
+  compares `expect.envelope`.
+
 ### Changed
 
 - Reader contract §11 and package spec §11 (`core`): the `E` family counts
