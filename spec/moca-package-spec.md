@@ -171,6 +171,7 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `images` | No | Pictures of the package for a catalogue or a library: package files under `media/`, each with a role (§4.6). |
 | `translations` | No | The manifest's `title`, `description`, `tags` and image `alt` text in other languages, keyed by a tag in `locales` (§4.7). |
 | `tags` | No | Short plain labels, in the default language, that a catalogue can filter and group by (§4.8). |
+| `apps` | No | Where the publisher suggests the package is opened, beyond conversation: an ordered list of specific apps and app types, the first preferred (§4.9). Advice only (§13.2). |
 | `validFrom`, `validUntil` | No | When the package's content is in force (§4.4). |
 | `members` | No | Packages this package is composed of, pinned by digest (§7.1). |
 | `relations` | No | Typed relations to other packages (§7.2). |
@@ -383,6 +384,55 @@ reading content.
 - Tags are labels for people and catalogues. They are not concepts. Pages
   keep OKF's `tags`, and the firm link from content to a vocabulary stays the
   concept binding in `structure.ttl` (§5.6).
+
+### 4.9 Apps
+
+`apps` says where the publisher suggests the package is opened, beyond
+conversation:
+
+```json
+"apps": ["https://apps.example.com/legal-review", "legal"]
+```
+
+It works like a CSS `font-family` stack. The first entry is the publisher's
+first choice, and each later entry is a fallback. A host shows or uses the
+first entry it can, and ignores the rest. Each entry is one of two forms:
+
+- **A specific app:** an absolute `https:` URI that names one application,
+  for example `https://apps.example.com/legal-review`. It is a name, not an
+  address to fetch.
+- **An app type:** a token of lower-case ASCII letters, digits and hyphens,
+  starting with a letter, for example `legal` or `tutoring`.
+
+Rules:
+
+- At most 16 entries. A URI is at most 2048 characters, with no white space.
+  A token is at most 64 characters. No two entries are equal. Anything else
+  fails the schema (`M002`).
+- **Conversation is never listed.** Every package can be read, searched and
+  asked about with the open Readers and the MCP server. `apps` names only
+  what goes beyond that, so an entry such as `chat` adds nothing.
+- **Types are open.** Anyone may use a token that no list names. A public,
+  informative list of well-known types, with a line on what each means, is
+  kept on openmoca.org. A type joins it by a pull request to the site, not by
+  a change to this specification.
+- **Advice, never configuration**
+  ([ADR-0022](../docs/adr/0022-applications-get-advice.md), §13.2). A Reader
+  exposes `apps` as declared and does nothing else with it. It MUST NOT
+  fetch, resolve or open a URI in `apps`
+  ([Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)).
+  A host MAY ignore `apps`, show it, or use it to offer an "Open with"
+  choice.
+- The app that receives a package decides whether it can use it. Listing an
+  app does not make the package suitable for it, and not listing an app does
+  not stop that app from opening the package.
+- `apps` names applications only. It never names agents, prompts, models or
+  tools (§8), and it never configures them.
+
+`apps` and profiles (§9) are separate. `apps` says **which** application the
+publisher suggests. A profile says **how** the content is shaped for a use:
+the data an application of that kind needs, which a Reader can check. A
+package may have either, both or neither, and neither implies the other.
 
 ## 5. Content
 
@@ -820,6 +870,8 @@ profile's package-level data. Node-level profile data goes under
 - A profile never defines a capability and never makes a package invalid.
   Structure that every Reader must understand belongs in `structure.ttl`
   (§5.6), not in a profile.
+- A profile says how content is shaped for a use. Which application the
+  publisher suggests is `apps` (§4.9), a separate property.
 
 The registry of profiles is [profiles/README.md](../profiles/README.md).
 
@@ -919,6 +971,10 @@ and SHOULD verify attestations before loading.
 No field in a package can make a Reader contact a location, load a model or
 change a setting. This is enforced by the Reader contract, not by a list of
 forbidden key names, which could never be complete.
+
+`apps` (§4.9) is advice to a host. It names applications, never agents,
+prompts, models or tools, and a URI in it is a name, never fetched or opened
+by a Reader.
 
 The same holds for an envelope ([encrypted packages](moca-encrypted-package.md)):
 its age stanzas and its outline are package data. A Reader passes stanzas it

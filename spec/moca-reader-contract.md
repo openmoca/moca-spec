@@ -137,6 +137,8 @@ These apply to both classes.
   source, a member resolver, online signature checks, and search backends.
   Nothing in a package can cause a Reader to contact anything. A Reader MUST
   NOT use an address, a model name or a credential that a package supplies.
+  It MUST NOT fetch, resolve or open a URI in `apps`
+  ([package spec §4.9](moca-package-spec.md#49-apps)): an app URI is a name.
 - **No access outside the package.** A Reader MUST NOT read or write outside
   the package while resolving package-relative paths.
 - **No age plugins.** A Reader MUST NOT run an age plugin, or any other

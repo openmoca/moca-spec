@@ -8,7 +8,8 @@ conformance corpus. The format follows [Keep a Changelog](https://keepachangelog
 
 The 0.7.0 Spec Change Proposal:
 [distribution tiers, encrypted packages and issued copies](https://github.com/openmoca/moca-spec/issues/5).
-Also [package images, translated titles and tags](https://github.com/openmoca/moca-spec/issues/7).
+Also [package images, translated titles and tags](https://github.com/openmoca/moca-spec/issues/7), and
+[an apps hint](https://github.com/openmoca/moca-spec/issues/8).
 
 ### Added
 
@@ -75,6 +76,15 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   the cover copy and the outline. The runner compares `expect.images`,
   `expect.translations` and `expect.tags`. The envelope fixtures come from
   `scripts/envelope-fixtures.py --only cover`.
+
+- Package spec §4.9 ([#8](https://github.com/openmoca/moca-spec/issues/8)):
+  `apps`, an ordered list of `https:` URIs naming apps and app-type tokens,
+  where the publisher suggests the package is opened beyond conversation.
+  Advice only: Reader contract §4 forbids fetching, resolving or opening an
+  app URI. The Reader interface's result gains `apps`; the envelope outline
+  may carry it. §9 and §13.2 say how `apps` differs from profiles and
+  configuration. 5 `apps-*` cases and 2 `envelope-outline-apps*` cases; the
+  runner compares `expect.apps`.
 
 ### Changed
 

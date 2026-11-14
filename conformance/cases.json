@@ -1956,6 +1956,75 @@
       }
     },
     {
+      "id": "apps-valid",
+      "description": "Package spec §4.9: a specific app (an https: URI) then an app type. The result exposes apps as declared; the Reader fetches nothing.",
+      "target": "fixtures/apps-valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "apps": [
+          "https://apps.example.com/legal-review",
+          "legal"
+        ],
+        "digest": "sha256:b815dd657ad1cf0aeb2968474e98a2e77eb3dda52eb046815f3b3920652c1acd"
+      }
+    },
+    {
+      "id": "apps-http",
+      "description": "Package spec §4.9: a specific app is an https: URI; http: fails the schema, and the result has no apps.",
+      "target": "fixtures/apps-http",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "apps": null
+      }
+    },
+    {
+      "id": "apps-relative",
+      "description": "Package spec §4.9: a relative URI is neither an https: URI nor a token: M002.",
+      "target": "fixtures/apps-relative",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "apps": null
+      }
+    },
+    {
+      "id": "apps-duplicate",
+      "description": "Package spec §4.9: no two entries are equal: M002.",
+      "target": "fixtures/apps-duplicate",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "apps": null
+      }
+    },
+    {
+      "id": "apps-token-invalid",
+      "description": "Package spec §4.9: an app type is lower-case ASCII letters, digits and hyphens, starting with a letter: M002.",
+      "target": "fixtures/apps-token-invalid",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "apps": null
+      }
+    },
+    {
       "id": "vendor-key-trailing-newline",
       "description": "Package spec §4.5: a vendor key must match x-<vendor>-<key> exactly. One with a trailing newline is an unknown key (M004).",
       "target": "fixtures/vendor-key-trailing-newline",
@@ -4831,6 +4900,58 @@
       "requires": [
         "encryption"
       ],
+      "expect": {
+        "valid": false,
+        "codes": [
+          "E004_OUTLINE_MISMATCH"
+        ],
+        "capabilities": [],
+        "envelope": {
+          "opened": false
+        }
+      }
+    },
+    {
+      "id": "envelope-outline-apps",
+      "description": "Encrypted packages §3: apps as an outline property, equal to the inner manifest's. It opens.",
+      "target": "fixtures/envelopes/outline-apps.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": true
+        },
+        "digest": "SAME:apps-valid",
+        "apps": [
+          "https://apps.example.com/legal-review",
+          "legal"
+        ]
+      }
+    },
+    {
+      "id": "envelope-outline-apps-mismatch",
+      "description": "Encrypted packages §3: an outline whose apps differ from the decrypted manifest's (here, in another order) is E004.",
+      "target": "fixtures/envelopes/outline-apps-mismatch.moca.enc",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
       "expect": {
         "valid": false,
         "codes": [

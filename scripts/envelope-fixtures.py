@@ -247,13 +247,30 @@ def cover_fixtures() -> None:
     check("cover-no-cover", True, minimal, identity="test")
 
 
+def apps_fixtures() -> None:
+    """The envelopes with apps in the outline (encrypted packages §3), added in 0.7.0 WP6c. Inner package: apps-valid."""
+    test = keypair("test")
+    package = ROOT / "apps-valid"
+    manifest = json.loads((package / "moca.json").read_text())
+    outline = {k: manifest[k] for k in ("id", "version", "title", "apps")}
+    inner = pack(package)
+    package_age = age_x25519(inner, test)
+    envelope("outline-apps", {"moca-enc.json": marker(outline), "package.age": package_age})
+    envelope("outline-apps-mismatch", {"moca-enc.json": marker({**outline, "apps": list(reversed(outline["apps"]))}), "package.age": package_age})
+    for name in ("outline-apps", "outline-apps-mismatch"):
+        check(name, True, inner, identity="test")
+
+
 if __name__ == "__main__":
-    # `--only index` and `--only cover` write only those fixtures, so the committed envelopes are never re-encrypted.
+    # `--only index`, `--only cover` and `--only apps` write only those fixtures, so the committed envelopes are never re-encrypted.
     if sys.argv[1:] == ["--only", "index"]:
         index_fixtures()
     elif sys.argv[1:] == ["--only", "cover"]:
         cover_fixtures()
+    elif sys.argv[1:] == ["--only", "apps"]:
+        apps_fixtures()
     else:
         main()
         index_fixtures()
         cover_fixtures()
+        apps_fixtures()

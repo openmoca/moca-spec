@@ -92,6 +92,9 @@ contract:
   - `translations`: as declared, without `alt` text that was dropped and
     without repeated tags.
   - `tags`: as declared, without repeats;
+- `apps`: the manifest's `apps`, as declared, when the manifest passes its
+  schema; absent otherwise ([package spec §4.9](moca-package-spec.md#49-apps)).
+  Advice only: the Reader does nothing else with it;
 - `envelope`, for an envelope only: `{ format, opened }`, plus the
   unverified `outline` when it was not opened
   ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).
