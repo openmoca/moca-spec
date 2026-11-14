@@ -57,8 +57,8 @@ function checkPackage(e, actual) {
   if (e.distribution !== undefined && e.distribution !== (actual.distribution ?? null)) {
     problems.push(`distribution: expected ${e.distribution}, got ${actual.distribution ?? null}`);
   }
-  // Package spec §4.6–4.9: images, translations, tags and apps as the result exposes them; null means absent.
-  for (const field of ['images', 'translations', 'tags', 'apps']) {
+  // Package spec §4.6–4.10: images, translations, tags, apps and readingOrder as the result exposes them; null means absent.
+  for (const field of ['images', 'translations', 'tags', 'apps', 'readingOrder']) {
     if (e[field] === undefined) continue;
     const got = actual[field] ?? null;
     if (JSON.stringify(canonical(got)) !== JSON.stringify(canonical(e[field]))) problems.push(`${field}: expected ${JSON.stringify(e[field])}, got ${JSON.stringify(got)}`);

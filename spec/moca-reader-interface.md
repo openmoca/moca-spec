@@ -95,6 +95,9 @@ contract:
 - `apps`: the manifest's `apps`, as declared, when the manifest passes its
   schema; absent otherwise ([package spec §4.9](moca-package-spec.md#49-apps)).
   Advice only: the Reader does nothing else with it;
+- `readingOrder`: the manifest's `readingOrder`, when the manifest passes its
+  schema and the IRI resolves; absent otherwise
+  ([package spec §4.10](moca-package-spec.md#410-reading-order));
 - `envelope`, for an envelope only: `{ format, opened }`, plus the
   unverified `outline` when it was not opened
   ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).
@@ -109,7 +112,7 @@ and `line`.
 | Operation | Takes | Returns |
 | --- | --- | --- |
 | `Search(source, options)` | A library, or, for a store backend, the loaded packages' states (`packageState`) and a clock; then a backend, an audience set and optional hooks. | A search. |
-| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`, `upTo`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
 
 Every call follows
 [Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate).

@@ -349,13 +349,34 @@ A Reader offers one search operation. It has the same signature in every
 language, and the default retrieval policy is applied inside it:
 
 ```text
-search(query, { limit, includeAll, locale, concepts, scope }) -> citation records, each with a score
+search(query, { limit, includeAll, locale, concepts, scope, upTo }) -> citation records, each with a score
 ```
 
 `concepts` keeps records bound to at least one of the given concept IRIs;
 `scope` keeps records bound to the concept or any of its descendants by
 hierarchy or parts (§10). Both refer to the package structure
 ([package spec §5.6](moca-package-spec.md#56-structure)).
+
+`upTo` is the IRI of a member of a package's reading order
+([package spec §4.10](moca-package-spec.md#410-reading-order)). It leaves
+out material that comes after that point:
+
+- **Which packages.** `upTo` limits only the packages whose reading order
+  has `upTo` as a member. Records from other loaded packages, such as
+  reference packages searched beside a course, are not limited by it. If no
+  loaded package's reading order has it, `upTo` limits nothing.
+- **What passes.** In a limited package, a record passes when every concept
+  it is bound to that is on the reading order has a position at or before
+  the position of `upTo`. The point itself is included.
+- **Records off the reading order.** A record bound to no concept on the
+  reading order is not limited: a glossary, an introduction or reference
+  pages are useful at every point and are not ahead of anything. A caller
+  that wants them out narrows the search with `scope` or `concepts`.
+- `upTo` combines with `concepts` and `scope`: a record must pass each one
+  the caller named. It applies to search only; the structure operations
+  (§10) report the whole structure.
+- `upTo` is a convenience, not access control. A person with the package
+  file can read all of it.
 
 ### 9.1 Backends
 
@@ -418,10 +439,12 @@ Each search runs these steps, in order
    5. when the caller named concepts or a scope, keep only records bound to
       them. Concepts and scope set by an ingress hook narrow the backend's
       search but never bind the gate: the gate follows the caller;
-   6. keep one record per node representation and span: two candidates with
+   6. when the caller named `upTo`, keep only records that pass it (§9). An
+      ingress hook can never set, change or remove `upTo`;
+   7. keep one record per node representation and span: two candidates with
       the same `node.ref`, `node.locale` and `span.start` are one result, the
       first;
-   7. return at most `limit` records. `limit` defaults to 5.
+   8. return at most `limit` records. `limit` defaults to 5.
 
 Hooks are host code, supplied when the host creates the search. A package can
 never supply or select one. A backend without `filterPushdown` can return hits
@@ -473,10 +496,12 @@ the trust root may have changed since ingest.
 
 So a store search takes the host's **package states**: for each loaded
 package, its digest, `id`, `version`, default language, relations, relation
-scopes (§7.2 of the package spec), signers, current reviews and node-level
-`moca.contested_by`. A Reader produces a package's state from the package
-result (`packageState`); it is small, plain JSON that a host keeps beside its
-store. At query time the Reader resolves store hits from their records and
+scopes (§7.2 of the package spec), signers, current reviews, node-level
+`moca.contested_by`, and, when `readingOrder` resolves, its members in order
+and the position of each concept on it, so a store search applies `upTo` as
+a library search does. A Reader produces a package's state from the package
+result (`packageState`); it is small, plain JSON that a host keeps beside
+its store. At query time the Reader resolves store hits from their records and
 MUST recompute from the states and the clock: `stale` and `inForce`;
 `superseded`, `supersededBy`, `contested` and `contestedBy` from the relations
 among the loaded packages; `package.signed` and `signers`; and
@@ -504,6 +529,8 @@ to it:
 | `concepts` | The concepts to search: the caller's, a scope and its descendants, or those an ingress hook chose. |
 
 Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.
+`upTo` adds no filter, because records off the reading order and from other
+packages still pass it; the gate applies it.
 
 ### 9.6 Hybrid backends
 
@@ -636,6 +663,7 @@ withhold only the `structured` capability.
 | `M011_TRANSLATION_LOCALE_UNDECLARED` | error | A key of `translations` is not a tag in `locales` ([package spec §4.7](moca-package-spec.md#47-translations)). |
 | `M012_TAG_DUPLICATE` | warning | Two tags in one list are equal, compared case-insensitively. The repeat is dropped ([package spec §4.8](moca-package-spec.md#48-tags)). |
 | `M013_ALT_IMAGE_UNKNOWN` | warning | A translated `alt` text names no image in `images`. It is dropped. |
+| `M014_READING_ORDER_UNRESOLVED` | warning | `readingOrder` does not name a `skos:OrderedCollection` with a `skos:memberList` in the package's own `structure.ttl`. It is ignored ([package spec §4.10](moca-package-spec.md#410-reading-order)). |
 | `C001_FRONTMATTER_MISSING` | error | A concept document has no YAML frontmatter (OKF MUST). |
 | `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML or is not a mapping. |
 | `C003_TYPE_MISSING` | error | Frontmatter has no non-empty type (OKF MUST). |

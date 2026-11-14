@@ -8,8 +8,9 @@ conformance corpus. The format follows [Keep a Changelog](https://keepachangelog
 
 The 0.7.0 Spec Change Proposal:
 [distribution tiers, encrypted packages and issued copies](https://github.com/openmoca/moca-spec/issues/5).
-Also [package images, translated titles and tags](https://github.com/openmoca/moca-spec/issues/7), and
-[an apps hint](https://github.com/openmoca/moca-spec/issues/8).
+Also [package images, translated titles and tags](https://github.com/openmoca/moca-spec/issues/7),
+[an apps hint](https://github.com/openmoca/moca-spec/issues/8), and
+[a reading order, and search up to a point](https://github.com/openmoca/moca-spec/issues/9).
 
 ### Added
 
@@ -23,7 +24,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Conformance runner: the `encryption` feature and the adapter's `envelope`
   output.
 - ADR-0023 (age envelope), ADR-0024 (`distribution`), ADR-0025 (images,
-  translations, tags) and ADR-0026 (`apps`).
+  translations, tags), ADR-0026 (`apps`) and ADR-0027 (reading order).
 - Package spec §4.1: `distribution` (`open`, `encrypted-only`,
   `service-only`), the publisher's signed intent; a label only. The manifest
   schema gains the closed enum, and the Reader interface's package result
@@ -86,6 +87,15 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   may carry it. §9 and §13.2 say how `apps` differs from profiles and
   configuration. 5 `apps-*` cases and 2 `envelope-outline-apps*` cases; the
   runner compares `expect.apps`.
+- Package spec §4.10 ([#9](https://github.com/openmoca/moca-spec/issues/9)):
+  `readingOrder`, the IRI of the ordered collection in the package's own
+  `structure.ttl` that orders the whole package; `M014` (warning) when it
+  does not resolve. Reader contract §9: the search option `upTo`, applied in
+  the gate (§9.2 step 6), limiting only packages whose reading order has it
+  as a member and never records off the reading order. §9.4: package states
+  carry the reading order. The Reader interface's result gains
+  `readingOrder`. 4 `reading-order-*` cases and 10 `search-upto-*` cases;
+  the runner compares `expect.readingOrder` and passes `search.upTo`.
 
 ### Changed
 

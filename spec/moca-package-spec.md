@@ -172,6 +172,7 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `translations` | No | The manifest's `title`, `description`, `tags` and image `alt` text in other languages, keyed by a tag in `locales` (§4.7). |
 | `tags` | No | Short plain labels, in the default language, that a catalogue can filter and group by (§4.8). |
 | `apps` | No | Where the publisher suggests the package is opened, beyond conversation: an ordered list of specific apps and app types, the first preferred (§4.9). Advice only (§13.2). |
+| `readingOrder` | No | The IRI of one ordered collection in the package's own `structure.ttl`: the order in which the package is meant to be read (§4.10). |
 | `validFrom`, `validUntil` | No | When the package's content is in force (§4.4). |
 | `members` | No | Packages this package is composed of, pinned by digest (§7.1). |
 | `relations` | No | Typed relations to other packages (§7.2). |
@@ -434,6 +435,49 @@ publisher suggests. A profile says **how** the content is shaped for a use:
 the data an application of that kind needs, which a Reader can check. A
 package may have either, both or neither, and neither implies the other.
 
+### 4.10 Reading order
+
+`readingOrder` names the order in which the package is meant to be read: a
+course, a handbook, a novel, a set of steps. A package may hold several
+ordered collections (a learning path, the steps of each procedure), and
+`readingOrder` says which one is the order of the package as a whole:
+
+```json
+"readingOrder": "https://example.com/moca/course#path"
+```
+
+```turtle
+<https://example.com/moca/course#path> a skos:OrderedCollection ;
+  skos:memberList ( <https://example.com/moca/course#intro>
+                    <https://example.com/moca/course#module-1>
+                    <https://example.com/moca/course#module-2> ) .
+```
+
+The name follows the W3C Publication Manifest, where `readingOrder` is the
+default order in which a publication is read. There it is a list of
+resources. Here it names an ordered collection the package already holds, so
+the order is stated once.
+
+Rules:
+
+- The value is an absolute IRI. Anything else fails the schema (`M002`).
+- It MUST name a `skos:OrderedCollection` with a `skos:memberList` in the
+  package's own `structure.ttl` (§5.6). If the package has no
+  `structure.ttl`, or the IRI is not such a collection there, the Reader
+  reports `M014_READING_ORDER_UNRESOLVED` (warning) and ignores
+  `readingOrder`. An overlay never supplies or changes it.
+- **Steps.** The members of the list, in list order, are the steps along the
+  reading order. A concept's **position** is the first member that is the
+  concept, or has it as a descendant by `skos:narrower` or `dcterms:hasPart`
+  in the package's own `structure.ttl`. A concept with no position is not on
+  the reading order.
+- **Describes, never enforces** (§5.6). `readingOrder` never removes anything
+  from a result and never stops a person reading ahead. Only a caller's
+  `upTo` narrows a search
+  ([Reader contract §9](moca-reader-contract.md#9-search)), and that is a
+  convenience, not access control.
+- The package result carries `readingOrder` when it resolves.
+
 ## 5. Content
 
 ### 5.1 An OKF bundle
@@ -606,7 +650,7 @@ understand exactly these terms, and ignore any others:
 | Hierarchy | `skos:broader`, `skos:narrower` | A is a kind or subtopic of B. |
 | Association | `skos:related` | A and B are related; symmetric. |
 | Parts | `dcterms:hasPart`, `dcterms:isPartOf` | B is part of A: a chapter of a handbook, a section of an act, a module of a course, a component of an assembly. |
-| Order | `skos:OrderedCollection`, `skos:memberList` | An ordered list of concepts: procedure steps, clause order, a learning path. |
+| Order | `skos:OrderedCollection`, `skos:memberList` | An ordered list of concepts: procedure steps, clause order, a learning path. The manifest's `readingOrder` names the one that orders the whole package (§4.10). |
 | Requires | `dcterms:requires`, `dcterms:isRequiredBy` | A requires B "to support its function, delivery, or coherence": a check before a step, a test before a treatment, a foundation before an advanced topic. |
 | Replaces | `dcterms:replaces`, `dcterms:isReplacedBy` | A supersedes B: an amended clause, a revised procedure. |
 | Deprecated | `owl:deprecated true` | The concept should no longer be used. |

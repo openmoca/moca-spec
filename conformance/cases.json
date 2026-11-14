@@ -2025,6 +2025,64 @@
       }
     },
     {
+      "id": "reading-order-valid",
+      "description": "Package spec §4.10: readingOrder names an ordered collection in the package's own structure.ttl. The result carries the IRI.",
+      "target": "fixtures/reading-order",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "readingOrder": "https://example.org/course#Path"
+      }
+    },
+    {
+      "id": "reading-order-not-collection",
+      "description": "Package spec §4.10: readingOrder names a concept, not an ordered collection. M014, and the result has no readingOrder.",
+      "target": "fixtures/reading-order-not-collection",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M014_READING_ORDER_UNRESOLVED"
+        ],
+        "capabilities": [
+          "core",
+          "structured"
+        ],
+        "readingOrder": null
+      }
+    },
+    {
+      "id": "reading-order-no-structure",
+      "description": "Package spec §4.10: readingOrder in a package with no structure.ttl. M014, and the result has no readingOrder.",
+      "target": "fixtures/reading-order-no-structure",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M014_READING_ORDER_UNRESOLVED"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "readingOrder": null
+      }
+    },
+    {
+      "id": "reading-order-relative",
+      "description": "Package spec §4.10: readingOrder is an absolute IRI; a relative one fails the schema.",
+      "target": "fixtures/reading-order-relative",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "readingOrder": null
+      }
+    },
+    {
       "id": "vendor-key-trailing-newline",
       "description": "Package spec §4.5: a vendor key must match x-<vendor>-<key> exactly. One with a trailing newline is an unknown key (M004).",
       "target": "fixtures/vendor-key-trailing-newline",
@@ -4050,6 +4108,310 @@
         "count": 1,
         "include": [
           "https://example.com/conformance/structure-procedure@1.0.0#steps/notify-customers.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-first",
+      "kind": "search",
+      "description": "Contract §9: upTo at the first member keeps that step, and records off the reading order (a glossary, notes bound to no concept).",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Intro"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-placement",
+      "kind": "search",
+      "description": "Contract §9: upTo at module 1. Basics sits under module 1 and module 3, and takes the first, so it passes. A node bound to module 1 and module 3 does not pass.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Module1"
+      },
+      "expect": {
+        "count": 4,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-middle",
+      "kind": "search",
+      "description": "Contract §9: upTo at module 2 keeps a part of module 2 (dcterms:hasPart) and everything before it; module 3 does not pass.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Module2"
+      },
+      "expect": {
+        "count": 5,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-last",
+      "kind": "search",
+      "description": "Contract §9: upTo at the last member keeps everything.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Module3"
+      },
+      "expect": {
+        "count": 7,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-other-package",
+      "kind": "search",
+      "description": "Contract §9: upTo limits only the packages whose reading order has it as a member. A reference package loaded beside the course is not limited.",
+      "packages": [
+        "fixtures/reading-order",
+        "fixtures/reading-order-reference"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Intro"
+      },
+      "expect": {
+        "count": 4,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md",
+          "https://example.com/conformance/reading-order-reference@1.0.0#reference.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-scope",
+      "kind": "search",
+      "description": "Contract §9: upTo combines with scope. scope keeps module 1 and Basics; upTo at module 1 then drops the node also bound to module 3.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Module1",
+        "scope": "https://example.org/course#Module1"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#basics.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-unknown",
+      "kind": "search",
+      "description": "Contract §9: upTo that no loaded reading order has limits nothing.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Unknown"
+      },
+      "expect": {
+        "count": 7,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-not-member",
+      "kind": "search",
+      "description": "Contract §9: upTo must be a member of the reading order. Basics is only a descendant of members, so it limits nothing.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Basics"
+      },
+      "expect": {
+        "count": 7,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-hostile-ingress",
+      "kind": "search",
+      "description": "Contract §9.2: an ingress hook that tries to remove upTo. The gate follows the caller.",
+      "packages": [
+        "fixtures/reading-order"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "hooks": "hostile-ingress"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.org/course#Intro"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-store",
+      "kind": "search",
+      "description": "Contract §9.4: a store search applies upTo from the package states, as a library search does.",
+      "packages": [
+        "fixtures/reading-order",
+        "fixtures/reading-order-reference"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/reading-order",
+          "fixtures/reading-order-reference"
+        ]
+      },
+      "search": {
+        "query": "lesson",
+        "upTo": "https://example.org/course#Module1"
+      },
+      "expect": {
+        "count": 5,
+        "include": [
+          "https://example.com/conformance/reading-order@1.0.0#intro.md",
+          "https://example.com/conformance/reading-order@1.0.0#basics.md",
+          "https://example.com/conformance/reading-order@1.0.0#glossary.md",
+          "https://example.com/conformance/reading-order@1.0.0#notes.md",
+          "https://example.com/conformance/reading-order-reference@1.0.0#reference.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/reading-order@1.0.0#practice.md",
+          "https://example.com/conformance/reading-order@1.0.0#module-3.md",
+          "https://example.com/conformance/reading-order@1.0.0#mixed.md"
         ]
       }
     },

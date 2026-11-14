@@ -50,7 +50,7 @@ conformance/
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
 | `expect.distribution` | The result's `distribution` ([package spec §4.1](../spec/moca-package-spec.md#41-properties)): `open`, `encrypted-only`, `service-only`, or `null` when the result has none. |
-| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps` | The result's `images`, `translations`, `tags` and `apps` ([package spec §4.6–4.9](../spec/moca-package-spec.md#46-images)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
+| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps`, `expect.readingOrder` | The result's `images`, `translations`, `tags`, `apps` and `readingOrder` ([package spec §4.6–4.10](../spec/moca-package-spec.md#46-images)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
 | `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
@@ -79,7 +79,7 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | Field | Meaning |
 | --- | --- |
 | `options.now` | The host clock. |
-| `options.hooks` | `ontology-guided`: the Reader's default ontology-guided hooks. `hostile`: an egress hook that returns every node of every loaded package plus a record whose digest is not loaded; the gate must remove all that policy and audience exclude. `hostile-ingress`: an ingress hook that asks for the opt-in to excluded content, a limit of 1000 and the locale `fr`, as far as the language's hook type lets it; the gate must still follow the caller. |
+| `options.hooks` | `ontology-guided`: the Reader's default ontology-guided hooks. `hostile`: an egress hook that returns every node of every loaded package plus a record whose digest is not loaded; the gate must remove all that policy and audience exclude. `hostile-ingress`: an ingress hook that asks for the opt-in to excluded content, a limit of 1000, the locale `fr` and no `upTo`, as far as the language's hook type lets it; the gate must still follow the caller. |
 | `options.allow` | With `backend: store`: the packages the host has loaded. The search gets their package states ([contract §9.4](../spec/moca-reader-contract.md#94-store-backends)). |
 | `options.ingestSeparately` | With `backend: store`: each package is ingested on its own, so its stored records know nothing of the other packages. |
 | `options.backend` | `store`: every listed package is ingested into a store that keeps whole citation records; the search resolves hits from those records, with only `options.allow` loaded. `lexical`: the Reader's own lexical search. `all`: a test backend that ignores every filter, declares no features, and returns one hit with score 1 for every representation of every loaded package, plus one hit from the digest `sha256:000…0`, which is not loaded. `dense`: dense search over `options.sidecar` with the conformance embedder. `hybrid`: the Reader's hybrid backend over its lexical backend and that dense backend. |
@@ -89,7 +89,7 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `options.allowUnsignedRelations` | `true`: the library applies relations from unsigned or unscoped packages ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). Absent means false. |
 | `options.sidecar` | A sidecar offered to every loaded package. A package it does not match reports the binding code (for example `S002`) and is searched without it. |
 | `options.embedder` | The conformance embedder's identity: `name`, optional `version`, `dimensions`, and optional `queryPrefix` and `documentPrefix` it declares. It returns `[1, 0, …, 0]` of that length for every text, whatever the role. |
-| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to). |
+| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a member of a reading order, contract §9). |
 | `expect.codes` | The set of diagnostic codes from sidecars, the backend and the library (`L` codes). |
 | `expect.include` | Results that must be returned. |
 | `expect.exclude` | Results that must never be returned. |
@@ -169,6 +169,8 @@ expected by at least one case or is listed below as untestable.
 | Resource limits | Contract §3 | `limit-*`, `structure-deep-chain` |
 | The digest | Package spec §6.4 | every valid package case (`expect.digest`), `digest-v1-package`, `attestations-as-file` |
 | Manifest | Package spec §4 | `manifest-*`, `distribution-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
+| Images, translations, tags and apps | Package spec §4.6–4.9 | `catalogue-valid`, `image-*`, `translation-*`, `tags-*`, `apps-*` |
+| Reading order and `upTo` | Package spec §4.10, contract §9 | `reading-order-*`, `search-upto-*` |
 | Versioning | Package spec §14 | `moca-version-*`, `digest-v1-package` |
 | Content and frontmatter | Package spec §5 | `frontmatter-*`, `type-missing`, `reserved-file-invalid`, `log-heading-in-fence`, `link-unresolved`, `resource-bad-escape`, `valid-minimal` |
 | Locales | Package spec §5.4 | `locale-orphan`, `valid-locales`, `search-locale*` |
@@ -185,7 +187,7 @@ expected by at least one case or is listed below as untestable.
 | Library identity | Contract §7 | `search-identity-conflict` |
 | Default retrieval policy | Contract §8 | `search-default-policy`, `search-include-all`, `search-recheck`, `search-gate-representations` |
 | Audience | Contract §8 | `audience-rules`, `search-audience*` |
-| The search pipeline, hooks and backends | Contract §9 | `search-concepts`, `search-scope`, `search-ontology-guided`, `search-hostile-*`, `search-store-*`, `search-hybrid*` |
+| The search pipeline, hooks and backends | Contract §9 | `search-concepts`, `search-scope`, `search-upto-*`, `search-ontology-guided`, `search-hostile-*`, `search-store-*`, `search-hybrid*` |
 | Dense search and the model check | Contract §9.3, sidecar spec | `search-dense*` |
 | Sidecars | Sidecar spec | `sidecar-*`, `search-sidecar-no-text` |
 
