@@ -4,6 +4,29 @@ All notable changes to the MOCA specification, schemas, profiles and
 conformance corpus. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
 [the versioning policy](docs/versioning-and-release.md).
 
+## [Unreleased]
+
+The 0.7.0 Spec Change Proposal:
+[distribution tiers, encrypted packages and issued copies](https://github.com/openmoca/moca-spec/issues/5).
+
+### Added
+
+- A new document, [encrypted packages](spec/moca-encrypted-package.md): a
+  `.moca` archive encrypted with age v1 inside an envelope.
+- Package spec §2: the terms envelope, encrypted package, outline, key
+  provider, issued copy and issuer. §12: an envelope is a transport, not a
+  fourth form.
+- Reader contract §14: the optional feature `encryption`. §13: what a Reader
+  does with an envelope it cannot open.
+- Conformance runner: the `encryption` feature and the adapter's `envelope`
+  output.
+- ADR-0023 (age envelope) and ADR-0024 (`distribution`).
+
+### Changed
+
+- Reader contract §11 and package spec §11 (`core`): the `E` family counts
+  for validity.
+
 ## [0.6.0] - 2026-11-11
 
 Hardening from the 10 November 2026 specification review. 0.5.0 was a soft

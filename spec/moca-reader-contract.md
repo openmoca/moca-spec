@@ -589,10 +589,10 @@ A Reader MUST report findings as structured values with `code`, `severity`
 (package-relative) and `line` (1-based). Codes are the contract; message text
 is not, and hosts MUST NOT match on it. A Reader MUST offer a strict mode that
 promotes warnings to errors without changing codes. Validity then follows
-the promoted severities: a `T`, `P`, `M` or `C` warning makes the package
+the promoted severities: a `T`, `P`, `M`, `C` or `E` warning makes the package
 invalid, and a promoted warning in another family affects only its feature.
 
-A package is **valid** when it has no error in the `T`, `P`, `M` or `C`
+A package is **valid** when it has no error in the `T`, `P`, `M`, `C` or `E`
 families. Errors in other families affect only the feature concerned: an
 invalid attestation does not count, a
 mismatched member is not used, an unusable sidecar is ignored. `O` diagnostics
@@ -704,6 +704,8 @@ it, to a person:
 | Malformed optional frontmatter field | `C005` (warning); node still read. |
 | Unknown relation type | Preserved; no effect. |
 | Unknown attestation predicate | Ignored. |
+| An envelope, with no key provider | Envelope recognised; not opened; `E001` (error). The package is not valid, and nothing inside it is exposed. |
+| An envelope, read by a Reader without the `encryption` feature | Envelope recognised; not opened; `E001` (error), as with no key provider. |
 | No trust root | Attestations unverifiable; package still readable. |
 | No resolver | Members exposed unresolved; no diagnostic. |
 | Unresolvable or mismatched member | That member is not used; the rest usable. |
@@ -717,7 +719,10 @@ it, to a person:
 
 An implementation claiming conformance MUST name its class, the contract
 version, and any **optional features** it does not implement (archives, host
-sources, Sigstore verification, sidecars, profiles). "Optional features" are
+sources, Sigstore verification, sidecars, profiles, `encryption`).
+`encryption` is opening envelopes
+([encrypted packages](moca-encrypted-package.md)). A Reader without it still
+recognises an envelope and reports `E001`. "Optional features" are
 what an implementation does; "capabilities" are what a package has
 ([package spec §11](moca-package-spec.md#11-capabilities)). It MUST pass every
 case in [`conformance/cases.json`](../conformance/cases.json) except those

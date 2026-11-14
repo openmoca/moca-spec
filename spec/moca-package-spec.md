@@ -43,6 +43,7 @@ MOCA is these documents, released and versioned together (§14):
 | [Sidecar index specification](moca-sidecar-index-spec.md) | Normative | Producers of sidecars, Readers that bind them |
 | [Reader contract](moca-reader-contract.md) | Normative | Readers and Producers (its §2 conformance classes) |
 | [Reader interface](moca-reader-interface.md) | Normative for operation names and inputs; its examples are informative | Readers |
+| [Encrypted packages](moca-encrypted-package.md) | Normative | Producers of encrypted packages, Readers that implement the `encryption` feature |
 | [AG-UI citations](moca-ag-ui-citations.md) | Normative for services and clients that send or show the `moca.citations` event; optional otherwise | AG-UI services and clients |
 | [`schemas/v1/`](../schemas/v1/) | Normative | As the document that names each schema |
 | [Conformance corpus](../conformance/README.md) | Normative test of the Reader contract | Readers and Producers |
@@ -124,6 +125,12 @@ characters (`C007`) after that.
 | Citation record | What a Reader hands on for a node or a chunk: its text, identity, trust and evidence (Reader contract §7). |
 | The gate | The last step of every search: the retrieval policy and audience checks (Reader contract §9.2). |
 | Application | The product built on a Reader: it decides what to do with the signals a package carries. |
+| Encrypted package | A `.moca` archive encrypted inside an envelope ([encrypted packages](moca-encrypted-package.md)). Once opened, it is that archive, with the same digest. |
+| Envelope | The Zip file that holds an encrypted package: a plain format marker, an optional outline and the encrypted archive. |
+| Outline | Manifest properties a Producer chooses to leave readable in an envelope. Unverified until the envelope is opened. |
+| Key provider | The host's function that supplies keys to open an envelope (Reader interface §3). A Reader never finds keys itself. |
+| Issued copy | A copy of a package whose issuer changed some files under `content/` or `media/`, bound to the original by an issued-copy attestation (attestations §3a). |
+| Issuer | Whoever makes and signs an issued copy. A publisher allows its issuers in its manifest. |
 
 ## 3. Standards used
 
@@ -711,7 +718,7 @@ a package actually has from what it contains and what verifies:
 
 | Capability | Present when |
 | --- | --- |
-| `core` | The package is valid: no error-severity `T`, `P`, `M` or `C` diagnostic. All other capabilities require `core`. |
+| `core` | The package is valid: no error-severity `T`, `P`, `M`, `C` or `E` diagnostic. All other capabilities require `core`. |
 | `composed` | The package lists members. |
 | `located-evidence` | At least one node has `moca.evidence`. |
 | `self-contained-evidence` | The package has `located-evidence`, and every evidence source of every node has a `resource` that resolves, relative to the node file (§5.1), to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it. |
@@ -746,6 +753,11 @@ A package is the same package whether it is:
   example from blob storage, a database or a registry.
 
 All three give the same digest.
+
+An **envelope** is not a fourth form. It is a transport for a `.moca`
+archive, encrypted for named recipients. Once opened, the archive inside is
+read under this specification as any other archive, and gives the same
+digest. See [encrypted packages](moca-encrypted-package.md).
 
 ## 13. Security considerations
 

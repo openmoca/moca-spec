@@ -39,13 +39,14 @@ conformance/
 | `options.limits` | Reader limits to use instead of the defaults, for example `{ "maxTriples": 3 }` ([contract §3](../spec/moca-reader-contract.md#3-opening-a-package)). |
 | `options.now` | The host clock. Trust-root keys expire against it ([attestations §6](../spec/moca-attestations.md#6-trust-roots)). Every case with a trust root sets it, so the corpus never depends on the day it is run. |
 | `options.requireSignature` | `true`: the host requires a valid package attestation ([attestations §8](../spec/moca-attestations.md#8-what-attestations-do-not-prove)). |
-| `requires` | Optional features the case needs, such as `["sigstore"]` (see "Running it against another Reader"). |
+| `requires` | Optional features the case needs, such as `["sigstore"]` or `["encryption"]` (see "Running it against another Reader"). |
 | `options.strict` | `true`: strict mode, which promotes warnings to errors ([contract §11](../spec/moca-reader-contract.md#11-diagnostics)). |
-| `expect.valid` | Whether the package is valid (no `T`/`P`/`M`/`C` error). |
+| `expect.valid` | Whether the package is valid (no `T`/`P`/`M`/`C`/`E` error). |
 | `expect.codes` | The **set** of diagnostic codes, from the package and the sidecar. Exactly these; extra codes fail. |
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
+| `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
 
 Order, counts and message text are not compared.
@@ -204,7 +205,9 @@ standard output.
 
 - Input: `{ "root": "<absolute path of conformance/>", "case": { … } }`.
 - Output for a package case: `{ "valid", "codes", "capabilities", "digest",
-  "sidecarUsable", "evidenceMatched" }`, as defined above.
+  "sidecarUsable", "evidenceMatched", "envelope" }`, as defined above.
+  `envelope` is the package result's `envelope` field for an envelope, and
+  absent otherwise.
 - Output for a search case: `{ "codes", "records" }`, where `records` are the
   citation records the search returned.
 - Output for a structure case: `{ "codes", "result" }`, shaped as above.
@@ -221,8 +224,10 @@ node scripts/run-conformance.mjs --reader "dotnet run --project ../my-reader/tes
 A case with `requires` needs an optional feature
 ([Reader contract §14](../spec/moca-reader-contract.md#14-demonstrating-conformance)).
 A Reader that names a feature as not implemented skips those cases with
-`--without <feature>`, for example `--without sigstore`. Today the only such
-feature in the corpus is `sigstore`.
+`--without <feature>`, for example `--without sigstore`. The features in the
+corpus are `sigstore` and `encryption`. A Reader run `--without encryption`
+still runs the cases that only recognise an envelope: they expect `E001`
+without opening it.
 
 The runner prints each case that fails and why, and exits non-zero if any do.
 [moca-reader-dotnet](https://github.com/openmoca/moca-reader-dotnet) runs it
