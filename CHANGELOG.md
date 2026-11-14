@@ -44,6 +44,10 @@ The 0.7.0 Spec Change Proposal:
   `options.identities`, `options.passphrase` and `options.fileKey`, and
   compares `expect.envelope`.
 
+- Encrypted packages §5.1–§5.2 and Reader contract §11: a missing or short
+  payload nonce, and a low-order X25519 share, are `E006`; an identity
+  string that is not a valid key is `E002`. This matches the C2SP age test
+  kit and all three Readers.
 - The reference adapter passes the reference Reader's age decryptor
   (`@openmoca/moca-core/age`), so the corpus runs the `encryption` cases
   against it.

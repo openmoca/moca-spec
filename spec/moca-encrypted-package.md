@@ -134,9 +134,10 @@ keyProvider(request) → result, or nothing; MAY be asynchronous
   uses (identities for a file with no `X25519` stanza, a passphrase for a
   file with no `scrypt` stanza).
 - `E002_DECRYPTION_FAILED` (error): a key of a kind the file uses was
-  supplied, but it failed. That covers identities that unwrap no stanza, a
-  wrong passphrase, and a header MAC that does not verify, including against
-  a returned `fileKey`.
+  supplied, but it failed. That covers identities that unwrap no stanza, an
+  identity string that is not a valid `AGE-SECRET-KEY-1…` key, a wrong
+  passphrase, and a header MAC that does not verify, including against a
+  returned `fileKey`.
 - An exception from the provider is never thrown to the caller.
 - The outline in the request is unverified. A key provider SHOULD choose a
   key by stanza type and host configuration, not by the outline alone.
@@ -154,8 +155,11 @@ first failure ends the read with its code.
 2. **Entries.** Check the entry set and `moca-enc.json` (§2, §3) (`E005`).
 3. **age header.** Parse the header of `package.age`. A malformed or
    unsupported header, an `scrypt` stanza that is not alone, a work factor
-   over the limit, or a header over 64 KiB is `E006_AGE_HEADER_INVALID`
-   (error).
+   over the limit, a header over 64 KiB, or a payload nonce that is missing or
+   shorter than 16 bytes is `E006_AGE_HEADER_INVALID` (error). So is an
+   `X25519` share that is a low-order point (the shared secret is all zero),
+   although it is found while unwrapping in step 4. The C2SP age test kit
+   classes both as header failures.
 4. **Key.** Call the key provider and unwrap (`E001`, `E002`).
 5. **Header MAC.** Verify it (`E002`).
 6. **Decrypt.** Decrypt and authenticate the whole payload, including the
