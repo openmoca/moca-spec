@@ -1,0 +1,27 @@
+{
+  "indexVersion": 1,
+  "target": {
+    "id": "https://example.com/conformance/issued-original",
+    "version": "1.0.0",
+    "digest": "sha256:d478cf4ebf6de298e70a1153782b2a49ab58a435495e1abb5ed2539d70725d23"
+  },
+  "indexType": "hybrid",
+  "chunking": {
+    "strategy": "whole-node"
+  },
+  "storage": {
+    "format": "moca-jsonl-v1",
+    "file": "payload/items.jsonl",
+    "vectors": {
+      "file": "payload/vectors.f32",
+      "dtype": "float32",
+      "dimensions": 2
+    }
+  },
+  "createdBy": "moca-spec conformance",
+  "model": {
+    "name": "conformance-embedder",
+    "version": "1",
+    "dimensions": 2
+  }
+}

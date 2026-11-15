@@ -1671,6 +1671,33 @@
       }
     },
     {
+      "id": "source-id-not-string",
+      "description": "Package spec §5.1: a source whose id is not a string has no id. Two sources with the number 7 are no repeat (no C002) and nothing names them; with the number 1 and the string \"1\", only the string is an id; true and 1 are neither, so \"1\" is an unknown source (C006). Each non-string id fails the node schema (C005).",
+      "target": "fixtures/source-id-not-string",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID",
+          "C006_EVIDENCE_SOURCE_UNKNOWN"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ],
+        "evidenceMatched": {
+          "numeric.md": [
+            null
+          ],
+          "mixed.md": [
+            true
+          ],
+          "boolean.md": [
+            null
+          ]
+        }
+      }
+    },
+    {
       "id": "frontmatter-invalid",
       "description": "Frontmatter that is not parseable YAML.",
       "target": "fixtures/frontmatter-invalid",
@@ -5967,6 +5994,26 @@
       }
     },
     {
+      "id": "media-duration-infinite",
+      "description": "Package spec §5.7: a duration of .inf, or a sync offset of .nan, is not a finite number, so the description fails the node schema (C005) and is ignored, in every Reader. A time range on the audio is then on media with no description, so it is not checked.",
+      "target": "fixtures/media-infinite",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ],
+        "evidenceMatched": {
+          "episode.md": [
+            null
+          ]
+        }
+      }
+    },
+    {
       "id": "search-media-fields",
       "kind": "search",
       "description": "Contract §7: node.media carries the valid descriptions, with the source's resource; package.datePublished is absent when the manifest has none.",
@@ -6700,6 +6747,67 @@
       }
     },
     {
+      "id": "search-composition-invalid-member",
+      "kind": "search",
+      "description": "Package spec §5.6: a member that resolves and matches its pin but is invalid is neither loaded nor bound. Scope on the topic finds the valid member's node only.",
+      "packages": [
+        "fixtures/composition-invalid-member/composer"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/composition-invalid-member/members"
+        ]
+      },
+      "search": {
+        "query": "anything",
+        "scope": "https://example.com/conformance/composition-invalid-member#tides"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/media-alternates@1.0.0#episode.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/source-id-duplicate@1.0.0#about.md"
+        ]
+      }
+    },
+    {
+      "id": "search-composition-depth",
+      "kind": "search",
+      "description": "Package spec §5.6, contract §3: with maxMemberDepth 1, the season's releases are past the limit, so they are neither loaded nor bound. Scope on the sea finds the release the show composes directly.",
+      "packages": [
+        "fixtures/series/show"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/series"
+        ],
+        "limits": {
+          "maxMemberDepth": 1
+        }
+      },
+      "search": {
+        "query": "anything",
+        "scope": "https://example.com/conformance/series-show#sea"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/series-episode-3@1.0.0#episode.md",
+          "https://example.com/conformance/series-episode-3@1.0.0#notes.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/series-episode-1@1.0.0#episode.md",
+          "https://example.com/conformance/series-episode-1@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
       "id": "search-upto-members-first",
       "kind": "search",
       "description": "Contract §9: the show's reading order limits its members' records. upTo at the first release keeps it and the show's own page, off the order.",
@@ -6836,6 +6944,66 @@
       }
     },
     {
+      "id": "search-upto-member-own-concepts",
+      "kind": "search",
+      "description": "Contract §9, Members: a composer's reading order limits a member's records by the node's own concepts too, even when the composer binds nothing by composition. upTo at week 1 keeps the week-1 lesson and the unbound reading, and leaves out the week-2 lesson.",
+      "packages": [
+        "fixtures/upto-member-own/composer"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/upto-member-own"
+        ]
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.com/conformance/upto-composer#w1"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/upto-member@1.0.0#early.md",
+          "https://example.com/conformance/upto-member@1.0.0#extra.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/upto-member@1.0.0#late.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-member-own-concepts-store",
+      "kind": "search",
+      "description": "Contract §9.4: package states hold every resolved member, so a store search limits the member's own concepts by the composer's order as a library search does.",
+      "packages": [
+        "fixtures/upto-member-own/composer"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/upto-member-own"
+        ],
+        "allow": [
+          "fixtures/upto-member-own/composer",
+          "fixtures/upto-member-own/member"
+        ]
+      },
+      "search": {
+        "query": "lesson",
+        "upTo": "https://example.com/conformance/upto-composer#w1"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/upto-member@1.0.0#early.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/upto-member@1.0.0#late.md"
+        ]
+      }
+    },
+    {
       "id": "member-issued-copy",
       "description": "Package spec §7.1: a member pinned by the publisher's digest resolves to an issued copy whose verified original digest equals the pin.",
       "target": "fixtures/series-issued/series",
@@ -6906,6 +7074,31 @@
       }
     },
     {
+      "id": "search-member-issued-copy-unverified",
+      "kind": "search",
+      "description": "Package spec §7.1: without the issuer in the trust root, the copy does not verify, so it does not match the pin (R002) and is neither loaded nor bound: the members' series brings nothing.",
+      "packages": [
+        "fixtures/series-issued/series"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/series-issued/members"
+        ]
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 0,
+        "exclude": [
+          "https://example.com/conformance/issued-original@1.0.0#intro.md",
+          "https://example.com/conformance/issued-original@1.0.0#lessons/one.md"
+        ]
+      }
+    },
+    {
       "id": "sidecar-issued-copy",
       "description": "Sidecar spec §5: a sidecar built from the publisher's package binds to a verified issued copy; the items of the changed file are replaced (S009).",
       "target": "fixtures/issued/copy-valid",
@@ -6948,6 +7141,28 @@
       }
     },
     {
+      "id": "sidecar-issued-copy-conflict",
+      "description": "Sidecar spec §5: two issued-copy attestations that disagree are not used (A002), so the copy has no verified original and its own digest is compared: the publisher's sidecar is stale (S003).",
+      "target": "fixtures/issued/copy-conflict",
+      "options": {
+        "sidecar": "fixtures/sidecars/issued-original",
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID",
+          "A008_PACKAGE_DIGEST_MISMATCH",
+          "S003_SIDECAR_STALE"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "sidecarUsable": false
+      }
+    },
+    {
       "id": "search-sidecar-issued-copy",
       "kind": "search",
       "description": "Sidecar spec §5: lexical search over the publisher's sidecar finds the issuer's text in a changed file, through its whole-body chunk.",
@@ -6969,6 +7184,77 @@
         ],
         "count": 1,
         "include": [
+          "https://example.com/conformance/issued-original@1.0.0#lessons/one.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-issued-copy",
+      "kind": "search",
+      "description": "Sidecar spec §5: a dense sidecar built from the publisher's package binds to a verified issued copy. The changed file's item and its vector are dropped and every other vector stays with its own item: query [1, 0] scores intro.md 0.6 and two.md 0, so with limit 1 intro.md comes back.",
+      "packages": [
+        "fixtures/issued/copy-valid"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/issued-original-dense",
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "lesson",
+        "limit": 1
+      },
+      "expect": {
+        "codes": [
+          "S009_SIDECAR_ITEMS_REPLACED"
+        ],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/issued-original@1.0.0#intro.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/issued-original@1.0.0#lessons/two.md",
+          "https://example.com/conformance/issued-original@1.0.0#lessons/one.md"
+        ]
+      }
+    },
+    {
+      "id": "search-dense-issued-copy-changed",
+      "kind": "search",
+      "description": "Sidecar spec §5: the changed file's whole-body chunk has no vector, so dense search never returns it.",
+      "packages": [
+        "fixtures/issued/copy-valid"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "dense",
+        "sidecar": "fixtures/sidecars/issued-original-dense",
+        "trustRoot": "fixtures/trust-root-issued.json",
+        "embedder": {
+          "name": "conformance-embedder",
+          "version": "1",
+          "dimensions": 2
+        }
+      },
+      "search": {
+        "query": "lesson",
+        "limit": 10
+      },
+      "expect": {
+        "codes": [
+          "S009_SIDECAR_ITEMS_REPLACED"
+        ],
+        "include": [
+          "https://example.com/conformance/issued-original@1.0.0#intro.md",
+          "https://example.com/conformance/issued-original@1.0.0#lessons/two.md"
+        ],
+        "exclude": [
           "https://example.com/conformance/issued-original@1.0.0#lessons/one.md"
         ]
       }

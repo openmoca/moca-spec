@@ -115,11 +115,28 @@ be at least those below, which the conformance corpus assumes:
 | Evidence checks per package | `maxEvidenceChecksPerPackage` | 10,000 | Further entries are not checked; `matched` is absent |
 | Source bytes scanned for evidence per package, counted once per check | `maxEvidenceBytesPerPackage` | 256 MiB | Further entries are not checked; `matched` is absent |
 | Depth of members ([package spec §7.1.1](moca-package-spec.md#711-resolving-a-composition)) | `maxMemberDepth` | 8 | `R001` for that member; it is not resolved |
-| Members resolved in one read, at every depth. Each resolved member is held in memory, so a host on a small device may set it lower | `maxMembers` | 4,096 | `R001` for each further member; it is not resolved |
+| Members resolved in one read, at every depth, each distinct member counted once (below). Each resolved member is held in memory, so a host on a small device may set it lower | `maxMembers` | 4,096 | `R001` for each further member; it is not resolved |
+| Bytes of all the members read in one read, counted once per distinct member. Checked before each new member is resolved, so one member can take the total past it | `maxMemberBytes` | 1 GiB | `R001` for each further member; it is not resolved |
+
+**Each member once per read.** Within one read, a member with a given `id`,
+`version` and pinned `digest` is resolved and read once, the first time it is
+reached, depth first in the order of each `members` list. Every later
+occurrence in the same read shares that result: it is not resolved, read,
+decrypted or verified again, and counts once toward `maxMembers` and
+`maxMemberBytes`. So a composition in which many packages share members costs
+what its distinct members cost.
 
 A Reader MUST normalise each evidence source once per package, not once per
 check, and MUST NOT let structure traversal depend on recursion depth: a long
 chain of relations must not exhaust the call stack.
+
+**Structure work stays roughly linear.** Resolving a reading order
+([package spec §4.10](moca-package-spec.md#410-reading-order)) and binding
+members by composition ([package spec §5.6](moca-package-spec.md#56-structure))
+MUST take work and memory roughly in proportion to the structure's triples
+plus the members and nodes involved, not to their product. For example, a
+Reader walks the ordered collection once, and finds a concept's ancestors
+once, not once per node bound to it or per member of the list.
 
 A Reader MUST NOT request a path from a host source that the source did not
 list.
@@ -550,11 +567,16 @@ scopes (§7.2 of the package spec), signers, current reviews, node-level
 `moca.contested_by`, its `issuedCopy`, and, when `readingOrder` resolves,
 its members in order and the position of each concept on it, so a store
 search applies `upTo` as a library search does. For a package with members,
-the state also carries, for each resolved member at any depth, its digest and
-the concepts the package's structure binds its records and nodes to by
-composition ([package spec §5.6](moca-package-spec.md#56-structure)), so a
+the state also carries every member that resolved, matched its pin and is
+valid, at any depth and once each: its digest and `id`, whether the package's
+structure declares that `id` as a concept, the paths of its nodes whose
+identifiers the structure declares, and the members that compose it. With
+them come, for each concept on the way up from those declared identifiers,
+its broader concepts and the concepts it is a part of in the package's
+structure ([package spec §5.6](moca-package-spec.md#56-structure)). So a
 store search applies `concepts`, `scope` and `upTo` to members' records as a
-library search does. A Reader produces a package's state from the package
+library search does, and the state grows with the structure and the members,
+not with their product (§3). A Reader produces a package's state from the package
 result (`packageState`); it is small, plain JSON that a host keeps beside
 its store. At query time the Reader resolves store hits from their records and
 MUST recompute from the states and the clock: `stale` and `inForce`;

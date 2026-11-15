@@ -166,7 +166,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     items of changed files are replaced.
   - Package spec §5.1: suggested node types are an informative list on
     openmoca.org.
-  - 36 cases (328 in all), and a `map-time` case kind; the runner compares `expect.datePublished` and
+  - 46 cases (338 in all), and a `map-time` case kind; the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
 ### Changed
@@ -182,6 +182,18 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `id` is invalid (`C002_FRONTMATTER_INVALID`), so the node is not read.
   Readers had disagreed on which entry applied.
 - Reader contract §3: `maxMembers` defaults to 4,096 (was 256).
+- Reader contract §3: within one read, a member met more than once (same
+  `id`, `version` and pinned `digest`) is read once and shared, and counts
+  once toward the limits. New limit `maxMemberBytes` (1 GiB) on the bytes of
+  all the members one read reads. Resolving a reading order and binding
+  members by composition must take roughly linear work.
+- Reader contract §9.4: package states carry every valid member, its direct
+  bindings by composition and the structure links above them, instead of
+  each member's full list of concepts. `upTo` limits a member's records by
+  their own concepts on every composer's reading order, bound or not.
+- Package spec §5.1: a source whose `id` is not a string has no `id`
+  (`C005`); YAML's `.inf` and `.nan` fail the node schema where it wants a
+  number.
 - Reader contract §9.5: when a loaded package binds members by composition,
   the Reader passes no `concepts` filter to the backend; the gate applies it.
 - Examples: each YouTube example node describes its video in `moca.media`

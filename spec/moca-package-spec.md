@@ -599,7 +599,10 @@ or uses an alias, is invalid (`C002_FRONTMATTER_INVALID`): YAML parsers
 disagree on which value applies, so none is chosen. For the same reason, so
 is frontmatter whose `sources` has two entries with the same `id`, compared
 as strings: evidence and media descriptions name a source by its `id`
-(§5.3, §5.7).
+(§5.3, §5.7). A source whose `id` is not a string, such as `7` or `true`, has
+no `id`: it fails the node schema (`C005_FIELD_INVALID`), nothing can name it,
+and it never counts as a repeat. YAML's `.inf`, `-.inf` and `.nan` are not
+JSON numbers, so where the node schema wants a number they fail it (`C005`).
 
 A concept document with a `C001`, `C002` or `C003` error is not a node. If no
 node is left, the package also has no content (`M003_NO_CONTENT`).
