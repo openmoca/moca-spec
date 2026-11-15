@@ -57,8 +57,8 @@ function checkPackage(e, actual) {
   if (e.distribution !== undefined && e.distribution !== (actual.distribution ?? null)) {
     problems.push(`distribution: expected ${e.distribution}, got ${actual.distribution ?? null}`);
   }
-  // Package spec §4.6–4.10, attestations §7.1: result fields compared as JSON values; null means absent.
-  for (const field of ['images', 'translations', 'tags', 'apps', 'readingOrder', 'issuedCopy']) {
+  // Package spec §4.6–4.12, attestations §7.1: result fields compared as JSON values; null means absent.
+  for (const field of ['images', 'translations', 'tags', 'apps', 'readingOrder', 'issuedCopy', 'datePublished']) {
     if (e[field] === undefined) continue;
     const got = actual[field] ?? null;
     if (JSON.stringify(canonical(got)) !== JSON.stringify(canonical(e[field]))) problems.push(`${field}: expected ${JSON.stringify(e[field])}, got ${JSON.stringify(got)}`);
@@ -107,6 +107,18 @@ function checkSearch(e, actual) {
   for (const [k, want] of Object.entries(e.fileChanged ?? {})) {
     const got = records.filter((r) => keyOf(r) === k).map((r) => (r.trust.attestedReviews ?? []).some((x) => x.fileChanged === true));
     if (got.length === 0 || got.some((x) => x !== want)) problems.push(`${k}: expected a fileChanged review ${want}, got [${got}]`);
+  }
+  // Record fields by node ref: each listed field (a dotted path such as node.media) compared as a JSON value; null
+  // means absent. Package spec §4.12 and §5.7.
+  for (const [k, fields] of Object.entries(e.fields ?? {})) {
+    const got = records.filter((r) => keyOf(r) === k);
+    if (got.length === 0) problems.push(`${k}: expected a result to compare fields with`);
+    for (const r of got) {
+      for (const [path, want] of Object.entries(fields)) {
+        const value = path.split('.').reduce((v, p) => (v && typeof v === 'object' ? v[p] : undefined), r) ?? null;
+        if (JSON.stringify(canonical(value)) !== JSON.stringify(canonical(want))) problems.push(`${k}: expected ${path} ${JSON.stringify(want)}, got ${JSON.stringify(value)}`);
+      }
+    }
   }
   if (e.issuedCopy !== undefined) {
     for (const r of records) {

@@ -1,0 +1,21 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/series-season-1",
+  "version": "1.0.0",
+  "title": "Season 1",
+  "language": "en",
+  "datePublished": "2026-01-05",
+  "readingOrder": "https://example.com/conformance/series-season-1#order",
+  "members": [
+    {
+      "id": "https://example.com/conformance/series-episode-1",
+      "version": "1.0.0",
+      "digest": "sha256:392662ecd095e956d350e600dfa7afdf886fd7511a44c269e1816b3d7a2a7af0"
+    },
+    {
+      "id": "https://example.com/conformance/series-episode-2",
+      "version": "1.0.0",
+      "digest": "sha256:f77129784f433b62e1a1016da04d4463b2dbea95794c7bad2247e5ccf9f19f99"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://example.com/conformance/series-season-1#order> a skos:OrderedCollection ;
+  skos:memberList ( <https://example.com/conformance/series-episode-1> <https://example.com/conformance/series-episode-2> ) .
+
+<https://example.com/conformance/series-episode-1> a skos:Concept ; skos:prefLabel "Episode 1"@en .
+<https://example.com/conformance/series-episode-2> a skos:Concept ; skos:prefLabel "Episode 2"@en .

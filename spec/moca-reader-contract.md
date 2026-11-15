@@ -322,10 +322,10 @@ and `profiles`, are left out, as they are in a real record):
   hold:
   1. the range overlaps at least one cue; and
   2. the range lies within the media: its end is at or before the bound. The
-     bound is the end time of the last cue, or the declared `duration` when
+     bound is the latest end time of any cue, or the declared `duration` when
      that is later. The duration is that of the media description being
      checked, or, when the evidence cites the WebVTT file itself, of the
-     node's media description whose `transcript` is that file. A range with
+     node's first media description whose `transcript` names that source. A range with
      no end runs to the end of the media, so it lies within it.
 
   Any other time range is not checked. Carry the captions or transcript of
@@ -582,6 +582,10 @@ to it:
 | `concepts` | The concepts to search: the caller's, a scope and its descendants, or those an ingress hook chose. |
 
 Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.
+A record bound to a concept by composition
+([package spec §5.6](moca-package-spec.md#56-structure)) does not carry that
+concept itself, so when any loaded package binds members by composition, the
+Reader passes no `concepts` filter and the gate applies it.
 `upTo` adds no filter, because records off the reading order and from other
 packages still pass it; the gate applies it.
 

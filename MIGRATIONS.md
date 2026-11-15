@@ -18,7 +18,13 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
 | `apps`: where the publisher suggests the package is opened, as `https:` URIs and app-type tokens ([ADR-0026](docs/adr/0026-apps-is-a-hint.md)). A list of well-known types is on openmoca.org | `M002` for a bad entry | Optional. Never list conversation. |
 | `readingOrder`: the IRI of the ordered collection in your own `structure.ttl` that orders the package ([ADR-0027](docs/adr/0027-reading-order-names-a-collection.md)) | `M014` (warning) when it does not resolve | Optional. Name a `skos:OrderedCollection` with a `skos:memberList`. |
 | Issued copies: an issuer marks a licensee's copy and binds it to your package with an issued-copy attestation ([ADR-0028](docs/adr/0028-issued-copies.md)). Without `issuedCopies` in your manifest, no copy is accepted | `A002` for a copy you did not allow | Publishers: add `issuedCopies` (issuers by key or Sigstore identity, and the paths they may mark under `content/` or `media/`) and publish a new version. Issuers: `moca-sign issue`, with a DSSE key. |
-| A sidecar index is bound to a package digest, and every issued copy has its own | `S003` on a copy | Issuers: build the sidecar for each copy (`moca-index build`) after marking it. |
+| A sidecar index built from your package binds to an issued copy that verifies against the host's trust root; items of the files the issuer changed are replaced by whole-body chunks without vectors (sidecar spec §5, [ADR-0033](docs/adr/0033-issued-copies-match-pins-and-sidecars.md)) | `S009` (info); `S003` on a copy that does not verify | Publishers: let issuers mark only files that need not be found by meaning (a notice page, or `media/`). Issuers: no per-copy sidecar is needed. |
+| `moca.media`: a description of a node's audio or video (media type, duration, optional SHA-256, transcript) ([ADR-0029](docs/adr/0029-media-is-described-never-fetched.md)) | `C005`, `C006` | Optional. Name the WebVTT transcript as `transcript`, so time ranges on hosted media are checked and count toward `self-contained-evidence`. |
+| Time ranges must end within the media: at or before the latest cue end, or the declared `duration` | `C011` | Check ranges that end after the last caption (a chapter that runs to the end of a video): declare the media's `duration`. |
+| `datePublished` in the manifest and `moca.date_published` on nodes ([ADR-0031](docs/adr/0031-date-published.md)) | `M002`, `C005` | Optional. A full date or an RFC 3339 date-time with an offset. |
+| Binding by composition: a series' structure may use its members' package ids and node ids as concepts ([ADR-0030](docs/adr/0030-series-bind-members-by-composition.md)) | — | Optional. Declare each as a `skos:Concept`. See the series guidance (package spec §7.3). |
+| `isPartOf`, a core relation type; other types that no declared profile defines are reported ([ADR-0032](docs/adr/0032-is-part-of-and-unknown-relation-types.md)) | `R005` (info) | Rename invented relation types, or declare the profile that defines them. |
+| An issued copy matches a member pin through its verified original digest ([ADR-0033](docs/adr/0033-issued-copies-match-pins-and-sidecars.md)) | `R002` when it does not verify | Pin the publisher's package in a members' series; hosts need the issuer in their trust root. |
 
 ### Readers and hosts
 
@@ -31,6 +37,9 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
 | Issued copies are verified in two passes: the publisher's attestations against the rebuilt original digest (attestations §7.1). Records carry `package.issuedCopy` and `node.issuedChange`; reviews of changed files are listed with `fileChanged` and never count | `A002` | Applications: show that a record comes from a changed file. Share `issuedCopy.originalDigest`, not the copy's digest, outside the licensee's own use. |
 | A library keeps the first of two issued copies of one original and notes the second | `L002_ISSUED_COPY_DUPLICATE` (info) | None. It replaces `L001` for this case only. |
 | Search takes `upTo`, a point on a package's reading order; a search has `diagnostics` for its latest call (Reader contract §9) | `S008_UPTO_UNRESOLVED` (warning) | Optional. Store searches: rebuild your package states (`packageState`), which now carry the reading order and the issued copy. |
+| `upTo` also limits the members of a package whose reading order places it, and `concepts`, `scope` and `upTo` see bindings by composition (Reader contract §9). Package states carry `composition` | — | Store searches: rebuild your package states (`packageState`). |
+| Result field `datePublished`; record fields `package.datePublished`, `node.datePublished` and `node.media` | — | Read them if you need them. Never fetch `node.media`. |
+| `maxMembers` defaults to 4,096 (was 256) | `R001` past it | Hosts on small devices may set it lower: each resolved member is held in memory. |
 | Citation records may carry new fields | — | Consumers ignore fields they do not know (Reader contract §7). |
 
 ### What 0.6 Readers do with 0.7 packages
@@ -40,7 +49,11 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
   under `requireSignature`. That fails safe.
 - **A trust root that lists `issued-copy`** is refused, because the `roles` enum is closed.
 - **New manifest keys** (`distribution`, `images`, `translations`, `tags`, `apps`, `readingOrder`,
-  `issuedCopies`) are unknown keys (`M004`, info) and are ignored.
+  `issuedCopies`, `datePublished`) are unknown keys (`M004`, info) and are ignored. `moca.media` and
+  `moca.date_published` are ignored.
+- **A series' structure** that uses member ids as concepts reads as before; its bindings have no effect.
+- **A member that is an issued copy** does not match its pin (`R002`), and the publisher's sidecar is stale on it
+  (`S003`).
 - **`mocaVersion` `0.7`** is newer than the Reader (`M009`, warning); the package is read on a best-effort basis.
 
 ## From 0.5.0 to 0.6.0

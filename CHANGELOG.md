@@ -9,8 +9,9 @@ conformance corpus. The format follows [Keep a Changelog](https://keepachangelog
 The 0.7.0 Spec Change Proposal:
 [distribution tiers, encrypted packages and issued copies](https://github.com/openmoca/moca-spec/issues/5).
 Also [package images, translated titles and tags](https://github.com/openmoca/moca-spec/issues/7),
-[an apps hint](https://github.com/openmoca/moca-spec/issues/8), and
-[a reading order, and search up to a point](https://github.com/openmoca/moca-spec/issues/9).
+[an apps hint](https://github.com/openmoca/moca-spec/issues/8),
+[a reading order, and search up to a point](https://github.com/openmoca/moca-spec/issues/9), and
+[podcast and video series content](https://github.com/openmoca/moca-spec/issues/10).
 
 ### Added
 
@@ -131,12 +132,48 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Guides: "Encrypt a package" (new), catalogue fields in "Authoring
   packages", and "Search up to a point" in "Search and sidecar indexes".
 
+- Podcast and video series content
+  ([issue #10](https://github.com/openmoca/moca-spec/issues/10), ADR-0029 to
+  ADR-0033):
+  - Package spec §5.7 (new): `moca.media` describes a node's audio and video,
+    hosted outside the package or not: media type, duration, an optional
+    SHA-256 and the transcript in the package. A Reader exposes it as
+    `node.media` and never fetches the media. Guidance on transcript text in
+    the node body.
+  - Package spec §4.12 (new): `datePublished`, following the W3C Publication
+    Manifest, and `moca.date_published` on nodes. Informative. The package
+    result and citation records carry them.
+  - Package spec §5.6: binding by composition. A composing package's
+    structure may use a member's package `id` or node identifier as a
+    concept; members' records are bound to it for `concepts`, `scope` and
+    `upTo`. Package states carry the bindings (Reader contract §9.4).
+  - Reader contract §9: `upTo` also limits the members of a package whose
+    reading order places it.
+  - Package spec §7.2: the core relation type `isPartOf`, and
+    `R005_RELATION_TYPE_UNKNOWN` (info) for a type that is neither core nor
+    defined by a declared profile. §7.3 (new): series guidance, including
+    long series and free and members-only releases.
+  - Package spec §7.1 and sidecar spec §5: an issued copy matches a member pin,
+    and binds the publisher's sidecar, through its verified
+    `issuedCopy.originalDigest`. `S009_SIDECAR_ITEMS_REPLACED` (info) when the
+    items of changed files are replaced.
+  - Package spec §5.1: suggested node types are an informative list on
+    openmoca.org.
+  - 27 cases (319 in all); the runner compares `expect.datePublished` and
+    record fields (`expect.fields`).
+
 ### Changed
 
 - Reader contract §11 and package spec §11 (`core`): the `E` family counts
   for validity.
 - Package spec §4.3: "metadata-only changes" now name the real properties
   `tags`, `images` and `translations`.
+- Reader contract §7: a media time range matches only when it overlaps a cue
+  and ends at or before the latest cue end, or the declared duration when
+  later. A range that ran past the end of its captions now gives `C011`.
+- Reader contract §3: `maxMembers` defaults to 4,096 (was 256).
+- Reader contract §9.5: when a loaded package binds members by composition,
+  the Reader passes no `concepts` filter to the backend; the gate applies it.
 
 ## [0.6.0] - 2026-11-11
 

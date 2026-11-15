@@ -1,0 +1,13 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/relation-is-part-of",
+  "version": "1.0.0",
+  "title": "A release of a series",
+  "language": "en",
+  "relations": [
+    {
+      "type": "isPartOf",
+      "target": "https://example.com/conformance/series-show"
+    }
+  ]
+}

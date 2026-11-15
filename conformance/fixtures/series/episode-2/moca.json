@@ -1,0 +1,14 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/series-episode-2",
+  "version": "1.0.0",
+  "title": "Episode 2",
+  "language": "en",
+  "datePublished": "2026-02-02",
+  "relations": [
+    {
+      "type": "isPartOf",
+      "target": "https://example.com/conformance/series-show"
+    }
+  ]
+}

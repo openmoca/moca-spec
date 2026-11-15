@@ -1,0 +1,8 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/date-published-invalid",
+  "version": "1.0.0",
+  "title": "A bad publication date",
+  "language": "en",
+  "datePublished": "1 March 2026"
+}

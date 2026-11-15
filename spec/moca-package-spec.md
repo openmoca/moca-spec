@@ -832,7 +832,7 @@ moca:
 | `type` | Required. The media type ([RFC 6838](https://www.rfc-editor.org/rfc/rfc6838)), such as `audio/mpeg` or `video/mp4`. Parameters are allowed. |
 | `duration` | The length in seconds: a number, 0 or more. |
 | `digest` | `sha256:` and the SHA-256 of the media file's bytes, in lower-case hex. |
-| `transcript` | The `id` of another source in `sources` whose `resource` is a WebVTT (`.vtt`) file in the package: the captions or transcript of this media. |
+| `transcript` | The `id` of another source in `sources` whose `resource` resolves to a WebVTT (`.vtt`) file under `sources/` or `media/`: the captions or transcript of this media. |
 
 Rules:
 
@@ -852,7 +852,7 @@ Rules:
 - **Invalid descriptions.** A description that fails the node schema, names
   an unknown source, or describes a source that an earlier description
   already describes, is ignored. A `transcript` that names an unknown source,
-  or a source that is not a `.vtt` file in the package, is dropped from its
+  or a source that is not a `.vtt` file under `sources/` or `media/`, is dropped from its
   description. Each is reported as `C005_FIELD_INVALID` (warning), or `C006`
   for an unknown source; the node's other descriptions stand.
 - Citation records carry the node's descriptions as `node.media`

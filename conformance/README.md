@@ -50,7 +50,7 @@ conformance/
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
 | `expect.distribution` | The result's `distribution` ([package spec §4.1](../spec/moca-package-spec.md#41-properties)): `open`, `encrypted-only`, `service-only`, or `null` when the result has none. |
-| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps`, `expect.readingOrder`, `expect.issuedCopy` | The result's `images`, `translations`, `tags`, `apps`, `readingOrder` ([package spec §4.6–4.10](../spec/moca-package-spec.md#46-images)) and `issuedCopy` (`{ originalDigest, issuers, changedFiles }`, [attestations §7.1](../spec/moca-attestations.md#71-issued-copies-two-passes)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
+| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps`, `expect.readingOrder`, `expect.datePublished`, `expect.issuedCopy` | The result's `images`, `translations`, `tags`, `apps`, `readingOrder`, `datePublished` ([package spec §4.6–4.12](../spec/moca-package-spec.md#46-images)) and `issuedCopy` (`{ originalDigest, issuers, changedFiles }`, [attestations §7.1](../spec/moca-attestations.md#71-issued-copies-two-passes)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
 | `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
@@ -100,6 +100,7 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `expect.issuedCopy` | Every result's `package.issuedCopy` (`{ originalDigest, issuers }`), or `null` for none. |
 | `expect.contested` | For each listed result, whether `trust.contested` is true ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). |
 | `expect.locales` | The `node.locale` a result must have. |
+| `expect.fields` | For each listed result, fields named by a dotted path (`node.media`, `package.datePublished`), compared as JSON values; `null` means absent ([package spec §4.12, §5.7](../spec/moca-package-spec.md#57-media)). |
 
 Every result must be a valid citation record with a `score`. Ranking is never
 compared, so lexical and dense implementations can differ.
@@ -146,6 +147,11 @@ they are compared **exactly**, order included.
 - Search: the default retrieval policy, the host's opt-in, audience
   sets, the re-check of every hit whatever the backend returns, locale,
   concepts, and the dense model check.
+- Podcast and video series content: media descriptions and time ranges bounded
+  by a transcript or a duration; `datePublished`; binding by composition and
+  `upTo` across members, in a library and in a store; `isPartOf` and unknown
+  relation types; issued copies matching member pins and a publisher's
+  sidecar.
 
 Some rules cannot be expressed as portable directory fixtures, because Git and
 some file systems cannot store them: unreadable folders, and symbolic links in
@@ -222,7 +228,9 @@ standard output.
 
 - Input: `{ "root": "<absolute path of conformance/>", "case": { … } }`.
 - Output for a package case: `{ "valid", "codes", "capabilities", "digest",
-  "distribution", "sidecarUsable", "evidenceMatched", "envelope" }`, as defined above.
+  "distribution", "images", "translations", "tags", "apps", "readingOrder",
+  "datePublished", "issuedCopy", "sidecarUsable", "evidenceMatched",
+  "envelope" }`, as defined above.
   `envelope` is the package result's `envelope` field for an envelope, and
   absent otherwise.
 - Output for a search case: `{ "codes", "records" }`, where `records` are the
