@@ -26,7 +26,12 @@ moca:
       selector:
         type: FragmentSelector
         conformsTo: http://www.w3.org/TR/media-frags/
-        value: t=0,1168
+        value: t=0,1167.6
+  media:
+    - source: video
+      type: text/html
+      duration: 1167
+      transcript: captions
 ---
 # Microsoft Agent Framework - Part#4: Azure AI Agents: Observability & Middleware
 

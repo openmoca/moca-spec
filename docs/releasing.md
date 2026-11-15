@@ -62,7 +62,8 @@ before its bindings, `@openmoca/moca-embed` and `@openmoca/moca-sign` before
 each publish to finish:
 
 1. moca-reader-typescript (`@openmoca/moca-core`);
-2. moca-tools, which checks that its `@openmoca/moca-core` range is on npm;
+2. moca-tools and moca-convert, which each check that their
+   `@openmoca/moca-core` range is on npm;
 3. moca-reader-dotnet and moca-reader-python;
 4. moca-mcp-dotnet, once its `OpenMoca.Reader` version is on NuGet.
 

@@ -30,8 +30,9 @@ series.
 Option 3 ([package spec §5.6](../../spec/moca-package-spec.md#56-structure),
 [Reader contract §9](../../spec/moca-reader-contract.md#9-search)).
 
-- Binding by composition applies to the `concepts` and `scope` filters
-  and to `upTo`. It never changes the member's bytes, digest, trust or its
+- Binding by composition applies to the `concepts` and `scope` filters,
+  to `upTo`, and to the structure operation `nodes()` (Reader contract §10),
+  so listing a topic's nodes agrees with searching it. It never changes the member's bytes, digest, trust or its
   record's `concepts`. Only a member that resolved and matched its pin is
   bound.
 - `upTo` limits a package whose reading order places the point and its
@@ -59,5 +60,4 @@ Option 3 ([package spec §5.6](../../spec/moca-package-spec.md#56-structure),
 
 ## What would change this decision
 
-A need for binding by composition in the structure operations (`nodes`), or
-composing packages that bind members they do not pin.
+Composing packages that need to bind members they do not pin.

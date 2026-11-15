@@ -91,6 +91,11 @@ moca:
         conformsTo: http://www.w3.org/TR/media-frags/
         value: t=3280,3516
       note: Q&A and Best Practices
+  media:
+    - source: video
+      type: text/html
+      duration: 3516
+      transcript: captions
 ---
 # Microsoft Agent Framework Workflows: From Zero to Hero
 

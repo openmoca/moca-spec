@@ -771,7 +771,9 @@ composition** to it, and to every concept that has it as a descendant. A
 member's package `id` also stands for the members it composes in turn. A
 record bound by composition is treated as if the node were bound to the
 concept for the `concepts` and `scope` filters and for `upTo`
-([Reader contract §9](moca-reader-contract.md#9-search)), so a series can file
+([Reader contract §9](moca-reader-contract.md#9-search)), and for the
+structure operation `nodes()`
+([Reader contract §10](moca-reader-contract.md#10-structure)), so a series can file
 its releases under its own topics without a new version of each release
 (§7.3). Binding by composition never changes the member: its bytes, digest,
 trust and the record's `concepts`, which lists only the node's own
@@ -846,6 +848,10 @@ Rules:
   compare its bytes with `digest`.
 - **Media in the package.** A description MAY describe a file under `media/`
   too. The same keys apply.
+- **Media played through a page.** When a source's `resource` is a web page
+  that plays the media, such as a video's page on a hosting site, its
+  description has the page's own type, `text/html`. `duration` and
+  `transcript` still apply.
 - **Time ranges.** The duration bounds the time ranges cited from the media,
   and from its transcript. A time range that cites the media is checked
   against its transcript

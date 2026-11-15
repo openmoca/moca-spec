@@ -26,7 +26,12 @@ moca:
       selector:
         type: FragmentSelector
         conformsTo: http://www.w3.org/TR/media-frags/
-        value: t=0,1198
+        value: t=0,1197.2
+  media:
+    - source: video
+      type: text/html
+      duration: 1196
+      transcript: captions
 ---
 # Microsoft Agent Framework - Part#3: Threads and State Management in Azure Agent Framework
 

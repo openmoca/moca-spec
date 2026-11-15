@@ -4459,6 +4459,75 @@
       }
     },
     {
+      "id": "structure-nodes-composition",
+      "kind": "structure",
+      "description": "Package spec §5.6 and contract §10: nodes() sees bindings by composition. The releases the show files under the sea, as parts, are bound to it.",
+      "packages": [
+        "fixtures/series/show"
+      ],
+      "options": {
+        "members": [
+          "fixtures/series"
+        ]
+      },
+      "op": "nodes",
+      "iri": "https://example.com/conformance/series-show#sea",
+      "expect": {
+        "codes": [],
+        "result": [
+          "https://example.com/conformance/series-episode-1@1.0.0#episode.md",
+          "https://example.com/conformance/series-episode-1@1.0.0#notes.md",
+          "https://example.com/conformance/series-episode-3@1.0.0#episode.md",
+          "https://example.com/conformance/series-episode-3@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "structure-nodes-composition-node",
+      "kind": "structure",
+      "description": "Package spec §5.6 and contract §10: a member's node id as a concept binds that node only, for nodes() as for search.",
+      "packages": [
+        "fixtures/series/show"
+      ],
+      "options": {
+        "members": [
+          "fixtures/series"
+        ]
+      },
+      "op": "nodes",
+      "iri": "https://example.com/conformance/series-show#weather",
+      "expect": {
+        "codes": [],
+        "result": [
+          "https://example.com/conformance/series-episode-2@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
+      "id": "structure-nodes-composition-season",
+      "kind": "structure",
+      "description": "Package spec §5.6 and contract §10: a member's package id stands for the members it composes, so nodes() on the season lists both of its releases.",
+      "packages": [
+        "fixtures/series/show"
+      ],
+      "options": {
+        "members": [
+          "fixtures/series"
+        ]
+      },
+      "op": "nodes",
+      "iri": "https://example.com/conformance/series-season-1",
+      "expect": {
+        "codes": [],
+        "result": [
+          "https://example.com/conformance/series-episode-1@1.0.0#episode.md",
+          "https://example.com/conformance/series-episode-1@1.0.0#notes.md",
+          "https://example.com/conformance/series-episode-2@1.0.0#episode.md",
+          "https://example.com/conformance/series-episode-2@1.0.0#notes.md"
+        ]
+      }
+    },
+    {
       "id": "structure-overlay-requires",
       "kind": "structure",
       "description": "An organisation overlay adds a requirement; transitive requires lists dependencies first, and each item names the layer that stated it.",

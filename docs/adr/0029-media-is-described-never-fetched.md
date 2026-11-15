@@ -40,6 +40,11 @@ Option 3 ([package spec §5.7](../../spec/moca-package-spec.md#57-media),
   the bound: the last cue's end, or the declared duration when later. A time
   range on media with no transcript stays unchecked, even with a duration:
   `matched` reports a check of package bytes, and a duration alone is a claim.
+- Media played through a web page, such as a video's page on a hosting
+  site, is described with the page's own type, `text/html`; `duration` and
+  `transcript` still apply. The type says what the `resource` is, so no new
+  key is needed, and the converters can bound the time ranges of hosted
+  video.
 - Search reads the node, not its sources, so transcript text belongs in the
   node body too. A quote across cues includes the line break between them.
 

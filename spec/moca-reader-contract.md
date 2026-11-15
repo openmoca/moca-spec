@@ -635,7 +635,7 @@ Terms and meanings are in
 | `narrower(iri, { transitive })` | Narrower concepts; transitively, breadth first, each level ordered by IRI. |
 | `broader(iri)`, `related(iri)` | Direct broader concepts; related concepts in either direction. Ordered by IRI. |
 | `sequence(iri)` | The members of the ordered collection `iri`, in list order; nothing if `iri` is not an ordered collection. |
-| `nodes(iri, { include })` | Citation records of the nodes bound to `iri`, and, with `include` of `narrower`, `parts` or `both`, to its descendants, with the default retrieval policy applied, ordered by `node.ref`. |
+| `nodes(iri, { include })` | Citation records of the nodes bound to `iri`, by their own `moca.concepts` or by composition ([package spec §5.6](moca-package-spec.md#56-structure)), and, with `include` of `narrower`, `parts` or `both`, to its descendants, with the default retrieval policy applied, ordered by `node.ref`. |
 
 Every concept item carries its `iri`, its preferred `label` (absent when the
 concept has none) and the `layer` that stated the fact: `package`,

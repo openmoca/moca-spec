@@ -138,15 +138,16 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   - Package spec §5.7 (new): `moca.media` describes a node's audio and video,
     hosted outside the package or not: media type, duration, an optional
     SHA-256 and the transcript in the package. A Reader exposes it as
-    `node.media` and never fetches the media. Guidance on transcript text in
+    `node.media` and never fetches the media. Media played through a web
+    page is described with the page's type, `text/html`. Guidance on transcript text in
     the node body.
   - Package spec §4.12 (new): `datePublished`, following the W3C Publication
     Manifest, and `moca.date_published` on nodes. Informative. The package
     result and citation records carry them.
   - Package spec §5.6: binding by composition. A composing package's
     structure may use a member's package `id` or node identifier as a
-    concept; members' records are bound to it for `concepts`, `scope` and
-    `upTo`. Package states carry the bindings (Reader contract §9.4).
+    concept; members' records are bound to it for `concepts`, `scope`,
+    `upTo` and the structure operation `nodes()`. Package states carry the bindings (Reader contract §9.4).
   - Reader contract §9: `upTo` also limits the members of a package whose
     reading order places it.
   - Package spec §7.2: the core relation type `isPartOf`, and
@@ -174,6 +175,10 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Reader contract §3: `maxMembers` defaults to 4,096 (was 256).
 - Reader contract §9.5: when a loaded package binds members by composition,
   the Reader passes no `concepts` filter to the backend; the gate applies it.
+- Examples: each YouTube example node describes its video in `moca.media`
+  (`text/html`, its length and its captions), and its last time range ends no
+  later than the video or its last caption. They are what moca-convert 0.7.0
+  writes from the same capture.
 
 ## [0.6.0] - 2026-11-11
 

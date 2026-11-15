@@ -24,6 +24,10 @@ What they show:
   `t=start,end`). The captions travel
   under `media/` as WebVTT, so a Reader checks every range against the cue
   timings without a network.
+- **Media descriptions.** Each node describes its video in `moca.media`: the
+  type of the YouTube page it plays through (`text/html`), its length, and its
+  captions as the transcript. The length bounds the time ranges, so the last
+  chapter can run to the end of the video, after the last caption.
 - **Originals in the package.** The YouTube description is kept as written
   under `sources/`, and the node quotes it (`TextQuoteSelector`). The video
   itself stays on YouTube: it is the node's `resource` and a `sources` entry,

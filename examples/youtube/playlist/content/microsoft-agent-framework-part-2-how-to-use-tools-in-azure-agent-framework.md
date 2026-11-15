@@ -26,7 +26,12 @@ moca:
       selector:
         type: FragmentSelector
         conformsTo: http://www.w3.org/TR/media-frags/
-        value: t=0,900
+        value: t=0,899.04
+  media:
+    - source: video
+      type: text/html
+      duration: 897
+      transcript: captions
 ---
 # Microsoft Agent Framework - Part#2: How to Use Tools in Azure Agent Framework
 
