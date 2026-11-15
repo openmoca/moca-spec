@@ -101,6 +101,10 @@ contract:
 - `readingOrder`: the manifest's `readingOrder`, when the manifest passes its
   schema and the IRI resolves; absent otherwise
   ([package spec §4.10](moca-package-spec.md#410-reading-order));
+- `datePublished`: the manifest's `datePublished`, as written, when the
+  manifest passes its schema; absent otherwise
+  ([package spec §4.12](moca-package-spec.md#412-publication-date)).
+  Informative only;
 - `envelope`, for an envelope only: `{ format, opened }`, plus the
   unverified `outline` when it was not opened
   ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).

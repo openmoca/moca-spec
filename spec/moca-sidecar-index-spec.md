@@ -110,13 +110,29 @@ A Reader MUST NOT use a sidecar unless all of these hold:
 
 1. `index.json` is valid (`S001`);
 2. `target.id` and `target.version` match the package (`S002`);
-3. `target.digest` equals the package's computed digest (`S003`);
+3. `target.digest` equals the package's computed digest, or, for an issued
+   copy, the `issuedCopy.originalDigest` it verified with
+   ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes))
+   (`S003`);
 4. the payload format is one it supports (`S005`);
 5. every item is valid and points at an existing node representation (`S004`).
 
 If any check fails, the Reader ignores the sidecar and searches the package
 directly. Any change to a package changes its digest, so a sidecar is stale as
 soon as its package changes.
+
+**Issued copies.** A sidecar built from the publisher's package binds to an
+issued copy of it, so a licensee's copy can be searched on a device without
+building a sidecar for each copy. The issuer changed some node files
+(`changedFiles`), so their chunks' offsets and text may no longer hold. Before
+check 5, the Reader drops every item whose node file is a changed file, and
+uses each changed node representation's whole body as one chunk, without a
+vector. It reports `S009_SIDECAR_ITEMS_REPLACED` (info) with the number of
+files. Lexical search covers the whole copy; dense search does not reach a
+changed node, and hybrid search reaches it through its lexical side. So
+publishers SHOULD let issuers mark only files that need not be found by
+meaning: an `issuedCopies.paths` entry for a notice page, or for `media/`
+([package spec §4.11](moca-package-spec.md#411-issued-copies)).
 
 Before a dense or hybrid search, a Reader compares the host's embedder with
 `model` as [Reader contract §9.3](moca-reader-contract.md#93-dense-backends)

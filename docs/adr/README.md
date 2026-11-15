@@ -38,5 +38,10 @@ carried over.
 | [0026](0026-apps-is-a-hint.md) | `apps` is a hint, never configuration |
 | [0027](0027-reading-order-names-a-collection.md) | The reading order names a collection, and `upTo` is the caller's |
 | [0028](0028-issued-copies.md) | Issued copies are bound to the publisher's package, with its consent |
+| [0029](0029-media-is-described-never-fetched.md) | Describe hosted media, never fetch it, and bound time ranges by it |
+| [0030](0030-series-bind-members-by-composition.md) | A composing package's structure can bind its members, and `upTo` reaches them |
+| [0031](0031-date-published.md) | `datePublished` follows the W3C Publication Manifest, and is informative |
+| [0032](0032-is-part-of-and-unknown-relation-types.md) | `isPartOf` is a core relation, and unknown relation types are reported |
+| [0033](0033-issued-copies-match-pins-and-sidecars.md) | Issued copies match member pins and the publisher's sidecar |
 
 New records use the template in [0000-template.md](0000-template.md).

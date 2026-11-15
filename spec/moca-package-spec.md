@@ -163,6 +163,7 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `$schema` | No | The manifest schema URI. |
 | `mocaVersion` | No | The version of this specification the package was written for, `major.minor`. |
 | `description` | No | Summary. |
+| `datePublished` | No | When the package was first published (§4.12). Informative. |
 | `language` | No | BCP 47 tag of the default-language content. |
 | `locales` | No | BCP 47 tags of additional representations (§5.4). |
 | `license` | No | SPDX license expression. |
@@ -525,6 +526,40 @@ Rules:
   attestations already in the package. It never contacts anything because of
   it.
 
+### 4.12 Publication date
+
+`datePublished` says when the package was first published. It follows the
+W3C Publication Manifest's `datePublished`
+([§4.7.1.8](https://www.w3.org/TR/pub-manifest/#pub-date)), which is
+schema.org's `datePublished`: the date on which the publication "was
+originally published".
+
+```json
+"datePublished": "2019-08-01"
+```
+
+Rules:
+
+- The value is a full date (`YYYY-MM-DD`) or an RFC 3339 date-time with an
+  offset, as every date in this specification is (§4.4). The Publication
+  Manifest allows any ISO 8601 date or date-time; MOCA allows only these two
+  forms, so a Reader never guesses a time zone. Any other value fails the
+  schema (`M002`).
+- It is the date of first publication, not of this version. A new version
+  keeps it. What changed, and when, is shown by `version` and the digest:
+  MOCA has no `dateModified`.
+- **Informative.** A Reader never compares it with its clock. It never
+  changes what is retrieved, the validity window (§4.4) or the reading order
+  (§4.10). A producer that orders a collection by date writes that order into
+  `structure.ttl`; a Reader does not check the order against the dates.
+- **Nodes.** A node MAY state its own date with `moca.date_published`
+  (§5.3), when parts of one package were published at different times: the
+  episodes of a series kept in one package, the articles of a collection. A
+  node's date does not inherit the package's, and neither limits the other.
+- The package result carries `datePublished`, and citation records carry
+  `package.datePublished` and `node.datePublished`, when present
+  ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
+
 ## 5. Content
 
 ### 5.1 An OKF bundle
@@ -544,7 +579,9 @@ case-insensitively, in ASCII only (§2): `INDEX.MD` is reserved, `ındex.md`
 
 OKF's other fields (`title`, `description`, `resource`, `tags`, `sources`,
 `generated`, `verified`, `status`, `stale_after`) keep exactly their OKF
-meaning. [`schemas/v1/node.schema.json`](../schemas/v1/node.schema.json)
+meaning. `type` is free text. An informative list of suggested node types,
+such as `PodcastEpisode` or `Procedure`, is kept on openmoca.org; a type joins
+it by a pull request to the site, not by a change to this specification. [`schemas/v1/node.schema.json`](../schemas/v1/node.schema.json)
 validates the frontmatter. Readers follow OKF's consumer rules: they MUST NOT
 reject a node for a missing optional field or an unknown `type`, and they
 report malformed optional fields as warnings (`C005_FIELD_INVALID`).
@@ -610,12 +647,14 @@ moca:
 
 | Key | Meaning |
 | --- | --- |
-| `evidence` | List of `{ source, selector, note? }`. `source` MUST equal the `id` of an entry in the node's OKF `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN`). `selector` is a W3C Web Annotation `FragmentSelector` (`value`, optional `conformsTo`), `TextQuoteSelector` (`exact`, optional `prefix`, `suffix`) or `TextPositionSelector` (`start`, `end`). A PDF page is a `FragmentSelector` with `value: "page=12"` and `conformsTo: "http://tools.ietf.org/rfc/rfc3778"`. A time range in audio or video is a `FragmentSelector` with `value: "t=75,210"` and `conformsTo: "http://www.w3.org/TR/media-frags/"`; such a range is checked only when the evidence cites a WebVTT (`.vtt`) source, so to make a time range checkable, cite the captions or transcript file rather than the video. |
+| `evidence` | List of `{ source, selector, note? }`. `source` MUST equal the `id` of an entry in the node's OKF `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN`). `selector` is a W3C Web Annotation `FragmentSelector` (`value`, optional `conformsTo`), `TextQuoteSelector` (`exact`, optional `prefix`, `suffix`) or `TextPositionSelector` (`start`, `end`). A PDF page is a `FragmentSelector` with `value: "page=12"` and `conformsTo: "http://tools.ietf.org/rfc/rfc3778"`. A time range in audio or video is a `FragmentSelector` with `value: "t=75,210"` and `conformsTo: "http://www.w3.org/TR/media-frags/"`; such a range is checked only against a WebVTT (`.vtt`) file in the package: the cited source itself, or the `transcript` named by the cited media's description (§5.7). To make a time range checkable, carry the captions or transcript in the package. |
 | `valid_from`, `valid_until` | The node's own validity window (§4.4). `valid_until` MUST be later than `valid_from` (`C010_VALIDITY_WINDOW_INVALID`). |
 | `contested_by` | Node ids or package ids of content that disputes this node. |
 | `audience` | Who the node is for: a non-empty string. Suggested values: `public`, `internal`, `restricted`; other values are allowed. A host filtering by audience leaves out nodes with no label unless it allows them, and nodes whose label is malformed always ([Reader contract §8](moca-reader-contract.md#8-default-retrieval-policy)). It is a label a host filters on, not an access-control mechanism (§13.3). |
 | `concepts` | Concepts from the package's `structure.ttl` that this node is bound to (§5.6): a list of `{ iri, role? }`. `iri` MUST be an absolute IRI; `role` is `primary` (what the node is about) or `supporting` (what it mentions). |
 | `profiles` | Profile URI to that profile's node-level data (§9). |
+| `media` | Descriptions of the node's audio and video sources, hosted outside the package or not (§5.7): a list of `{ source, type, duration?, digest?, transcript? }`. |
+| `date_published` | When the node's content was first published, in the form of `datePublished` (§4.12). A value that does not parse is `C005_FIELD_INVALID` and treated as absent. |
 
 ### 5.4 Locales
 
@@ -722,6 +761,40 @@ prints a sorted JSON view of `structure.ttl`, in the shape of
 [`structure.schema.json`](../schemas/v1/structure.schema.json), for people and
 tools to read.
 
+**Members in the structure.** A package with members MAY use, as concepts
+in its own `structure.ttl`, the `id` of a member package at any depth, or the
+node identifier (`<id>#<path>`, §4.2) of a member's node, each declared with
+`rdf:type skos:Concept`. Such a concept stands for that member's content. In
+a library, each record of the member, or of that node, is **bound by
+composition** to it, and to every concept that has it as a descendant. A
+member's package `id` also stands for the members it composes in turn. A
+record bound by composition is treated as if the node were bound to the
+concept for the `concepts` and `scope` filters and for `upTo`
+([Reader contract §9](moca-reader-contract.md#9-search)), so a series can file
+its releases under its own topics without a new version of each release
+(§7.3). Binding by composition never changes the member: its bytes, digest,
+trust and the record's `concepts`, which lists only the node's own
+`moca.concepts`. Only a member that resolved and matched its pin (§7.1) is
+bound this way.
+
+**In RDF and SKOS terms**, such an IRI then names both a package (or a node)
+and a concept. SKOS allows this, and RDF and SKOS tools read the structure
+layer as they read any other: the IRI is one more resource typed
+`skos:Concept`. Two things follow:
+
+- Do not also type it `skos:Collection` or `skos:ConceptScheme`: SKOS makes
+  those disjoint from `skos:Concept`.
+- The IRI is compared with the identifier as a string, after Turtle's own
+  escapes are decoded, never percent-decoded. An identifier that contains a
+  space, a backtick or one of `<`, `>`, `"`, `{`, `}`, `|`, `^` and `\`
+  cannot be written in Turtle, so such a node or package cannot be bound this
+  way. Bind its package `id`, or the nodes of a
+  package with plain paths.
+
+A member MAY instead bind its nodes to the composing package's concept IRIs
+directly, declaring them in its own `structure.ttl`. That works without the
+composing package, but a new topic then needs a new version of every member.
+
 **Capabilities come from the package alone.** `structured` and the `O`
 diagnostics depend only on the package's own `structure.ttl`. Nothing a host
 loads beside it changes them.
@@ -731,6 +804,65 @@ relations over a package's structure. Overlays are supplied by
 the host, not by the package, and are never covered by the package's digest
 ([ADR-0008](../docs/adr/0008-package-application-organisation-layers.md),
 [Reader contract §10](moca-reader-contract.md#10-structure)).
+
+### 5.7 Media
+
+Audio and video are often hosted outside the package. A node names such
+media as an OKF source whose `resource` is a URL, and MAY describe it in
+`moca.media`:
+
+```yaml
+sources:
+  - id: audio
+    resource: https://media.example.com/episodes/42.mp3
+  - id: transcript
+    resource: ../media/episode-42.en.vtt
+moca:
+  media:
+    - source: audio
+      type: audio/mpeg
+      duration: 1834.5
+      digest: sha256:4f1c…
+      transcript: transcript
+```
+
+| Key | Meaning |
+| --- | --- |
+| `source` | Required. The `id` of an entry in the node's `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN` otherwise). |
+| `type` | Required. The media type ([RFC 6838](https://www.rfc-editor.org/rfc/rfc6838)), such as `audio/mpeg` or `video/mp4`. Parameters are allowed. |
+| `duration` | The length in seconds: a number, 0 or more. |
+| `digest` | `sha256:` and the SHA-256 of the media file's bytes, in lower-case hex. |
+| `transcript` | The `id` of another source in `sources` whose `resource` is a WebVTT (`.vtt`) file in the package: the captions or transcript of this media. |
+
+Rules:
+
+- **Never fetched.** A description is the publisher's statement. A Reader
+  never fetches the media, never checks `duration` or `digest` against it,
+  and never contacts its `resource`
+  ([Reader contract §4](moca-reader-contract.md#4-what-a-reader-must-never-do)).
+  The description is covered by the package digest, so a signed package
+  vouches for which file it means. A host that downloads the media MAY
+  compare its bytes with `digest`.
+- **Media in the package.** A description MAY describe a file under `media/`
+  too. The same keys apply.
+- **Time ranges.** The duration bounds the time ranges cited from the media,
+  and from its transcript. A time range that cites the media is checked
+  against its transcript
+  ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
+- **Invalid descriptions.** A description that fails the node schema, names
+  an unknown source, or describes a source that an earlier description
+  already describes, is ignored. A `transcript` that names an unknown source,
+  or a source that is not a `.vtt` file in the package, is dropped from its
+  description. Each is reported as `C005_FIELD_INVALID` (warning), or `C006`
+  for an unknown source; the node's other descriptions stand.
+- Citation records carry the node's descriptions as `node.media`
+  ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
+
+**Search reads the node, not its sources.** Put a transcript's text in the
+node body as well, so lexical and dense search find what was said, and keep
+the WebVTT file as the evidence for the times. The text of a WebVTT source is
+its cue payloads joined with LF, so a `TextQuoteSelector` that quotes across
+cues includes the line break between them.
 
 ## 6. Package contents and the digest
 
@@ -857,6 +989,14 @@ differs from the pin, or if its manifest's `id` or `version` differs from the
 pin's (`R002_MEMBER_DIGEST_MISMATCH`). Resolution is therefore verification,
 not trust in the resolver.
 
+**Issued copies of members.** A pin names the publisher's package. A
+resolved member that is an issued copy matches the pin when its
+`issuedCopy.originalDigest`, verified against the host's trust root
+([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)),
+equals it. So one series package serves every licensee's copies of its
+releases. A copy that did not verify is compared by its own digest, and so
+does not match.
+
 #### 7.1.1 Resolving a composition
 
 A Reader resolves members only when the host supplies a resolver. Without
@@ -913,11 +1053,15 @@ What composition means for nodes and trust:
 | `amends` | This package changes part of the target; the rest of the target stays in force. | None beyond reporting the relation. |
 | `conflictsWith` | Both packages claim authority over overlapping subject matter, and the conflict is unresolved. | Nodes of both packages are `contested`, each naming the other. |
 | `crossReferences` | Informative link. | None. |
+| `isPartOf` | This package is part of the target: an episode of a series, a volume of a set. The name follows Dublin Core's `dcterms:isPartOf` and schema.org's `isPartOf`. The target's `members`, which pins this package by digest, is what composes it (§7.1, §7.3). | None beyond reporting the relation. |
 
 `version`, when present, limits the relation to that exact target version.
-Profiles MAY define further types; Readers preserve relations they do not
-understand. MOCA surfaces conflicts as information; it does not arbitrate
-them.
+Profiles MAY define further types. A Reader preserves every relation. It
+reports a relation whose type is none of these five, and is not defined by a
+profile the package declares, as `R005_RELATION_TYPE_UNKNOWN` (info). When the
+package declares a profile the Reader does not recognise (`F001`), the Reader
+cannot tell which types that profile defines, so it does not report `R005`.
+MOCA surfaces conflicts as information; it does not arbitrate them.
 
 **Who may make a relation take effect.** A package `id` is a name the package
 gives itself, so a relation alone proves nothing about who may retire or
@@ -935,6 +1079,55 @@ A host MAY switch on an option that applies relations from unsigned or
 unscoped packages. It is off by default, and it is safe only for a library of
 the host's own packages: with it on, any loaded package can remove another
 publisher's content from default retrieval.
+
+### 7.3 Series
+
+A series that grows with each release, such as a podcast or a video series,
+is a package whose `members` are its releases:
+
+- **Each release is its own package**, with its own `id`, signed on its own.
+- **The series keeps one `id`.** For each release, append the new package to
+  `members`, pinned by digest, and to the end of the ordered collection that
+  `readingOrder` names, and publish the series as its next minor version.
+  Earlier versions of the series stay valid: they are the series as it was.
+- **Order.** Order the collection by release. List each member's package
+  `id` in it, declared as a `skos:Concept`, so that `upTo` places every
+  record of that member
+  ([Reader contract §9](moca-reader-contract.md#9-search)). Members' nodes
+  bound to concepts on the collection are placed by those concepts too.
+- **Topics** go in the series' `structure.ttl`: concepts that have the
+  members, or their concepts, as parts (`dcterms:hasPart`).
+- **Back-links.** A release MAY name the series with an `isPartOf` relation
+  (§7.2). Leave out `version`, so the relation stays true as the series
+  grows. It has no effect: the series' `members` are what compose it.
+- **Dates.** Each release states when it was published with `datePublished`
+  (§4.12); the series' own `datePublished` is the date of its first release.
+- **Long series.** A Reader resolves at most `maxMembers` members in one
+  read, at every depth (4,096 by default), and `maxMemberDepth` levels (8)
+  ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)). Group
+  a long series by season or by year: a package per season, each composing
+  its releases, and the series composing the seasons. A host can then read
+  one season on its own. The series' ordered collection still lists every
+  release, by its package `id`, so `upTo` places each one exactly; give each
+  season concept its releases as parts (`dcterms:hasPart`), so `scope` on a
+  season finds them.
+- **Free and members-only releases.** Anyone who has a package can read its
+  manifest, its members and its structure. A series that lists members-only
+  releases reveals their ids, versions, digests and the labels its structure
+  gives them. Publish two series: a public one that composes only the free
+  releases, and a members' series that composes the public series and adds
+  the members-only releases. The members' series is handed out like the
+  releases it lists (for example `distribution: encrypted-only`). Do not
+  name members-only releases anywhere in the public series: not in its
+  members, structure, relations or text. A members-only release MAY name the
+  public series with `isPartOf`; that reveals nothing about the release. Its
+  `id` is visible to whoever holds it and to every host that composes it, so
+  choose ids that say no more than the title may.
+- **Members' copies.** When members receive issued copies of releases, the
+  members' series pins the publisher's packages; each copy matches its pin
+  through its verified `issuedCopy.originalDigest` (§7.1), and the
+  publisher's sidecar index binds to it the same way
+  ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)).
 
 ## 8. No agent material
 
@@ -994,7 +1187,7 @@ a package actually has from what it contains and what verifies:
 | `core` | The package is valid: no error-severity `T`, `P`, `M`, `C` or `E` diagnostic. All other capabilities require `core`. |
 | `composed` | The package lists members. |
 | `located-evidence` | At least one node has `moca.evidence`. |
-| `self-contained-evidence` | The package has `located-evidence`, and every evidence source of every node has a `resource` that resolves, relative to the node file (§5.1), to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it. |
+| `self-contained-evidence` | The package has `located-evidence`, and every evidence entry of every node is checkable inside the package: its source has a `resource` that resolves, relative to the node file (§5.1), to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it; or the entry is a media time range (§5.3) whose source has a valid media description with a `transcript` (§5.7). |
 | `localized` | At least one node has a locale representation. |
 | `structured` | `structure.ttl` is present, parses, and every relation and node binding resolves, with no `O` diagnostic (§5.6). |
 | `signed` | At least one package attestation verifies against the host's trust root. For an issued copy, against the rebuilt original digest ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |

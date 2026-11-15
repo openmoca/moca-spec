@@ -115,7 +115,7 @@ be at least those below, which the conformance corpus assumes:
 | Evidence checks per package | `maxEvidenceChecksPerPackage` | 10,000 | Further entries are not checked; `matched` is absent |
 | Source bytes scanned for evidence per package, counted once per check | `maxEvidenceBytesPerPackage` | 256 MiB | Further entries are not checked; `matched` is absent |
 | Depth of members ([package spec §7.1.1](moca-package-spec.md#711-resolving-a-composition)) | `maxMemberDepth` | 8 | `R001` for that member; it is not resolved |
-| Members resolved in one read, at every depth | `maxMembers` | 256 | `R001` for each further member; it is not resolved |
+| Members resolved in one read, at every depth. Each resolved member is held in memory, so a host on a small device may set it lower | `maxMembers` | 4,096 | `R001` for each further member; it is not resolved |
 
 A Reader MUST normalise each evidence source once per package, not once per
 check, and MUST NOT let structure traversal depend on recursion depth: a long
@@ -254,6 +254,9 @@ and `profiles`, are left out, as they are in a real record):
   | `trust.contestedBy` | The node's `moca.contested_by`, as written, then `<id>@<version>` of each loaded package it conflicts with. |
   | `audience` | As in [§8](#8-default-retrieval-policy); `audienceInvalid` is `true` when the label is malformed. |
   | `profiles` | The manifest's profile URIs, in manifest order; absent when there are none. |
+  | `package.datePublished` | The manifest's `datePublished`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-date)). |
+  | `node.datePublished` | The node's `moca.date_published`, as written, when it parses; absent otherwise. The package's date is never copied to it. |
+  | `node.media` | The node's valid media descriptions ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ source, resource, type, duration?, digest?, transcript? }`, where `resource` is the source's `resource` as written. Absent when there are none. |
 
   A consumer of citation records (a store, an application) SHOULD ignore
   properties it does not know: later versions add fields. An AG-UI client
@@ -285,8 +288,9 @@ and `profiles`, are left out, as they are in a real record):
 - `evidence[].matched` is `true` when the Reader checked the selector against
   the cited file inside the package and it matched, and `false` when it checked
   and it did not match (`C011`). It is absent when the Reader did not check:
-  the source is outside the package, its file type is not in the table below,
-  or the Reader does not check that kind of selector. It says the quote is in the
+  the source is outside the package (and is not media with a `transcript`,
+  for a time range), its file type is not in the table below, or the Reader
+  does not check that kind of selector. It says the quote is in the
   file; it does not say the node's claim is true.
 - **Text is normalised before matching**, as W3C Web Annotation requires
   ("the text MUST be normalized"). By source type, from the file name's extension, compared case-insensitively in ASCII:
@@ -311,9 +315,21 @@ and `profiles`, are left out, as they are in a real record):
 - **Media time ranges.** A `FragmentSelector` that `conformsTo`
   `http://www.w3.org/TR/media-frags/` with a temporal value `t=start[,end]`
   (seconds, or `hh:mm:ss` with an optional `npt:` prefix; an empty start
-  means 0, as Media Fragments 1.0 allows) matches a WebVTT
-  source when the range overlaps at least one cue. Against other media it is
-  not checked. Carry the captions or transcript of a video in the package to
+  means 0, as Media Fragments 1.0 allows) is checked against a WebVTT file in
+  the package: the cited source, when it is one, or else the `transcript` of
+  the cited source's media description
+  ([package spec §5.7](moca-package-spec.md#57-media)). It matches when both
+  hold:
+  1. the range overlaps at least one cue; and
+  2. the range lies within the media: its end is at or before the bound. The
+     bound is the end time of the last cue, or the declared `duration` when
+     that is later. The duration is that of the media description being
+     checked, or, when the evidence cites the WebVTT file itself, of the
+     node's media description whose `transcript` is that file. A range with
+     no end runs to the end of the media, so it lies within it.
+
+  Any other time range is not checked. Carry the captions or transcript of
+  audio or video in the package, and name it as the media's `transcript`, to
   make its citations checkable.
 - `concepts` lists the absolute concept IRIs the node is bound to by its
   `moca.concepts` ([package spec §5.6](moca-package-spec.md#56-structure)).
@@ -367,7 +383,9 @@ language, and the default retrieval policy is applied inside it:
 search(query, { limit, includeAll, locale, concepts, scope, upTo }) -> citation records, each with a score
 ```
 
-`concepts` keeps records bound to at least one of the given concept IRIs;
+`concepts` keeps records bound to at least one of the given concept IRIs, by
+the node's own `moca.concepts` or by composition
+([package spec §5.6](moca-package-spec.md#56-structure));
 `scope` keeps records bound to the concept or any of its descendants by
 hierarchy or parts (§10). Both refer to the package structure
 ([package spec §5.6](moca-package-spec.md#56-structure)).
@@ -380,17 +398,26 @@ out material that comes after that point:
 - **Where the point is.** `upTo` takes its position as any concept does: the
   first member that is it or contains it. So a descendant limits exactly as
   that member would.
-- **Which packages.** `upTo` limits only the packages whose reading order
-  places it. Records from other loaded packages, such as reference packages
-  searched beside a course, are not limited by it.
+- **Which packages.** `upTo` limits the packages whose reading order places
+  it, and their resolved members at any depth
+  ([package spec §7.1](moca-package-spec.md#71-members)). Records from other
+  loaded packages, such as reference packages searched beside a course, are
+  not limited by it.
+- **Members.** A record from a member of a limited package takes its
+  positions on the composing package's reading order from every concept it is
+  bound to there: its node's own `moca.concepts`, and the concepts it is bound
+  to by composition, such as the member's package `id` listed in the order
+  ([package spec §5.6](moca-package-spec.md#56-structure)). A member's own
+  reading order limits only for points that it places itself. A record that
+  more than one limit applies to must pass each of them.
 - **Unresolved.** If no loaded package's reading order places `upTo`, it
   limits nothing, and the Reader reports `S008_UPTO_UNRESOLVED` (warning)
   for that search, so it never fails silently.
-- **What passes.** In a limited package, a record passes when every concept
-  it is bound to that is on the reading order has a position at or before
-  the position of `upTo`. The point itself is included.
-- **Records off the reading order.** A record bound to no concept on the
-  reading order is not limited: a glossary, an introduction or reference
+- **What passes.** In a limited package, a record passes when every
+  position it has is at or before the position of `upTo`. The point itself is
+  included.
+- **Records off the reading order.** A record with no position is not
+  limited: a glossary, an introduction or reference
   pages are useful at every point and are not ahead of anything. A caller
   that wants them out narrows the search with `scope` or `concepts`.
 - `upTo` combines with `concepts` and `scope`: a record must pass each one
@@ -520,7 +547,12 @@ package, its digest, `id`, `version`, default language, relations, relation
 scopes (§7.2 of the package spec), signers, current reviews, node-level
 `moca.contested_by`, its `issuedCopy`, and, when `readingOrder` resolves,
 its members in order and the position of each concept on it, so a store
-search applies `upTo` as a library search does. A Reader produces a package's state from the package
+search applies `upTo` as a library search does. For a package with members,
+the state also carries, for each resolved member at any depth, its digest and
+the concepts the package's structure binds its records and nodes to by
+composition ([package spec §5.6](moca-package-spec.md#56-structure)), so a
+store search applies `concepts`, `scope` and `upTo` to members' records as a
+library search does. A Reader produces a package's state from the package
 result (`packageState`); it is small, plain JSON that a host keeps beside
 its store. At query time the Reader resolves store hits from their records and
 MUST recompute from the states and the clock: `stale` and `inForce`;
@@ -690,7 +722,7 @@ withhold only the `structured` capability.
 | `C003_TYPE_MISSING` | error | Frontmatter has no non-empty type (OKF MUST). |
 | `C004_RESERVED_FILE_INVALID` | error | index.md or log.md breaks the OKF reserved-file rules. |
 | `C005_FIELD_INVALID` | warning | A frontmatter field does not match the node schema. |
-| `C006_EVIDENCE_SOURCE_UNKNOWN` | warning | moca.evidence names a source id that sources[] does not declare. |
+| `C006_EVIDENCE_SOURCE_UNKNOWN` | warning | moca.evidence or moca.media names a source id that sources[] does not declare. |
 | `C007_LINK_UNRESOLVED` | warning | An internal Markdown link does not resolve. |
 | `C008_UNSAFE_PATH` | error | A package-relative path is absolute or escapes the package root. |
 | `C009_LOCALE_ORPHAN` | warning | A locale representation has no default-language file. |
@@ -711,9 +743,10 @@ withhold only the `structured` capability.
 | `A008_PACKAGE_DIGEST_MISMATCH` | error | A package attestation names this package's `id` and `version` with a different digest: the content changed after it was signed ([attestations §3](moca-attestations.md#3-package-attestations)). |
 | `A009_SIGNATURE_REQUIRED` | error | The host requires a valid package attestation (`requireSignature`) and the package has none. This one makes the package invalid. |
 | `R001_MEMBER_UNRESOLVED` | warning | A member could not be resolved by the host resolver. |
-| `R002_MEMBER_DIGEST_MISMATCH` | error | A resolved member does not match its pinned digest. |
+| `R002_MEMBER_DIGEST_MISMATCH` | error | A resolved member does not match its pinned digest, or, for an issued copy that verified, its original digest ([package spec §7.1](moca-package-spec.md#71-members)). |
 | `R003_MEMBER_CYCLE` | error | Members form a cycle. |
 | `R004_RELATION_UNAUTHORISED` | info | A `supersedes` or `conflictsWith` relation is not authorised by a signer of the package, so it has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
+| `R005_RELATION_TYPE_UNKNOWN` | info | A relation's type is not a core type, and no profile the package declares defines it. It is preserved and has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
 | `L001_IDENTITY_CONFLICT` | error | A library was given a second package with the same `id` and `version` but a different digest; the second is refused (§7). Reported by the library, not the package. |
 | `L002_ISSUED_COPY_DUPLICATE` | info | A library was given a second issued copy of the same original (§7): the same `id` and `version`, another digest, and the same `issuedCopy.originalDigest`. The second is not loaded. Reported by the library. |
 | `F001_PROFILE_UNRECOGNISED` | info | A declared profile is not recognised by this Reader. |
@@ -729,6 +762,7 @@ withhold only the `structured` capability.
 | `S006_MODEL_MISMATCH` | warning | The host's embedder does not match the index's model; dense search is refused. |
 | `S007_NO_VECTORS` | warning | A loaded package has no vectors a dense backend can search; that package is not searched. |
 | `S008_UPTO_UNRESOLVED` | warning | A search's `upTo` is on no loaded package's reading order, neither a member nor a descendant of one. It limits nothing (§9). |
+| `S009_SIDECAR_ITEMS_REPLACED` | info | A sidecar built from the publisher's package is bound to an issued copy, and the items of the files the issuer changed were replaced by each file's whole body, without a vector ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)). |
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0011](../docs/adr/0011-park-unconsumed-features.md)), `O004_STRUCTURE_VIEW_MISMATCH` ([ADR-0019](../docs/adr/0019-park-structure-json.md)).
 
