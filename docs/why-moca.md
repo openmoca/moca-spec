@@ -146,7 +146,7 @@ reviewed node or a superseded policy.
 
 ## Honest status
 
-MOCA is at 0.6.0, before 1.0. The specification, three Readers, the tools and
+MOCA is at 0.7.0, before 1.0. The specification, three Readers, the tools and
 the conformance corpus are complete and tested together, but nobody has yet
 measured how much MOCA metadata improves answers. That
 [evaluation](plans/01-outcome-evaluation.md) comes next, and fields that do not

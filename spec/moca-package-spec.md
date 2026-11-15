@@ -1,6 +1,6 @@
 # MOCA Package Specification
 
-Specification version: `0.6.0` (`mocaVersion` `0.6`)
+Specification version: `0.7.0` (`mocaVersion` `0.7`)
 Status: Before `1.0.0`. A minor version may still change the format; each change is in [MIGRATIONS.md](../MIGRATIONS.md).
 License: [Apache License 2.0](../LICENSE)
 
@@ -1154,7 +1154,7 @@ log. Content and sources may hold more.
 **One version for the document set.** The package specification, the Reader
 contract, the Reader interface, the attestation, sidecar and AG-UI
 specifications, the schemas and the conformance corpus are versioned together,
-as one release (`0.6.0`). "The contract version" in the Reader contract means
+as one release (`0.7.0`). "The contract version" in the Reader contract means
 this version. Before `1.0.0`, a minor version MAY be breaking, and each change
 is described in [MIGRATIONS.md](../MIGRATIONS.md). From `1.0.0`, a breaking
 change needs a major version.

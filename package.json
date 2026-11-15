@@ -1,7 +1,7 @@
 {
   "name": "moca-spec",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "MOCA (Modular Ontology, Content & Attestation): a package layer for portable, verifiable AI knowledge. Specification, schemas, examples and conformance corpus.",
   "license": "Apache-2.0",
   "type": "module",

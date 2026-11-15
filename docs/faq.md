@@ -113,7 +113,7 @@ trade mark on behalf of the project ([governance](../GOVERNANCE.md)).
 
 ## Is it ready to use?
 
-It is at 0.6.0, before 1.0. The format is tested end to end and the three
+It is at 0.7.0, before 1.0. The format is tested end to end and the three
 Readers agree on every case, but it may still change before 1.0
 ([versioning](versioning-and-release.md)).
 

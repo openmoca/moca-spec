@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "0.6.0",
+  "corpusVersion": "0.7.0",
   "cases": [
     {
       "id": "valid-minimal",

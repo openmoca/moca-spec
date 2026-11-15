@@ -1,6 +1,6 @@
 # MOCA Encrypted Packages
 
-Specification version: `0.7.0` (draft)
+Specification version: `0.7.0`
 Status: Before `1.0.0`. A minor version may still change the format; each change is in [MIGRATIONS.md](../MIGRATIONS.md).
 License: [Apache License 2.0](../LICENSE)
 

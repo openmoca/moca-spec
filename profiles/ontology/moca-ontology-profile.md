@@ -1,7 +1,7 @@
 # MOCA Ontology profile
 
 Profile URI: `https://w3id.org/moca/profiles/ontology/v1`
-Status: Draft, `0.6.0`
+Status: Draft, `0.7.0`
 
 ## 1. Purpose
 

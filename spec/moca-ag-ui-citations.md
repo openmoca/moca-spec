@@ -1,6 +1,6 @@
 # MOCA Citations Over AG-UI
 
-Specification version: `0.6.0`
+Specification version: `0.7.0`
 Status: Before `1.0.0`. A minor version may still change the format; each change is in [MIGRATIONS.md](../MIGRATIONS.md). This document binds AG-UI services and clients, not Readers (package spec §1.1).
 License: [Apache License 2.0](../LICENSE)
 Schema: [`ag-ui-citations.schema.json`](../schemas/v1/ag-ui-citations.schema.json)

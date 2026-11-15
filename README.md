@@ -145,7 +145,7 @@ teaches it to make, check, sign, index, read and serve packages.
 | [Citations over AG-UI](spec/moca-ag-ui-citations.md) | The `moca.citations` event: how a service sends the citation records an answer cites to any AG-UI client |
 | [Profiles](profiles/README.md) | Optional extensions; today the ontology profile (extra vocabulary files) |
 | [Schemas](schemas/v1) | Manifest, node, structure, citation record, search hit, sidecar, review predicate, trust root, AG-UI citations event |
-| [Conformance corpus](conformance/README.md) | 196 cases, with pinned digests, that any Reader must pass, in any language |
+| [Conformance corpus](conformance/README.md) | 292 cases, with pinned digests, that any Reader must pass, in any language |
 
 Identifiers use `https://w3id.org/moca/...`, permanent names that redirect to
 openmoca.org: each schema resolves to itself and each profile to its
@@ -177,7 +177,7 @@ line and a chat for each, side by side.
 
 ## Status
 
-**`0.6.0`, before `1.0.0`.** A minor version may still change the format, and each change is in [MIGRATIONS.md](MIGRATIONS.md). `1.0.0` comes when the format has settled and is used beyond its maintainer ([GOVERNANCE.md](GOVERNANCE.md#path-to-a-standard)). The
+**`0.7.0`, before `1.0.0`.** A minor version may still change the format, and each change is in [MIGRATIONS.md](MIGRATIONS.md). `1.0.0` comes when the format has settled and is used beyond its maintainer ([GOVERNANCE.md](GOVERNANCE.md#path-to-a-standard)). The
 specification, schemas, examples and conformance corpus are tested together
 (`npm test`), and every Reader runs the corpus in its own CI. What is not proven yet is value in use: the
 [outcome evaluation](docs/plans/01-outcome-evaluation.md) is the next
