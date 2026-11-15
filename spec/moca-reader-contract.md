@@ -722,7 +722,7 @@ withhold only the `structured` capability.
 | `M013_ALT_IMAGE_UNKNOWN` | warning | A translated `alt` text names no image in `images`. It is dropped. |
 | `M014_READING_ORDER_UNRESOLVED` | warning | `readingOrder` does not name a `skos:OrderedCollection` with a `skos:memberList` in the package's own `structure.ttl`. It is ignored ([package spec §4.10](moca-package-spec.md#410-reading-order)). |
 | `C001_FRONTMATTER_MISSING` | error | A concept document has no YAML frontmatter (OKF MUST). |
-| `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML or is not a mapping. |
+| `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML, is not a mapping, repeats a key, uses an alias, or lists two sources with one `id`. |
 | `C003_TYPE_MISSING` | error | Frontmatter has no non-empty type (OKF MUST). |
 | `C004_RESERVED_FILE_INVALID` | error | index.md or log.md breaks the OKF reserved-file rules. |
 | `C005_FIELD_INVALID` | warning | A frontmatter field does not match the node schema. |

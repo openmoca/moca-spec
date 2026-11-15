@@ -160,7 +160,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     items of changed files are replaced.
   - Package spec §5.1: suggested node types are an informative list on
     openmoca.org.
-  - 27 cases (319 in all); the runner compares `expect.datePublished` and
+  - 31 cases (323 in all); the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
 ### Changed
@@ -172,6 +172,9 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Reader contract §7: a media time range matches only when it overlaps a cue
   and ends at or before the latest cue end, or the declared duration when
   later. A range that ran past the end of its captions now gives `C011`.
+- Package spec §5.1: frontmatter whose `sources` has two entries with the same
+  `id` is invalid (`C002_FRONTMATTER_INVALID`), so the node is not read.
+  Readers had disagreed on which entry applied.
 - Reader contract §3: `maxMembers` defaults to 4,096 (was 256).
 - Reader contract §9.5: when a loaded package binds members by composition,
   the Reader passes no `concepts` filter to the backend; the gate applies it.

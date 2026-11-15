@@ -596,7 +596,10 @@ and YAML's `...` does not end the block. A block that never ends is `C002`.
 Frontmatter is parsed with the YAML 1.2 core schema. Timestamps are strings
 and MUST NOT be reinterpreted as local times. Frontmatter that repeats a key,
 or uses an alias, is invalid (`C002_FRONTMATTER_INVALID`): YAML parsers
-disagree on which value applies, so none is chosen.
+disagree on which value applies, so none is chosen. For the same reason, so
+is frontmatter whose `sources` has two entries with the same `id`, compared
+as strings: evidence and media descriptions name a source by its `id`
+(§5.3, §5.7).
 
 A concept document with a `C001`, `C002` or `C003` error is not a node. If no
 node is left, the package also has no content (`M003_NO_CONTENT`).
