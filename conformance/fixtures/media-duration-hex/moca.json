@@ -1,0 +1,7 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/media-duration-hex",
+  "version": "1.0.0",
+  "title": "A duration written as a long hex integer",
+  "language": "en"
+}

@@ -171,7 +171,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     items of changed files are replaced.
   - Package spec §5.1: suggested node types are an informative list on
     openmoca.org.
-  - 57 cases (349 in all), a `map-time` case kind and
+  - 60 cases (352 in all), a `map-time` case kind and
     `expect.evidenceLocated`; the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
@@ -221,7 +221,9 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Package spec §5.1: `.inf` and `.nan` are not strings either, and a number
   too large to be finite (`1e400`, or a decimal, octal or hex integer too
   large for a finite double) is read as `.inf` is, never failing the read. A
-  number that is not finite may be a mapping key.
+  number that is not finite may be a mapping key. An integer beyond 64
+  bits is rounded once to the nearest double. An implicit mapping key longer
+  than 1,024 characters is `C002`, as YAML 1.2 says.
 - Reader contract §3: the two evidence budgets (`maxEvidenceChecksPerPackage`
   and `maxEvidenceBytesPerPackage`) now cover the whole read, so members share
   them with the package that composes them; the options keep their names.

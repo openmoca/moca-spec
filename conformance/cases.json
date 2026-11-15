@@ -6072,6 +6072,69 @@
       }
     },
     {
+      "id": "frontmatter-long-key",
+      "description": "Package spec §5.1: as YAML 1.2 says, an implicit mapping key is at most 1,024 characters, counted from its start, with any quotes, to its colon. A key of 1,025 characters, plain or quoted, is refused (C002), and the node is not read; the package's other node is. Every Reader applies the same limit.",
+      "target": "fixtures/frontmatter-long-key",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "frontmatter-long-key-read",
+      "description": "Package spec §5.1: an implicit key of exactly 1,024 characters is read, and so is an explicit key (after ?) of 3,000 characters: the limit is for implicit keys only. Both nodes are read, and each matches its quote.",
+      "target": "fixtures/frontmatter-long-key-read",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "evidenceMatched": {
+          "at-limit.md": [
+            true
+          ],
+          "explicit.md": [
+            true
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-media-duration-hex",
+      "kind": "search",
+      "description": "Package spec §5.1: a hex integer beyond 64 bits is rounded once to the nearest double. 0x10000000000000801 is 2 to the power 64 plus 2,049, so its nearest double is 2 to the power 64 plus 4,096 (18446744073709556000), not 2 to the power 64.",
+      "packages": [
+        "fixtures/media-duration-hex"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "long hex duration"
+      },
+      "expect": {
+        "fields": {
+          "https://example.com/conformance/media-duration-hex@1.0.0#episode.md": {
+            "node.media": [
+              {
+                "source": "audio",
+                "resource": "https://media.example.com/hex.mp3",
+                "type": "audio/mpeg",
+                "duration": 18446744073709556000
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
       "id": "search-media-fields",
       "kind": "search",
       "description": "Contract §7: node.media carries the valid descriptions, with the source's resource; package.datePublished is absent when the manifest has none.",

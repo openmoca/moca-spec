@@ -51,6 +51,7 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
 | A member pinned more than once in one composition is read once and shared, and counts once. New limit `maxMemberBytes` (1 GiB): the bytes of all members read in one read (contract §3) | `R001` past it | None for ordinary compositions. Readers: share member results within a read, and keep structure work roughly linear. |
 | The evidence budgets `maxEvidenceChecksPerPackage` and `maxEvidenceBytesPerPackage` cover the whole read: a package and its members share them (contract §3) | — (`matched` absent past them) | Hosts that read large compositions with many checked quotes may raise them. Readers: one budget per read; parse each transcript's cues once per package. |
 | A source whose `id` is not a string has no `id`, and YAML's `.inf` and `.nan` are not numbers; nor is a number too large for a finite double, however it is written (package spec §5.1) | `C005` | Give every source a string `id`. |
+| An implicit mapping key longer than 1,024 characters makes the frontmatter invalid, as YAML 1.2 says (package spec §5.1) | `C002` | Write a key that long as an explicit key, after `?`. |
 | Citation records may carry new fields | — | Consumers ignore fields they do not know (Reader contract §7). |
 
 ### What 0.6 Readers do with 0.7 packages

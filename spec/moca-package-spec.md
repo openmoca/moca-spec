@@ -594,7 +594,11 @@ Lines end with LF or CRLF; a lone CR, U+2028 or U+2029 does not end a line,
 and YAML's `...` does not end the block. A block that never ends is `C002`.
 
 Frontmatter is parsed with the YAML 1.2 core schema. Timestamps are strings
-and MUST NOT be reinterpreted as local times. Frontmatter that repeats a key,
+and MUST NOT be reinterpreted as local times. As YAML 1.2 says, an implicit
+mapping key is at most 1,024 characters, counted from its start, with any
+quotes, tag or anchor, to its `:`. Frontmatter with a longer implicit key is
+`C002`; a longer key must be written as an explicit key, after `?`.
+Frontmatter that repeats a key,
 or uses an alias, is invalid (`C002_FRONTMATTER_INVALID`): YAML parsers
 disagree on which value applies, so none is chosen. For the same reason, so
 is frontmatter whose `sources` has two entries with the same `id`, compared
