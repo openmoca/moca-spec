@@ -604,9 +604,11 @@ no `id`: it fails the node schema (`C005_FIELD_INVALID`), nothing can name it,
 and it never counts as a repeat. YAML's `.inf`, `-.inf` and `.nan` are not
 JSON numbers, so where the node schema wants a number they fail it (`C005`).
 They are not strings either, so a source whose `id` is written `.inf` has no
-`id`. A number too large to be finite, such as `1e400`, is read as `.inf`
-is: a Reader reports it (`C005` where a number is wanted) and never fails on
-it.
+`id`. A number too large to be finite, such as `1e400`, or an integer too
+large for a finite double, written in decimal, octal (`0o`) or hex (`0x`), is
+read as `.inf` is: a Reader reports it (`C005` where a number is wanted) and
+never fails on it. An integer that fits is a number, however large:
+`0x8000000000000000` is 2 to the power 63, never a negative number.
 
 A concept document with a `C001`, `C002` or `C003` error is not a node. If no
 node is left, the package also has no content (`M003_NO_CONTENT`).

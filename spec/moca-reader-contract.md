@@ -112,8 +112,8 @@ be at least those below, which the conformance corpus assumes:
 | Triples in a structure file | `maxTriples` | 100,000 | `O001` |
 | Evidence entries checked per node representation | `maxEvidencePerNode` | 256 | Further entries are not checked; `matched` is absent |
 | Source file size checked for evidence | `maxSourceBytesChecked` | 8 MiB | Not checked; `matched` is absent |
-| Evidence checks per package | `maxEvidenceChecksPerPackage` | 10,000 | Further entries are not checked; `matched` is absent |
-| Source bytes scanned for evidence per package, counted once per check | `maxEvidenceBytesPerPackage` | 256 MiB | Further entries are not checked; `matched` is absent |
+| Evidence checks in one read, by the package and all its members together (below) | `maxEvidenceChecksPerPackage` | 10,000 | Further entries are not checked; `matched` is absent |
+| Source bytes scanned for evidence in one read, by the package and all its members together, counted once per check | `maxEvidenceBytesPerPackage` | 256 MiB | Further entries are not checked; `matched` is absent |
 | Depth of members ([package spec §7.1.1](moca-package-spec.md#711-resolving-a-composition)) | `maxMemberDepth` | 8 | `R001` for that member; it is not resolved |
 | Members resolved in one read, at every depth, each distinct member counted once (below). Each resolved member is held in memory, so a host on a small device may set it lower | `maxMembers` | 4,096 | `R001` for each further member; it is not resolved |
 | Bytes of all the members read in one read, counted once per distinct member. Checked before each new member is resolved, so one member can take the total past it | `maxMemberBytes` | 1 GiB | `R001` for each further member; it is not resolved |
@@ -139,9 +139,20 @@ or serialises it keeps track of the members it has visited.
 A refined quote (§7) is checked in time and memory roughly linear in the
 covered text and the quote, however many times the quote occurs.
 
+**One evidence budget per read.** The two evidence budgets cover the whole
+read: the package and every member it reads spend from the same checks and
+bytes, so members do not multiply them. The options keep their earlier names.
 A Reader MUST normalise each evidence source once per package, not once per
-check, and MUST NOT let structure traversal depend on recursion depth: a long
-chain of relations must not exhaust the call stack.
+check, and parse each WebVTT file's cues once per package too. It MUST NOT let
+structure traversal, or any other step, depend on recursion depth or on how
+many arguments one call can take: a long chain of relations, or a transcript
+of many cues, must not exhaust the call stack.
+
+**Numbers too large.** A frontmatter number too large for a finite double,
+however it is written (`1e400`, or a decimal, octal or hex integer of any
+length), is read as `.inf` is ([package spec §5.1](moca-package-spec.md#51-an-okf-bundle)),
+and reading it never fails. A number that is not finite may be a mapping key;
+the node is still read.
 
 **Structure work stays roughly linear.** Resolving a reading order
 ([package spec §4.10](moca-package-spec.md#410-reading-order)) and binding

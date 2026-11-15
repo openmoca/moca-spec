@@ -171,7 +171,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     items of changed files are replaced.
   - Package spec §5.1: suggested node types are an informative list on
     openmoca.org.
-  - 56 cases (348 in all), a `map-time` case kind and
+  - 57 cases (349 in all), a `map-time` case kind and
     `expect.evidenceLocated`; the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
@@ -219,8 +219,14 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   earliest start to the latest end of the touched cues, and white space in
   refined quotes means the five ASCII white-space characters.
 - Package spec §5.1: `.inf` and `.nan` are not strings either, and a number
-  too large to be finite (`1e400`) is read as `.inf` is, never failing the
-  read.
+  too large to be finite (`1e400`, or a decimal, octal or hex integer too
+  large for a finite double) is read as `.inf` is, never failing the read. A
+  number that is not finite may be a mapping key.
+- Reader contract §3: the two evidence budgets (`maxEvidenceChecksPerPackage`
+  and `maxEvidenceBytesPerPackage`) now cover the whole read, so members share
+  them with the package that composes them; the options keep their names.
+  Each WebVTT file's cues are parsed once per package, and no step may depend
+  on how many arguments one call can take.
 - Package spec §5.1: a source whose `id` is not a string has no `id`
   (`C005`); YAML's `.inf` and `.nan` fail the node schema where it wants a
   number.

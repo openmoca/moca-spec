@@ -49,7 +49,8 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
 | `node.media` entries carry `alternateOf` and `sync` for valid alternates; Readers offer `mapTime`; the corpus has `map-time` cases (Reader interface §4, package spec §5.7) | — | Readers: implement `mapTime` and validate alternates. Conformance runners and adapters: support the `map-time` case kind. Apps: switch between audio and video with `mapTime`. |
 | `maxMembers` defaults to 4,096 (was 256) | `R001` past it | Hosts on small devices may set it lower: each resolved member is held in memory. |
 | A member pinned more than once in one composition is read once and shared, and counts once. New limit `maxMemberBytes` (1 GiB): the bytes of all members read in one read (contract §3) | `R001` past it | None for ordinary compositions. Readers: share member results within a read, and keep structure work roughly linear. |
-| A source whose `id` is not a string has no `id`, and YAML's `.inf` and `.nan` are not numbers (package spec §5.1) | `C005` | Give every source a string `id`. |
+| The evidence budgets `maxEvidenceChecksPerPackage` and `maxEvidenceBytesPerPackage` cover the whole read: a package and its members share them (contract §3) | — (`matched` absent past them) | Hosts that read large compositions with many checked quotes may raise them. Readers: one budget per read; parse each transcript's cues once per package. |
+| A source whose `id` is not a string has no `id`, and YAML's `.inf` and `.nan` are not numbers; nor is a number too large for a finite double, however it is written (package spec §5.1) | `C005` | Give every source a string `id`. |
 | Citation records may carry new fields | — | Consumers ignore fields they do not know (Reader contract §7). |
 
 ### What 0.6 Readers do with 0.7 packages

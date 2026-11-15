@@ -1672,7 +1672,7 @@
     },
     {
       "id": "source-id-not-string",
-      "description": "Package spec §5.1: a source whose id is not a string has no id. Two sources with the number 7 are no repeat (no C002) and nothing names them; with the number 1 and the string \"1\", only the string is an id; true and 1 are neither, so \"1\" is an unknown source (C006). Each non-string id fails the node schema (C005). YAML's .inf is not a string either, so a source written with id .inf has no id.",
+      "description": "Package spec §5.1: a source whose id is not a string has no id. Two sources with the number 7 are no repeat (no C002) and nothing names them; with the number 1 and the string \"1\", only the string is an id; true and 1 are neither, so \"1\" is an unknown source (C006). Each non-string id fails the node schema (C005). YAML's .inf is not a string either, so a source written with id .inf has no id; nor do ids written as 1e400 or as hex, octal or decimal integers too large to be finite, which are read as .inf is (huge.md), so \"1e400\" names nothing (C006). A number that is not finite may be a mapping key: the node is still read (keys.md).",
       "target": "fixtures/source-id-not-string",
       "expect": {
         "valid": true,
@@ -1696,6 +1696,12 @@
           ],
           "infinite.md": [
             null
+          ],
+          "huge.md": [
+            null
+          ],
+          "keys.md": [
+            true
           ]
         }
       }
@@ -6023,7 +6029,7 @@
     },
     {
       "id": "media-duration-infinite",
-      "description": "Package spec §5.7: a duration of .inf or of 1e400 (too large to be finite), or a sync offset of .nan, is not a finite number, so the description fails the node schema (C005) and is ignored, in every Reader. A time range on the audio is then on media with no description, so it is not checked.",
+      "description": "Package spec §5.7: a duration of .inf or of 1e400 (too large to be finite), or a sync offset of .nan, is not a finite number, so the description fails the node schema (C005) and is ignored, in every Reader. A time range on the audio is then on media with no description, so it is not checked. So is an integer too large to be finite, however it is written: a duration of 5,000 decimal digits or 300 hex digits, or a sync \"at\" of 401 digits. A range on the valid reference matches; its alternate, whose sync has the 401-digit \"at\", is ignored, so a range on it is not checked.",
       "target": "fixtures/media-infinite",
       "expect": {
         "valid": true,
@@ -6036,7 +6042,31 @@
         ],
         "evidenceMatched": {
           "episode.md": [
+            null,
+            true,
             null
+          ]
+        }
+      }
+    },
+    {
+      "id": "media-many-cues",
+      "description": "Contract §3 and §7: a transcript of 200,000 cues, under the source size limit, is checked like any other. A range inside it matches; one that runs past its last cue, with no declared duration, does not (C011).",
+      "target": "fixtures/media-many-cues",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "evidenceMatched": {
+          "episode.md": [
+            true,
+            false
           ]
         }
       }
@@ -6085,7 +6115,7 @@
     },
     {
       "id": "media-alternates",
-      "description": "Package spec §5.7, Alternates: a time range on an alternate with no transcript is mapped to its reference and checked against the reference's transcript, bounded by the reference's duration. A range maps when it lies in one stretch, and may end on the stretch's boundary; a range across two stretches, or in an ad break only the alternate has, does not map and does not match. A range with no end maps its start. The evidence is checkable in the package. A range with no end runs to the end of its stretch on the reference, so it never covers a break only the reference has. A range on an alternate must also end within the alternate's own duration.",
+      "description": "Package spec §5.7, Alternates: a time range on an alternate with no transcript is mapped to its reference and checked against the reference's transcript, bounded by the reference's duration. A range maps when it lies in one stretch, and may end on the stretch's boundary; a range across two stretches, or in an ad break only the alternate has, does not map and does not match. The evidence is checkable in the package. A range with no end runs to the end of its stretch on the reference, so it never covers a break only the reference has. A range on an alternate must also end within the alternate's own duration.",
       "target": "fixtures/media-alternates",
       "expect": {
         "valid": true,
