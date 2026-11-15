@@ -124,7 +124,20 @@ reached, depth first in the order of each `members` list. Every later
 occurrence in the same read shares that result: it is not resolved, read,
 decrypted or verified again, and counts once toward `maxMembers` and
 `maxMemberBytes`. So a composition in which many packages share members costs
-what its distinct members cost.
+what its distinct members cost. A member whose `id` an earlier entry of the
+same `members` list already has is a repeat (`M005_DUPLICATE_MEMBER`) and is
+not resolved at all.
+
+A Reader holds each member it reads in memory, and a read can take a small
+multiple of the members' bytes (their text, parsed structure and indexes), so
+the memory one read needs grows with `maxMemberBytes` by a factor that
+depends on the Reader. A host on a small device sets `maxMemberBytes` lower.
+The same member result can be reached from more than one composing package
+in one read: `members` is a shared graph, not a tree, and a host that walks
+or serialises it keeps track of the members it has visited.
+
+A refined quote (§7) is checked in time and memory roughly linear in the
+covered text and the quote, however many times the quote occurs.
 
 A Reader MUST normalise each evidence source once per package, not once per
 check, and MUST NOT let structure traversal depend on recursion depth: a long
@@ -356,13 +369,14 @@ and `profiles`, are left out, as they are in a real record):
   same WebVTT file and through an alternate's reference in the same way. It
   then checks the quote against the range's **covered text**: the payloads of
   the cues the range overlaps, in file order, normalised as for any WebVTT
-  source and joined with LF. Before comparing, every run of white space, line
-  breaks included, becomes one space, in the covered text and in the quote's
+  source and joined with LF. Before comparing, every run of white space (here
+  only tab, line feed, form feed, carriage return and space, U+0009, U+000A,
+  U+000C, U+000D and U+0020) becomes one space, in the covered text and in the quote's
   `exact`, `prefix` and `suffix`; this applies to refined quotes only, and
   every other quote keeps exact matching. No case folding is applied.
   - Both match: `matched` is `true`, and the entry's `located` is
     `{ start, end }`, in seconds on the cited source's timeline: from the
-    start of the first cue the quote touches to the end of the last. A cue
+    earliest start to the latest end of the cues the quote touches. A cue
     is touched when a character of `exact` other than white space comes
     from it. If the
     quote occurs more than once in the covered text, the shortest such span

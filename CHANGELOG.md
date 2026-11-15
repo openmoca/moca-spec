@@ -171,7 +171,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     items of changed files are replaced.
   - Package spec §5.1: suggested node types are an informative list on
     openmoca.org.
-  - 51 cases (343 in all), a `map-time` case kind and
+  - 55 cases (347 in all), a `map-time` case kind and
     `expect.evidenceLocated`; the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
@@ -207,6 +207,18 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   only when the composer's signers' `ids` cover the member's `id` (as for
   relations, `R004`), or the host allows unsigned packages to
   (`allowUnsignedRelations`).
+- Reader contract §3: a repeat of a member id (`M005`) is not resolved; a
+  refined quote is checked in linear time; `members` is a shared graph, and
+  the memory a read needs grows with `maxMemberBytes` by a factor that
+  depends on the Reader.
+- Package spec §5.7: a range with no end on an alternate runs to the end of
+  its stretch on the reference, and a range on an alternate must end within
+  the alternate's own `duration`. Reader contract §7: `located` runs from the
+  earliest start to the latest end of the touched cues, and white space in
+  refined quotes means the five ASCII white-space characters.
+- Package spec §5.1: `.inf` and `.nan` are not strings either, and a number
+  too large to be finite (`1e400`) is read as `.inf` is, never failing the
+  read.
 - Package spec §5.1: a source whose `id` is not a string has no `id`
   (`C005`); YAML's `.inf` and `.nan` fail the node schema where it wants a
   number.

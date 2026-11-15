@@ -8,6 +8,8 @@ sources:
     resource: https://video.example.com/watch?v=tides
   - id: clip
     resource: https://video.example.com/tides-clip.mp4
+  - id: short
+    resource: https://video.example.com/tides-short.mp4
   - id: transcript
     resource: ../media/episode.en.vtt
 moca:
@@ -28,6 +30,10 @@ moca:
     - source: clip
       type: video/mp4
       duration: 100
+      alternateOf: audio
+    - source: short
+      type: video/mp4
+      duration: 30
       alternateOf: audio
   evidence:
     - source: video
@@ -54,6 +60,15 @@ moca:
     - source: video
       selector: { type: FragmentSelector, conformsTo: 'http://www.w3.org/TR/media-frags/', value: 't=110,125' }
       note: '90 to 105 on the audio, past its duration'
+    - source: video
+      selector: { type: FragmentSelector, conformsTo: 'http://www.w3.org/TR/media-frags/', value: 't=12', refinedBy: { type: TextQuoteSelector, exact: audio sponsor } }
+      note: 'No end: runs to the end of its stretch, 40 on the audio, so the break the video does not have is not covered'
+    - source: video
+      selector: { type: FragmentSelector, conformsTo: 'http://www.w3.org/TR/media-frags/', value: 't=12', refinedBy: { type: TextQuoteSelector, exact: talk about tides } }
+      note: 'No end, within its stretch: located 30 to 50 on the video'
+    - source: short
+      selector: { type: FragmentSelector, conformsTo: 'http://www.w3.org/TR/media-frags/', value: 't=20,40' }
+      note: 'Within the audio, but after the 30 seconds of this alternate'
 ---
 # Tides
 

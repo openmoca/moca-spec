@@ -5,6 +5,7 @@ sources:
   - { id: audio, resource: 'https://media.example.com/inf.mp3' }
   - { id: video, resource: 'https://video.example.com/inf' }
   - { id: transcript, resource: ../media/episode.en.vtt }
+  - { id: clip, resource: 'https://video.example.com/huge' }
 moca:
   media:
     - { source: audio, type: audio/mpeg, duration: .inf, transcript: transcript }
@@ -12,10 +13,11 @@ moca:
       type: text/html
       alternateOf: audio
       sync: [{ at: 0, offset: .nan }]
+    - { source: clip, type: video/mp4, duration: 1e400 }
   evidence:
     - source: audio
       selector: { type: FragmentSelector, conformsTo: 'http://www.w3.org/TR/media-frags/', value: 't=10,20' }
 ---
 # Infinite numbers
 
-A duration of .inf and an offset of .nan fail the node schema, so both descriptions are ignored.
+A duration of .inf, an offset of .nan and a duration of 1e400, too large to be finite, fail the node schema, so all three descriptions are ignored.

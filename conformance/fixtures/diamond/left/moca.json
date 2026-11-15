@@ -1,0 +1,8 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/diamond-left",
+  "version": "1.0.0",
+  "title": "The left side",
+  "language": "en",
+  "members": [{ "id": "https://example.com/conformance/diamond-leaf", "version": "1.0.0", "digest": "sha256:c7b3b467ef7bb1b9e9a6111dbc7ab02d49c0c365d66c9a36064e25edafbfa79c" }]
+}

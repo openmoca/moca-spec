@@ -79,7 +79,9 @@ A **package result** has at least these fields, with the meanings in the
 contract:
 
 - `manifest`, `digest` and `payloadManifest`;
-- `nodes`, `members` and `profiles`;
+- `nodes`, `members` and `profiles`. `members` is a shared graph: a member met
+  more than once in one read is one result, reached from each place it is
+  composed ([Reader contract §3](moca-reader-contract.md#3-opening-a-package));
 - `structure`;
 - `diagnostics`, `valid` and `capabilities`;
 - `distribution`: the manifest's `distribution`, or `open` when the manifest

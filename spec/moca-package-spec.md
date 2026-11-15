@@ -603,6 +603,10 @@ as strings: evidence and media descriptions name a source by its `id`
 no `id`: it fails the node schema (`C005_FIELD_INVALID`), nothing can name it,
 and it never counts as a repeat. YAML's `.inf`, `-.inf` and `.nan` are not
 JSON numbers, so where the node schema wants a number they fail it (`C005`).
+They are not strings either, so a source whose `id` is written `.inf` has no
+`id`. A number too large to be finite, such as `1e400`, is read as `.inf`
+is: a Reader reports it (`C005` where a number is wanted) and never fails on
+it.
 
 A concept document with a `C001`, `C002` or `C003` error is not a node. If no
 node is left, the package also has no content (`M003_NO_CONTENT`).
@@ -931,14 +935,16 @@ moca:
 - **Mapping a time range.** A range maps when its start and its end lie in
   one stretch, with the end allowed to equal the stretch's last moment, the
   next entry's `at` (or that plus the offset, on the alternate). Its start
-  and end then move by the stretch's `offset`. A range with no end maps its
-  start and keeps no end. A range across two stretches does not map: content
-  between them differs.
+  and end then move by the stretch's `offset`. A range with no end maps to
+  the range from its start, moved by the offset, to the end of that stretch
+  on the reference, which has no end only for the last stretch. A range
+  across two stretches does not map: content between them differs.
 - **Checking evidence.** A time range that cites an alternate is checked
   against the alternate's own `transcript`. When the alternate has none, the
   range is mapped to the reference and checked against the reference's
   `transcript`, bounded by the reference's `duration`; a range that does not
-  map does not match. Evidence checked this way is checkable in the package
+  map does not match, and neither does one that ends after the alternate's
+  own `duration`, when it declares one. Evidence checked this way is checkable in the package
   (§11, `self-contained-evidence`).
 - **Invalid alternates.** Each of these is `C005_FIELD_INVALID` (warning),
   and the description loses `alternateOf` and `sync` but stands on its own:

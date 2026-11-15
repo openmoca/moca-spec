@@ -1,0 +1,9 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/nested-a",
+  "version": "1.0.0",
+  "title": "A signed course over the unsigned one",
+  "language": "en",
+  "readingOrder": "https://example.com/conformance/nested-a#weeks",
+  "members": [{ "id": "https://example.com/conformance/nested-b", "version": "1.0.0", "digest": "sha256:12dabd7bb74fcf545c037004552a8ee31930c7019ef434cd1e853423115bb31b" }]
+}

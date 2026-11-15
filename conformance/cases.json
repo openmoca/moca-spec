@@ -1672,7 +1672,7 @@
     },
     {
       "id": "source-id-not-string",
-      "description": "Package spec §5.1: a source whose id is not a string has no id. Two sources with the number 7 are no repeat (no C002) and nothing names them; with the number 1 and the string \"1\", only the string is an id; true and 1 are neither, so \"1\" is an unknown source (C006). Each non-string id fails the node schema (C005).",
+      "description": "Package spec §5.1: a source whose id is not a string has no id. Two sources with the number 7 are no repeat (no C002) and nothing names them; with the number 1 and the string \"1\", only the string is an id; true and 1 are neither, so \"1\" is an unknown source (C006). Each non-string id fails the node schema (C005). YAML's .inf is not a string either, so a source written with id .inf has no id.",
       "target": "fixtures/source-id-not-string",
       "expect": {
         "valid": true,
@@ -1692,6 +1692,9 @@
             true
           ],
           "boolean.md": [
+            null
+          ],
+          "infinite.md": [
             null
           ]
         }
@@ -5995,7 +5998,7 @@
     },
     {
       "id": "media-duration-infinite",
-      "description": "Package spec §5.7: a duration of .inf, or a sync offset of .nan, is not a finite number, so the description fails the node schema (C005) and is ignored, in every Reader. A time range on the audio is then on media with no description, so it is not checked.",
+      "description": "Package spec §5.7: a duration of .inf or of 1e400 (too large to be finite), or a sync offset of .nan, is not a finite number, so the description fails the node schema (C005) and is ignored, in every Reader. A time range on the audio is then on media with no description, so it is not checked.",
       "target": "fixtures/media-infinite",
       "expect": {
         "valid": true,
@@ -6057,7 +6060,7 @@
     },
     {
       "id": "media-alternates",
-      "description": "Package spec §5.7, Alternates: a time range on an alternate with no transcript is mapped to its reference and checked against the reference's transcript, bounded by the reference's duration. A range maps when it lies in one stretch, and may end on the stretch's boundary; a range across two stretches, or in an ad break only the alternate has, does not map and does not match. A range with no end maps its start. The evidence is checkable in the package.",
+      "description": "Package spec §5.7, Alternates: a time range on an alternate with no transcript is mapped to its reference and checked against the reference's transcript, bounded by the reference's duration. A range maps when it lies in one stretch, and may end on the stretch's boundary; a range across two stretches, or in an ad break only the alternate has, does not map and does not match. A range with no end maps its start. The evidence is checkable in the package. A range with no end runs to the end of its stretch on the reference, so it never covers a break only the reference has. A range on an alternate must also end within the alternate's own duration.",
       "target": "fixtures/media-alternates",
       "expect": {
         "valid": true,
@@ -6078,7 +6081,28 @@
             false,
             false,
             true,
+            false,
+            false,
+            true,
             false
+          ]
+        },
+        "evidenceLocated": {
+          "episode.md": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            {
+              "start": 30,
+              "end": 50
+            },
+            null
           ]
         }
       }
@@ -6169,6 +6193,42 @@
       }
     },
     {
+      "id": "media-refined-edge",
+      "description": "Contract §7: located runs from the earliest start to the latest end of the touched cues, even when cues are out of time order. White space means only the five ASCII characters: a no-break space is a character to find, and a quote of only white space does not match.",
+      "target": "fixtures/media-refined-edge",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "evidenceMatched": {
+          "episode.md": [
+            true,
+            true,
+            false
+          ]
+        },
+        "evidenceLocated": {
+          "episode.md": [
+            {
+              "start": 10,
+              "end": 40
+            },
+            {
+              "start": 40,
+              "end": 50
+            },
+            null
+          ]
+        }
+      }
+    },
+    {
       "id": "search-media-alternates-fields",
       "kind": "search",
       "description": "Contract §7: node.media carries alternateOf and sync for valid alternates only, with sync [{at: 0, offset: 0}] when the node gave none.",
@@ -6224,6 +6284,19 @@
                 "resource": "https://video.example.com/tides-clip.mp4",
                 "type": "video/mp4",
                 "duration": 100,
+                "alternateOf": "audio",
+                "sync": [
+                  {
+                    "at": 0,
+                    "offset": 0
+                  }
+                ]
+              },
+              {
+                "source": "short",
+                "resource": "https://video.example.com/tides-short.mp4",
+                "type": "video/mp4",
+                "duration": 30,
                 "alternateOf": "audio",
                 "sync": [
                   {
@@ -6873,6 +6946,50 @@
       }
     },
     {
+      "id": "member-diamond-counted-once",
+      "description": "Contract §3: a member reached from two composing packages is read once and counts once. Left, right and the shared member are three members, so maxMembers 3 resolves them all.",
+      "target": "fixtures/diamond/top",
+      "options": {
+        "members": [
+          "fixtures/diamond"
+        ],
+        "limits": {
+          "maxMembers": 3
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "composed",
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "member-bytes-limit",
+      "description": "Contract §3: once the members read so far hold more than maxMemberBytes, no further member is resolved (R001).",
+      "target": "fixtures/diamond/top",
+      "options": {
+        "members": [
+          "fixtures/diamond"
+        ],
+        "limits": {
+          "maxMemberBytes": 1
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "R001_MEMBER_UNRESOLVED"
+        ],
+        "capabilities": [
+          "composed",
+          "core"
+        ]
+      }
+    },
+    {
       "id": "search-upto-members-first",
       "kind": "search",
       "description": "Contract §9: the show's reading order limits its members' records. upTo at the first release keeps it and the show's own page, off the order. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
@@ -7188,6 +7305,33 @@
         ],
         "exclude": [
           "https://example.com/conformance/upto-member@1.0.0#late.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-nested-signers",
+      "kind": "search",
+      "description": "Contract §9, Members: A, signed by a key whose ids cover only A, composes unsigned B, which composes a third party's M. A's signers do not speak for M and B is unsigned, so neither limits M: upTo at week 1 keeps the week-2 lesson.",
+      "packages": [
+        "fixtures/nested-signers/a"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/nested-signers"
+        ],
+        "trustRoot": "fixtures/trust-root-nested.json"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.com/conformance/nested-a#w1"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/third-party/nested-m@1.0.0#early.md",
+          "https://example.com/third-party/nested-m@1.0.0#late.md"
         ]
       }
     },
