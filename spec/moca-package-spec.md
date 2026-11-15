@@ -579,9 +579,10 @@ case-insensitively, in ASCII only (§2): `INDEX.MD` is reserved, `ındex.md`
 
 OKF's other fields (`title`, `description`, `resource`, `tags`, `sources`,
 `generated`, `verified`, `status`, `stale_after`) keep exactly their OKF
-meaning. `type` is free text. An informative list of suggested node types,
-such as `PodcastEpisode` or `Procedure`, is kept on openmoca.org; a type joins
-it by a pull request to the site, not by a change to this specification. [`schemas/v1/node.schema.json`](../schemas/v1/node.schema.json)
+meaning. `type` is free text. An informative list of
+[suggested node types](https://openmoca.org/spec/node-types/), such as
+`PodcastEpisode` or `Procedure`, is kept on openmoca.org; a type joins it by a
+pull request to the site, not by a change to this specification. [`schemas/v1/node.schema.json`](../schemas/v1/node.schema.json)
 validates the frontmatter. Readers follow OKF's consumer rules: they MUST NOT
 reject a node for a missing optional field or an unknown `type`, and they
 report malformed optional fields as warnings (`C005_FIELD_INVALID`).
