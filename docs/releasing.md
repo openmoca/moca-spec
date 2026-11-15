@@ -53,6 +53,19 @@ released as platform downloads and the `OpenMoca.Mcp` .NET tool. Publish
 `@openmoca/moca-core` first; the others depend on it. Each repository's
 README has its release steps.
 
+Each repository that publishes a package has a release workflow that runs
+when a `vX.Y.Z` tag is pushed on main. It publishes through the registry's
+trusted publishing (npm with provenance, NuGet, PyPI), so no repository keeps
+a registry token. Within a repository the workflow keeps the order: a Reader
+before its bindings, `@openmoca/moca-embed` and `@openmoca/moca-sign` before
+`@openmoca/moca-index`. Across repositories, tag in this order and wait for
+each publish to finish:
+
+1. moca-reader-typescript (`@openmoca/moca-core`);
+2. moca-tools, which checks that its `@openmoca/moca-core` range is on npm;
+3. moca-reader-dotnet and moca-reader-python;
+4. moca-mcp-dotnet, once its `OpenMoca.Reader` version is on NuGet.
+
 ## Identifiers
 
 The specification's identifiers live under `https://w3id.org/moca/`. The
