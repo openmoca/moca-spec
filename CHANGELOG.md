@@ -175,6 +175,13 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     `expect.evidenceLocated`; the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
+- Package spec §12.1 (new): media types for the three file forms,
+  `application/vnd.openmoca.package+zip` (`.moca`),
+  `application/vnd.openmoca.envelope+zip` (`.moca.enc`) and
+  `application/vnd.openmoca.index+zip` (`.moca.idx.zip`). Readers do not
+  depend on them. IANA registration templates in `docs/iana/`, to be
+  submitted after the release.
+
 ### Changed
 
 - Reader contract §11 and package spec §11 (`core`): the `E` family counts

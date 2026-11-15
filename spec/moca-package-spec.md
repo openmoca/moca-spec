@@ -1309,7 +1309,8 @@ A package is the same package whether it is:
 
 - a **directory**;
 - a **`.moca` archive**: a Zip file with `moca.json` at its root, containing
-  the package's regular files (and, optionally, `attestations/`);
+  the package's regular files (and, optionally, `attestations/`), with the
+  media type in §12.1;
 - **records a host supplies** through a package source
   ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)), for
   example from blob storage, a database or a registry.
@@ -1320,6 +1321,33 @@ An **envelope** is not a fourth form. It is a transport for a `.moca`
 archive, encrypted for named recipients. Once opened, the archive inside is
 read under this specification as any other archive, and gives the same
 digest. See [encrypted packages](moca-encrypted-package.md).
+
+### 12.1 Media types
+
+Each file form has a media type in the vendor tree
+([RFC 6838](https://www.rfc-editor.org/rfc/rfc6838)). The `+zip` suffix
+([RFC 6839](https://www.rfc-editor.org/rfc/rfc6839)) says each is a Zip file.
+
+| File | Media type | Extension | Recognised by | Defined in |
+| --- | --- | --- | --- | --- |
+| Package archive | `application/vnd.openmoca.package+zip` | `.moca` | `moca.json` at its root | §12 |
+| Envelope | `application/vnd.openmoca.envelope+zip` | `.moca.enc` | `moca-enc.json` at its root | [Encrypted packages §2](moca-encrypted-package.md#2-layout) |
+| Sidecar index archive | `application/vnd.openmoca.index+zip` | `.moca.idx.zip` | `index.json` at its root | [Sidecar index §2](moca-sidecar-index-spec.md#2-layout) |
+
+- A host that serves one of these files, over HTTP or otherwise, SHOULD
+  label it with its type. A package and its sidecar index can be served as
+  separate files, each with its own type.
+- A Reader MUST NOT depend on the type or the file name. It recognises and
+  reads each file from its bytes, as
+  [Reader contract §3](moca-reader-contract.md#3-opening-a-package) says.
+- The types name these file forms only. A directory, the records a host
+  supplies, and an index carried inside an envelope as `index.age` have no
+  media type of their own.
+- The types have no parameters and define no fragment identifiers. A node is
+  cited by its node identifier (§4.2), not by a fragment of a file's URL.
+
+The registration templates are in
+[`docs/iana/`](../docs/iana/README.md).
 
 ## 13. Security considerations
 
