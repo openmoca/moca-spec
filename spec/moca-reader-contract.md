@@ -256,7 +256,7 @@ and `profiles`, are left out, as they are in a real record):
   | `profiles` | The manifest's profile URIs, in manifest order; absent when there are none. |
   | `package.datePublished` | The manifest's `datePublished`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-date)). |
   | `node.datePublished` | The node's `moca.date_published`, as written, when it parses; absent otherwise. The package's date is never copied to it. |
-  | `node.media` | The node's valid media descriptions ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ source, resource, type, duration?, digest?, transcript? }`, where `resource` is the source's `resource` as written. Absent when there are none. |
+  | `node.media` | The node's valid media descriptions ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ source, resource, type, duration?, digest?, transcript?, alternateOf?, sync? }`, where `resource` is the source's `resource` as written. A valid alternate carries `alternateOf` and its `sync`, which is `[{ "at": 0, "offset": 0 }]` when the node gave none. Absent when there are none. |
 
   A consumer of citation records (a store, an application) SHOULD ignore
   properties it does not know: later versions add fields. An AG-UI client
@@ -318,8 +318,10 @@ and `profiles`, are left out, as they are in a real record):
   means 0, as Media Fragments 1.0 allows) is checked against a WebVTT file in
   the package: the cited source, when it is one, or else the `transcript` of
   the cited source's media description
-  ([package spec §5.7](moca-package-spec.md#57-media)). It matches when both
-  hold:
+  ([package spec §5.7](moca-package-spec.md#57-media)), or, for an alternate
+  with no `transcript` of its own, the range mapped to its reference and
+  checked against the reference's `transcript` (a range that does not map
+  does not match). It matches when both hold:
   1. the range overlaps at least one cue; and
   2. the range lies within the media: its end is at or before the bound. The
      bound is the latest end time of any cue, or the declared `duration` when

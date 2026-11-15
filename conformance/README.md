@@ -2,8 +2,8 @@
 
 A language-neutral test suite for anything that reads MOCA packages. An
 implementation conforms to the [Reader contract](../spec/moca-reader-contract.md)
-when it reaches the same conclusions as these cases: package, `search` and
-`structure` cases all apply to every Reader.
+when it reaches the same conclusions as these cases: package, `search`,
+`structure` and `map-time` cases all apply to every Reader.
 
 ## Layout
 
@@ -128,6 +128,26 @@ Concept items are compared as `{ iri, label, layer }`; `nodes` as the list of
 `node.ref`; `concept` as the whole object. Structure answers are facts, so
 they are compared **exactly**, order included.
 
+## A map-time case
+
+```json
+{
+  "id": "map-time-alternates",
+  "kind": "map-time",
+  "target": "fixtures/media-alternates",
+  "node": "episode.md",
+  "calls": [{ "from": "audio", "to": "video", "t": 39.5 }, { "from": "audio", "to": "video", "t": 45 }],
+  "expect": { "codes": ["C011_EVIDENCE_SELECTOR_UNMATCHED"], "result": [49.5, null] }
+}
+```
+
+The target is read, and its citation record for the node at `node` in the
+default language is passed to `mapTime` once for each call
+([Reader interface §4](../spec/moca-reader-interface.md#4-reading),
+[package spec §5.7](../spec/moca-package-spec.md#57-media)). `codes` are the
+package's diagnostics. `result` lists the answers in order, `null` for
+nothing, and is compared **exactly**.
+
 ## What the corpus covers
 
 - **Digest agreement**: literal digests for every valid package, and equality
@@ -151,7 +171,7 @@ they are compared **exactly**, order included.
   by a transcript or a duration; `datePublished`; binding by composition and
   `upTo` across members, in a library and in a store; `isPartOf` and unknown
   relation types; issued copies matching member pins and a publisher's
-  sidecar.
+  sidecar; alternate media, its evidence checks and `mapTime`.
 
 Some rules cannot be expressed as portable directory fixtures, because Git and
 some file systems cannot store them: unreadable folders, and symbolic links in
@@ -200,6 +220,7 @@ expected by at least one case or is listed below as untestable.
 | The search pipeline, hooks and backends | Contract §9 | `search-concepts`, `search-scope`, `search-upto-*`, `search-ontology-guided`, `search-hostile-*`, `search-store-*`, `search-hybrid*` |
 | Dense search and the model check | Contract §9.3, sidecar spec | `search-dense*` |
 | Sidecars | Sidecar spec | `sidecar-*`, `search-sidecar-no-text` |
+| Media descriptions and alternates | Package spec §5.7, contract §7, interface §4 | `media-*`, `search-media-*`, `map-time-*` |
 
 **Not testable by the corpus.** These rules need a live service, a file system
 feature or a model, so each implementation tests them itself:

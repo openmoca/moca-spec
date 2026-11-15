@@ -150,13 +150,13 @@ for (const c of corpus.cases) {
   const actual = await run(c);
   if (showActual) {
     const shown = c.kind === 'search' ? { codes: uniqueSorted(actual.codes ?? []), results: (actual.records ?? []).map(keyOf) }
-      : c.kind === 'structure' ? actual
+      : c.kind === 'structure' || c.kind === 'map-time' ? actual
         : { ...actual, codes: uniqueSorted(actual.codes), capabilities: uniqueSorted(actual.capabilities) };
     console.log(`${c.id}: ${JSON.stringify(shown)}`);
     continue;
   }
   const problems = c.kind === 'search' ? checkSearch(c.expect, actual)
-    : c.kind === 'structure' ? checkStructure(c.expect, actual)
+    : c.kind === 'structure' || c.kind === 'map-time' ? checkStructure(c.expect, actual)
       : checkPackage(c.expect, actual);
   if (problems.length > 0) {
     failures++;

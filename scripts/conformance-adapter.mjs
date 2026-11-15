@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   readPackage, bindSidecar, directoryResolver, Library, Search, LexicalBackend, DenseBackend, MemoryStoreBackend, HybridBackend, ontologyGuided,
-  packageState, bindEnvelopeSidecar,
+  packageState, bindEnvelopeSidecar, mapTime,
 } from '@openmoca/moca-core';
 // The reference Reader implements the optional feature `encryption` through its separate age module.
 import { ageDecryptor } from '@openmoca/moca-core/age';
@@ -85,6 +85,18 @@ export async function actualFor(root, c) {
     decryptor: ageDecryptor,
   };
   const overlays = (o.overlays ?? []).map((v) => ({ id: v.id, layer: v.layer, path: join(root, v.path) }));
+
+  // Reader interface §4: mapTime on the node's default-language citation record, once per call.
+  if (c.kind === 'map-time') {
+    const result = await readPackage(join(root, c.target), readOptions);
+    const library = new Library({ clock: o.now ? () => new Date(o.now) : undefined });
+    if (result.valid) library.add(result);
+    const record = library.citations({}).find((r) => r.node.path === c.node);
+    return {
+      codes: result.diagnostics.map((d) => d.code),
+      result: c.calls.map((call) => (record ? mapTime(record, call.from, call.to, call.t) : null)),
+    };
+  }
 
   if (c.kind === 'structure') {
     const library = new Library({ overlays });

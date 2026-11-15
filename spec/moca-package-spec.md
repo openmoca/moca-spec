@@ -868,6 +868,86 @@ Rules:
 - Citation records carry the node's descriptions as `node.media`
   ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
 
+**Alternates.** A podcast is often published as audio and as video, with
+different intros and ad breaks. A node MAY mark two or more of its media
+descriptions as **alternates**: the same content, on timelines that line up
+stretch by stretch.
+
+```yaml
+sources:
+  - id: audio
+    resource: https://media.example.com/episodes/42.mp3
+  - id: video
+    resource: https://video.example.com/watch?v=abc123
+  - id: transcript
+    resource: ../media/episode-42.en.vtt
+moca:
+  media:
+    - source: audio
+      type: audio/mpeg
+      duration: 1834.5
+      transcript: transcript
+    - source: video
+      type: text/html
+      duration: 1931
+      alternateOf: audio
+      sync:
+        - { at: 0, offset: 62 }
+        - { at: 600, offset: null }
+        - { at: 630, offset: 32 }
+        - { at: 1200, offset: 92 }
+```
+
+| Key | Meaning |
+| --- | --- |
+| `alternateOf` | The `source` of another description in the same node: the **reference**. This description is an alternate of it. |
+| `sync` | Only with `alternateOf`. A list of `{ at, offset }`, in order of `at`. `at` is a time on the reference, in seconds, 0 or more. `offset` is a number of seconds, which may be negative, or `null`. Without `sync`, the alternate is the reference's timeline unchanged: `[{ at: 0, offset: 0 }]`. |
+
+- **Groups.** A reference and every description whose `alternateOf` names
+  it form one group. The reference has no `alternateOf` itself, so every
+  alternate is one step from the reference's timeline. Alternates are
+  always within one node.
+- **Stretches.** Each entry of `sync` starts a stretch of the reference, from
+  its `at` up to the next entry's `at`; the last stretch runs to the end of the
+  reference. A moment `t` in a stretch with an `offset` is the moment
+  `t + offset` on the alternate. A stretch whose `offset` is `null` is not in
+  the alternate, such as an ad break that only the reference has, and neither
+  is anything before the first `at`. An ad break that only the alternate has
+  lies between two stretches on the alternate's timeline, so its moments are
+  not on the reference.
+- **Mapping a moment.** From the reference to an alternate: find the stretch
+  that holds `t` (it holds its `at` and every time up to, but not including,
+  the next entry's `at`) and add its `offset`. From an alternate to the
+  reference: find the stretch whose moments on the alternate hold `t` (from
+  `at + offset` up to, but not including, the next entry's `at` plus the same
+  `offset`) and subtract its `offset`. Between two alternates of one
+  reference, map through the reference. A moment before 0, or after the
+  `duration` of the description it is on, when that has one, is on no
+  timeline. Where any step finds no moment, the moment is not in the other
+  description.
+- **Mapping a time range.** A range maps when its start and its end lie in
+  one stretch, with the end allowed to equal the stretch's last moment, the
+  next entry's `at` (or that plus the offset, on the alternate). Its start
+  and end then move by the stretch's `offset`. A range with no end maps its
+  start and keeps no end. A range across two stretches does not map: content
+  between them differs.
+- **Checking evidence.** A time range that cites an alternate is checked
+  against the alternate's own `transcript`. When the alternate has none, the
+  range is mapped to the reference and checked against the reference's
+  `transcript`, bounded by the reference's `duration`; a range that does not
+  map does not match. Evidence checked this way is checkable in the package
+  (§11, `self-contained-evidence`).
+- **Invalid alternates.** Each of these is `C005_FIELD_INVALID` (warning),
+  and the description loses `alternateOf` and `sync` but stands on its own:
+  `alternateOf` names no valid description in the node, names the
+  description itself, or names a description that has an `alternateOf` of
+  its own; the `at` values are not in strictly increasing order; or two
+  stretches with an `offset` overlap on the alternate's timeline. `sync`
+  without `alternateOf` is `C005` too, and is dropped.
+- A Reader offers `mapTime`
+  ([Reader interface §4](moca-reader-interface.md#4-reading)), so apps
+  switch between alternates the same way in every language.
+
 **Search reads the node, not its sources.** Put a transcript's text in the
 node body as well, so lexical and dense search find what was said, and keep
 the WebVTT file as the evidence for the times. The text of a WebVTT source is
@@ -1197,7 +1277,7 @@ a package actually has from what it contains and what verifies:
 | `core` | The package is valid: no error-severity `T`, `P`, `M`, `C` or `E` diagnostic. All other capabilities require `core`. |
 | `composed` | The package lists members. |
 | `located-evidence` | At least one node has `moca.evidence`. |
-| `self-contained-evidence` | The package has `located-evidence`, and every evidence entry of every node is checkable inside the package: its source has a `resource` that resolves, relative to the node file (§5.1), to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it; or the entry is a media time range (§5.3) whose source has a valid media description with a `transcript` (§5.7). |
+| `self-contained-evidence` | The package has `located-evidence`, and every evidence entry of every node is checkable inside the package: its source has a `resource` that resolves, relative to the node file (§5.1), to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it; or the entry is a media time range (§5.3) whose source has a valid media description with a `transcript`, or is a valid alternate with none whose reference has one (§5.7). |
 | `localized` | At least one node has a locale representation. |
 | `structured` | `structure.ttl` is present, parses, and every relation and node binding resolves, with no `O` diagnostic (§5.6). |
 | `signed` | At least one package attestation verifies against the host's trust root. For an issued copy, against the rebuilt original digest ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |

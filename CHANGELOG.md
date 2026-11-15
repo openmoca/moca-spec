@@ -134,12 +134,18 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 
 - Podcast and video series content
   ([issue #10](https://github.com/openmoca/moca-spec/issues/10), ADR-0029 to
-  ADR-0033):
+  ADR-0034):
   - Package spec §5.7 (new): `moca.media` describes a node's audio and video,
     hosted outside the package or not: media type, duration, an optional
     SHA-256 and the transcript in the package. A Reader exposes it as
     `node.media` and never fetches the media. Media played through a web
-    page is described with the page's type, `text/html`. Guidance on transcript text in
+    page is described with the page's type, `text/html`.
+  - Package spec §5.7, Alternates: media descriptions of one node may be
+    alternates of a reference (`alternateOf`), lined up by a `sync` list of
+    stretches with an offset in seconds, or `null` for a stretch the
+    alternate does not hold. A time range on an alternate with no transcript
+    is checked through the reference's. Reader interface §4: `mapTime`.
+    Records carry `alternateOf` and `sync`. Guidance on transcript text in
     the node body.
   - Package spec §4.12 (new): `datePublished`, following the W3C Publication
     Manifest, and `moca.date_published` on nodes. Informative. The package
@@ -160,7 +166,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     items of changed files are replaced.
   - Package spec §5.1: suggested node types are an informative list on
     openmoca.org.
-  - 31 cases (323 in all); the runner compares `expect.datePublished` and
+  - 36 cases (328 in all), and a `map-time` case kind; the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
 ### Changed

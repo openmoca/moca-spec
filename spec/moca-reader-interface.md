@@ -73,6 +73,7 @@ A package never supplies any of these.
 | `Library.add` | A valid package result, and optionally its sidecar chunks and index. | The library, with the package and its resolved members loaded. |
 | `Library.citations` | Options: locale, include text. | Every node's citation record. |
 | `Library.get` | A node id or a versioned node reference, and options: locale. | One citation record, or nothing. |
+| `mapTime` | A citation record, the `source` of the description a moment is on, the `source` of the description to map it to, and the moment in seconds. | The same moment on the other description, in seconds, or nothing when it is not there ([package spec §5.7](moca-package-spec.md#57-media)): the two are not in one group of alternates, or the moment falls in no stretch or outside a duration. A description maps a moment on its own timeline to itself. |
 
 A **package result** has at least these fields, with the meanings in the
 contract:

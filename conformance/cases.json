@@ -6009,6 +6009,375 @@
       }
     },
     {
+      "id": "media-alternates",
+      "description": "Package spec §5.7, Alternates: a time range on an alternate with no transcript is mapped to its reference and checked against the reference's transcript, bounded by the reference's duration. A range maps when it lies in one stretch, and may end on the stretch's boundary; a range across two stretches, or in an ad break only the alternate has, does not map and does not match. A range with no end maps its start. The evidence is checkable in the package.",
+      "target": "fixtures/media-alternates",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "evidenceMatched": {
+          "episode.md": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            true,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "media-alternates-invalid",
+      "description": "Package spec §5.7, Alternates: alternateOf naming no description, itself, or an alternate; at values out of order; stretches that overlap on the alternate; and sync without alternateOf are each C005, and the description stands without alternateOf and sync. A time range on a valid alternate whose reference has no transcript is not checked.",
+      "target": "fixtures/media-alternates-invalid",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence"
+        ],
+        "evidenceMatched": {
+          "episode.md": [
+            null
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-media-alternates-fields",
+      "kind": "search",
+      "description": "Contract §7: node.media carries alternateOf and sync for valid alternates only, with sync [{at: 0, offset: 0}] when the node gave none.",
+      "packages": [
+        "fixtures/media-alternates",
+        "fixtures/media-alternates-invalid"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "fields": {
+          "https://example.com/conformance/media-alternates@1.0.0#episode.md": {
+            "node.media": [
+              {
+                "source": "audio",
+                "resource": "https://media.example.com/tides.mp3",
+                "type": "audio/mpeg",
+                "duration": 100,
+                "transcript": "transcript"
+              },
+              {
+                "source": "video",
+                "resource": "https://video.example.com/watch?v=tides",
+                "type": "text/html",
+                "duration": 130,
+                "alternateOf": "audio",
+                "sync": [
+                  {
+                    "at": 0,
+                    "offset": 10
+                  },
+                  {
+                    "at": 40,
+                    "offset": null
+                  },
+                  {
+                    "at": 50,
+                    "offset": 0
+                  },
+                  {
+                    "at": 70,
+                    "offset": 20
+                  }
+                ]
+              },
+              {
+                "source": "clip",
+                "resource": "https://video.example.com/tides-clip.mp4",
+                "type": "video/mp4",
+                "duration": 100,
+                "alternateOf": "audio",
+                "sync": [
+                  {
+                    "at": 0,
+                    "offset": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "https://example.com/conformance/media-alternates-invalid@1.0.0#episode.md": {
+            "node.media": [
+              {
+                "source": "audio",
+                "resource": "https://media.example.com/a.mp3",
+                "type": "audio/mpeg",
+                "duration": 60
+              },
+              {
+                "source": "v1",
+                "resource": "https://video.example.com/1",
+                "type": "text/html"
+              },
+              {
+                "source": "v2",
+                "resource": "https://video.example.com/2",
+                "type": "text/html"
+              },
+              {
+                "source": "v3",
+                "resource": "https://video.example.com/3",
+                "type": "text/html"
+              },
+              {
+                "source": "v4",
+                "resource": "https://video.example.com/4",
+                "type": "text/html"
+              },
+              {
+                "source": "v5",
+                "resource": "https://video.example.com/5",
+                "type": "text/html"
+              },
+              {
+                "source": "v6",
+                "resource": "https://video.example.com/6",
+                "type": "text/html",
+                "alternateOf": "audio",
+                "sync": [
+                  {
+                    "at": 0,
+                    "offset": 5
+                  }
+                ]
+              },
+              {
+                "source": "v7",
+                "resource": "https://video.example.com/7",
+                "type": "text/html"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "map-time-alternates",
+      "kind": "map-time",
+      "description": "Reader interface §4, mapTime; package spec §5.7. Stretches hold their at and run up to the next at: moments on a null stretch, before the alternate's first stretch, in an ad break only the alternate has, or past a duration are not there. Two alternates map through the reference; a description maps its own timeline to itself.",
+      "target": "fixtures/media-alternates",
+      "node": "episode.md",
+      "calls": [
+        {
+          "from": "audio",
+          "to": "video",
+          "t": 0
+        },
+        {
+          "from": "audio",
+          "to": "video",
+          "t": 39.5
+        },
+        {
+          "from": "audio",
+          "to": "video",
+          "t": 40
+        },
+        {
+          "from": "audio",
+          "to": "video",
+          "t": 45
+        },
+        {
+          "from": "audio",
+          "to": "video",
+          "t": 50
+        },
+        {
+          "from": "audio",
+          "to": "video",
+          "t": 70
+        },
+        {
+          "from": "audio",
+          "to": "video",
+          "t": 100
+        },
+        {
+          "from": "audio",
+          "to": "video",
+          "t": 100.5
+        },
+        {
+          "from": "video",
+          "to": "audio",
+          "t": 5
+        },
+        {
+          "from": "video",
+          "to": "audio",
+          "t": 10
+        },
+        {
+          "from": "video",
+          "to": "audio",
+          "t": 49.5
+        },
+        {
+          "from": "video",
+          "to": "audio",
+          "t": 50
+        },
+        {
+          "from": "video",
+          "to": "audio",
+          "t": 80
+        },
+        {
+          "from": "video",
+          "to": "audio",
+          "t": 90
+        },
+        {
+          "from": "video",
+          "to": "audio",
+          "t": 125
+        },
+        {
+          "from": "video",
+          "to": "clip",
+          "t": 30
+        },
+        {
+          "from": "clip",
+          "to": "video",
+          "t": 45
+        },
+        {
+          "from": "audio",
+          "to": "audio",
+          "t": 45
+        },
+        {
+          "from": "video",
+          "to": "video",
+          "t": 80
+        },
+        {
+          "from": "video",
+          "to": "video",
+          "t": 131
+        },
+        {
+          "from": "audio",
+          "to": "video",
+          "t": -1
+        },
+        {
+          "from": "audio",
+          "to": "missing",
+          "t": 1
+        }
+      ],
+      "expect": {
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "result": [
+          10,
+          49.5,
+          null,
+          null,
+          50,
+          90,
+          120,
+          null,
+          null,
+          0,
+          39.5,
+          50,
+          null,
+          70,
+          null,
+          20,
+          null,
+          45,
+          80,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "id": "map-time-alternates-invalid",
+      "kind": "map-time",
+      "description": "Reader interface §4, mapTime: only valid alternates map. A description that lost its alternateOf (overlapping stretches, a chain, sync alone) maps to nothing.",
+      "target": "fixtures/media-alternates-invalid",
+      "node": "episode.md",
+      "calls": [
+        {
+          "from": "audio",
+          "to": "v6",
+          "t": 3
+        },
+        {
+          "from": "v6",
+          "to": "audio",
+          "t": 4
+        },
+        {
+          "from": "v6",
+          "to": "audio",
+          "t": 65
+        },
+        {
+          "from": "audio",
+          "to": "v4",
+          "t": 1
+        },
+        {
+          "from": "audio",
+          "to": "v5",
+          "t": 1
+        },
+        {
+          "from": "v7",
+          "to": "audio",
+          "t": 1
+        }
+      ],
+      "expect": {
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "result": [
+          8,
+          null,
+          60,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
       "id": "date-published",
       "description": "Package spec §4.12: datePublished as written in the result; a node date that does not parse is C005.",
       "target": "fixtures/date-published",
