@@ -76,6 +76,11 @@ function checkPackage(e, actual) {
     const got = actual.evidenceMatched?.[path];
     if (JSON.stringify(got) !== JSON.stringify(want)) problems.push(`evidenceMatched ${path}: expected ${JSON.stringify(want)}, got ${JSON.stringify(got)}`);
   }
+  // Contract §7: where a refined quote is spoken; null means absent.
+  for (const [path, want] of Object.entries(e.evidenceLocated ?? {})) {
+    const got = actual.evidenceLocated?.[path];
+    if (JSON.stringify(canonical(got)) !== JSON.stringify(canonical(want))) problems.push(`evidenceLocated ${path}: expected ${JSON.stringify(want)}, got ${JSON.stringify(got)}`);
+  }
   return problems;
 }
 

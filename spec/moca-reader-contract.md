@@ -350,6 +350,37 @@ and `profiles`, are left out, as they are in a real record):
   Any other time range is not checked. Carry the captions or transcript of
   audio or video in the package, and name it as the media's `transcript`, to
   make its citations checkable.
+- **A time range refined by a quote.** A media time range MAY carry a
+  `TextQuoteSelector` as its `refinedBy` (W3C Web Annotation): the words
+  spoken in that range. The Reader checks the range as above, against the
+  same WebVTT file and through an alternate's reference in the same way. It
+  then checks the quote against the range's **covered text**: the payloads of
+  the cues the range overlaps, in file order, normalised as for any WebVTT
+  source and joined with LF. Before comparing, every run of white space, line
+  breaks included, becomes one space, in the covered text and in the quote's
+  `exact`, `prefix` and `suffix`; this applies to refined quotes only, and
+  every other quote keeps exact matching. No case folding is applied.
+  - Both match: `matched` is `true`, and the entry's `located` is
+    `{ start, end }`, in seconds on the cited source's timeline: from the
+    start of the first cue the quote touches to the end of the last. A cue
+    is touched when a character of `exact` other than white space comes
+    from it. If the
+    quote occurs more than once in the covered text, the shortest such span
+    is used, and the earliest if two are equally short. On an alternate,
+    `located` is moved back to the alternate's timeline by the offset of the
+    stretch the range maps through.
+  - The range does not match: `matched` is `false` (`C011`), the quote is
+    not checked, and `located` is absent.
+  - The range matches but the quote is not in its covered text: `matched` is
+    `false` (`C011`), even if the words occur elsewhere in the transcript,
+    and `located` is absent.
+  - The range is not checked (hosted media with no transcript): neither is
+    the quote, and `matched` and `located` are absent.
+
+  A `refinedBy` of any other type is not checked: the range is checked
+  alone, and `located` is absent. A `TextQuoteSelector` with an empty or
+  missing `exact` does not match, as for any quote, and neither does a
+  refined one whose `exact` is only white space.
 - `concepts` lists the absolute concept IRIs the node is bound to by its
   `moca.concepts` ([package spec §5.6](moca-package-spec.md#56-structure)).
 
@@ -429,6 +460,15 @@ out material that comes after that point:
   ([package spec §5.6](moca-package-spec.md#56-structure)). A member's own
   reading order limits only for points that it places itself. A record that
   more than one limit applies to must pass each of them.
+- **Who may limit a member.** A composing package's reading order limits a
+  member's records only when the composing package's signers speak for that
+  member: when the `ids` of its valid package attestations' signers cover the
+  member's `id`, as for relations
+  ([package spec §7.2](moca-package-spec.md#72-relations), `R004`). A host
+  that loads only its own packages MAY allow unsigned composing packages to
+  limit their members, with the same option that allows unsigned relations.
+  So a package loaded beside a member can never hide the member's records
+  from an `upTo` search unless it speaks for that member.
 - **Unresolved.** If no loaded package's reading order places `upTo`, it
   limits nothing, and the Reader reports `S008_UPTO_UNRESOLVED` (warning)
   for that search, so it never fails silently.

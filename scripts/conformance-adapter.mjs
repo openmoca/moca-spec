@@ -184,12 +184,14 @@ export async function actualFor(root, c) {
     sidecarUsable = bound.usable;
   }
   const evidenceMatched = {};
+  const evidenceLocated = {};
   if (result.valid) {
     for (const r of new Library().add(result).citations()) {
       if (r.evidence.length > 0) evidenceMatched[r.node.path] = r.evidence.map((e) => e.matched ?? null);
+      if (r.evidence.length > 0) evidenceLocated[r.node.path] = r.evidence.map((e) => e.located ?? null);
     }
   }
-  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, issuedCopy: result.issuedCopy ?? null, datePublished: result.datePublished ?? null, sidecarUsable, evidenceMatched, envelope: result.envelope };
+  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, issuedCopy: result.issuedCopy ?? null, datePublished: result.datePublished ?? null, sidecarUsable, evidenceMatched, evidenceLocated, envelope: result.envelope };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

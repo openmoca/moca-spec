@@ -54,6 +54,7 @@ conformance/
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
 | `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
+| `expect.evidenceLocated` | For each node path, the `located` value (`{ start, end }`) of each `evidence` entry, in order; `null` means absent ([contract §7](../spec/moca-reader-contract.md#7-citation-records)). |
 
 Order, counts and message text are not compared.
 
@@ -250,13 +251,15 @@ standard output.
 - Input: `{ "root": "<absolute path of conformance/>", "case": { … } }`.
 - Output for a package case: `{ "valid", "codes", "capabilities", "digest",
   "distribution", "images", "translations", "tags", "apps", "readingOrder",
-  "datePublished", "issuedCopy", "sidecarUsable", "evidenceMatched",
+  "datePublished", "issuedCopy", "sidecarUsable", "evidenceMatched", "evidenceLocated",
   "envelope" }`, as defined above.
   `envelope` is the package result's `envelope` field for an envelope, and
   absent otherwise.
 - Output for a search case: `{ "codes", "records" }`, where `records` are the
   citation records the search returned.
 - Output for a structure case: `{ "codes", "result" }`, shaped as above.
+- Output for a map-time case: `{ "codes", "result" }`: the package's codes and
+  the answer to each call, `null` for nothing.
 
 Run the corpus through it from a clone of this repository at a release tag,
 so you test against a fixed corpus. You need Node.js 22 or later:

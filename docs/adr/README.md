@@ -44,5 +44,6 @@ carried over.
 | [0032](0032-is-part-of-and-unknown-relation-types.md) | `isPartOf` is a core relation, and unknown relation types are reported |
 | [0033](0033-issued-copies-match-pins-and-sidecars.md) | Issued copies match member pins and the publisher's sidecar |
 | [0034](0034-alternate-media-sync-by-stretches.md) | Alternate media line up stretch by stretch |
+| [0035](0035-time-ranges-refined-by-a-quote.md) | A time range can be refined by the words spoken in it |
 
 New records use the template in [0000-template.md](0000-template.md).

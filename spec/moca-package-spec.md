@@ -654,7 +654,7 @@ moca:
 
 | Key | Meaning |
 | --- | --- |
-| `evidence` | List of `{ source, selector, note? }`. `source` MUST equal the `id` of an entry in the node's OKF `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN`). `selector` is a W3C Web Annotation `FragmentSelector` (`value`, optional `conformsTo`), `TextQuoteSelector` (`exact`, optional `prefix`, `suffix`) or `TextPositionSelector` (`start`, `end`). A PDF page is a `FragmentSelector` with `value: "page=12"` and `conformsTo: "http://tools.ietf.org/rfc/rfc3778"`. A time range in audio or video is a `FragmentSelector` with `value: "t=75,210"` and `conformsTo: "http://www.w3.org/TR/media-frags/"`; such a range is checked only against a WebVTT (`.vtt`) file in the package: the cited source itself, or the `transcript` named by the cited media's description (§5.7). To make a time range checkable, carry the captions or transcript in the package. |
+| `evidence` | List of `{ source, selector, note? }`. `source` MUST equal the `id` of an entry in the node's OKF `sources` (`C006_EVIDENCE_SOURCE_UNKNOWN`). `selector` is a W3C Web Annotation `FragmentSelector` (`value`, optional `conformsTo`), `TextQuoteSelector` (`exact`, optional `prefix`, `suffix`) or `TextPositionSelector` (`start`, `end`). A PDF page is a `FragmentSelector` with `value: "page=12"` and `conformsTo: "http://tools.ietf.org/rfc/rfc3778"`. A time range in audio or video is a `FragmentSelector` with `value: "t=75,210"` and `conformsTo: "http://www.w3.org/TR/media-frags/"`, optionally refined by a `TextQuoteSelector` in `refinedBy` for the words spoken in that range ([Reader contract §7](moca-reader-contract.md#7-citation-records)); such a range is checked only against a WebVTT (`.vtt`) file in the package: the cited source itself, or the `transcript` named by the cited media's description (§5.7). To make a time range checkable, carry the captions or transcript in the package. |
 | `valid_from`, `valid_until` | The node's own validity window (§4.4). `valid_until` MUST be later than `valid_from` (`C010_VALIDITY_WINDOW_INVALID`). |
 | `contested_by` | Node ids or package ids of content that disputes this node. |
 | `audience` | Who the node is for: a non-empty string. Suggested values: `public`, `internal`, `restricted`; other values are allowed. A host filtering by audience leaves out nodes with no label unless it allows them, and nodes whose label is malformed always ([Reader contract §8](moca-reader-contract.md#8-default-retrieval-policy)). It is a label a host filters on, not an access-control mechanism (§13.3). |
@@ -1188,6 +1188,9 @@ is a package whose `members` are its releases:
   record of that member
   ([Reader contract §9](moca-reader-contract.md#9-search)). Members' nodes
   bound to concepts on the collection are placed by those concepts too.
+  Sign the series with a key whose `ids` cover its releases' ids: a series'
+  order limits its members only when its signers speak for them, or when
+  the host allows unsigned packages to.
 - **Topics** go in the series' `structure.ttl`: concepts that have the
   members, or their concepts, as parts (`dcterms:hasPart`).
 - **Back-links.** A release MAY name the series with an `isPartOf` relation

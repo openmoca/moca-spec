@@ -134,7 +134,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 
 - Podcast and video series content
   ([issue #10](https://github.com/openmoca/moca-spec/issues/10), ADR-0029 to
-  ADR-0034):
+  ADR-0035):
   - Package spec §5.7 (new): `moca.media` describes a node's audio and video,
     hosted outside the package or not: media type, duration, an optional
     SHA-256 and the transcript in the package. A Reader exposes it as
@@ -145,7 +145,12 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     stretches with an offset in seconds, or `null` for a stretch the
     alternate does not hold. A time range on an alternate with no transcript
     is checked through the reference's. Reader interface §4: `mapTime`.
-    Records carry `alternateOf` and `sync`. Guidance on transcript text in
+    Records carry `alternateOf` and `sync`.
+  - Reader contract §7: a media time range may carry a `TextQuoteSelector`
+    as its `refinedBy`. It matches when the range does and the quote is in
+    the cues the range covers (white space collapsed for refined quotes
+    only); `evidence[].located` gives the cue-precise span, also through
+    alternates. Guidance on transcript text in
     the node body.
   - Package spec §4.12 (new): `datePublished`, following the W3C Publication
     Manifest, and `moca.date_published` on nodes. Informative. The package
@@ -166,7 +171,8 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     items of changed files are replaced.
   - Package spec §5.1: suggested node types are an informative list on
     openmoca.org.
-  - 46 cases (338 in all), and a `map-time` case kind; the runner compares `expect.datePublished` and
+  - 51 cases (343 in all), a `map-time` case kind and
+    `expect.evidenceLocated`; the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
 ### Changed
@@ -190,7 +196,10 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Reader contract §9.4: package states carry every valid member, its direct
   bindings by composition and the structure links above them, instead of
   each member's full list of concepts. `upTo` limits a member's records by
-  their own concepts on every composer's reading order, bound or not.
+  their own concepts on every composer's reading order, bound or not, but
+  only when the composer's signers' `ids` cover the member's `id` (as for
+  relations, `R004`), or the host allows unsigned packages to
+  (`allowUnsignedRelations`).
 - Package spec §5.1: a source whose `id` is not a string has no `id`
   (`C005`); YAML's `.inf` and `.nan` fail the node schema where it wants a
   number.

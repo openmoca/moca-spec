@@ -36,7 +36,10 @@ Option 3 ([package spec §5.6](../../spec/moca-package-spec.md#56-structure),
   record's `concepts`. Only a member that resolved and matched its pin is
   bound.
 - `upTo` limits a package whose reading order places the point and its
-  resolved members at any depth. A member record takes positions from its own
+  resolved members at any depth, but a composing package limits a member
+  only when its signers' `ids` cover the member's `id`, as for relations
+  (`R004`), or the host allows unsigned packages to. A package loaded beside
+  a member cannot hide the member's records unless it speaks for it. A member record takes positions from its own
   concepts and from its bindings by composition. This extends the "which
   packages" rule of ADR-0027; the rest of it stands.
 - The IRI names both a package or node and a concept. SKOS allows that; the

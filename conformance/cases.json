@@ -6104,6 +6104,71 @@
       }
     },
     {
+      "id": "media-refined-quote",
+      "description": "Contract §7: a time range refined by a TextQuoteSelector matches when the range does and the quote is in the cues the range covers, with each run of white space as one space. located is the span of the cues the quote's text is in: the shortest of several occurrences, the earliest on a tie; on an alternate, on the alternate's timeline. A range that matches with the words spoken elsewhere does not match; a range that does not match is not refined; a refinement of another type leaves the range checked alone.",
+      "target": "fixtures/media-refined",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "evidenceMatched": {
+          "episode.md": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        "evidenceLocated": {
+          "episode.md": [
+            {
+              "start": 10,
+              "end": 20
+            },
+            {
+              "start": 0,
+              "end": 20
+            },
+            {
+              "start": 52,
+              "end": 60
+            },
+            {
+              "start": 20,
+              "end": 30
+            },
+            null,
+            null,
+            {
+              "start": 20,
+              "end": 30
+            },
+            null,
+            {
+              "start": 152,
+              "end": 160
+            },
+            {
+              "start": 56,
+              "end": 60
+            }
+          ]
+        }
+      }
+    },
+    {
       "id": "search-media-alternates-fields",
       "kind": "search",
       "description": "Contract §7: node.media carries alternateOf and sync for valid alternates only, with sync [{at: 0, offset: 0}] when the node gave none.",
@@ -6810,7 +6875,7 @@
     {
       "id": "search-upto-members-first",
       "kind": "search",
-      "description": "Contract §9: the show's reading order limits its members' records. upTo at the first release keeps it and the show's own page, off the order.",
+      "description": "Contract §9: the show's reading order limits its members' records. upTo at the first release keeps it and the show's own page, off the order. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
         "fixtures/series/show"
       ],
@@ -6819,7 +6884,8 @@
         "backend": "all",
         "members": [
           "fixtures/series"
-        ]
+        ],
+        "allowUnsignedRelations": true
       },
       "search": {
         "query": "anything",
@@ -6843,7 +6909,7 @@
     {
       "id": "search-upto-members-second",
       "kind": "search",
-      "description": "Contract §9: upTo at the second release keeps the first two, members of the season, a member of the show.",
+      "description": "Contract §9: upTo at the second release keeps the first two, members of the season, a member of the show. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
         "fixtures/series/show"
       ],
@@ -6852,7 +6918,8 @@
         "backend": "all",
         "members": [
           "fixtures/series"
-        ]
+        ],
+        "allowUnsignedRelations": true
       },
       "search": {
         "query": "anything",
@@ -6876,7 +6943,7 @@
     {
       "id": "search-upto-members-season",
       "kind": "search",
-      "description": "Contract §9: the season alone; its own reading order limits its members.",
+      "description": "Contract §9: the season alone; its own reading order limits its members. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
         "fixtures/series/season-1"
       ],
@@ -6885,7 +6952,8 @@
         "backend": "all",
         "members": [
           "fixtures/series"
-        ]
+        ],
+        "allowUnsignedRelations": true
       },
       "search": {
         "query": "anything",
@@ -6906,7 +6974,7 @@
     {
       "id": "search-upto-members-store",
       "kind": "search",
-      "description": "Contract §9.4: a store search applies upTo to members' records from the package states.",
+      "description": "Contract §9.4: a store search applies upTo to members' records from the package states. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
         "fixtures/series/show"
       ],
@@ -6922,7 +6990,8 @@
           "fixtures/series/episode-1",
           "fixtures/series/episode-2",
           "fixtures/series/episode-3"
-        ]
+        ],
+        "allowUnsignedRelations": true
       },
       "search": {
         "query": "about",
@@ -6946,7 +7015,7 @@
     {
       "id": "search-upto-member-own-concepts",
       "kind": "search",
-      "description": "Contract §9, Members: a composer's reading order limits a member's records by the node's own concepts too, even when the composer binds nothing by composition. upTo at week 1 keeps the week-1 lesson and the unbound reading, and leaves out the week-2 lesson.",
+      "description": "Contract §9, Members: a composer's reading order limits a member's records by the node's own concepts too, even when the composer binds nothing by composition. upTo at week 1 keeps the week-1 lesson and the unbound reading, and leaves out the week-2 lesson. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
         "fixtures/upto-member-own/composer"
       ],
@@ -6955,7 +7024,8 @@
         "backend": "all",
         "members": [
           "fixtures/upto-member-own"
-        ]
+        ],
+        "allowUnsignedRelations": true
       },
       "search": {
         "query": "anything",
@@ -6975,7 +7045,7 @@
     {
       "id": "search-upto-member-own-concepts-store",
       "kind": "search",
-      "description": "Contract §9.4: package states hold every resolved member, so a store search limits the member's own concepts by the composer's order as a library search does.",
+      "description": "Contract §9.4: package states hold every resolved member, so a store search limits the member's own concepts by the composer's order as a library search does. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
         "fixtures/upto-member-own/composer"
       ],
@@ -6987,6 +7057,124 @@
         ],
         "allow": [
           "fixtures/upto-member-own/composer",
+          "fixtures/upto-member-own/member"
+        ],
+        "allowUnsignedRelations": true
+      },
+      "search": {
+        "query": "lesson",
+        "upTo": "https://example.com/conformance/upto-composer#w1"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/upto-member@1.0.0#early.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/upto-member@1.0.0#late.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-member-unsigned",
+      "kind": "search",
+      "description": "Contract §9, Members: an unsigned composer does not limit its member, unless the host allows unsigned packages to. Without that, upTo at week 1 keeps the week-2 lesson.",
+      "packages": [
+        "fixtures/upto-member-own/composer"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/upto-member-own"
+        ]
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.com/conformance/upto-composer#w1"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/upto-member@1.0.0#early.md",
+          "https://example.com/conformance/upto-member@1.0.0#extra.md",
+          "https://example.com/conformance/upto-member@1.0.0#late.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-member-signed",
+      "kind": "search",
+      "description": "Contract §9, Members: a composer whose signer's ids cover the member's id limits it, with no opt-in.",
+      "packages": [
+        "fixtures/upto-member-signed/composer"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/upto-member-own/member"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.com/conformance/upto-composer#w1"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/upto-member@1.0.0#early.md",
+          "https://example.com/conformance/upto-member@1.0.0#extra.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/upto-member@1.0.0#late.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-member-signed-narrow",
+      "kind": "search",
+      "description": "Contract §9, Members: a composer whose signer's ids do not cover the member's id does not limit it, as a relation it may not make has no effect (R004).",
+      "packages": [
+        "fixtures/upto-member-signed/composer"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/upto-member-own/member"
+        ],
+        "trustRoot": "fixtures/trust-root-narrow-ids.json"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.com/conformance/upto-composer#w1"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/upto-member@1.0.0#early.md",
+          "https://example.com/conformance/upto-member@1.0.0#extra.md",
+          "https://example.com/conformance/upto-member@1.0.0#late.md"
+        ]
+      }
+    },
+    {
+      "id": "search-upto-member-signed-store",
+      "kind": "search",
+      "description": "Contract §9.4: a store search applies the same rule from the package states, which carry the signers' ids.",
+      "packages": [
+        "fixtures/upto-member-signed/composer"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/upto-member-own/member"
+        ],
+        "trustRoot": "fixtures/trust-root.json",
+        "allow": [
+          "fixtures/upto-member-signed/composer",
           "fixtures/upto-member-own/member"
         ]
       },
