@@ -23,12 +23,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: openmoca/moca-reader-typescript
-          ref: v0.6.0
+          ref: 082f7c2ecda446b15dbfd30dd706d79e9686c315  # 0.7.0 release candidate; v0.7.0 once tagged
           path: moca-reader-typescript
       - uses: actions/checkout@v4
         with:
           repository: openmoca/moca-tools
-          ref: v0.6.0
+          ref: e07ec76efd4b8783c67d1997d3659a57986f7170  # 0.7.0 release candidate; v0.7.0 once tagged
           path: moca-tools
       - uses: actions/setup-node@v4
         with:
