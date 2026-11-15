@@ -171,15 +171,17 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     items of changed files are replaced.
   - Package spec §5.1: suggested node types are an informative list on
     openmoca.org.
-  - 55 cases (347 in all), a `map-time` case kind and
+  - 56 cases (348 in all), a `map-time` case kind and
     `expect.evidenceLocated`; the runner compares `expect.datePublished` and
     record fields (`expect.fields`).
 
 - Package spec §12.1 (new): media types for the three file forms,
   `application/vnd.openmoca.package+zip` (`.moca`),
-  `application/vnd.openmoca.envelope+zip` (`.moca.enc`) and
-  `application/vnd.openmoca.index+zip` (`.moca.idx.zip`). Readers do not
-  depend on them. IANA registration templates in `docs/iana/`, to be
+  `application/vnd.openmoca.envelope+zip` (`.mocae`) and
+  `application/vnd.openmoca.index+zip` (`.mocai`), each with a single file
+  extension: `.mocae` replaces `.moca.enc` and `.mocai` replaces
+  `.moca.idx.zip`. Files with the old names still read, because Readers go
+  by content. Readers do not depend on the types either. IANA registration templates in `docs/iana/`, to be
   submitted after the release.
 
 ### Changed

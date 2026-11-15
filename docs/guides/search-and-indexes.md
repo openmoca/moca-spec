@@ -37,11 +37,11 @@ curl -fsSLO https://github.com/openmoca/moca-spec/releases/latest/download/airpl
 ## 1. Build a lexical index
 
 ```sh
-npx @openmoca/moca-index build airplane-flying-handbook.moca -o afh.moca.idx --chunk headings
+npx @openmoca/moca-index build airplane-flying-handbook.moca -o afh.mocai --chunk headings
 ```
 
 ```text
-Wrote afh.moca.idx (540 item(s)) bound to sha256:4dd2efa4ff7d047a4f52a6553fe29605d0591aaf6f18d1ed9d9a2328afe49be2
+Wrote afh.mocai (540 item(s)) bound to sha256:4dd2efa4ff7d047a4f52a6553fe29605d0591aaf6f18d1ed9d9a2328afe49be2
 ```
 
 - **`--chunk headings`** cuts each page at its headings, so a result is the
@@ -76,13 +76,13 @@ SHA-256. `all-MiniLM-L6-v2` reads at most 256 tokens of each text, about 1,000
 characters, so keep passages that short with `--max-chars`:
 
 ```sh
-npx @openmoca/moca-index build airplane-flying-handbook.moca -o afh-minilm.moca.idx \
+npx @openmoca/moca-index build airplane-flying-handbook.moca -o afh-minilm.mocai \
   --chunk headings --max-chars 1000 --model all-MiniLM-L6-v2
-npx @openmoca/moca-index check afh-minilm.moca.idx --package airplane-flying-handbook.moca
+npx @openmoca/moca-index check afh-minilm.mocai --package airplane-flying-handbook.moca
 ```
 
 ```text
-Wrote afh-minilm.moca.idx (1651 item(s)) bound to sha256:4dd2efa4ff7d047a4f52a6553fe29605d0591aaf6f18d1ed9d9a2328afe49be2
+Wrote afh-minilm.mocai (1651 item(s)) bound to sha256:4dd2efa4ff7d047a4f52a6553fe29605d0591aaf6f18d1ed9d9a2328afe49be2
 No findings.
 
 Usable: 1651 chunk(s)
@@ -143,7 +143,7 @@ import { standardEmbedder } from '@openmoca/moca-embed';
 const embedder = await standardEmbedder('all-MiniLM-L6-v2');
 
 const pkg = await readPackage('airplane-flying-handbook.moca');
-const sidecar = bindSidecar('afh-minilm.moca.idx', pkg);
+const sidecar = bindSidecar('afh-minilm.mocai', pkg);
 if (!sidecar.usable) throw new Error(sidecar.diagnostics.map((d) => d.message).join('; '));
 const library = new Library().add(pkg, { chunks: sidecar.chunks, index: sidecar.index });
 
@@ -173,7 +173,7 @@ var store = new ModelStore(ModelStore.DefaultFolder);
 using var embedder = store.Load(StandardModel.Find("all-MiniLM-L6-v2")!);
 
 var pkg = await MocaReader.ReadPackageAsync("airplane-flying-handbook.moca");
-var sidecar = SidecarBinder.Bind("afh-minilm.moca.idx", pkg);
+var sidecar = SidecarBinder.Bind("afh-minilm.mocai", pkg);
 if (!sidecar.Usable) throw new InvalidOperationException(string.Join("; ", sidecar.Diagnostics.Select(d => d.Message)));
 var library = new Library().Add(pkg, sidecar);
 
@@ -207,7 +207,7 @@ from moca_reader.embedders import standard_embedder
 embedder = standard_embedder("all-MiniLM-L6-v2")
 
 pkg = read_package("airplane-flying-handbook.moca")
-sidecar = bind_sidecar("afh-minilm.moca.idx", pkg)
+sidecar = bind_sidecar("afh-minilm.mocai", pkg)
 if not sidecar.usable:
     raise SystemExit("; ".join(d.message for d in sidecar.diagnostics))
 library = Library().add(pkg, chunks=sidecar.chunks, index=sidecar.index)
@@ -290,7 +290,7 @@ model is installed. Name the index after the package and put it beside it:
 
 ```sh
 moca-mcp models add all-MiniLM-L6-v2
-mv afh-minilm.moca.idx airplane-flying-handbook.moca.idx
+mv afh-minilm.mocai airplane-flying-handbook.mocai
 moca-mcp --library .
 ```
 

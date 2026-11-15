@@ -10,7 +10,7 @@ moca-lint.sarif
 # Generated MOCA artifacts (packages and sidecars are built, never committed;
 # the checked-in fixtures under examples/ are uncompressed directories)
 *.moca
-*.moca.idx.zip
+*.mocai
 
 # Source PDFs for examples/pdf are downloaded by scripts/fetch-pdfs.mjs
 examples/pdf/capture/*.pdf

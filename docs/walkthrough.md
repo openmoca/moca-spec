@@ -36,7 +36,7 @@ You need:
 Get the example and make a working copy of it:
 
 ```sh
-git clone --depth 1 --branch v0.6.0 https://github.com/openmoca/moca-spec.git
+git clone --depth 1 --branch v0.7.0 https://github.com/openmoca/moca-spec.git
 mkdir moca-walkthrough
 cp -R moca-spec/examples/acme-support moca-walkthrough/acme-support
 cd moca-walkthrough
@@ -220,11 +220,11 @@ over those chunks, and the index can also carry embeddings for semantic
 search, which step 8 adds.
 
 ```sh
-npx @openmoca/moca-index build acme-support -o acme-support.moca.idx --chunk headings
+npx @openmoca/moca-index build acme-support -o acme-support.mocai --chunk headings
 ```
 
 ```text
-Wrote acme-support.moca.idx (68 item(s)) bound to sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
+Wrote acme-support.mocai (68 item(s)) bound to sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
 ```
 
 The index is **bound to the digest**. If the package changes, a Reader
@@ -232,7 +232,7 @@ reports the index as stale and ignores it, so search never returns text the
 package no longer has. Check that the two belong together:
 
 ```sh
-npx @openmoca/moca-lint lint acme-support --sidecar acme-support.moca.idx --trust-root keys/trust-root.json
+npx @openmoca/moca-lint lint acme-support --sidecar acme-support.mocai --trust-root keys/trust-root.json
 ```
 
 ```text
@@ -349,13 +349,13 @@ on your machine; install it once, then build the index with it:
 
 ```sh
 moca-mcp models add bge-small-en-v1.5
-npx @openmoca/moca-index build acme-support -o acme-support.bge-small-en-v1.5.moca.idx --chunk headings --model bge-small-en-v1.5
-moca-mcp acme-support.moca=acme-support.bge-small-en-v1.5.moca.idx --trust-root keys/trust-root.json --audience public
+npx @openmoca/moca-index build acme-support -o acme-support.bge-small-en-v1.5.mocai --chunk headings --model bge-small-en-v1.5
+moca-mcp acme-support.moca=acme-support.bge-small-en-v1.5.mocai --trust-root keys/trust-root.json --audience public
 ```
 
 (The same index is a download on the
-[release](https://github.com/openmoca/moca-spec/releases/tag/v0.6.0), as
-`acme-support.bge-small-en-v1.5.moca.idx.zip`. The server reads it as it is.)
+[release](https://github.com/openmoca/moca-spec/releases/tag/v0.7.0), as
+`acme-support.bge-small-en-v1.5.mocai`. The server reads it as it is.)
 
 `moca_search` takes a `mode`. With "I want my money back" and `limit` 3:
 

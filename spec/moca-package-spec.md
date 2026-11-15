@@ -1337,8 +1337,8 @@ Each file form has a media type in the vendor tree
 | File | Media type | Extension | Recognised by | Defined in |
 | --- | --- | --- | --- | --- |
 | Package archive | `application/vnd.openmoca.package+zip` | `.moca` | `moca.json` at its root | §12 |
-| Envelope | `application/vnd.openmoca.envelope+zip` | `.moca.enc` | `moca-enc.json` at its root | [Encrypted packages §2](moca-encrypted-package.md#2-layout) |
-| Sidecar index archive | `application/vnd.openmoca.index+zip` | `.moca.idx.zip` | `index.json` at its root | [Sidecar index §2](moca-sidecar-index-spec.md#2-layout) |
+| Envelope | `application/vnd.openmoca.envelope+zip` | `.mocae` | `moca-enc.json` at its root | [Encrypted packages §2](moca-encrypted-package.md#2-layout) |
+| Sidecar index archive | `application/vnd.openmoca.index+zip` | `.mocai` | `index.json` at its root | [Sidecar index §2](moca-sidecar-index-spec.md#2-layout) |
 
 - A host that serves one of these files, over HTTP or otherwise, SHOULD
   label it with its type. A package and its sidecar index can be served as
@@ -1351,6 +1351,15 @@ Each file form has a media type in the vendor tree
   media type of their own.
 - The types have no parameters and define no fragment identifiers. A node is
   cited by its node identifier (§4.2), not by a fragment of a file's URL.
+- Each extension is a single one, so that phones and computers can recognise
+  each kind of file. Producers write these extensions. Files named with the
+  earlier double extensions, `.moca.enc` and `.moca.idx.zip`, are read as
+  before, because a Reader goes by their bytes.
+- A sidecar index is specific to MOCA: it is bound to one package's digest,
+  its chunks are spans of that package's nodes, and its vectors follow the
+  embedding recipe it records (sidecar index §3). Its insides stay plain,
+  JSON lines and raw little-endian `float32` vectors, so other tools can read
+  them, but it is not a general vector format.
 
 The registration templates are in
 [`docs/iana/`](../docs/iana/README.md).

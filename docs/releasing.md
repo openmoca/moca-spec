@@ -15,7 +15,7 @@ For maintainers.
      directory), so an implementation can pin it without a checkout;
    - every example package as a `.moca` file, and the example trust root as
      `example-trust-root.json`, and Acme's semantic index as
-     `acme-support.bge-small-en-v1.5.moca.idx.zip`: everything
+     `acme-support.bge-small-en-v1.5.mocai`: everything
      `npm run pack:examples` writes to `dist/examples/`. It checks each file as
      it packs it. The index needs the standard model installed first
      (`npx @openmoca/moca-embed models add bge-small-en-v1.5`); the walkthrough

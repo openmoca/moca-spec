@@ -25,12 +25,12 @@ and only when, they appear in capitals. Terms are as defined in
 
 A sidecar is a directory, or a Zip archive of one with `index.json` at its
 root, kept **outside** the package it indexes. The archive is conventionally
-named `<name>.moca.idx.zip` and has the media type
+named `<name>.mocai` and has the media type
 `application/vnd.openmoca.index+zip`
 ([package spec §12.1](moca-package-spec.md#121-media-types)):
 
 ```text
-support-kb.moca.idx/
+support-kb/
 ├── index.json
 └── payload/
     └── items.jsonl

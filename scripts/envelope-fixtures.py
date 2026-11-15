@@ -68,7 +68,7 @@ def split_header(age_file: bytes) -> tuple[bytes, bytes]:
 
 
 def envelope(name: str, entries: dict[str, bytes], stored: tuple[str, ...] = ("package.age", "index.age")) -> None:
-    with zipfile.ZipFile(OUT / f"{name}.moca.enc", "w") as z:
+    with zipfile.ZipFile(OUT / f"{name}.mocae", "w") as z:
         for entry, data in entries.items():
             info = zipfile.ZipInfo(entry, FIXED_TIME)
             info.compress_type = zipfile.ZIP_STORED if entry in stored else zipfile.ZIP_DEFLATED
@@ -91,7 +91,7 @@ def keypair(name: str) -> str:
 
 
 def check(name: str, expect_ok: bool, plain: bytes | None = None, identity: str | None = None, passphrase: str | None = None) -> None:
-    with zipfile.ZipFile(OUT / f"{name}.moca.enc") as z:
+    with zipfile.ZipFile(OUT / f"{name}.mocae") as z:
         data = z.read("package.age")
     args = ["age", "--decrypt"]
     env = dict(os.environ)
@@ -191,7 +191,7 @@ def index_fixtures() -> None:
     sidecar (fixtures/sidecars/valid), encrypted by the Go age CLI to the test key.
     """
     test = keypair("test")
-    with zipfile.ZipFile(OUT / "x25519.moca.enc") as z:
+    with zipfile.ZipFile(OUT / "x25519.mocae") as z:
         x25519 = z.read("package.age")
         marker_bytes = z.read("moca-enc.json")
     root = ROOT / "sidecars" / "valid"

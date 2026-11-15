@@ -10,5 +10,5 @@ specification version they cite is tagged.
 | Media type | File | Template |
 | --- | --- | --- |
 | `application/vnd.openmoca.package+zip` | `.moca` package archive | [package](application-vnd.openmoca.package+zip.md) |
-| `application/vnd.openmoca.envelope+zip` | `.moca.enc` envelope | [envelope](application-vnd.openmoca.envelope+zip.md) |
-| `application/vnd.openmoca.index+zip` | `.moca.idx.zip` sidecar index | [sidecar index](application-vnd.openmoca.index+zip.md) |
+| `application/vnd.openmoca.envelope+zip` | `.mocae` envelope | [envelope](application-vnd.openmoca.envelope+zip.md) |
+| `application/vnd.openmoca.index+zip` | `.mocai` sidecar index | [sidecar index](application-vnd.openmoca.index+zip.md) |

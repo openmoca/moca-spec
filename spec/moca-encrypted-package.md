@@ -29,7 +29,7 @@ The reasons for this design, and the options rejected, are in
 
 ## 2. Layout
 
-An envelope is a Zip archive, conventionally named `<name>.moca.enc`, with the
+An envelope is a Zip archive, conventionally named `<name>.mocae`, with the
 media type `application/vnd.openmoca.envelope+zip`
 ([package spec §12.1](moca-package-spec.md#121-media-types)). Every
 archive rule and limit in

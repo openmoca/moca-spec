@@ -58,7 +58,7 @@ To search it with a sidecar index:
 
 ```sh
 npx @openmoca/moca-index build examples/pdf/airplane-flying-handbook \
-  -o afh.moca.idx --chunk headings
+  -o afh.mocai --chunk headings
 ```
 
 ## Attribution

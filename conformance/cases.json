@@ -5114,7 +5114,7 @@
     {
       "id": "envelope-no-provider",
       "description": "Encrypted packages §2, §5.1: an envelope is recognised by its content. With no key provider, or in a Reader without the encryption feature, it is not opened (E001), and nothing inside it is exposed.",
-      "target": "fixtures/envelopes/x25519.moca.enc",
+      "target": "fixtures/envelopes/x25519.mocae",
       "expect": {
         "valid": false,
         "capabilities": [],
@@ -5130,7 +5130,32 @@
     {
       "id": "envelope-x25519",
       "description": "An envelope for an X25519 recipient, with the default outline (id, version, title). Opened, it is the inner archive, with the same digest.",
-      "target": "fixtures/envelopes/x25519.moca.enc",
+      "target": "fixtures/envelopes/x25519.mocae",
+      "requires": [
+        "encryption"
+      ],
+      "options": {
+        "identities": [
+          "fixtures/envelopes/keys/INSECURE-test.txt"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "SAME:valid-minimal",
+        "envelope": {
+          "format": "moca-enc-v1",
+          "opened": true
+        }
+      }
+    },
+    {
+      "id": "envelope-old-extension",
+      "description": "Package spec §12.1: a file named with the earlier double extension .moca.enc is recognised by its content and opened as any envelope is: the same package, with the same digest.",
+      "target": "fixtures/envelopes/legacy-name.moca.enc",
       "requires": [
         "encryption"
       ],
@@ -5155,7 +5180,7 @@
     {
       "id": "envelope-passphrase",
       "description": "An envelope for a passphrase (one scrypt stanza, work factor 10).",
-      "target": "fixtures/envelopes/passphrase.moca.enc",
+      "target": "fixtures/envelopes/passphrase.mocae",
       "requires": [
         "encryption"
       ],
@@ -5177,7 +5202,7 @@
     {
       "id": "envelope-no-outline",
       "description": "An envelope with no outline: moca-enc.json holds only the format.",
-      "target": "fixtures/envelopes/no-outline.moca.enc",
+      "target": "fixtures/envelopes/no-outline.mocae",
       "requires": [
         "encryption"
       ],
@@ -5201,7 +5226,7 @@
     {
       "id": "envelope-structure",
       "description": "An envelope with the opt-in structure copy, outline/structure.ttl, equal to the inner structure.ttl.",
-      "target": "fixtures/envelopes/structure.moca.enc",
+      "target": "fixtures/envelopes/structure.mocae",
       "requires": [
         "encryption"
       ],
@@ -5239,7 +5264,7 @@
     {
       "id": "envelope-large",
       "description": "An envelope whose payload has more than one age chunk.",
-      "target": "fixtures/envelopes/large.moca.enc",
+      "target": "fixtures/envelopes/large.mocae",
       "requires": [
         "encryption"
       ],
@@ -5263,7 +5288,7 @@
     {
       "id": "envelope-wrong-key-type",
       "description": "Encrypted packages §5.1: a key of a kind no stanza uses (a passphrase for an X25519 file) is E001, not E002.",
-      "target": "fixtures/envelopes/x25519.moca.enc",
+      "target": "fixtures/envelopes/x25519.mocae",
       "requires": [
         "encryption"
       ],
@@ -5284,7 +5309,7 @@
     {
       "id": "envelope-wrong-key",
       "description": "An X25519 identity that is not a recipient (E002).",
-      "target": "fixtures/envelopes/x25519.moca.enc",
+      "target": "fixtures/envelopes/x25519.mocae",
       "requires": [
         "encryption"
       ],
@@ -5307,7 +5332,7 @@
     {
       "id": "envelope-wrong-passphrase",
       "description": "A wrong passphrase (E002).",
-      "target": "fixtures/envelopes/passphrase.moca.enc",
+      "target": "fixtures/envelopes/passphrase.mocae",
       "requires": [
         "encryption"
       ],
@@ -5328,7 +5353,7 @@
     {
       "id": "envelope-wrong-file-key",
       "description": "A file key from the host that fails the header MAC (E002).",
-      "target": "fixtures/envelopes/x25519.moca.enc",
+      "target": "fixtures/envelopes/x25519.mocae",
       "requires": [
         "encryption"
       ],
@@ -5349,7 +5374,7 @@
     {
       "id": "envelope-truncated",
       "description": "The payload's final chunk is missing (E003); no plaintext is used.",
-      "target": "fixtures/envelopes/truncated.moca.enc",
+      "target": "fixtures/envelopes/truncated.mocae",
       "requires": [
         "encryption"
       ],
@@ -5372,7 +5397,7 @@
     {
       "id": "envelope-flipped-byte",
       "description": "One payload byte changed after encryption (E003).",
-      "target": "fixtures/envelopes/flipped-byte.moca.enc",
+      "target": "fixtures/envelopes/flipped-byte.mocae",
       "requires": [
         "encryption"
       ],
@@ -5395,7 +5420,7 @@
     {
       "id": "envelope-outline-mismatch",
       "description": "Encrypted packages §3: the outline's title differs from the inner manifest's (E004). Nothing inside is exposed.",
-      "target": "fixtures/envelopes/outline-mismatch.moca.enc",
+      "target": "fixtures/envelopes/outline-mismatch.mocae",
       "requires": [
         "encryption"
       ],
@@ -5418,7 +5443,7 @@
     {
       "id": "envelope-structure-mismatch",
       "description": "The structure copy differs from the inner structure.ttl by one line (E004).",
-      "target": "fixtures/envelopes/structure-mismatch.moca.enc",
+      "target": "fixtures/envelopes/structure-mismatch.mocae",
       "requires": [
         "encryption"
       ],
@@ -5441,7 +5466,7 @@
     {
       "id": "envelope-extra-entry",
       "description": "Encrypted packages §2: an entry the layout does not name (E005).",
-      "target": "fixtures/envelopes/extra-entry.moca.enc",
+      "target": "fixtures/envelopes/extra-entry.mocae",
       "expect": {
         "valid": false,
         "capabilities": [],
@@ -5456,7 +5481,7 @@
     {
       "id": "envelope-missing-package",
       "description": "No package.age (E005).",
-      "target": "fixtures/envelopes/missing-package.moca.enc",
+      "target": "fixtures/envelopes/missing-package.mocae",
       "expect": {
         "valid": false,
         "capabilities": [],
@@ -5471,7 +5496,7 @@
     {
       "id": "envelope-unknown-format",
       "description": "moca-enc.json names another format (E005).",
-      "target": "fixtures/envelopes/unknown-format.moca.enc",
+      "target": "fixtures/envelopes/unknown-format.mocae",
       "expect": {
         "valid": false,
         "capabilities": [],
@@ -5486,7 +5511,7 @@
     {
       "id": "envelope-both-markers",
       "description": "A Zip with both moca.json and moca-enc.json at its root (E005).",
-      "target": "fixtures/envelopes/both-markers.moca.enc",
+      "target": "fixtures/envelopes/both-markers.mocae",
       "expect": {
         "valid": false,
         "capabilities": [],
@@ -5501,7 +5526,7 @@
     {
       "id": "envelope-deflated-package",
       "description": "package.age is deflated, not stored (E005).",
-      "target": "fixtures/envelopes/deflated-package.moca.enc",
+      "target": "fixtures/envelopes/deflated-package.mocae",
       "expect": {
         "valid": false,
         "capabilities": [],
@@ -5516,7 +5541,7 @@
     {
       "id": "envelope-scrypt-not-alone",
       "description": "Encrypted packages §4: an scrypt stanza beside an X25519 stanza (E006), found before any key is used.",
-      "target": "fixtures/envelopes/scrypt-not-alone.moca.enc",
+      "target": "fixtures/envelopes/scrypt-not-alone.mocae",
       "requires": [
         "encryption"
       ],
@@ -5539,7 +5564,7 @@
     {
       "id": "envelope-work-factor",
       "description": "An scrypt work factor of 21, over the default limit of 20 (E006), refused without running scrypt.",
-      "target": "fixtures/envelopes/work-factor.moca.enc",
+      "target": "fixtures/envelopes/work-factor.mocae",
       "requires": [
         "encryption"
       ],
@@ -5560,7 +5585,7 @@
     {
       "id": "envelope-header-64k",
       "description": "Encrypted packages §5.2 step 3: an age header of exactly 64 KiB, padded by a stanza of another type (data, passed to the key provider), is within the limit and opens.",
-      "target": "fixtures/envelopes/header-64k.moca.enc",
+      "target": "fixtures/envelopes/header-64k.mocae",
       "requires": [
         "encryption"
       ],
@@ -5585,7 +5610,7 @@
     {
       "id": "envelope-header-over-64k",
       "description": "Encrypted packages §5.2 step 3: the same header one byte longer, over 64 KiB, is refused (E006) before the key provider is called.",
-      "target": "fixtures/envelopes/header-over-64k.moca.enc",
+      "target": "fixtures/envelopes/header-over-64k.mocae",
       "requires": [
         "encryption"
       ],
@@ -5614,7 +5639,7 @@
     {
       "id": "envelope-limit-inner",
       "description": "Reader contract §3: the limits apply again to the archive inside an envelope. The envelope is small; the inner archive inflates past maxBytes (T003).",
-      "target": "fixtures/envelopes/large.moca.enc",
+      "target": "fixtures/envelopes/large.mocae",
       "requires": [
         "encryption"
       ],
@@ -5640,7 +5665,7 @@
     {
       "id": "envelope-index",
       "description": "Encrypted packages §6: index.age is opened through the same key provider and bound to the package from the same envelope.",
-      "target": "fixtures/envelopes/with-index.moca.enc",
+      "target": "fixtures/envelopes/with-index.mocae",
       "requires": [
         "encryption"
       ],
@@ -5666,7 +5691,7 @@
     {
       "id": "envelope-index-corrupt",
       "description": "Encrypted packages §6: an index.age whose payload fails authentication is reported by the binding (E003) and is not used. The package stays valid.",
-      "target": "fixtures/envelopes/with-index-corrupt.moca.enc",
+      "target": "fixtures/envelopes/with-index-corrupt.mocae",
       "requires": [
         "encryption"
       ],
@@ -5693,7 +5718,7 @@
     {
       "id": "envelope-index-deflated",
       "description": "Encrypted packages §2: an index.age that is deflated, not stored, makes the envelope invalid (E005).",
-      "target": "fixtures/envelopes/with-index-deflated.moca.enc",
+      "target": "fixtures/envelopes/with-index-deflated.mocae",
       "expect": {
         "valid": false,
         "codes": [
@@ -5708,7 +5733,7 @@
     {
       "id": "envelope-cover",
       "description": "Encrypted packages §3: an outline with translations and tags and a cover copy equal to the inner manifest's first cover. It opens.",
-      "target": "fixtures/envelopes/cover.moca.enc",
+      "target": "fixtures/envelopes/cover.mocae",
       "options": {
         "identities": [
           "fixtures/envelopes/keys/INSECURE-test.txt"
@@ -5738,7 +5763,7 @@
     {
       "id": "envelope-cover-differs",
       "description": "Encrypted packages §3: a cover copy that differs by one byte from the inner cover is E004.",
-      "target": "fixtures/envelopes/cover-differs.moca.enc",
+      "target": "fixtures/envelopes/cover-differs.mocae",
       "options": {
         "identities": [
           "fixtures/envelopes/keys/INSECURE-test.txt"
@@ -5761,7 +5786,7 @@
     {
       "id": "envelope-cover-wrong-extension",
       "description": "Encrypted packages §3: the copy's extension must match the cover's type; a WebP cover copied as outline/cover.png is E004.",
-      "target": "fixtures/envelopes/cover-wrong-extension.moca.enc",
+      "target": "fixtures/envelopes/cover-wrong-extension.mocae",
       "options": {
         "identities": [
           "fixtures/envelopes/keys/INSECURE-test.txt"
@@ -5784,7 +5809,7 @@
     {
       "id": "envelope-cover-no-cover",
       "description": "Encrypted packages §3: a cover copy when the inner manifest has no cover image is E004.",
-      "target": "fixtures/envelopes/cover-no-cover.moca.enc",
+      "target": "fixtures/envelopes/cover-no-cover.mocae",
       "options": {
         "identities": [
           "fixtures/envelopes/keys/INSECURE-test.txt"
@@ -5807,7 +5832,7 @@
     {
       "id": "envelope-cover-gif",
       "description": "Encrypted packages §2: outline/cover.gif is not an allowed entry: E005, before any key is asked for.",
-      "target": "fixtures/envelopes/cover-gif.moca.enc",
+      "target": "fixtures/envelopes/cover-gif.mocae",
       "expect": {
         "valid": false,
         "codes": [
@@ -5822,7 +5847,7 @@
     {
       "id": "envelope-cover-two",
       "description": "Encrypted packages §2: an envelope has at most one cover copy: E005.",
-      "target": "fixtures/envelopes/cover-two.moca.enc",
+      "target": "fixtures/envelopes/cover-two.mocae",
       "expect": {
         "valid": false,
         "codes": [
@@ -5837,7 +5862,7 @@
     {
       "id": "envelope-cover-too-large",
       "description": "Encrypted packages §2: a cover copy over maxImageBytes is E005, before any key is asked for.",
-      "target": "fixtures/envelopes/cover.moca.enc",
+      "target": "fixtures/envelopes/cover.mocae",
       "options": {
         "limits": {
           "maxImageBytes": 16
@@ -5858,7 +5883,7 @@
     {
       "id": "envelope-outline-translation-mismatch",
       "description": "Encrypted packages §3: an outline whose translated title differs from the decrypted manifest's is E004.",
-      "target": "fixtures/envelopes/outline-translation-mismatch.moca.enc",
+      "target": "fixtures/envelopes/outline-translation-mismatch.mocae",
       "options": {
         "identities": [
           "fixtures/envelopes/keys/INSECURE-test.txt"
@@ -5881,7 +5906,7 @@
     {
       "id": "envelope-outline-apps",
       "description": "Encrypted packages §3: apps as an outline property, equal to the inner manifest's. It opens.",
-      "target": "fixtures/envelopes/outline-apps.moca.enc",
+      "target": "fixtures/envelopes/outline-apps.mocae",
       "requires": [
         "encryption"
       ],
@@ -5910,7 +5935,7 @@
     {
       "id": "envelope-outline-apps-mismatch",
       "description": "Encrypted packages §3: an outline whose apps differ from the decrypted manifest's (here, in another order) is E004.",
-      "target": "fixtures/envelopes/outline-apps-mismatch.moca.enc",
+      "target": "fixtures/envelopes/outline-apps-mismatch.mocae",
       "requires": [
         "encryption"
       ],

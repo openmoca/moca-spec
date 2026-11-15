@@ -49,7 +49,7 @@ part-way through:
 
 Pins sit in one `env` block at the top of each workflow (`MOCA_SPEC_REF`,
 `MOCA_READER_TYPESCRIPT_REF` and the like). Between proposals each pin is a
-release tag, such as `v0.6.0`. While a proposal is in flight, a pin
+release tag, such as `v0.7.0`. While a proposal is in flight, a pin
 may name a commit. `npm run check:deps` fails on a checkout without a pin, or
 pinned to a branch.
 

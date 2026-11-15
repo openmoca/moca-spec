@@ -2,7 +2,7 @@
 // Packs every example package into a .moca file, for the release (docs/releasing.md), and checks each one:
 // moca-lint finds no errors, and the file has the same digest as its folder. It also writes the example
 // trust root, which verifies support-kb's signatures, as example-trust-root.json, and a semantic index for
-// acme-support built with the standard model bge-small-en-v1.5, as acme-support.bge-small-en-v1.5.moca.idx.zip.
+// acme-support built with the standard model bge-small-en-v1.5, as acme-support.bge-small-en-v1.5.mocai.
 // The index needs that model installed (npx @openmoca/moca-embed models add bge-small-en-v1.5); --check skips it,
 // with a note, when the model is not installed.
 //
@@ -49,7 +49,7 @@ const digestOf = (path) => lint('digest', path).trim();
 const index = (...a) => execFileSync(process.execPath, [indexBin, ...a], { cwd: root, encoding: 'utf8', stdio: 'pipe' });
 
 // The examples' semantic index: its name says which model it needs, which is how the MCP server finds it.
-const SEMANTIC = { package: 'acme-support.moca', model: 'bge-small-en-v1.5', file: 'acme-support.bge-small-en-v1.5.moca.idx.zip' };
+const SEMANTIC = { package: 'acme-support.moca', model: 'bge-small-en-v1.5', file: 'acme-support.bge-small-en-v1.5.mocai' };
 const modelStore = process.env.MOCA_MODELS || join(homedir(), '.moca', 'models');
 
 let failed = false;

@@ -41,11 +41,11 @@ check who published the package after opening it
 public keys:
 
 ```sh
-npx @openmoca/moca-sign encrypt support-kb -o support-kb.moca.enc -r age1…
+npx @openmoca/moca-sign encrypt support-kb -o support-kb.mocae -r age1…
 ```
 
 ```text
-Wrote support-kb.moca.enc
+Wrote support-kb.mocae
 sha256:4992176b90ea0992037617ee56d5dcafecf60aeb400cfa9369c9164453df96da
 outline: {"id":"https://example.com/moca/support-kb","version":"4.2.0","title":"Acme Support Knowledge Base"}
 ```
@@ -68,7 +68,7 @@ from an environment variable, never from the command line:
 
 ```sh
 export MOCA_PASSPHRASE='…'
-npx @openmoca/moca-sign encrypt support-kb -o shared.moca.enc --passphrase-env MOCA_PASSPHRASE
+npx @openmoca/moca-sign encrypt support-kb -o shared.mocae --passphrase-env MOCA_PASSPHRASE
 ```
 
 Keys are better for anything long-lived: a passphrase has to be shared, and
@@ -77,7 +77,7 @@ anyone who has it can open every file encrypted to it.
 ## 3. What a reader without the key sees
 
 ```sh
-npx @openmoca/moca-lint info support-kb.moca.enc
+npx @openmoca/moca-lint info support-kb.mocae
 ```
 
 ```json
@@ -110,7 +110,7 @@ and refuses the package if they differ (`E004`).
 With the tools, pass the identity file:
 
 ```sh
-npx @openmoca/moca-lint lint support-kb.moca.enc --identity reader.key \
+npx @openmoca/moca-lint lint support-kb.mocae --identity reader.key \
   --trust-root trust-root.json
 ```
 
@@ -142,7 +142,7 @@ import { ageDecryptor } from '@openmoca/moca-core/age';
 // The host's own key: here an age identity file; in production, a secret store.
 const identities = readFileSync('reader.key', 'utf8').split('\n').filter((l) => l.startsWith('AGE-SECRET-KEY-1'));
 
-const pkg = await readPackage('support-kb.moca.enc', {
+const pkg = await readPackage('support-kb.mocae', {
   decryptor: ageDecryptor,
   keyProvider: () => ({ identities }),
 });
@@ -164,7 +164,7 @@ var options = new ReadOptions
     EnvelopeDecryptor = AgeEnvelopeDecryptor.Instance,
     KeyProvider = (request, ct) => ValueTask.FromResult<EnvelopeKey?>(new EnvelopeKey(Identities: identities)),
 };
-var pkg = await MocaReader.ReadPackageAsync(PackageTarget.FromPath("support-kb.moca.enc"), options);
+var pkg = await MocaReader.ReadPackageAsync(PackageTarget.FromPath("support-kb.mocae"), options);
 ```
 
 **Python** (`moca-reader`):
@@ -179,7 +179,7 @@ from moca_reader.age import AGE_DECRYPTOR
 identities = [l for l in Path("reader.key").read_text().splitlines() if l.startswith("AGE-SECRET-KEY-1")]
 
 pkg = read_package(
-    "support-kb.moca.enc",
+    "support-kb.mocae",
     decryptor=AGE_DECRYPTOR,
     key_provider=lambda request: {"identities": identities},
 )
@@ -195,7 +195,7 @@ new reader, uses `moca-sign decrypt`. It writes the decrypted `.moca` to disk,
 which a Reader never does:
 
 ```sh
-npx @openmoca/moca-sign decrypt support-kb.moca.enc -o support-kb.moca -i reader.key
+npx @openmoca/moca-sign decrypt support-kb.mocae -o support-kb.moca -i reader.key
 ```
 
 ## What encryption does not do
