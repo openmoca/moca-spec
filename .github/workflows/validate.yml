@@ -11,8 +11,8 @@ permissions:
 # The released reference Reader and tools this corpus is checked against. Pins are release
 # tags, or commits while a Spec Change Proposal is in flight; never a branch (CONTRIBUTING.md).
 env:
-  MOCA_READER_TYPESCRIPT_REF: f093784a095a82c646ab8fe8dff25626442b9773  # 0.7.0 release candidate; v0.7.0 once tagged
-  MOCA_TOOLS_REF: 9f9cf70aa8fc0ef118fe063b1c22667843299b35  # 0.7.0 release candidate; v0.7.0 once tagged
+  MOCA_READER_TYPESCRIPT_REF: b1e6632b23e976e6080c37c67d3ab970b68cc37c  # 0.7.0 release candidate; v0.7.0 once tagged
+  MOCA_TOOLS_REF: c877b1884624d267110cfc2e27c3a84041f5019b  # 0.7.0 release candidate; v0.7.0 once tagged
 
 jobs:
   deps:
