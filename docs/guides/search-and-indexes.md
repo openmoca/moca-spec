@@ -319,8 +319,8 @@ await search.search('which form do I use', { upTo: 'https://example.com/moca/cou
 
 `upTo` can be a member of the reading order or anything under one. If no
 loaded package's reading order has it, it limits nothing and the search
-reports `S008_UPTO_UNRESOLVED` in `search.diagnostics`. A series' reading
-order limits its member packages too, when the series is signed by a key
+reports `S008_UPTO_UNRESOLVED` in `search.diagnostics`. A composite
+package's reading order limits its member packages too, when it is signed by a key
 whose `ids` cover them; for a library of your own unsigned packages, set
 `allowUnsignedRelations`. It is a convenience,
 not access control: anyone with the file can read all of it

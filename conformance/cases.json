@@ -4511,11 +4511,11 @@
       "kind": "structure",
       "description": "Package spec §5.6 and contract §10: nodes() sees bindings by composition. The releases the show files under the sea, as parts, are bound to it.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ]
       },
       "op": "nodes",
@@ -4535,11 +4535,11 @@
       "kind": "structure",
       "description": "Package spec §5.6 and contract §10: a member's node id as a concept binds that node only, for nodes() as for search.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ]
       },
       "op": "nodes",
@@ -4556,11 +4556,11 @@
       "kind": "structure",
       "description": "Package spec §5.6 and contract §10: a member's package id stands for the members it composes, so nodes() on the season lists both of its releases.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ]
       },
       "op": "nodes",
@@ -6776,12 +6776,12 @@
       }
     },
     {
-      "id": "series-show",
-      "description": "Package spec §5.6, §7.3: a show composing a season and a release. Its structure uses member package ids and a member node id as concepts, which is a valid structure layer.",
-      "target": "fixtures/series/show",
+      "id": "composite-show",
+      "description": "Package spec §5.6, §7.3: a composite package, a show composing a season and an episode. Its structure uses member package ids and a member node id as concepts, which is a valid structure layer.",
+      "target": "fixtures/composite/show",
       "options": {
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ]
       },
       "expect": {
@@ -6799,13 +6799,13 @@
       "kind": "search",
       "description": "Package spec §5.6: scope on a topic of the show finds the releases it has as parts, bound by composition, at any depth.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ]
       },
       "search": {
@@ -6832,13 +6832,13 @@
       "kind": "search",
       "description": "Package spec §5.6: a member's package id stands for the members it composes, so scope on the season finds both of its releases.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ]
       },
       "search": {
@@ -6865,13 +6865,13 @@
       "kind": "search",
       "description": "Contract §9: the concepts filter matches a record bound by composition to a member's package id.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ]
       },
       "search": {
@@ -6900,13 +6900,13 @@
       "kind": "search",
       "description": "Package spec §5.6: a member's node id as a concept binds that node only, and scope on its topic finds it.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ]
       },
       "search": {
@@ -6932,20 +6932,20 @@
       "kind": "search",
       "description": "Contract §9.4: a store search applies bindings by composition from the package states, as a library search does.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "store",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ],
         "allow": [
-          "fixtures/series/show",
-          "fixtures/series/season-1",
-          "fixtures/series/episode-1",
-          "fixtures/series/episode-2",
-          "fixtures/series/episode-3"
+          "fixtures/composite/show",
+          "fixtures/composite/season-1",
+          "fixtures/composite/episode-1",
+          "fixtures/composite/episode-2",
+          "fixtures/composite/episode-3"
         ]
       },
       "search": {
@@ -6972,13 +6972,13 @@
       "kind": "search",
       "description": "Package spec §5.6: only resolved members are bound. With maxMembers 2, episode 2 and episode 3 are not resolved, so scope on the sea finds episode 1 only.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ],
         "limits": {
           "maxMembers": 2
@@ -7035,13 +7035,13 @@
       "kind": "search",
       "description": "Package spec §5.6, contract §3: with maxMemberDepth 1, the season's releases are past the limit, so they are neither loaded nor bound. Scope on the sea finds the release the show composes directly.",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ],
         "limits": {
           "maxMemberDepth": 1
@@ -7112,13 +7112,13 @@
       "kind": "search",
       "description": "Contract §9: the show's reading order limits its members' records. upTo at the first release keeps it and the show's own page, off the order. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ],
         "allowUnsignedRelations": true
       },
@@ -7146,13 +7146,13 @@
       "kind": "search",
       "description": "Contract §9: upTo at the second release keeps the first two, members of the season, a member of the show. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ],
         "allowUnsignedRelations": true
       },
@@ -7180,13 +7180,13 @@
       "kind": "search",
       "description": "Contract §9: the season alone; its own reading order limits its members. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
-        "fixtures/series/season-1"
+        "fixtures/composite/season-1"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ],
         "allowUnsignedRelations": true
       },
@@ -7211,20 +7211,20 @@
       "kind": "search",
       "description": "Contract §9.4: a store search applies upTo to members' records from the package states. The packages are unsigned, so the host allows unsigned packages to limit their members (allowUnsignedRelations).",
       "packages": [
-        "fixtures/series/show"
+        "fixtures/composite/show"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "store",
         "members": [
-          "fixtures/series"
+          "fixtures/composite"
         ],
         "allow": [
-          "fixtures/series/show",
-          "fixtures/series/season-1",
-          "fixtures/series/episode-1",
-          "fixtures/series/episode-2",
-          "fixtures/series/episode-3"
+          "fixtures/composite/show",
+          "fixtures/composite/season-1",
+          "fixtures/composite/episode-1",
+          "fixtures/composite/episode-2",
+          "fixtures/composite/episode-3"
         ],
         "allowUnsignedRelations": true
       },
@@ -7456,10 +7456,10 @@
     {
       "id": "member-issued-copy",
       "description": "Package spec §7.1: a member pinned by the publisher's digest resolves to an issued copy whose verified original digest equals the pin.",
-      "target": "fixtures/series-issued/series",
+      "target": "fixtures/composite-issued/composite",
       "options": {
         "members": [
-          "fixtures/series-issued/members"
+          "fixtures/composite-issued/members"
         ],
         "trustRoot": "fixtures/trust-root-issued.json",
         "now": "2026-09-27T00:00:00Z"
@@ -7476,10 +7476,10 @@
     {
       "id": "member-issued-copy-unverified",
       "description": "Package spec §7.1: without the issuer in the trust root the copy is compared by its own digest, which does not match the pin (R002).",
-      "target": "fixtures/series-issued/series",
+      "target": "fixtures/composite-issued/composite",
       "options": {
         "members": [
-          "fixtures/series-issued/members"
+          "fixtures/composite-issued/members"
         ],
         "now": "2026-09-27T00:00:00Z"
       },
@@ -7497,15 +7497,15 @@
     {
       "id": "search-member-issued-copy",
       "kind": "search",
-      "description": "Package spec §7.1: the members' series brings the licensee's copy into the library, with its issued-copy fields.",
+      "description": "Package spec §7.1: the members' composite package brings the licensee's copy into the library, with its issued-copy fields.",
       "packages": [
-        "fixtures/series-issued/series"
+        "fixtures/composite-issued/composite"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series-issued/members"
+          "fixtures/composite-issued/members"
         ],
         "trustRoot": "fixtures/trust-root-issued.json"
       },
@@ -7526,15 +7526,15 @@
     {
       "id": "search-member-issued-copy-unverified",
       "kind": "search",
-      "description": "Package spec §7.1: without the issuer in the trust root, the copy does not verify, so it does not match the pin (R002) and is neither loaded nor bound: the members' series brings nothing.",
+      "description": "Package spec §7.1: without the issuer in the trust root, the copy does not verify, so it does not match the pin (R002) and is neither loaded nor bound: the members' composite package brings nothing.",
       "packages": [
-        "fixtures/series-issued/series"
+        "fixtures/composite-issued/composite"
       ],
       "options": {
         "now": "2026-09-27T00:00:00Z",
         "backend": "all",
         "members": [
-          "fixtures/series-issued/members"
+          "fixtures/composite-issued/members"
         ]
       },
       "search": {

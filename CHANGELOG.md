@@ -163,8 +163,11 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
     reading order places it.
   - Package spec §7.2: the core relation type `isPartOf`, and
     `R005_RELATION_TYPE_UNKNOWN` (info) for a type that is neither core nor
-    defined by a declared profile. §7.3 (new): series guidance, including
-    long series and free and members-only releases.
+    defined by a declared profile. §7.3 (new): composite packages, whose
+    members are packages, such as a podcast of seasons and episodes, a book
+    series or a course of sections and lessons: worked examples, when to use
+    one package instead, large composites, and free and members-only parts.
+    §2 defines the term.
   - Package spec §7.1 and sidecar spec §5: an issued copy matches a member pin,
     and binds the publisher's sidecar, through its verified
     `issuedCopy.originalDigest`. `S009_SIDECAR_ITEMS_REPLACED` (info) when the

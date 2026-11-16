@@ -4,6 +4,12 @@
 - **Date:** 2026-11-15
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 
+> **Terminology.** The specification now calls a package whose members are
+> packages a **composite package**
+> ([package spec §7.3](../../spec/moca-package-spec.md#73-composite-packages)):
+> a series is one example, as are a podcast's seasons and a course's lessons.
+> This record keeps the word it was decided with.
+
 ## Context
 
 A series of releases (podcast and video series content) is a package whose

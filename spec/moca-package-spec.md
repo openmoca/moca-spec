@@ -131,6 +131,7 @@ characters (`C007`) after that.
 | Key provider | The host's function that supplies keys to open an envelope (Reader interface §3). A Reader never finds keys itself. |
 | Issued copy | A copy of a package whose issuer changed some files under `content/` or `media/`, bound to the original by an issued-copy attestation ([attestations §3a](moca-attestations.md#3a-issued-copy-attestations)). |
 | Issuer | Whoever makes and signs an issued copy. A publisher allows its issuers in its manifest (§4.11). |
+| Composite package | A package whose `members` are packages, such as a podcast of seasons and episodes, a book series or a course of lessons (§7.3). It is the composing package of each of its members. |
 
 ## 3. Standards used
 
@@ -554,7 +555,7 @@ Rules:
   `structure.ttl`; a Reader does not check the order against the dates.
 - **Nodes.** A node MAY state its own date with `moca.date_published`
   (§5.3), when parts of one package were published at different times: the
-  episodes of a series kept in one package, the articles of a collection. A
+  episodes of a show kept in one package, the articles of an anthology. A
   node's date does not inherit the package's, and neither limits the other.
 - The package result carries `datePublished`, and citation records carry
   `package.datePublished` and `node.datePublished`, when present
@@ -789,8 +790,8 @@ record bound by composition is treated as if the node were bound to the
 concept for the `concepts` and `scope` filters and for `upTo`
 ([Reader contract §9](moca-reader-contract.md#9-search)), and for the
 structure operation `nodes()`
-([Reader contract §10](moca-reader-contract.md#10-structure)), so a series can file
-its releases under its own topics without a new version of each release
+([Reader contract §10](moca-reader-contract.md#10-structure)), so a composite package
+can file its parts under its own topics without a new version of each part
 (§7.3). Binding by composition never changes the member: its bytes, digest,
 trust and the record's `concepts`, which lists only the node's own
 `moca.concepts`. Only a member that resolved and matched its pin (§7.1) is
@@ -1098,8 +1099,8 @@ not trust in the resolver.
 resolved member that is an issued copy matches the pin when its
 `issuedCopy.originalDigest`, verified against the host's trust root
 ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)),
-equals it. So one series package serves every licensee's copies of its
-releases. A copy that did not verify is compared by its own digest, and so
+equals it. So one composite package serves every licensee's copies of its
+parts. A copy that did not verify is compared by its own digest, and so
 does not match.
 
 #### 7.1.1 Resolving a composition
@@ -1158,7 +1159,7 @@ What composition means for nodes and trust:
 | `amends` | This package changes part of the target; the rest of the target stays in force. | None beyond reporting the relation. |
 | `conflictsWith` | Both packages claim authority over overlapping subject matter, and the conflict is unresolved. | Nodes of both packages are `contested`, each naming the other. |
 | `crossReferences` | Informative link. | None. |
-| `isPartOf` | This package is part of the target: an episode of a series, a volume of a set. The name follows Dublin Core's `dcterms:isPartOf` and schema.org's `isPartOf`. The target's `members`, which pins this package by digest, is what composes it (§7.1, §7.3). | None beyond reporting the relation. |
+| `isPartOf` | This package is part of the target: an episode of a show, a volume of a book series, a lesson of a course. The name follows Dublin Core's `dcterms:isPartOf` and schema.org's `isPartOf`. The target's `members`, which pins this package by digest, is what composes it (§7.1, §7.3). | None beyond reporting the relation. |
 
 `version`, when present, limits the relation to that exact target version.
 Profiles MAY define further types. A Reader preserves every relation. It
@@ -1185,57 +1186,138 @@ unscoped packages. It is off by default, and it is safe only for a library of
 the host's own packages: with it on, any loaded package can remove another
 publisher's content from default retrieval.
 
-### 7.3 Series
+### 7.3 Composite packages
 
-A series that grows with each release, such as a podcast or a video series,
-is a package whose `members` are its releases:
+A **composite package** is a package whose `members` are packages (§7.1).
+It is the composing package of each of them. Its `structure.ttl` orders and
+groups them, and its members may be composite packages in turn. The same
+mechanism suits any content made of parts that are published, signed or
+handed out on their own:
 
-- **Each release is its own package**, with its own `id`, signed on its own.
-- **The series keeps one `id`.** For each release, append the new package to
-  `members`, pinned by digest, and to the end of the ordered collection that
-  `readingOrder` names, and publish the series as its next minor version.
-  Earlier versions of the series stay valid: they are the series as it was.
-- **Order.** Order the collection by release. List each member's package
-  `id` in it, declared as a `skos:Concept`, so that `upTo` places every
-  record of that member
-  ([Reader contract §9](moca-reader-contract.md#9-search)). Members' nodes
-  bound to concepts on the collection are placed by those concepts too.
-  Sign the series with a key whose `ids` cover its releases' ids: a series'
-  order limits its members only when its signers speak for them, or when
-  the host allows unsigned packages to.
-- **Topics** go in the series' `structure.ttl`: concepts that have the
-  members, or their concepts, as parts (`dcterms:hasPart`).
-- **Back-links.** A release MAY name the series with an `isPartOf` relation
-  (§7.2). Leave out `version`, so the relation stays true as the series
-  grows. It has no effect: the series' `members` are what compose it.
-- **Dates.** Each release states when it was published with `datePublished`
-  (§4.12); the series' own `datePublished` is the date of its first release.
-- **Long series.** A Reader resolves at most `maxMembers` members in one
-  read, at every depth (4,096 by default), and `maxMemberDepth` levels (8)
-  ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)). Group
-  a long series by season or by year: a package per season, each composing
-  its releases, and the series composing the seasons. A host can then read
-  one season on its own. The series' ordered collection still lists every
-  release, by its package `id`, so `upTo` places each one exactly; give each
-  season concept its releases as parts (`dcterms:hasPart`), so `scope` on a
-  season finds them.
-- **Free and members-only releases.** Anyone who has a package can read its
-  manifest, its members and its structure. A series that lists members-only
-  releases reveals their ids, versions, digests and the labels its structure
-  gives them. Publish two series: a public one that composes only the free
-  releases, and a members' series that composes the public series and adds
-  the members-only releases. The members' series is handed out like the
-  releases it lists (for example `distribution: encrypted-only`). Do not
-  name members-only releases anywhere in the public series: not in its
-  members, structure, relations or text. A members-only release MAY name the
-  public series with `isPartOf`; that reveals nothing about the release. Its
+| Composite | Composes | Which compose |
+| --- | --- | --- |
+| A podcast or a video show | its seasons | their episodes |
+| A book series | its volumes | — |
+| An e-learning course | its sections | their lessons |
+
+A series that grows with each release is one example. The rules below say
+"part" for a member package, at any level.
+
+- **Each part is its own package**, with its own `id`, signed on its own.
+- **The composite keeps one `id`.** To add a part, append it to `members`,
+  pinned by digest, and to the ordered collection that `readingOrder` names,
+  and publish the composite as its next minor version. Earlier versions stay
+  valid: they are the composite as it was.
+- **Order.** List each part's package `id` in the ordered collection,
+  declared as a `skos:Concept`, so that `upTo` places every record of that
+  part ([Reader contract §9](moca-reader-contract.md#9-search)). A part's
+  nodes bound to concepts on the collection are placed by those concepts
+  too. Sign the composite with a key whose `ids` cover its parts' ids: a
+  composite's order limits its parts only when its signers speak for them,
+  or when the host allows unsigned packages to.
+- **Topics** go in the composite's `structure.ttl`: concepts that have the
+  parts, or their concepts, as parts (`dcterms:hasPart`).
+- **Back-links.** A part MAY name the composite with an `isPartOf` relation
+  (§7.2). Leave out `version`, so the relation stays true as the composite
+  grows. It has no effect: the composite's `members` are what compose it.
+- **Dates.** Each part states when it was published with `datePublished`
+  (§4.12); a composite's own `datePublished` is the date of its first part.
+- **Large composites.** A Reader resolves at most `maxMembers` members in
+  one read, at every depth (4,096 by default), and `maxMemberDepth` levels
+  (8) ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)).
+  Group a large composite in levels: a package per season, section or year,
+  each composing its parts, and the composite composing those. A host can
+  then read one level on its own. The top level's ordered collection still
+  lists every part, by its package `id`, so `upTo` places each one exactly;
+  give each group's concept its parts as parts (`dcterms:hasPart`), so
+  `scope` on a group finds them.
+- **Free and members-only parts.** Anyone who has a package can read its
+  manifest, its members and its structure. A composite that lists
+  members-only parts reveals their ids, versions, digests and the labels its
+  structure gives them. Publish two composites: a public one that composes
+  only the free parts, and a members' composite that composes the public one
+  and adds the members-only parts. The members' composite is handed out like
+  the parts it lists (for example `distribution: encrypted-only`). Do not
+  name members-only parts anywhere in the public composite: not in its
+  members, structure, relations or text. A members-only part MAY name the
+  public composite with `isPartOf`; that reveals nothing about the part. Its
   `id` is visible to whoever holds it and to every host that composes it, so
   choose ids that say no more than the title may.
-- **Members' copies.** When members receive issued copies of releases, the
-  members' series pins the publisher's packages; each copy matches its pin
-  through its verified `issuedCopy.originalDigest` (§7.1), and the
+- **Members' copies.** When members receive issued copies of parts, the
+  members' composite pins the publisher's packages; each copy matches its
+  pin through its verified `issuedCopy.originalDigest` (§7.1), and the
   publisher's sidecar index binds to it the same way
   ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)).
+
+#### 7.3.1 Example: a podcast
+
+A show composes its seasons, and each season its episodes. The show's
+reading order lists every episode by its package `id`; its season concepts
+have their episodes as parts, so a host can search one season, or everything
+up to the episode a listener has reached.
+
+```json
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/tides",
+  "version": "1.2.0",
+  "title": "Tides",
+  "readingOrder": "https://example.com/tides#by-release",
+  "members": [
+    { "id": "https://example.com/tides/season-1", "version": "1.0.0", "digest": "sha256:…" },
+    { "id": "https://example.com/tides/season-2", "version": "1.1.0", "digest": "sha256:…" }
+  ]
+}
+```
+
+```turtle
+<https://example.com/tides#by-release> a skos:OrderedCollection ;
+  skos:memberList ( <https://example.com/tides/s1e1> <https://example.com/tides/s1e2>
+                    <https://example.com/tides/s2e1> ) .
+<https://example.com/tides/season-2> a skos:Concept ; skos:prefLabel "Season 2"@en ;
+  dcterms:hasPart <https://example.com/tides/s2e1> .
+<https://example.com/tides/s1e1> a skos:Concept ; skos:prefLabel "Episode 1"@en .
+# … and each other season and episode id, declared the same way.
+```
+
+Each new episode is a new package; its season and the show each publish
+their next minor version.
+
+#### 7.3.2 Example: a book series
+
+A book series composes its volumes, each a package with its own chapters in
+its own `structure.ttl`. The series' reading order is the order the books are
+meant to be read in, which need not be the order they were published in; each
+volume's `datePublished` keeps the publication date. A volume MAY name the
+series with `isPartOf`.
+
+#### 7.3.3 Example: a course
+
+A course composes its sections, and each section its lessons. The course's
+reading order lists the lessons by their package `id`, so a learner's search
+can stop at the lesson they have reached (`upTo`). Course-wide topics, such
+as "Statistics" or "Ethics", are concepts in the course's `structure.ttl`
+whose parts are the lessons, or nodes in them, that teach them.
+
+#### 7.3.4 One package or a composite?
+
+A course, a book or a short series can also be **one package**, its parts
+being nodes and its order an ordered collection in its own `structure.ttl`
+(§4.10, §5.6). Choose one package when the parts are written, reviewed and
+released together, by one publisher, and given to the same people. Choose a
+composite when the parts have lives of their own:
+
+- they are released or corrected on their own schedule, so a change to one
+  should not make a new version of the rest;
+- a part is reused, for example a lesson that several courses compose;
+- parts have different authors or signers, or reach different people (free
+  and members-only parts, or issued copies);
+- the whole is too large to read at once, and a host should be able to read
+  one part, or one level, on its own.
+
+A composite costs a little more to publish: each new or corrected part
+needs a new version of every composite above it. One package costs a new
+version of the whole for any change.
 
 ## 8. No agent material
 
