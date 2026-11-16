@@ -189,6 +189,22 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 
 ### Changed
 
+- Package spec §5.6: `skos:altLabel`, a concept's other names (synonyms,
+  abbreviations, short names, plurals), any number per language. Reader
+  contract §10: `concept()` gives `altLabels` by language. Reader interface
+  §5.4: the default `ontologyGuided` ingress matches a preferred or an
+  alternative label; Readers make no plurals or other forms of their own.
+- Reader contract §9.2, "Ingress narrowing": concepts or a scope an ingress
+  hook sets narrow the search even when they can't be pushed down (no
+  pushdown, or members bound by composition): the Reader applies them to the
+  resolved hits after the backend, before the egress hook and the gate, on
+  every round. §9.4: a store search may take a structure source (packages the
+  host has read, such as a show and its seasons) whose structure the hooks
+  see; it adds no records. The fixture `ranked-filter` gains alternative
+  labels; new cases `structure-alt-labels`,
+  `search-ontology-guided-alt-label`, `search-ingress-narrows-composition`,
+  `search-ingress-narrows-without-pushdown` and
+  `search-store-structure-source`; the runner option `options.structure`.
 - Reader contract §9.2: **filters come before the limit.** A search returns the
   best-scored records among all that match and pass the gate (`upTo`,
   `concepts`, `scope`, policy, audience, locale), however far down the

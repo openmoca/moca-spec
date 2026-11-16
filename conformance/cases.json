@@ -4335,6 +4335,7 @@
           "labels": {
             "en": "Notify customers"
           },
+          "altLabels": {},
           "deprecated": false,
           "replacedBy": [],
           "replaces": [],
@@ -7585,6 +7586,193 @@
       },
       "expect": {
         "count": 5,
+        "exclude": [
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"
+        ]
+      }
+    },
+    {
+      "id": "structure-alt-labels",
+      "kind": "structure",
+      "description": "Package spec §5.6, contract §10: concept() gives alternative labels by language, in the order read, with the repeated one dropped.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "members": [
+          "fixtures/ranked-filter"
+        ]
+      },
+      "op": "concept",
+      "iri": "https://example.com/conformance/ranked-filter#topic",
+      "expect": {
+        "codes": [],
+        "result": {
+          "iri": "https://example.com/conformance/ranked-filter#topic",
+          "label": "A topic",
+          "labels": {
+            "en": "A topic"
+          },
+          "altLabels": {
+            "en": [
+              "Lantern lore",
+              "Early steps"
+            ]
+          },
+          "deprecated": false,
+          "replacedBy": [],
+          "replaces": [],
+          "layer": "package"
+        }
+      }
+    },
+    {
+      "id": "search-ontology-guided-alt-label",
+      "kind": "search",
+      "description": "Reader interface §5.4: the default ingress matches an alternative label (\"Lantern lore\"), and contract §9.2 narrows the search to the concept although it binds by composition: the six step 1 notes, which rank below 240 others.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "members": [
+          "fixtures/ranked-filter"
+        ],
+        "allowUnsignedRelations": true,
+        "backend": "lexical",
+        "hooks": "ontology-guided"
+      },
+      "search": {
+        "query": "lantern lore",
+        "limit": 6
+      },
+      "expect": {
+        "count": 6,
+        "include": [
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#a.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#b.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#c.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#d.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#e.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#f.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"
+        ]
+      }
+    },
+    {
+      "id": "search-ingress-narrows-composition",
+      "kind": "search",
+      "description": "Contract §9.2, ingress narrowing: the default ingress matches the preferred label \"A topic\"; the concept binds by composition, so it can't be pushed down, and the Reader narrows the resolved hits itself, on every round.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "members": [
+          "fixtures/ranked-filter"
+        ],
+        "allowUnsignedRelations": true,
+        "backend": "lexical",
+        "hooks": "ontology-guided"
+      },
+      "search": {
+        "query": "a topic lantern",
+        "limit": 6
+      },
+      "expect": {
+        "count": 6,
+        "include": [
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#a.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#b.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#c.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#d.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#e.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#f.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"
+        ]
+      }
+    },
+    {
+      "id": "search-ingress-narrows-without-pushdown",
+      "kind": "search",
+      "description": "Contract §9.2, ingress narrowing: the test backend applies no filter, so the Reader narrows its hits to the matched concept.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "members": [
+          "fixtures/ranked-filter"
+        ],
+        "allowUnsignedRelations": true,
+        "backend": "all",
+        "hooks": "ontology-guided"
+      },
+      "search": {
+        "query": "lantern lore",
+        "limit": 6
+      },
+      "expect": {
+        "count": 6,
+        "include": [
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#a.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#b.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#c.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#d.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#e.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#f.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"
+        ]
+      }
+    },
+    {
+      "id": "search-store-structure-source",
+      "kind": "search",
+      "description": "Contract §9.4: a store search with a structure source (the course package) lets the default ingress match the concept and narrow the store's hits; the source adds no records.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "members": [
+          "fixtures/ranked-filter"
+        ],
+        "allowUnsignedRelations": true,
+        "backend": "store",
+        "allow": [
+          "fixtures/ranked-filter/course",
+          "fixtures/ranked-filter/step-1",
+          "fixtures/ranked-filter/step-2"
+        ],
+        "structure": [
+          "fixtures/ranked-filter/course"
+        ],
+        "hooks": "ontology-guided"
+      },
+      "search": {
+        "query": "lantern lore",
+        "limit": 6
+      },
+      "expect": {
+        "count": 6,
+        "include": [
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#a.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#b.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#c.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#d.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#e.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#f.md"
+        ],
         "exclude": [
           "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
           "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"

@@ -130,6 +130,11 @@ Every call follows
 the filters come before the limit, so a search returns the best `limit`
 records that pass them, however far down the unfiltered ranking they are.
 
+For a store backend, `source` may also carry `structure`: a library of
+packages the host has read (for a show, its show and season packages), the
+structure source of [Reader contract §9.4](moca-reader-contract.md#94-store-backends).
+It adds no records.
+
 `Search(source, options)` also takes `maxCandidates` (optional, a host
 setting): the bound in contract §9.2, the most candidates one `search` call
 examines. Unset by default. When it stops a call before `limit` records pass
@@ -185,14 +190,20 @@ Ontology-guided retrieval is a strategy, not a fact, so it is pluggable
   tagged `retrieval: { via, from }`.
 
 `ctx` holds the request, the library, its structure operations, the audience
-set and the clock, all read-only. The gate runs after both hooks, so no hook
+set and the clock, all read-only. In a store search, the structure operations
+are those of the search's structure source, if the host gave one; otherwise
+there are none. The gate runs after both hooks, so no hook
 can return what the retrieval policy excludes. Each Reader ships a default
 strategy, `ontologyGuided`, which the conformance corpus tests, and which
 behaves the same in every Reader:
 
-- **ingress:** every declared concept whose preferred label's words (letters
-  and digits, lower-cased) all occur among the query's words is matched; the
-  search is then narrowed to those concepts and their descendants;
+- **ingress:** every declared concept with a preferred or alternative label
+  whose words (letters and digits, lower-cased) all occur among the query's
+  words is matched; the search is then narrowed to those concepts and their
+  descendants ([Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate),
+  "Ingress narrowing"). A Reader matches the labels as written: it never makes
+  plurals or other forms of its own; a producer that wants them writes them as
+  `skos:altLabel`;
 - **egress:** after each candidate, for each concept it is bound to, the nodes
   bound to every concept that concept transitively requires are added, in
   dependency order, each once, in the request's locale and tagged

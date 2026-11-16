@@ -149,7 +149,16 @@ export async function actualFor(root, c) {
         await store.ingest(library);
       }
       const allowed = library.packages.filter(({ result }) => (o.allow ?? []).some((t) => join(root, t) === result.source?.location)).map(({ result }) => packageState(result));
-      const search = new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true });
+      // Contract §9.4: the structure source, packages read into a small library whose structure the hooks see.
+      let structure;
+      if (o.structure) {
+        structure = new Library({ clock: () => new Date(o.now), overlays });
+        for (const t of o.structure) {
+          const r = await readPackage(join(root, t), readOptions);
+          if (r.valid) structure.add(r);
+        }
+      }
+      const search = new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true, structure }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks });
       const records = await search.search(s.query, searchOptions);
       codes.push(...search.diagnostics.map((d) => d.code));
       return { codes, records };

@@ -10,4 +10,5 @@
 
 <https://example.com/conformance/ranked-filter#topic> a skos:Concept ;
   skos:prefLabel "A topic"@en ;
+  skos:altLabel "Lantern lore"@en, "Early steps"@en, "Lantern lore"@en ;
   dcterms:hasPart <https://example.com/conformance/ranked-filter-step-1> .

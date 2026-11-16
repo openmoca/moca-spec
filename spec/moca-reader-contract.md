@@ -569,8 +569,9 @@ Each search runs these steps, in order
    4. when the caller named a locale, keep only the representation §5 of the
       package spec selects for it;
    5. when the caller named concepts or a scope, keep only records bound to
-      them. Concepts and scope set by an ingress hook narrow the backend's
-      search but never bind the gate: the gate follows the caller;
+      them. Concepts and scope set by an ingress hook narrow the search
+      ("Ingress narrowing", below) but never bind the gate: the gate follows
+      the caller;
    6. when the caller named `upTo`, keep only records that pass it (§9). An
       ingress hook can never set, change or remove `upTo`;
    7. keep one record per node representation and span: two candidates with
@@ -597,6 +598,17 @@ gate or the backend has no more. Filters remove records; they never change a
 record's score, which is the backend's score for the query over all the loaded
 packages. When an egress hook is set, it runs again on the whole candidate list
 each time the Reader fetches more.
+
+**Ingress narrowing.** When an ingress hook sets concepts or a scope, the
+search returns only records bound to them (by the node's own concepts or by
+composition, [package spec §5.6](moca-package-spec.md#56-structure)), as well
+as passing the gate. A Reader passes them to a backend with `filterPushdown`
+when it can (§9.5). When it can't (the backend has no pushdown, or a loaded
+package binds members by composition) it applies them itself to the
+resolved hits: after the backend, before the egress hook and the gate, on every
+round of asking again, within any bound the host set. Records an egress hook
+adds are not narrowed by them. "Filters come before the limit" holds for them
+too: the search returns the best records that pass both.
 
 A host MAY bound the work one search does, for example the number of
 candidates it examines. When a bound stops a search before `limit` records
@@ -674,6 +686,15 @@ search its store, and a package superseded, or a key removed from the trust
 root, after ingest is reflected at once. Records left behind by an older
 version of a package are never returned, because its state is not supplied.
 
+**Structure in a store search.** A package state carries composition, not the
+concept graph or its labels. A host MAY give a store search a **structure
+source**: packages it has read itself (for a show, its show and season
+packages), whose merged structure the hooks see (`ctx.structure`) and through
+which `scope` reaches descendants. A structure source adds no records and is
+not loaded for the gate: records still come only from the packages whose
+states the host supplied. Without one, hooks in a store search see no
+structure.
+
 The store itself is trusted: the Reader cannot check a stored record's text or
 audience against the package without loading it. A host whose store others can
 write to SHOULD NOT use it as a store backend: the Reader cannot protect it.
@@ -697,7 +718,8 @@ Whether or not a backend applies the filters, the result is the same (§9.2,
 A record bound to a concept by composition
 ([package spec §5.6](moca-package-spec.md#56-structure)) does not carry that
 concept itself, so when any loaded package binds members by composition, the
-Reader passes no `concepts` filter and the gate applies it.
+Reader passes no `concepts` filter and applies the concepts itself (§9.2,
+"Ingress narrowing") and in the gate.
 `upTo` adds no filter, because records off the reading order and from other
 packages still pass it; the gate applies it.
 
@@ -742,7 +764,7 @@ Terms and meanings are in
 
 | Operation | Returns |
 | --- | --- |
-| `concept(iri)` | The concept's preferred label (no language tag, then `en`, then the first language tag in order, §2 of the package spec), labels, definition, `deprecated`, what it replaces and what replaces it, and its layer; or nothing when no layer declares it. |
+| `concept(iri)` | The concept's preferred label (no language tag, then `en`, then the first language tag in order, §2 of the package spec), labels, alternative labels (`altLabels`: by language tag, each a list in the order read, with duplicates dropped; empty when there are none), definition, `deprecated`, what it replaces and what replaces it, and its layer; or nothing when no layer declares it. |
 | `requires(iri, { transitive })` | The concepts `iri` requires. Direct: ordered by IRI. Transitive: every concept reachable through `requires`, each after the concepts it requires (depth first, ties by IRI). |
 | `requiredBy(iri)` | The concepts that require `iri`, ordered by IRI. |
 | `parts(iri)` | The direct parts of `iri`, ordered by IRI. |

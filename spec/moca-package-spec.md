@@ -750,7 +750,7 @@ understand exactly these terms, and ignore any others:
 
 | Idea | Terms | Meaning |
 | --- | --- | --- |
-| Concept | `skos:Concept`, `skos:prefLabel`, `skos:definition` | A thing the knowledge is about, its label and its definition. |
+| Concept | `skos:Concept`, `skos:prefLabel`, `skos:altLabel`, `skos:definition` | A thing the knowledge is about, its label, its other names (synonyms, abbreviations, short names, plurals) and its definition. A concept has at most one `skos:prefLabel` per language and any number of `skos:altLabel`s. |
 | Hierarchy | `skos:broader`, `skos:narrower` | A is a kind or subtopic of B. |
 | Association | `skos:related` | A and B are related; symmetric. |
 | Parts | `dcterms:hasPart`, `dcterms:isPartOf` | B is part of A: a chapter of a handbook, a section of an act, a module of a course, a component of an assembly. |
