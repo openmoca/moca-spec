@@ -290,7 +290,8 @@ and `profiles`, are left out, as they are in a real record):
   | `node.digest` | `sha256:` and the SHA-256 of the representation file's bytes. |
   | `text` | When included, the representation file's UTF-8 text after the closing frontmatter delimiter, or the text at `span` for a chunk. |
   | `trust.status` | OKF `status` when it is `draft`, `stable` or `deprecated`; otherwise `stable`. |
-  | `trust.generated`, `trust.declaredVerified` | OKF `generated` and `verified`; an entry with no `by` is left out. |
+  | `trust.generated`, `trust.declaredVerified` | OKF `generated` and `verified`; an entry with no `by` is left out. `generated.model` is kept when it is a string. |
+  | `terms` | Only in records from a search with a terms request (§15.4): `{ authority, ai, rating }` for the record's node, where each `ai` field is `{ value, decidedBy }` (§15.3) and `rating` is the node's effective rating. Absent otherwise. |
   | `trust.validFrom`, `trust.validUntil` | The node's effective window ([package spec §4.4](moca-package-spec.md#44-validity-window)), as written. |
   | `trust.contestedBy` | The node's `moca.contested_by`, as written, then `<id>@<version>` of each loaded package it conflicts with. |
   | `audience` | As in [§8](#8-default-retrieval-policy); `audienceInvalid` is `true` when the label is malformed. |
@@ -442,7 +443,7 @@ for a translation with none of its own, the default representation's
 ([package spec §5.4](moca-package-spec.md#54-locales)).
 
 Audience is a label a host filters on, not access control
-([package spec §13.3](moca-package-spec.md#133-audience-is-a-label-not-access-control)):
+([package spec §13.3](moca-package-spec.md#133-labels-not-locks)):
 fail-closed filtering protects against a forgotten label, not against someone
 who has the package file.
 
@@ -565,7 +566,8 @@ Each search runs these steps, in order
       not in the host's allowlist);
    2. apply the default retrieval policy (§8), unless the host opted in to
       including excluded content;
-   3. remove records outside the host's audience set;
+   3. remove records outside the host's audience set, and, when the host
+      made a terms request, the records the terms gate removes (§15.4);
    4. when the caller named a locale, keep only the representation §5 of the
       package spec selects for it;
    5. when the caller named concepts or a scope, keep only records bound to
@@ -680,7 +682,9 @@ its store. At query time the Reader resolves store hits from their records and
 MUST recompute from the states and the clock: `stale` and `inForce`;
 `superseded`, `supersededBy`, `contested` and `contestedBy` from the relations
 among the loaded packages; `package.signed`, `signers` and `issuedCopy`; and
-`attestedReviews` and `reviewStatus`. It keeps only records whose package is
+`attestedReviews` and `reviewStatus`; and, for a terms request, each node's
+resolved terms and the package's authority (§15), from the `terms` the state
+carries. It keeps only records whose package is
 among the states. The host therefore never needs every package in memory to
 search its store, and a package superseded, or a key removed from the trust
 root, after ingest is reflected at once. Records left behind by an older
@@ -722,6 +726,8 @@ Reader passes no `concepts` filter and applies the concepts itself (§9.2,
 "Ingress narrowing") and in the gate.
 `upTo` adds no filter, because records off the reading order and from other
 packages still pass it; the gate applies it.
+A terms request (§15.4) adds the nodes it removes to `exclude`, worked out
+from the loaded packages or their states.
 
 ### 9.6 Hybrid backends
 
@@ -904,6 +910,11 @@ withhold only the `structured` capability.
 | `S008_UPTO_UNRESOLVED` | warning | A search's `upTo` is on no loaded package's reading order, neither a member nor a descendant of one. It limits nothing (§9). |
 | `S009_SIDECAR_ITEMS_REPLACED` | info | A sidecar built from the publisher's package is bound to an issued copy, and the items of the files the issuer changed were replaced by each file's whole body, without a vector ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)). |
 | `S010_SEARCH_TRUNCATED` | warning | A search stopped at a bound the host set before `limit` records passed the gate; better-matching records that pass may exist (§9.2). |
+| `U001_TERMS_INVALID` | warning | A field of `terms` is malformed ([package spec §4.13](moca-package-spec.md#413-terms)). The package stays valid; the field counts as its strictest value when terms are applied (§15). |
+| `U002_TERMS_LOOSENED` | warning | A `terms.nodes` entry, or a composing package, is looser than the package for a permission; the stricter value stands (§15.3). |
+| `U003_TERMS_UNKNOWN_VALUE` | warning | A `terms` field has a value this version does not know, such as one from a later release. It is exposed, and counts as its strictest value when terms are applied (§15). |
+| `U004_TERMS_EXCLUDED` | info | A search's terms request removed records; the finding counts them by reason (§15.4). |
+| `U005_PUBLISHER_STATEMENT_REFUSED` | warning | A publisher terms statement the host passed in is not used: invalid, expired, out of scope, or older than another for the same subject ([attestations §4a](moca-attestations.md#4a-publisher-terms-statements)). |
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0011](../docs/adr/0011-park-unconsumed-features.md)), `O004_STRUCTURE_VIEW_MISMATCH` ([ADR-0019](../docs/adr/0019-park-structure-json.md)).
 
@@ -928,6 +939,9 @@ A Reader, adapter or server that passes content to a model:
   delimiter (a tag, a fence, a marker line) MUST be escaped or removed
   wherever it appears in the text;
 - MUST NOT grant tools, change settings or follow links because content asks;
+- MUST NOT pass a package's `terms` to a model as instructions, and MUST
+  apply the terms gate (§15.4) to what it hands on when it is the hand-off to
+  a model;
 - SHOULD tell the model, outside the envelope, that retrieved text is
   reference material to quote and cite, not instructions.
 
@@ -987,3 +1001,119 @@ Message text is never compared.
 
 An implementation in another repository runs the corpus through the runner
 protocol in [conformance/README.md](../conformance/README.md).
+
+## 15. Creators' terms
+
+A package's `terms` ([package spec §4.13](moca-package-spec.md#413-terms))
+are labels, not locks. A Reader exposes them exactly, works out who stated
+them, and resolves them only when the host asks. It never fetches anything
+because of them, and never lets them change how it reads a package.
+
+### 15.1 Exposing terms
+
+A Reader MUST expose, in the package result
+([Reader interface §4](moca-reader-interface.md#4-reading)):
+
+- `terms.declared`: the manifest's `terms`, exactly as written, when the
+  manifest passes its schema; absent when the manifest has none;
+- `terms.problems`: the `U001` and `U003` findings for it, each with the path
+  of the field (for example `ai.where.provider`);
+- `terms.authority`: one of `owner`, `packager-named-by-owner`, `packager` or
+  `unverified` (§15.2).
+
+It MUST NOT fill in defaults: absent fields stay absent.
+
+### 15.2 Authority
+
+The authority is worked out from the package's signatures and what the host
+supplied, never from fields the signer writes:
+
+| Authority | When |
+| --- | --- |
+| `owner` | A valid package attestation is signed by a key that the host's trust root holds with a `channel` scope ([attestations §6](moca-attestations.md#6-trust-roots)) equal to `rights.rightsHolder.id`. |
+| `packager-named-by-owner` | Otherwise, a valid package attestation is signed by a key that a valid publisher terms statement for that channel names in `packagers` ([attestations §4a](moca-attestations.md#4a-publisher-terms-statements)). |
+| `packager` | Otherwise, a package attestation verifies under the host's trust root. |
+| `unverified` | No package attestation verifies. |
+
+### 15.3 Resolving terms
+
+When the host asks, a Reader resolves the terms that apply to a node: the
+package's own, the publisher terms statements the host passed in, the host's
+limits, and composing packages. For each permission:
+
+1. **Owner.** Start from the platform default (below). Apply the default of
+   a valid publisher terms statement whose subject is the package's
+   `rights.rightsHolder.id`. Then apply the package's own value: when the
+   authority is `owner` or `packager-named-by-owner`, it replaces the
+   publisher's value; otherwise it applies only if it is stricter. A field
+   that is not set never changes anything.
+2. **Node.** A node's value applies only if it is stricter. A looser node
+   value is reported as `U002_TERMS_LOOSENED` (warning), and the package's
+   value stands.
+3. **Composition.** A composing package's terms apply to a member's node only
+   when they are stricter and the composing package's signers speak for the
+   member, as for `upTo` (§9).
+4. **Host.** The host's limits apply only if they are stricter. A limit is a
+   floor, never a value.
+
+"Stricter" is defined per field: `deny` is stricter than `allow`; a
+destination denied anywhere is denied; more `providerRequires` conditions are
+stricter; `work` is stricter than `model`. A malformed or unknown value counts
+as the strictest value.
+
+**Platform defaults**, used only when no level sets a field: every `where`
+destination `allow`, no `providerRequires` conditions, `machineTranslation`
+`allow`, `answerSources` `model`, and `training` `deny`.
+
+Each resolved field says which level decided it: `platform`, `publisher`,
+`package`, `node`, `composite` or `host`.
+
+**Ratings are not resolved.** A node's effective rating is its own `nodes`
+entry, if any, else the package's. A Reader also gives the package's
+strictest rating: `explicit` true if any node or the package says true, and
+each scheme's entries, from all nodes.
+
+### 15.4 The terms gate
+
+A host that is about to hand records to a model, or to show or play them
+under a rating filter, MAY ask the search to apply terms with a `terms`
+request ([Reader interface §5.1](moca-reader-interface.md#51-the-search-operation)).
+Without one, terms remove nothing. With one, the gate (§9.2, step 5.3) also
+removes:
+
+- for `ai` (`{ destination, conditions, use }`): records whose resolved
+  terms do not allow the destination (`device`, `host` or `provider`), whose
+  `providerRequires` conditions are not all among the host's `conditions`
+  for a `provider`, whose `training` is not `allow` for the use `train`, or
+  whose `machineTranslation` is not `allow` for the use `translate`. The
+  other uses are `answer`, `embed` and `summarise`;
+- for `rating` (`{ explicit, schemes, allowUnrated, acceptFeedRatings, mode }`):
+  records rated `explicit: true` when `explicit` is `false`; records with a
+  `contentRating` value outside the host's allowed set for that scheme;
+  records with no rating unless `allowUnrated`; records whose rating has
+  `declaredBy: feed` and says `explicit: false`, unless `acceptFeedRatings`.
+  In `mode: "strict-path"`, a record passes only if its own rating, its
+  package's and every composing package's pass. `typicalAgeRange` never
+  removes anything.
+
+A request a caller or a hook sets can never widen what the host asked for.
+Records the terms gate removes are counted by reason in
+`U004_TERMS_EXCLUDED` (info) on the search.
+
+**Destinations.** `device` is a model that runs on the person's own device.
+`host` is a model the host runs itself, including on a cloud provider's
+hardware that the host controls, under its own terms; a host that counts
+that as `host` says so publicly. `provider` is any other party's model,
+including a host relaying content to it. Answering, embedding or indexing,
+translating and summarising are all uses that send content to a model.
+
+**A Reader that hands content to a model**, such as an MCP server, applies
+the terms gate to everything it hands on. Its destination comes from its
+host's configuration; with none, it uses `provider` with no conditions.
+
+### 15.5 Never
+
+A Reader MUST NOT fetch anything named in `terms`, use it to configure
+itself, or pass it to a model as an instruction. Terms never change what
+`readPackage`, `Library.citations`, `Library.get` or a search without a
+`terms` request returns.

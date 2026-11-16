@@ -198,6 +198,19 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   chose, and content with complete structure; for a concept guessed from a
   question's words, a host can add its labels to the query instead. The
   default strategy is unchanged.
+- **Draft, Proposed until the maintainer's review (ADR-0036, ADR-0037).**
+  The creator's terms: package spec §4.13 `terms` (`ai`, `rating`,
+  `rights`, node values in the manifest), §4.3 (a terms change is at least
+  minor), §13.3 widened to "Labels, not locks", §13.5, §13.6 and a new §13.7.
+  Reader contract §15 (exposing, authority, resolution, the terms gate),
+  §9.2 step 5.3, §9.4, §9.5, §12, and the codes `U001`–`U005`. Reader
+  interface §3, §4 and §5.1. Attestations §4a, publisher terms statements,
+  and §6, channel-scoped trust-root entries and advice on discovering keys.
+  Encrypted packages §3: the outline may carry `terms`. New schemas
+  `terms.schema.json` and `publisher-terms-predicate.schema.json`; `terms` in
+  the manifest, citation record and envelope schemas; `generated.model` in
+  the node and citation record schemas; `channel` in the trust-root schema.
+  Corpus cases follow.
 - Reader contract §9.2, "Ingress narrowing": concepts or a scope an ingress
   hook sets narrow the search even when they can't be pushed down (no
   pushdown, or members bound by composition): the Reader applies them to the

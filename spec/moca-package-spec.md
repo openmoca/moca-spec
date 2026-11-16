@@ -176,6 +176,7 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `apps` | No | Where the publisher suggests the package is opened, beyond conversation: an ordered list of specific apps and app types, the first preferred (§4.9). Advice only (§13.2). |
 | `readingOrder` | No | The IRI of one ordered collection in the package's own `structure.ttl`: the order in which the package is meant to be read (§4.10). |
 | `issuedCopies` | No | The issuers the publisher allows to make issued copies, and the paths they may mark (§4.11). Without it, no issued copy of the package is valid. |
+| `terms` | No | The creator's terms: AI use, rating and rights, for the package and for some of its nodes (§4.13). Labels, not locks (§13.3). |
 | `validFrom`, `validUntil` | No | When the package's content is in force (§4.4). |
 | `members` | No | Packages this package is composed of, pinned by digest (§7.1). |
 | `relations` | No | Typed relations to other packages (§7.2). |
@@ -241,6 +242,9 @@ Metadata-only changes (licence, description, `tags`, `images`,
 `translations`) are patch changes. The
 digest changes with any byte change; the version tells people how much the
 meaning changed.
+
+A change to `terms` (§4.13) is at least a minor change: it changes what a
+host may do with the work.
 
 ### 4.4 Validity window
 
@@ -560,6 +564,125 @@ Rules:
 - The package result carries `datePublished`, and citation records carry
   `package.datePublished` and `node.datePublished`, when present
   ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
+
+### 4.13 Terms
+
+`terms` is the creator's terms for the work, in one place: what AI use is
+acceptable (`ai`), how suitable the work is (`rating`), and who holds the
+rights and who may repackage it (`rights`)
+([ADR-0036](../docs/adr/0036-creators-terms-travel-with-the-work.md)). It is
+covered by the digest, so it is the signer's statement and changing it needs
+a new version.
+
+```json
+"terms": {
+  "ai": {
+    "where": { "device": "allow", "host": "allow", "provider": "deny" },
+    "providerRequires": ["no-training", "no-retention"],
+    "training": "deny",
+    "answerSources": "work",
+    "machineTranslation": "deny"
+  },
+  "rating": { "explicit": false, "typicalAgeRange": "12-", "declaredBy": "signer" },
+  "rights": {
+    "rightsHolder": { "id": "https://podcast.example.org", "name": "Example Podcast" },
+    "basis": "license",
+    "contact": "mailto:rights@example.org",
+    "repackage": { "allowed": "deny" }
+  },
+  "nodes": [
+    { "paths": ["content/episodes/12/"], "rating": { "explicit": true, "declaredBy": "feed" } }
+  ]
+}
+```
+
+**Two kinds of value.** *Permissions* (every field of `ai`, and
+`rights.repackage.allowed`) have three values: absent (not set), `allow` and
+`deny`. *Labels* (`rating`, and the rest of `rights`) describe the work.
+
+**Fields.** Every object is closed: a member not listed here is malformed.
+
+| Field | Type | Limits | Absent |
+| --- | --- | --- | --- |
+| `ai.where` | Object with any of `device`, `host`, `provider`; each `allow` or `deny`. Where answers and other AI use may run: on the person's own device, in the host's own service, or with a third party's model (Reader contract §15.4). | 3 members | Each destination not set |
+| `ai.providerRequires` | Array of `no-training`, `no-retention`, unique. Conditions a provider must meet, as the host states them. | 2 items | No condition |
+| `ai.training` | `allow` or `deny`: whether the work may be used to train a model. | — | Not set |
+| `ai.answerSources` | `work` (every sentence backed by the work) or `model` (the model's general knowledge allowed, and marked). | — | Not set |
+| `ai.machineTranslation` | `allow` or `deny`: whether the work may be translated by a machine. The package's own representations (§5.4) are not machine translation. | — | Not set |
+| `rating.explicit` | Boolean. | — | No statement; never `false` |
+| `rating.contentRating` | Array of `{ scheme, value }`. `scheme` matches `^[a-z0-9][a-z0-9-]{0,31}$`, from the list of schemes on openmoca.org (an open list); `value` is 1 to 32 characters with no control characters. One entry per scheme. | 8 entries | No statement |
+| `rating.typicalAgeRange` | String matching `^[0-9]{1,2}-([0-9]{1,2})?$`, the lower bound not above the upper. As schema.org `typicalAgeRange`: who the work is meant for, not whether it suits them. | — | No statement |
+| `rating.declaredBy` | `signer` (the signer states it) or `feed` (taken from the source's metadata, such as `itunes:explicit`). | — | `signer` |
+| `rights.rightsHolder` | `{ id, name? }`. `id` is an `https:` origin with no path, or the `https:` URL of a feed: the channel where the rights holder publishes. `name` is 1 to 200 characters, for display. | `id` 2048 characters | No rights holder |
+| `rights.basis` | `own` (the rights holder made the package), `consent` (made with the rights holder's consent) or `license` (made under the open licence in `license`, §4.1). | — | Not stated |
+| `rights.contact` | A `mailto:` or `https:` URI, for people to report a problem or claim the work. Never fetched. | 2048 characters | No contact |
+| `rights.repackage` | `{ allowed, packagers? }`. `allowed` is `allow` or `deny`. `packagers` names who may package the work anyway, in the form of `issuedCopies.issuers` (§4.11). | 32 packagers | Not set |
+| `nodes` | Array of `{ paths, ai?, rating? }`: values for some nodes (below). | 256 entries; 64 paths each | No node values |
+
+Enums are closed except rating schemes: a new value needs a new minor release.
+A `rights.basis` of `license` needs the manifest's `license`.
+
+**Node values.** A node's terms are found in one place, the manifest. Each
+`nodes` entry names node paths, or directory prefixes ending in `/`, under
+`content/` (NFC, no segment starting with `.`), and gives `ai` or `rating`
+values for them. For a node, the entry with the longest matching path
+applies; a node with no entry has the package's values. Every representation
+of a node (§5.4) has the node's values. Frontmatter never carries terms: a
+`moca.*` key that looks like one has no effect. A node's `ai` values may only
+make a permission stricter (Reader contract §15.3). A node's `rating` is its
+own, and may describe the node as less strict than the package: a clean
+episode in an explicit show.
+
+**Malformed terms are a warning, never `M002`.** The manifest schema checks
+only that `terms` is an object. The Reader checks the inside against
+[`terms.schema.json`](../schemas/v1/terms.schema.json) and reports each
+problem as `U001_TERMS_INVALID` (warning), or `U003_TERMS_UNKNOWN_VALUE`
+(warning) for a value this version does not know, such as one from a later
+release. The package stays valid. The Reader exposes the block as written,
+with its problems, and a malformed or unknown permission counts as the
+strictest value wherever a host asks the Reader to apply terms
+(Reader contract §15).
+
+**Who said it.** `terms` is what the signer wrote. A signature proves who
+signed, not who owns the work: `rightsHolder`, `basis` and
+`declaredBy: signer` are the signer's claims. The Reader works out an
+*authority* for the terms from signatures and the keys the host discovered
+from the rights holder's own channel, never from these fields
+(Reader contract §15.2).
+
+**Not configuration, not instructions.** Naming a destination, a condition
+or a packager is a restriction, never configuration (§13.2): a host never
+chooses a destination because a package names it, and a Reader never
+contacts anything because of `terms`. Terms are read only from these fields
+and are never given to a model as instructions. Text in content that claims
+a permission has no effect.
+
+**Machine-made content.** Content a machine made, such as a transcript or a
+generated topic layer, is marked with OKF `generated` (§5.1). `generated`
+MAY carry `model`, the model's name and version as one string. A `sources`
+entry MAY carry `generated` too, for files with no frontmatter of their own,
+such as a WebVTT transcript. The absence of a mark proves nothing.
+
+**Other standards (informative).** A producer MAY publish the same terms where
+crawlers look, and MAY read them in, but only to make terms stricter. The
+mapping is partial: where a term cannot be expressed, map to the stricter one.
+When they disagree, the package is the source for a Reader and its host.
+
+| `terms` | IETF `draft-ietf-aipref-vocab-08` | RSL 1.0 | TDMRep |
+| --- | --- | --- | --- |
+| `training: deny` | `train-ai=n` | prohibits `ai-train` | `tdm-reservation: 1` |
+| `training: allow` | `train-ai=y` | permits `ai-train` | no statement |
+| any `where` destination `deny` | `ai-use=n` | prohibits `ai-input ai-index` | — |
+| every `where` destination `allow` | `ai-use=y` | permits `ai-input ai-index` | — |
+| `providerRequires`, `answerSources`, `machineTranslation` | not expressible | not expressible | — |
+
+Ratings: `explicit` corresponds to `itunes:explicit` (`true`, `yes` and
+`explicit` mean true; `false`, `no` and `clean` mean false; an absent tag is
+no statement) and to the inverse of schema.org `isFamilyFriendly`;
+`contentRating` to schema.org `contentRating`; `typicalAgeRange` to
+schema.org `typicalAgeRange` and to ONIX audience age ranges.
+`rights.repackage.allowed: deny` corresponds to Podcasting 2.0
+`podcast:locked`.
 
 ## 5. Content
 
@@ -1492,7 +1615,10 @@ its age stanzas and its outline are package data. A Reader passes stanzas it
 does not unwrap to the host's key provider, and neither the Reader nor the
 key provider contacts an address taken from them.
 
-### 13.3 Audience is a label, not access control
+### 13.3 Labels, not locks
+
+`moca.audience`, `distribution`, `apps` and `terms` are labels. A host can
+filter or advise on them; none of them protects anything.
 
 `moca.audience` lets a host filter content before retrieval. It does not
 protect anything: anyone with the package can read every file. Content that
@@ -1538,6 +1664,12 @@ date and no "latest". So:
 - **Requiring a signature.** A host that serves only signed content SHOULD
   read packages with `requireSignature`: a package with no valid package
   attestation is then invalid (`A009`).
+- **Terms in old versions.** An older version keeps the terms it was signed
+  with. When a creator tightens their terms, a frozen copy of an older,
+  looser version still carries the looser ones, unless a publisher terms
+  statement covers it
+  ([attestations §4a](moca-attestations.md#4a-publisher-terms-statements)).
+  Publishers who may tighten their terms SHOULD set `validUntil`.
 
 ### 13.6 Personal data
 
@@ -1568,6 +1700,32 @@ log. Content and sources may hold more.
   titles and descriptions, tags, `alt` text and images are package data like
   any other. A picture of a person is personal data. The rules above apply
   to them.
+- **Rights holders and contacts.** `terms.rights.rightsHolder.name` and
+  `terms.rights.contact` (§4.13) can name a person, and stay in every old
+  version. Publishers SHOULD use an organisation's name and a role address
+  where they can.
+- **Discovering keys can reveal what a person reads.** A host that looked up
+  a rights holder's keys each time a person opened a package would tell the
+  rights holder's server who reads what. Hosts look them up at ingest instead
+  ([attestations §6](moca-attestations.md#6-trust-roots)).
+
+### 13.7 Terms are labels, not locks
+
+`terms` (§4.13) states what the creator accepts. It does not enforce it:
+
+- A Reader exposes terms and, when the host asks, removes what they exclude
+  ([Reader contract §15](moca-reader-contract.md#15-creators-terms)). It
+  cannot see what a host does with content afterwards.
+- A host that has opened a package can ignore its terms. Hosts that honour
+  them can say so with a tested claim
+  ([ADR-0037](../docs/adr/0037-a-named-host-claim-for-creators-terms.md)).
+- Encryption limits which hosts can open a package. It cannot stop a host
+  that opened it from breaking the terms.
+- Changing terms is detectable only by a host that checks who signed them.
+  Stripping `terms` from a copy and signing it again leaves a package with
+  no terms and a weaker authority
+  ([Reader contract §15.2](moca-reader-contract.md#152-authority)).
+- The absence of terms, a rating or a machine-made mark proves nothing.
 
 ## 14. Versioning of this specification
 

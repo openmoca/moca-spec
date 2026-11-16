@@ -37,7 +37,7 @@ The enum is closed. A later value needs a new minor release.
 
 - No existing package changes meaning.
 - `distribution` is a label, like `audience`
-  ([package spec §13.3](../../spec/moca-package-spec.md#133-audience-is-a-label-not-access-control)).
+  ([package spec §13.3](../../spec/moca-package-spec.md#133-labels-not-locks)).
   It protects nothing. Removing it from a decrypted copy changes the digest,
   so the publisher's signature no longer verifies, but the copy stays
   readable unsigned.

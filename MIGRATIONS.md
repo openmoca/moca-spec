@@ -55,6 +55,7 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
 | Filters come before the limit: a search returns the best `limit` records that pass the gate, however far down the unfiltered ranking (contract §9.2). Scores no longer depend on pushed-down filters; hybrid ranks are taken before filters (§9.6) | `S010_SEARCH_TRUNCATED` (warning), only with a host bound | Readers: keep asking the backend, for more each time, until `limit` records pass or it has no more; score before filtering. Hosts: expect fuller results for `upTo`, `concepts` and `scope`; set `maxCandidates` only if you must bound the work, and treat `S010` as a short result. Store backends with pushdown: score over the loaded packages, then filter. |
 | `skos:altLabel` is read: `concept()` gains `altLabels`; the default ingress also matches alternative labels (package spec §5.6, Reader interface §5.4) | — | Readers: parse `skos:altLabel`; match it in the default ingress, as written. Producers: write other names, plurals and short forms as `skos:altLabel`. Corpus adapters: `concept` results carry `altLabels`. |
 | Ingress concepts narrow under composition and without pushdown; a store search may take a structure source (Reader contract §9.2, §9.4) | — | Readers: narrow resolved hits by the concepts an ingress hook set, before egress and the gate, each round. Hosts with store searches: pass the show and season packages as `structure` so hooks see topics. Corpus adapters: support `options.structure` and hooks on store cases. |
+| **Draft, Proposed (ADR-0036):** the manifest's `terms` block, the creator's terms for AI use, rating and rights (package spec §4.13). Readers expose it with its problems and an authority, resolve it when asked, and apply a terms gate when a search has a terms request (Reader contract §15). Publisher terms statements and channel-scoped trust-root entries (attestations §4a, §6). `generated.model` | `U001`–`U003`, `U005` (warning); `U004` (info) | Producers: write `terms` only with the signer's real knowledge; never state consent you do not hold. Readers: validate against `terms.schema.json` (warnings, never `M002`), expose exactly, implement §15. Hosts that hand content to models: send a terms request with the real destination and use. Store searches: rebuild package states, which carry `terms`. |
 | Citation records may carry new fields | — | Consumers ignore fields they do not know (Reader contract §7). |
 
 ### What 0.6 Readers do with 0.7 packages
@@ -67,6 +68,9 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
   `issuedCopies`, `datePublished`) are unknown keys (`M004`, info) and are ignored. `moca.media` and
   `moca.date_published` are ignored.
 - **A composite package's structure** that uses member ids as concepts reads as before; its bindings have no effect.
+- **`terms`** is an unknown key (`M004`, info): a 0.6 Reader never exposes it and has no terms gate, so a host that
+  honours creators' terms needs a 0.7 Reader. An envelope whose outline carries `terms` is `E005`. A trust root
+  with `channel` on an entry is refused (`additionalProperties` is false).
 - **A member that is an issued copy** does not match its pin (`R002`), and the publisher's sidecar is stale on it
   (`S003`).
 - **`mocaVersion` `0.7`** is newer than the Reader (`M009`, warning); the package is read on a best-effort basis.

@@ -202,6 +202,51 @@ Reviews and OKF's `verified` field answer different questions. `verified`
 is the author saying who checked; a review attestation is the checker saying
 so, verifiably. Readers keep them apart in citation records.
 
+## 4a. Publisher terms statements
+
+A rights holder can set default terms for all their work, and name the
+packagers they allow, without a new version of every package. They publish a
+**publisher terms statement**: a DSSE envelope (§5) over an in-toto Statement
+whose `predicateType` is `https://w3id.org/moca/attestations/publisher-terms/v1`:
+
+```json
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [{ "name": "https://podcast.example.org" }],
+  "predicateType": "https://w3id.org/moca/attestations/publisher-terms/v1",
+  "predicate": {
+    "sequence": 7,
+    "issued": "2026-11-16T09:00:00Z",
+    "expires": "2027-11-16T00:00:00Z",
+    "defaults": { "ai": { "where": { "provider": "deny" }, "training": "deny" } },
+    "packagers": [{ "publicKey": "-----BEGIN PUBLIC KEY-----\n…" }]
+  }
+}
+```
+
+- `subject` has one entry: the channel (a `rights.rightsHolder.id`,
+  [package spec §4.13](moca-package-spec.md#413-terms)). The statement
+  covers only packages whose `rights.rightsHolder.id` equals it.
+- `sequence` is a positive integer that grows with each new statement.
+  `issued` and `expires` are date-times. `defaults` has the shape of
+  `terms.ai` and `terms.rights.repackage`; `packagers` the shape of
+  `issuedCopies.issuers`. At most 64 KiB and 32 packagers.
+- **Valid** when it is signed by a key the host's trust root holds with a
+  `channel` scope equal to the subject (§6), the clock is before `expires`,
+  and the predicate is valid. A Reader verifies statements the host passes
+  in; it never fetches one. A statement MAY also travel in a package's
+  `attestations/` directory, outside the digest, and is then verified the
+  same way.
+- **Latest wins, never an older one.** Of the valid statements for a subject,
+  a Reader uses the one with the highest `sequence`, and reports any other
+  it was given, and any expired one, as `U005_PUBLISHER_STATEMENT_REFUSED`
+  (warning). With no valid statement, the package's own terms apply.
+- A statement only sets defaults and names packagers. It never changes a
+  package's bytes or digest, and a package with the owner's authority can
+  still set its own values ([Reader contract §15.3](moca-reader-contract.md#153-resolving-terms)).
+  Producers SHOULD copy the defaults into each package they build, so a
+  package carries the owner's terms on its own.
+
 ## 5. Signing modes
 
 | Mode | Trust rests on | Use when |
@@ -279,6 +324,37 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
   package it signed supersedes or contests another
   ([package spec §7.2](moca-package-spec.md#72-relations)). Without `ids`, a
   package it signs can make no relation take effect.
+- **`channel`** is OPTIONAL: `{ kind, value, fetchedAt }`, where `kind` is
+  `feed` or `web`, `value` is the feed's `https:` URL or the site's `https:`
+  origin, and `fetchedAt` is when the host found the key there. It says the
+  host discovered the key from the rights holder's own channel, and it is
+  what lets a package signed with that key have the authority `owner` for
+  `terms` ([Reader contract §15.2](moca-reader-contract.md#152-authority)),
+  and only for packages whose `rights.rightsHolder.id` equals `value`. It
+  grants nothing else: a `channel` key has the `package` role like any other
+  key, and no `ids` unless the host adds them. How a host discovers keys is
+  advice (below); a Reader never fetches one.
+
+**Discovering a rights holder's keys (advice for hosts).** A rights holder
+publishes keys where they already show they control the channel:
+
+- in their podcast feed, as a Podcasting 2.0 `podcast:txt` element with
+  `purpose="verify"`, whose value is `moca-key ed25519:<base64 of the
+  SubjectPublicKeyInfo>` or `moca-sigstore <issuer> <subject>`;
+- on their website, in `https://<origin>/.well-known/moca-keys.json`:
+  `{ "keys": [ { "publicKey": "…" } ], "publisherTerms": "<URL>" }`, at most
+  16 keys.
+
+A host SHOULD fetch these only over `https`, at ingest or in a catalogue
+batch and never from a person's device each time a package opens; refuse
+private, loopback, link-local and metadata addresses after resolving the
+name; follow no cross-origin redirects; read at most 64 KiB within 5 seconds;
+and keep the keys it found, signed statements included, with the package so
+the check works offline. A host that finds different keys on two channels
+for the same rights holder SHOULD show that, not choose. A new key SHOULD be
+signed by the one before it; a host SHOULD show an unexplained change of key.
+A host MAY decline discovery; then no package has the authority `owner`. A
+discovered key proves control of a channel, not ownership of a work.
 - A key is not trusted from the instant the host's clock reaches `expires`
   (now ≥ `expires`, compared as in
   [package spec §4.4](moca-package-spec.md#44-validity-window)); a key whose

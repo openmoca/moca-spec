@@ -76,7 +76,7 @@ today.
 - `outline` is OPTIONAL. It may carry any of these inner manifest properties,
   copied as JSON values: `id`, `version`, `title`, `description`, `language`,
   `license`, `publisher`, `mocaVersion`, `distribution`, `translations`,
-  `tags`, `apps`. Any other property is `E005`.
+  `tags`, `apps`, `terms`. Any other property is `E005`.
 - A Producer includes only what the publisher chooses. The default, and the
   minimum that tools write, is `id`, `version` and `title`. A Producer MAY
   write no outline at all.
@@ -86,6 +86,10 @@ today.
   them by default.
 - `apps` is opt-in, so a catalogue can offer "Open with" before the envelope
   is opened. Tools never write it by default.
+- `terms` is opt-in, so a catalogue or a younger person's profile can filter
+  by the creator's terms before the key is released. Like the rest of the
+  outline it is unverified until the envelope is opened, and then compared
+  with the inner manifest (`E004`). Tools never write it by default.
 
 **The cover copy.** A Producer MAY leave a copy of the package's cover readable,
 so a catalogue can show a picture before the envelope is opened. It is
