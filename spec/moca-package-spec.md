@@ -478,6 +478,13 @@ Rules:
   concept, or has it as a descendant by `skos:narrower` or `dcterms:hasPart`
   in the package's own `structure.ttl`. A concept with no position is not on
   the reading order.
+
+  *Informative.* Because the first containing member wins, a member that
+  contains later steps hides them: an episode overview listed first, whose
+  parts are every segment, gives every segment the overview's position, so a
+  caller's `upTo` inside that episode limits nothing. List the steps
+  themselves, and keep an overview that contains them off the list (it can
+  still be a concept in the package).
 - **Describes, never enforces** (§5.6). `readingOrder` never removes anything
   from a result and never stops a person reading ahead. Only a caller's
   `upTo` narrows a search

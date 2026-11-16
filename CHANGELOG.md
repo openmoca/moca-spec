@@ -198,6 +198,9 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   chose, and content with complete structure; for a concept guessed from a
   question's words, a host can add its labels to the query instead. The
   default strategy is unchanged.
+- Package spec §4.10, informative: a member that contains later steps hides
+  them, so list the steps themselves and keep an overview that contains them
+  off the reading order.
 - **Draft, Proposed until the maintainer's review (ADR-0036, ADR-0037).**
   The creator's terms: package spec §4.13 `terms` (`ai`, `rating`,
   `rights`, node values in the manifest), §4.3 (a terms change is at least
