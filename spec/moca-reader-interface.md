@@ -209,6 +209,16 @@ behaves the same in every Reader:
   dependency order, each once, in the request's locale and tagged
   `retrieval: { via: "requires", from: <concept> }`.
 
+**Choosing a strategy (informative).** Narrowing to matched concepts suits a
+concept the person chose, for example a topic they picked from a list, and
+content whose structure is complete, such as a course or a handbook. A
+concept matched from the words of a question is a guess, and a concept layer
+can miss content that is about it: narrowing then hides the answer. A host
+can keep narrowing for concepts the person chose, show what the narrowing
+covers and let the person remove it, and for guessed concepts only add their
+labels to the query (`ingress` returning `query` without `concepts`). The
+default strategy's behaviour is unchanged.
+
 **Domain extensions.** A domain extension, such as a legal, procedures or
 course extension, is a set of hooks plus a vocabulary overlay. It is built on
 the standard Reader, never as a separate Reader, and lives in its own

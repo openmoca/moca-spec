@@ -194,6 +194,10 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   contract §10: `concept()` gives `altLabels` by language. Reader interface
   §5.4: the default `ontologyGuided` ingress matches a preferred or an
   alternative label; Readers make no plurals or other forms of their own.
+- Reader interface §5.4, informative: narrowing suits a concept the person
+  chose, and content with complete structure; for a concept guessed from a
+  question's words, a host can add its labels to the query instead. The
+  default strategy is unchanged.
 - Reader contract §9.2, "Ingress narrowing": concepts or a scope an ingress
   hook sets narrow the search even when they can't be pushed down (no
   pushdown, or members bound by composition): the Reader applies them to the
