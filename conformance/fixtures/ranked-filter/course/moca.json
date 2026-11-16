@@ -1,0 +1,20 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/ranked-filter",
+  "version": "1.0.0",
+  "title": "A path in two steps",
+  "language": "en",
+  "readingOrder": "https://example.com/conformance/ranked-filter#path",
+  "members": [
+    {
+      "id": "https://example.com/conformance/ranked-filter-step-1",
+      "version": "1.0.0",
+      "digest": "sha256:03e05a70cc9ec557228bb8aed39f2a853051598891c5082c17369c3d9e706f1f"
+    },
+    {
+      "id": "https://example.com/conformance/ranked-filter-step-2",
+      "version": "1.0.0",
+      "digest": "sha256:d2095bd8600d7fa15a1ab07fab9ac7db2c63836fde86dc11624080f069c5fdac"
+    }
+  ]
+}

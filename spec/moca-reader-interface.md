@@ -126,7 +126,14 @@ and `line`.
 | `Search.diagnostics` | Nothing. | The findings of the latest `search` call on this search, such as `S008_UPTO_UNRESOLVED`. Empty when it found none. |
 
 Every call follows
-[Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate).
+[Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate):
+the filters come before the limit, so a search returns the best `limit`
+records that pass them, however far down the unfiltered ranking they are.
+
+`Search(source, options)` also takes `maxCandidates` (optional, a host
+setting): the bound in contract §9.2, the most candidates one `search` call
+examines. Unset by default. When it stops a call before `limit` records pass
+the gate, `diagnostics` holds `S010_SEARCH_TRUNCATED`.
 `includeAll` is the host's opt-in from contract §8; a host that lets a caller
 set it has chosen to.
 

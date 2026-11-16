@@ -201,6 +201,7 @@ expected by at least one case or is listed below as untestable.
 | Manifest | Package spec §4 | `manifest-*`, `distribution-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
 | Images, translations, tags and apps | Package spec §4.6–4.9 | `catalogue-valid`, `image-*`, `translation-*`, `tags-*`, `apps-*` |
 | Reading order and `upTo` | Package spec §4.10, contract §9 | `reading-order-*`, `search-upto-*` |
+| Filters come before the limit | Contract §9.2 | `search-upto-below-top-200`, `search-concepts-below-top-200`, `search-scope-below-top-200`, `search-filtered-limit-full` |
 | Issued copies: consent, the two passes, records and libraries | Package spec §4.11, attestations §3a and §7.1, contract §7 | `issued-*`, `search-issued-copy-*` |
 | Versioning | Package spec §14 | `moca-version-*`, `digest-v1-package` |
 | Content and frontmatter | Package spec §5 | `frontmatter-*`, `type-missing`, `reserved-file-invalid`, `log-heading-in-fence`, `link-unresolved`, `resource-bad-escape`, `valid-minimal` |
@@ -233,6 +234,7 @@ feature or a model, so each implementation tests them itself:
 | Symbolic links and unreadable entries in a directory | Contract §3 | Git cannot store them portably; each Reader's own tests. |
 | Handing content to a model, and rendering it | Contract §12 | Needs a model or a client; the bindings' own tests (for example the .NET envelope test). |
 | A Reader never writes decrypted bytes to a file | Encrypted packages §5.4 | A fixture cannot show an absence. Each Reader reads an envelope with a temporary directory it cannot write to, in its own tests. |
+| A host's bound on a search; `S010_SEARCH_TRUNCATED` | Contract §9.2 | Whether a bound stops a search depends on how a Reader's backends check candidates, which conformance leaves open. Each reference Reader's own tests set `maxCandidates` with a backend that applies no filter. |
 | Ranking | Contract §9.6 | Informative ([ADR-0018](../docs/adr/0018-ranking-is-informative.md)); the reference Readers' parity tests. |
 
 ## Running it

@@ -7454,6 +7454,144 @@
       }
     },
     {
+      "id": "search-upto-below-top-200",
+      "kind": "search",
+      "description": "Contract §9.2, filters come before the limit: upTo at step 1 keeps the six step 1 notes, and all six are returned. Each of the 240 step 2 notes mentions the word three times and ranks above every step 1 note, so the best step 1 note is 241st overall: a Reader that applies the gate to a fixed number of top candidates finds none.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/ranked-filter"
+        ],
+        "allowUnsignedRelations": true
+      },
+      "search": {
+        "query": "lantern",
+        "upTo": "https://example.com/conformance/ranked-filter-step-1",
+        "limit": 6
+      },
+      "expect": {
+        "count": 6,
+        "include": [
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#a.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#b.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#c.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#d.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#e.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#f.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"
+        ]
+      }
+    },
+    {
+      "id": "search-concepts-below-top-200",
+      "kind": "search",
+      "description": "Contract §9.2: a concept bound by composition (the topic has step 1 as a part) cannot be pushed down, and the search still returns every record bound to it. Each of the 240 step 2 notes mentions the word three times and ranks above every step 1 note, so the best step 1 note is 241st overall: a Reader that applies the gate to a fixed number of top candidates finds none.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/ranked-filter"
+        ],
+        "allowUnsignedRelations": true
+      },
+      "search": {
+        "query": "lantern",
+        "concepts": [
+          "https://example.com/conformance/ranked-filter#topic"
+        ],
+        "limit": 6
+      },
+      "expect": {
+        "count": 6,
+        "include": [
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#a.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#b.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#c.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#d.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#e.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#f.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"
+        ]
+      }
+    },
+    {
+      "id": "search-scope-below-top-200",
+      "kind": "search",
+      "description": "Contract §9.2: scope on a concept bound by composition, as for concepts. Each of the 240 step 2 notes mentions the word three times and ranks above every step 1 note, so the best step 1 note is 241st overall: a Reader that applies the gate to a fixed number of top candidates finds none.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/ranked-filter"
+        ],
+        "allowUnsignedRelations": true
+      },
+      "search": {
+        "query": "lantern",
+        "scope": "https://example.com/conformance/ranked-filter#topic",
+        "limit": 6
+      },
+      "expect": {
+        "count": 6,
+        "include": [
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#a.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#b.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#c.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#d.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#e.md",
+          "https://example.com/conformance/ranked-filter-step-1@1.0.0#f.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"
+        ]
+      }
+    },
+    {
+      "id": "search-filtered-limit-full",
+      "kind": "search",
+      "description": "Contract §9.2: when at least limit records pass the gate, the search returns limit records. upTo at step 1, limit 5: five of the six step 1 notes, none from step 2. Each of the 240 step 2 notes mentions the word three times and ranks above every step 1 note, so the best step 1 note is 241st overall: a Reader that applies the gate to a fixed number of top candidates finds none.",
+      "packages": [
+        "fixtures/ranked-filter/course"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/ranked-filter"
+        ],
+        "allowUnsignedRelations": true
+      },
+      "search": {
+        "query": "lantern",
+        "upTo": "https://example.com/conformance/ranked-filter-step-1",
+        "limit": 5
+      },
+      "expect": {
+        "count": 5,
+        "exclude": [
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n001.md",
+          "https://example.com/conformance/ranked-filter-step-2@1.0.0#n240.md"
+        ]
+      }
+    },
+    {
       "id": "member-issued-copy",
       "description": "Package spec §7.1: a member pinned by the publisher's digest resolves to an issued copy whose verified original digest equals the pin.",
       "target": "fixtures/composite-issued/composite",

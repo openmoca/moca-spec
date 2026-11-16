@@ -189,6 +189,18 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 
 ### Changed
 
+- Reader contract §9.2: **filters come before the limit.** A search returns the
+  best-scored records among all that match and pass the gate (`upTo`,
+  `concepts`, `scope`, policy, audience, locale), however far down the
+  unfiltered ranking they are; a Reader no longer applies the gate to a fixed
+  number of top candidates. It pushes the filters down or asks the backend
+  again until `limit` records pass. Filters never change a score. A host may
+  bound the work (`maxCandidates`, Reader interface §5.1); a search the bound
+  stops reports the new warning `S010_SEARCH_TRUNCATED` (§11). §9.5: the
+  result is the same with or without pushdown; §9.6: hybrid ranks are taken
+  before any filter. New fixture `ranked-filter` and the cases
+  `search-upto-below-top-200`, `search-concepts-below-top-200`,
+  `search-scope-below-top-200` and `search-filtered-limit-full`.
 - Reader contract §11 and package spec §11 (`core`): the `E` family counts
   for validity.
 - Package spec §4.3: "metadata-only changes" now name the real properties

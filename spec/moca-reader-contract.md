@@ -579,9 +579,30 @@ Each search runs these steps, in order
    8. return at most `limit` records. `limit` defaults to 5.
 
 Hooks are host code, supplied when the host creates the search. A package can
-never supply or select one. A backend without `filterPushdown` can return hits
-the gate removes; a Reader SHOULD ask such a backend for more hits than the
-caller's limit.
+never supply or select one.
+
+**Filters come before the limit.** Steps 5.1 to 5.7 decide which records can
+be results; step 5.8 only counts them. A search MUST return the best-scored
+records among all the records that match the query and pass the gate: the same
+records, in the same order, as ranking every matching record, applying the
+gate, and keeping the first `limit`. So when at least `limit` matching records
+pass the gate, the search returns `limit` records, however far down the
+unfiltered ranking they are. A Reader MUST NOT apply the gate to a fixed number
+of top candidates and return what is left.
+
+A Reader meets this in either of two ways, or both: it passes the filters to a
+backend that applies them before it ranks (`filterPushdown`, §9.5), or it asks
+the backend again, for more hits each time, until `limit` records pass the
+gate or the backend has no more. Filters remove records; they never change a
+record's score, which is the backend's score for the query over all the loaded
+packages. When an egress hook is set, it runs again on the whole candidate list
+each time the Reader fetches more.
+
+A host MAY bound the work one search does, for example the number of
+candidates it examines. When a bound stops a search before `limit` records
+pass the gate, the Reader MUST report `S010_SEARCH_TRUNCATED` (warning) for
+that search, so a short result is never silent. The reference Readers set no
+bound by default.
 
 ### 9.3 Dense backends
 
@@ -671,6 +692,8 @@ to it:
 | `concepts` | The concepts to search: the caller's, a scope and its descendants, or those an ingress hook chose. |
 
 Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.
+Whether or not a backend applies the filters, the result is the same (§9.2,
+"Filters come before the limit").
 A record bound to a concept by composition
 ([package spec §5.6](moca-package-spec.md#56-structure)) does not carry that
 concept itself, so when any loaded package binds members by composition, the
@@ -696,8 +719,10 @@ reference Readers use Reciprocal Rank Fusion (informative):
 score(hit) = Σ over the two backends of  weight_b / (k + rank_b(hit))
 ```
 
-`rank_b` is the hit's 1-based position in backend b's results; a hit a backend
-did not return adds nothing from it. `k` defaults to 60 and each weight to 1.
+`rank_b` is the hit's 1-based position in backend b's ranking of the loaded
+packages before any filter, so that filters never change a score (§9.2); a hit
+a backend did not return adds nothing from it. Filters pushed down to the two
+backends only decide which fused hits pass. `k` defaults to 60 and each weight to 1.
 Weights are at least 0, and at least one is above 0; a Reader MUST refuse other
 settings as a host error, before any search.
 A hit whose fused score is 0 is dropped, so a backend with weight 0
@@ -856,6 +881,7 @@ withhold only the `structured` capability.
 | `S007_NO_VECTORS` | warning | A loaded package has no vectors a dense backend can search; that package is not searched. |
 | `S008_UPTO_UNRESOLVED` | warning | A search's `upTo` is on no loaded package's reading order, neither a member nor a descendant of one. It limits nothing (§9). |
 | `S009_SIDECAR_ITEMS_REPLACED` | info | A sidecar built from the publisher's package is bound to an issued copy, and the items of the files the issuer changed were replaced by each file's whole body, without a vector ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)). |
+| `S010_SEARCH_TRUNCATED` | warning | A search stopped at a bound the host set before `limit` records passed the gate; better-matching records that pass may exist (§9.2). |
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0011](../docs/adr/0011-park-unconsumed-features.md)), `O004_STRUCTURE_VIEW_MISMATCH` ([ADR-0019](../docs/adr/0019-park-structure-json.md)).
 
