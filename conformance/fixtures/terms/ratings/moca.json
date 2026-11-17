@@ -1,0 +1,21 @@
+{
+  "id": "https://example.com/conformance/terms-ratings",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "rating": {
+      "explicit": true
+    },
+    "nodes": [
+      {
+        "paths": [
+          "content/clean.md"
+        ],
+        "rating": {
+          "explicit": false
+        }
+      }
+    ]
+  }
+}

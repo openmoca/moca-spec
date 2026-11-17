@@ -645,7 +645,13 @@ only that `terms` is an object. The Reader checks the inside against
 [`terms.schema.json`](../schemas/v1/terms.schema.json) and reports each
 problem as `U001_TERMS_INVALID` (warning), or `U003_TERMS_UNKNOWN_VALUE`
 (warning) for a value this version does not know, such as one from a later
-release. The package stays valid. The Reader exposes the block as written,
+release. The line between them is mechanical, so every Reader agrees: a
+string where the schema allows only listed strings, and a member name the
+schema does not list, are `U003`; anything else that fails the schema (a
+wrong type, a pattern, a limit), and the checks the schema cannot express
+(a `typicalAgeRange` whose lower bound is above its upper, two
+`contentRating` entries for one scheme), are `U001`. The package stays
+valid. The Reader exposes the block as written,
 with its problems, and a malformed or unknown permission counts as the
 strictest value wherever a host asks the Reader to apply terms
 (Reader contract §15).

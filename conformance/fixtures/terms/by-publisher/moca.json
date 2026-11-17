@@ -1,0 +1,21 @@
+{
+  "id": "https://example.com/conformance/terms-by-publisher",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "where": {
+        "provider": "allow"
+      },
+      "machineTranslation": "deny"
+    },
+    "rights": {
+      "rightsHolder": {
+        "id": "https://podcast.example.org",
+        "name": "Example Podcast"
+      },
+      "basis": "own"
+    }
+  }
+}

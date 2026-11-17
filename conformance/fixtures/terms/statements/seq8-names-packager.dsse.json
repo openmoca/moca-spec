@@ -1,0 +1,10 @@
+{
+  "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJzdWJqZWN0IjpbeyJuYW1lIjoiaHR0cHM6Ly9wb2RjYXN0LmV4YW1wbGUub3JnIn1dLCJwcmVkaWNhdGVUeXBlIjoiaHR0cHM6Ly93M2lkLm9yZy9tb2NhL2F0dGVzdGF0aW9ucy9wdWJsaXNoZXItdGVybXMvdjEiLCJwcmVkaWNhdGUiOnsic2VxdWVuY2UiOjgsImlzc3VlZCI6IjIwMjYtMTEtMDFUMDA6MDA6MDBaIiwiZXhwaXJlcyI6IjIwMjctMTEtMDFUMDA6MDA6MDBaIiwiZGVmYXVsdHMiOnsiYWkiOnsid2hlcmUiOnsicHJvdmlkZXIiOiJkZW55In0sIm1hY2hpbmVUcmFuc2xhdGlvbiI6ImRlbnkifX0sInBhY2thZ2VycyI6W3sicHVibGljS2V5IjoiLS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS1cbk1Db3dCUVlESzJWd0F5RUE5NEF6anVWV25CTXJpTGk0Uk84dmZxVzFCZnB1SWljTncyMFRUdW55cGpzPVxuLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tXG4ifV19fQ==",
+  "payloadType": "application/vnd.in-toto+json",
+  "signatures": [
+    {
+      "keyid": "example-publisher-2026",
+      "sig": "lDnkjorCpw1OPjTJacSvcYnQ6FtFAN8FlcwH9tk4+n59HsD9a2pJGIa8iUnbU5R3xoiOqJ9mJtYKcY2nWR1iAw=="
+    }
+  ]
+}

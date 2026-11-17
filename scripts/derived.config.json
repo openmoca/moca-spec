@@ -52,6 +52,14 @@
       "key": "publisher"
     },
     {
+      "package": "conformance/fixtures/terms/by-publisher",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/terms/by-packager",
+      "key": "issuer"
+    },
+    {
       "package": "examples/acme-support",
       "key": "publisher"
     },
@@ -445,6 +453,101 @@
           "key": "issuer"
         }
       ]
+    }
+  ],
+  "$comment-publisherTerms": "Publisher terms statements (attestations §4a): DSSE over an in-toto Statement, signed with Ed25519. packagerKeys lists keys whose public keys the predicate names in packagers.",
+  "publisherTerms": [
+    {
+      "out": "conformance/fixtures/terms/statements/seq7-deny.dsse.json",
+      "key": "publisher",
+      "subject": "https://podcast.example.org",
+      "predicate": {
+        "sequence": 7,
+        "issued": "2026-11-01T00:00:00Z",
+        "expires": "2027-11-01T00:00:00Z",
+        "defaults": {
+          "ai": {
+            "where": {
+              "provider": "deny"
+            },
+            "machineTranslation": "deny"
+          }
+        }
+      }
+    },
+    {
+      "out": "conformance/fixtures/terms/statements/seq8-names-packager.dsse.json",
+      "key": "publisher",
+      "subject": "https://podcast.example.org",
+      "predicate": {
+        "sequence": 8,
+        "issued": "2026-11-01T00:00:00Z",
+        "expires": "2027-11-01T00:00:00Z",
+        "defaults": {
+          "ai": {
+            "where": {
+              "provider": "deny"
+            },
+            "machineTranslation": "deny"
+          }
+        }
+      },
+      "packagerKeys": [
+        "issuer"
+      ]
+    },
+    {
+      "out": "conformance/fixtures/terms/statements/seq5-allow.dsse.json",
+      "key": "publisher",
+      "subject": "https://podcast.example.org",
+      "predicate": {
+        "sequence": 5,
+        "issued": "2026-11-01T00:00:00Z",
+        "expires": "2027-11-01T00:00:00Z",
+        "defaults": {
+          "ai": {
+            "where": {
+              "provider": "allow"
+            }
+          }
+        }
+      }
+    },
+    {
+      "out": "conformance/fixtures/terms/statements/seq9-expired.dsse.json",
+      "key": "publisher",
+      "subject": "https://podcast.example.org",
+      "predicate": {
+        "sequence": 9,
+        "issued": "2026-01-01T00:00:00Z",
+        "expires": "2026-06-01T00:00:00Z",
+        "defaults": {
+          "ai": {
+            "where": {
+              "provider": "deny"
+            },
+            "machineTranslation": "deny"
+          }
+        }
+      }
+    },
+    {
+      "out": "conformance/fixtures/terms/statements/seq10-other-channel.dsse.json",
+      "key": "issuer-other",
+      "subject": "https://podcast.example.org",
+      "predicate": {
+        "sequence": 10,
+        "issued": "2026-11-01T00:00:00Z",
+        "expires": "2027-11-01T00:00:00Z",
+        "defaults": {
+          "ai": {
+            "where": {
+              "provider": "deny"
+            },
+            "machineTranslation": "deny"
+          }
+        }
+      }
     }
   ]
 }

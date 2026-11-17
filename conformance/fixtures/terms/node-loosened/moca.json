@@ -1,0 +1,25 @@
+{
+  "id": "https://example.com/conformance/terms-node-loosened",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "where": {
+        "provider": "deny"
+      }
+    },
+    "nodes": [
+      {
+        "paths": [
+          "content/open.md"
+        ],
+        "ai": {
+          "where": {
+            "provider": "allow"
+          }
+        }
+      }
+    ]
+  }
+}

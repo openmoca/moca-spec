@@ -1049,7 +1049,8 @@ limits, and composing packages. For each permission:
    that is not set never changes anything.
 2. **Node.** A node's value applies only if it is stricter. A looser node
    value is reported as `U002_TERMS_LOOSENED` (warning), and the package's
-   value stands.
+   value stands. Both values are in the manifest, so a Reader reports this
+   when it reads the package, compared with the package's own value.
 3. **Composition.** A composing package's terms apply to a member's node only
    when they are stricter and the composing package's signers speak for the
    member, as for `upTo` (§9).

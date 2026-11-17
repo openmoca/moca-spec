@@ -213,7 +213,14 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `terms.schema.json` and `publisher-terms-predicate.schema.json`; `terms` in
   the manifest, citation record and envelope schemas; `generated.model` in
   the node and citation record schemas; `channel` in the trust-root schema.
-  Corpus cases follow.
+  Package spec §4.13: the line between `U001` and `U003` is mechanical.
+  Contract §15.3: `U002` for a node entry is reported when the package is
+  read. The citation record's resolved `terms.ai` has the shape of
+  `terms.ai`. 34 corpus cases (`terms-*`, `search-terms-*`) from the worked
+  conflict table, with fixtures under `conformance/fixtures/terms/`, the
+  trust root `trust-root-terms.json`, publisher terms statements made by
+  `refresh:derived`, and the runner fields `expect.terms`,
+  `options.publisherStatements`, `options.termsLimits` and `search.terms`.
 - Reader contract §9.2, "Ingress narrowing": concepts or a scope an ingress
   hook sets narrow the search even when they can't be pushed down (no
   pushdown, or members bound by composition): the Reader applies them to the
