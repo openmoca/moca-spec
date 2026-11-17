@@ -207,7 +207,10 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   under `ai.allowed` (`device`, `host`, `provider`, `training`,
   `machineTranslation`) and `rights.repackage.allowed`, and provider
   conditions `noTraining` and `noRetention`; §2 "Values", the rule every
-  field this version adds follows; §4.3 (a terms change is at least
+  field this version adds follows (not set is an absent field; `null` only
+  where a schema allows it and the specification says what it means, as for
+  `sync[].offset`; anywhere else it is malformed, cases `null-undeclared`
+  and `terms-null-undeclared`); §4.3 (a terms change is at least
   minor), §13.3 widened to "Labels, not locks", §13.5, §13.6 and a new §13.7.
   Reader contract §15 (exposing, authority, resolution, the terms gate),
   §9.2 step 5.3, §9.4, §9.5, §12, and the codes `U001`–`U004`. Reader
@@ -223,7 +226,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   Package spec §4.13: the line between `U001` and `U003` is mechanical.
   Contract §15.3: `U002` for a node entry is reported when the package is
   read. The citation record's resolved `terms.ai` has the shape of
-  `terms.ai`. 25 corpus cases (`terms-*`, `search-terms-*`) from the worked
+  `terms.ai`. 26 corpus cases (`terms-*`, `search-terms-*`) from the worked
   conflict table, with fixtures under `conformance/fixtures/terms/`, the
   trust root `trust-root-terms.json`, and the runner fields `expect.terms`,
   `options.termsLimits` and `search.terms`. Two of them check that a signed

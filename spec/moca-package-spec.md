@@ -109,14 +109,19 @@ value has one fixed shape:
 - **A yes-or-no answer is a JSON boolean**, never a string such as
   `"allow"` or `"yes"`. The field is named so that `true` is the positive
   answer (`allowed.training: false`, `explicit: true`).
-- **Not set is an absent field**, never `null` or a placeholder string.
+- **Not set is always an absent field**, never `null` or a placeholder
+  string.
+- **`null` is an explicit "none"**, allowed only where a field's schema
+  allows it and this specification says what it means, as for a `sync`
+  stretch's `offset` (§5.7). Anywhere else `null` is malformed.
 - **A choice is one key from a closed list** of short lowerCamel tokens
   (`answerSources: "work"`); several choices are an array of unique keys
   (`providerRequires: ["noTraining"]`).
 - **A condition is a separate field**, never a third value of a boolean.
 - **An object is closed**: a member it does not list is malformed, unless
   the specification says where extensions go (§4.5).
-- **No field takes either of two shapes**, such as a string or an object.
+- **No field takes either of two shapes**, such as a string or an object;
+  an explicit `null`, as above, is the only exception.
 
 The schemas under `schemas/v1/` (JSON Schema 2020-12) state each field's
 shape.
@@ -1086,7 +1091,7 @@ moca:
 | Key | Meaning |
 | --- | --- |
 | `alternateOf` | The `source` of another description in the same node: the **reference**. This description is an alternate of it. |
-| `sync` | Only with `alternateOf`. A list of `{ at, offset }`, in order of `at`. `at` is a time on the reference, in seconds, 0 or more. `offset` is a number of seconds, which may be negative, or `null`. Without `sync`, the alternate is the reference's timeline unchanged: `[{ at: 0, offset: 0 }]`. |
+| `sync` | Only with `alternateOf`. A list of `{ at, offset }`, in order of `at`. `at` is a time on the reference, in seconds, 0 or more. `offset` is a number of seconds, which may be negative, or `null`, meaning the stretch is not in the alternate (below). Without `sync`, the alternate is the reference's timeline unchanged: `[{ at: 0, offset: 0 }]`. |
 
 - **Groups.** A reference and every description whose `alternateOf` names
   it form one group. The reference has no `alternateOf` itself, so every

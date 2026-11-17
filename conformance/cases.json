@@ -979,6 +979,18 @@
       }
     },
     {
+      "id": "null-undeclared",
+      "description": "Package spec §2, \"Values\": not set is an absent field. null is allowed only where a schema says what it means; datePublished does not, so null fails the schema.",
+      "target": "fixtures/null-undeclared",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
       "id": "signature-untrusted-key",
       "description": "Signed with a key the trust root does not list.",
       "target": "fixtures/signature-untrusted-key",
@@ -8150,6 +8162,37 @@
               "path": "rating.contentRating"
             }
           ]
+        }
+      }
+    },
+    {
+      "id": "terms-null-undeclared",
+      "description": "Package spec §2, \"Values\", and §4.13: null where a permission wants a boolean is malformed, U001 (warning); the package stays valid and the block is exposed as written.",
+      "target": "fixtures/terms/null",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U001_TERMS_INVALID"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": [
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "ai.allowed.training"
+            }
+          ],
+          "declared": {
+            "ai": {
+              "allowed": {
+                "training": null,
+                "device": true
+              }
+            }
+          }
         }
       }
     },
