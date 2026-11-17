@@ -1,6 +1,6 @@
-# 0036 — The creator's terms travel with the work, and only the owner can loosen them
+# 0036 — The creator's terms travel with the work, and only the rights holder can loosen them
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-11-16
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 
@@ -48,7 +48,7 @@ over a package that never change it
 
 1. Most specific wins.
 2. Strictest of every level, always.
-3. The owner of the work decides; every other level, and every more specific
+3. The rights holder decides; every other level, and every more specific
    part of a package, may only make a permission stricter.
 
 ### Where per-node values live (inheritance)
@@ -60,29 +60,31 @@ over a package that never change it
 
 Shape option 2, precedence option 3, inheritance option 2.
 
-**One block.** `terms` carries two kinds of value. *Permissions* (in `ai`,
-and `rights.repackage`) have three values: not set, `allow`, `deny`. *Labels*
+**One block.** `terms` carries two kinds of value. *Permissions* (in
+`ai.allowed`, and `rights.repackage.allowed`) are booleans: absent means not
+set, otherwise `true` or `false`. *Labels*
 (`rating`, and the rest of `rights`) describe. Readers expose the block
 exactly as written, with its problems, the package's signed state and an
 authority result. They never fill in defaults, and never act on it unless
 the host asks for the gate.
 
-**The owner decides; everyone else only tightens.**
+**The rights holder decides; everyone else only tightens.**
 
-- A package's permission counts as the owner's only when the Reader can tie
+- A package's permission counts as the rights holder's only when the Reader can tie
   its signature to the rights holder, through keys the host discovered from
   the rights holder's own channel. Otherwise it may only tighten the
-  owner's published defaults. Authority is worked out from signatures and
+  rights holder's published defaults. Authority is worked out from signatures and
   host-supplied keys, never from fields the signer writes.
-- **In 0.7.0 no package has the owner's authority.** Discovering a rights
-  holder's keys from their channel, and the owner's published defaults, come
+- **In 0.7.0 no package has the rights holder's authority** (the `owner`
+  authority level). Discovering a rights
+  holder's keys from their channel, and the rights holder's published defaults, come
   in a later format version. Until then every package's permissions may only
   tighten the platform defaults, and the authority is `packager` or
   `unverified`, from signatures alone.
 - Hosts, catalogues and people may tighten, never loosen. A limit set above
-  the owner is a floor, never a value.
+  the rights holder is a floor, never a value.
 - "Not set" never overrides anything. "Stricter" is defined field by field;
-  `deny` beats `allow`; an empty result means "not allowed".
+  `false` beats `true`; an empty result means "not allowed".
 - Ratings describe rather than permit. Each node keeps its own rating (an
   episode may be clean in an explicit show); the Reader also gives the
   strictest rating across the package, and the gate has a strict-path mode
@@ -121,7 +123,7 @@ At the time of this decision one implementer needs it. The maintainer's
 reasons:
 
 - **The cases are real and recurring.** They come from creators: a podcaster
-  who will let listeners ask questions with the AI on their own phone but not
+  who will let listeners ask questions with the AI on their own device but not
   send episodes to large cloud providers; a publisher who wants answers drawn
   from the work only; families and schools who need to filter before playing
   or answering; a show packaged by someone other than its creator, under
@@ -148,7 +150,7 @@ ADR-0001 itself is not changed.
 - One field table, one set of `U` diagnostics, one resolution rule and one
   gate step to implement and test, instead of three.
 - A worked conflict table becomes the conformance cases: a repackager, a
-  catalogue, a node or a composing package trying to loosen the owner's terms
+  catalogue, a node or a composing package trying to loosen the rights holder's terms
   must fail.
 - Readers gain host inputs (host limits and the gate request in 0.7.0;
   discovered keys and the publisher's signed defaults later) and result fields (resolved terms,

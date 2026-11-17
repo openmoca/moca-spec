@@ -1,6 +1,6 @@
 # 0037 — A named claim for hosts that honour creators' terms
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-11-16
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 - **Narrows:** [ADR-0022](0022-applications-get-advice.md)
