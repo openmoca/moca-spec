@@ -45,7 +45,6 @@ conformance/
 | `options.fileKey` | The key provider returns this file key, given as 32 hex digits. With no `identities`, `passphrase` or `fileKey`, the Reader has no key provider. |
 | `options.envelopeSidecar` | `true`: after reading the target envelope, bind its `index.age` through the same key provider ([encrypted packages §6](../spec/moca-encrypted-package.md#6-derived-data)). Its codes join `expect.codes`, and `expect.sidecarUsable` applies to it. |
 | `options.strict` | `true`: strict mode, which promotes warnings to errors ([contract §11](../spec/moca-reader-contract.md#11-diagnostics)). |
-| `options.publisherStatements` | Publisher terms statements the host holds (DSSE envelope files, relative to `conformance/`), verified against `options.trustRoot` ([attestations §4a](../spec/moca-attestations.md#4a-publisher-terms-statements)). Search cases take it too. |
 | `expect.valid` | Whether the package is valid (no `T`/`P`/`M`/`C`/`E` error). |
 | `expect.codes` | The **set** of diagnostic codes, from the package and the sidecar. Exactly these; extra codes fail. |
 | `expect.capabilities` | The exact set of derived capabilities. |

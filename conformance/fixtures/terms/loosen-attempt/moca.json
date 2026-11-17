@@ -1,0 +1,18 @@
+{
+  "id": "https://example.com/conformance/terms-loosen-attempt",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "training": "allow"
+    },
+    "rights": {
+      "rightsHolder": {
+        "id": "https://podcast.example.org",
+        "name": "Example Podcast"
+      },
+      "basis": "own"
+    }
+  }
+}

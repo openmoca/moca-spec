@@ -74,6 +74,11 @@ the host asks for the gate.
   the rights holder's own channel. Otherwise it may only tighten the
   owner's published defaults. Authority is worked out from signatures and
   host-supplied keys, never from fields the signer writes.
+- **In 0.7.0 no package has the owner's authority.** Discovering a rights
+  holder's keys from their channel, and the owner's published defaults, come
+  in a later format version. Until then every package's permissions may only
+  tighten the platform defaults, and the authority is `packager` or
+  `unverified`, from signatures alone.
 - Hosts, catalogues and people may tighten, never loosen. A limit set above
   the owner is a floor, never a value.
 - "Not set" never overrides anything. "Stricter" is defined field by field;
@@ -145,8 +150,8 @@ ADR-0001 itself is not changed.
 - A worked conflict table becomes the conformance cases: a repackager, a
   catalogue, a node or a composing package trying to loosen the owner's terms
   must fail.
-- Readers gain host inputs (discovered keys, the publisher's signed
-  defaults, host limits, the gate request) and result fields (resolved terms,
+- Readers gain host inputs (host limits and the gate request in 0.7.0;
+  discovered keys and the publisher's signed defaults later) and result fields (resolved terms,
   the level that decided each, the authority).
 - A package's terms are no stronger than the host that reads them. Labels are
   not locks: an open format cannot stop a host that has opened a package

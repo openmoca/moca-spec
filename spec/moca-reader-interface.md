@@ -59,7 +59,6 @@ Everything a Reader touches outside a package's bytes comes from the host
 | Embedder | §5.3. | Dense search. |
 | Retrieval hooks | `ingress` and `egress` (§5.4). | Ontology-guided retrieval strategies. |
 | Audience set | A list of audience labels. | Removing records outside it. |
-| Publisher terms statements | DSSE envelopes ([attestations §4a](moca-attestations.md#4a-publisher-terms-statements)). | A rights holder's default terms and named packagers. |
 | Terms limits | The host's own `ai` values, with the shape of `terms.ai` ([package spec §4.13](moca-package-spec.md#413-terms)). | Tightening a creator's terms, never loosening them. |
 | Key provider | Given an envelope's age stanzas, its unverified outline and which file is being opened, returns X25519 identities, a passphrase or a file key (one or more of them), or nothing; MAY be asynchronous where the language's read is ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). | Opening encrypted packages, for a Reader that implements `encryption`. |
 

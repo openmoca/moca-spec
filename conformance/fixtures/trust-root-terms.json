@@ -3,19 +3,14 @@
     {
       "keyid": "example-publisher-2026",
       "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAV7oSvpgKWeRJP+wg5aoP04bxrq2ZzOiT+NPhHsW1W4g=\n-----END PUBLIC KEY-----\n",
-      "identity": "MOCA examples publisher (INSECURE), discovered at the rights holder's channel",
+      "identity": "MOCA examples publisher (INSECURE)",
       "expires": "2031-01-01T00:00:00Z",
       "roles": [
         "package"
       ],
       "ids": [
         "https://example.com/conformance/"
-      ],
-      "channel": {
-        "kind": "web",
-        "value": "https://podcast.example.org",
-        "fetchedAt": "2026-11-01T00:00:00Z"
-      }
+      ]
     },
     {
       "keyid": "example-issuer-2026",
@@ -28,20 +23,6 @@
       "ids": [
         "https://example.com/conformance/"
       ]
-    },
-    {
-      "keyid": "example-issuer-other-2026",
-      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAK9L4WIA15pf4vVS3A0tH9S9zbWZ75Nz7V6mNtUDRQw8=\n-----END PUBLIC KEY-----\n",
-      "identity": "MOCA conformance key discovered at another channel (INSECURE)",
-      "expires": "2031-01-01T00:00:00Z",
-      "roles": [
-        "package"
-      ],
-      "channel": {
-        "kind": "web",
-        "value": "https://other.example.org",
-        "fetchedAt": "2026-11-01T00:00:00Z"
-      }
     }
   ]
 }

@@ -83,8 +83,6 @@ export async function actualFor(root, c) {
     strict: o.strict === true,
     keyProvider: conformanceKeyProvider(root, o),
     decryptor: ageDecryptor,
-    // Attestations §4a: the publisher terms statements the host holds.
-    publisherStatements: o.publisherStatements?.map((f) => JSON.parse(readFileSync(join(root, f), 'utf8'))),
   };
   const overlays = (o.overlays ?? []).map((v) => ({ id: v.id, layer: v.layer, path: join(root, v.path) }));
 

@@ -914,7 +914,6 @@ withhold only the `structured` capability.
 | `U002_TERMS_LOOSENED` | warning | A `terms.nodes` entry, or a composing package, is looser than the package for a permission; the stricter value stands (§15.3). |
 | `U003_TERMS_UNKNOWN_VALUE` | warning | A `terms` field has a value this version does not know, such as one from a later release. It is exposed, and counts as its strictest value when terms are applied (§15). |
 | `U004_TERMS_EXCLUDED` | info | A search's terms request removed records; the finding counts them by reason (§15.4). |
-| `U005_PUBLISHER_STATEMENT_REFUSED` | warning | A publisher terms statement the host passed in is not used: invalid, expired, out of scope, or older than another for the same subject ([attestations §4a](moca-attestations.md#4a-publisher-terms-statements)). |
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0011](../docs/adr/0011-park-unconsumed-features.md)), `O004_STRUCTURE_VIEW_MISMATCH` ([ADR-0019](../docs/adr/0019-park-structure-json.md)).
 
@@ -1018,35 +1017,34 @@ A Reader MUST expose, in the package result
   manifest passes its schema; absent when the manifest has none;
 - `terms.problems`: the `U001` and `U003` findings for it, each with the path
   of the field (for example `ai.where.provider`);
-- `terms.authority`: one of `owner`, `packager-named-by-owner`, `packager` or
-  `unverified` (§15.2).
+- `terms.authority`: `packager` or `unverified` (§15.2).
 
 It MUST NOT fill in defaults: absent fields stay absent.
 
 ### 15.2 Authority
 
-The authority is worked out from the package's signatures and what the host
-supplied, never from fields the signer writes:
+The authority is worked out from the package's signatures, never from fields
+the signer writes:
 
 | Authority | When |
 | --- | --- |
-| `owner` | A valid package attestation is signed by a key that the host's trust root holds with a `channel` scope ([attestations §6](moca-attestations.md#6-trust-roots)) equal to `rights.rightsHolder.id`. |
-| `packager-named-by-owner` | Otherwise, a valid package attestation is signed by a key that a valid publisher terms statement for that channel names in `packagers` ([attestations §4a](moca-attestations.md#4a-publisher-terms-statements)). |
-| `packager` | Otherwise, a package attestation verifies under the host's trust root. |
+| `packager` | A package attestation verifies under the host's trust root. |
 | `unverified` | No package attestation verifies. |
+
+A signature shows who signed the package, not who owns the work: a package
+whose `rights.rightsHolder` names a channel has the authority `packager`
+like any other signed package. Neither authority lets a package loosen the
+platform defaults (§15.3).
 
 ### 15.3 Resolving terms
 
 When the host asks, a Reader resolves the terms that apply to a node: the
-package's own, the publisher terms statements the host passed in, the host's
-limits, and composing packages. For each permission:
+package's own, the host's limits, and composing packages. For each
+permission:
 
-1. **Owner.** Start from the platform default (below). Apply the default of
-   a valid publisher terms statement whose subject is the package's
-   `rights.rightsHolder.id`. Then apply the package's own value: when the
-   authority is `owner` or `packager-named-by-owner`, it replaces the
-   publisher's value; otherwise it applies only if it is stricter. A field
-   that is not set never changes anything.
+1. **Package.** Start from the platform default (below). The package's own
+   value applies only if it is stricter, whatever its authority and whatever
+   `rights` says. A field that is not set never changes anything.
 2. **Node.** A node's value applies only if it is stricter. A looser node
    value is reported as `U002_TERMS_LOOSENED` (warning), and the package's
    value stands. Both values are in the manifest, so a Reader reports this
@@ -1066,8 +1064,8 @@ as the strictest value.
 destination `allow`, no `providerRequires` conditions, `machineTranslation`
 `allow`, `answerSources` `model`, and `training` `deny`.
 
-Each resolved field says which level decided it: `platform`, `publisher`,
-`package`, `node`, `composite` or `host`.
+Each resolved field says which level decided it: `platform`, `package`,
+`node`, `composite` or `host`.
 
 **Ratings are not resolved.** A node's effective rating is its own `nodes`
 entry, if any, else the package's. A Reader also gives the package's

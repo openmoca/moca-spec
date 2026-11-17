@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import AdmZip from 'adm-zip';
-import { createPrivateKey, createPublicKey, sign as cryptoSign } from 'node:crypto';
+import { createPrivateKey, sign as cryptoSign } from 'node:crypto';
 import { readPackage, directoryResolver, packageStatement, issuedCopyStatement, rebuiltDigest, preAuthEncode, PAYLOAD_TYPE } from '@openmoca/moca-core';
 import { signPackage, reviewNodes } from '@openmoca/moca-sign';
 import { buildSidecar } from '@openmoca/moca-index';
@@ -79,22 +79,6 @@ async function refresh(root) {
       const envelope = { payload: statement.toString('base64'), payloadType: PAYLOAD_TYPE, signatures: [{ keyid, sig: sig.toString('base64') }] };
       writeFileSync(at(join(c.out, 'attestations', `${a.name ?? `issued.${keyid}`}.dsse.json`)), `${JSON.stringify(envelope, null, 2)}\n`);
     }
-  }
-
-  // Publisher terms statements (attestations §4a). Ed25519 signatures are deterministic, so these are byte-stable.
-  for (const t of config.publisherTerms ?? []) {
-    const { privateKeyPem, keyid } = key(t.key);
-    const packagers = (t.packagerKeys ?? []).map((k) => ({ publicKey: createPublicKey(createPrivateKey(key(k).privateKeyPem)).export({ type: 'spki', format: 'pem' }) }));
-    const statement = Buffer.from(JSON.stringify({
-      _type: 'https://in-toto.io/Statement/v1',
-      subject: [{ name: t.subject }],
-      predicateType: 'https://w3id.org/moca/attestations/publisher-terms/v1',
-      predicate: { ...t.predicate, ...(packagers.length > 0 ? { packagers } : {}) },
-    }), 'utf8');
-    const sig = cryptoSign(null, preAuthEncode(PAYLOAD_TYPE, statement), createPrivateKey(privateKeyPem));
-    const envelope = { payload: statement.toString('base64'), payloadType: PAYLOAD_TYPE, signatures: [{ keyid, sig: sig.toString('base64') }] };
-    mkdirSync(dirname(at(t.out)), { recursive: true });
-    writeFileSync(at(t.out), `${JSON.stringify(envelope, null, 2)}\n`);
   }
 
   for (const s of config.sidecars) {

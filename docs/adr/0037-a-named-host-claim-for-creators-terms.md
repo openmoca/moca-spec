@@ -67,8 +67,8 @@ service says so in its public list of the models it uses.
   canary token reaches a destination its package forbids, and every answer
   records its sources and the deciding level;
 - cases cover each destination and use, absent and malformed terms, unrated
-  content, composite members, a host setting trying to loosen, and a stale
-  publisher statement.
+  content, composite members, a host setting trying to loosen, and a signed
+  package trying to loosen the platform defaults.
 
 **Self-certified, and said to be.** As with "OpenMOCA conformant"
 ([TRADEMARKS.md](../../TRADEMARKS.md)), the host runs the tests itself. A

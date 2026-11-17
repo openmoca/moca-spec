@@ -659,9 +659,9 @@ strictest value wherever a host asks the Reader to apply terms
 **Who said it.** `terms` is what the signer wrote. A signature proves who
 signed, not who owns the work: `rightsHolder`, `basis` and
 `declaredBy: signer` are the signer's claims. The Reader works out an
-*authority* for the terms from signatures and the keys the host discovered
-from the rights holder's own channel, never from these fields
-(Reader contract §15.2).
+*authority* for the terms from signatures, never from these fields
+(Reader contract §15.2). In this version no authority lets a package loosen
+the platform defaults: its permissions only make them stricter.
 
 **Not configuration, not instructions.** Naming a destination, a condition
 or a packager is a restriction, never configuration (§13.2): a host never
@@ -1679,10 +1679,8 @@ date and no "latest". So:
   attestation is then invalid (`A009`).
 - **Terms in old versions.** An older version keeps the terms it was signed
   with. When a creator tightens their terms, a frozen copy of an older,
-  looser version still carries the looser ones, unless a publisher terms
-  statement covers it
-  ([attestations §4a](moca-attestations.md#4a-publisher-terms-statements)).
-  Publishers who may tighten their terms SHOULD set `validUntil`.
+  looser version still carries the looser ones. Publishers who may tighten
+  their terms SHOULD set `validUntil`.
 
 ### 13.6 Personal data
 
@@ -1717,10 +1715,6 @@ log. Content and sources may hold more.
   `terms.rights.contact` (§4.13) can name a person, and stay in every old
   version. Publishers SHOULD use an organisation's name and a role address
   where they can.
-- **Discovering keys can reveal what a person reads.** A host that looked up
-  a rights holder's keys each time a person opened a package would tell the
-  rights holder's server who reads what. Hosts look them up at ingest instead
-  ([attestations §6](moca-attestations.md#6-trust-roots)).
 
 ### 13.7 Terms are labels, not locks
 

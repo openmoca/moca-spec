@@ -206,21 +206,24 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `rights`, node values in the manifest), §4.3 (a terms change is at least
   minor), §13.3 widened to "Labels, not locks", §13.5, §13.6 and a new §13.7.
   Reader contract §15 (exposing, authority, resolution, the terms gate),
-  §9.2 step 5.3, §9.4, §9.5, §12, and the codes `U001`–`U005`. Reader
-  interface §3, §4 and §5.1. Attestations §4a, publisher terms statements,
-  and §6, channel-scoped trust-root entries and advice on discovering keys.
-  Encrypted packages §3: the outline may carry `terms`. New schemas
-  `terms.schema.json` and `publisher-terms-predicate.schema.json`; `terms` in
-  the manifest, citation record and envelope schemas; `generated.model` in
-  the node and citation record schemas; `channel` in the trust-root schema.
+  §9.2 step 5.3, §9.4, §9.5, §12, and the codes `U001`–`U004`. Reader
+  interface §3, §4 and §5.1. Encrypted packages §3: the outline may carry
+  `terms`. New schema `terms.schema.json`; `terms` in the manifest, citation
+  record and envelope schemas; `generated.model` in the node and citation
+  record schemas. The authority is `packager` or `unverified`, from the
+  package's signatures only, and a package's permissions only make the
+  platform defaults stricter. Discovering a rights holder's keys,
+  channel-scoped keys and publisher terms statements, which would let an
+  owner loosen them, come in a later version.
   Package spec §4.13: the line between `U001` and `U003` is mechanical.
   Contract §15.3: `U002` for a node entry is reported when the package is
   read. The citation record's resolved `terms.ai` has the shape of
-  `terms.ai`. 34 corpus cases (`terms-*`, `search-terms-*`) from the worked
+  `terms.ai`. 25 corpus cases (`terms-*`, `search-terms-*`) from the worked
   conflict table, with fixtures under `conformance/fixtures/terms/`, the
-  trust root `trust-root-terms.json`, publisher terms statements made by
-  `refresh:derived`, and the runner fields `expect.terms`,
-  `options.publisherStatements`, `options.termsLimits` and `search.terms`.
+  trust root `trust-root-terms.json`, and the runner fields `expect.terms`,
+  `options.termsLimits` and `search.terms`. Two of them check that a signed
+  package cannot loosen the platform defaults, with or without a
+  `rightsHolder`.
 - Reader contract §9.2, "Ingress narrowing": concepts or a scope an ingress
   hook sets narrow the search even when they can't be pushed down (no
   pushdown, or members bound by composition): the Reader applies them to the

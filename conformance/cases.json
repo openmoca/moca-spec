@@ -8220,29 +8220,8 @@
       }
     },
     {
-      "id": "terms-authority-owner",
-      "description": "Contract §15.2: signed by a key the host discovered at the channel that rights.rightsHolder.id names: the authority is owner.",
-      "target": "fixtures/terms/by-publisher",
-      "options": {
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "now": "2026-11-16T00:00:00Z"
-      },
-      "expect": {
-        "valid": true,
-        "capabilities": [
-          "core",
-          "signed"
-        ],
-        "codes": [],
-        "terms": {
-          "authority": "owner",
-          "problems": []
-        }
-      }
-    },
-    {
       "id": "terms-authority-not-from-fields",
-      "description": "Contract §15.2: rightsHolder names the podcast's channel, but the signing key was not discovered there: packager, never owner from fields.",
+      "description": "Contract §15.2: rightsHolder names the podcast's channel and basis says own, but a signature shows only who signed: packager, never owner from fields.",
       "target": "fixtures/terms/by-packager",
       "options": {
         "trustRoot": "fixtures/trust-root-terms.json",
@@ -8257,134 +8236,6 @@
         "codes": [],
         "terms": {
           "authority": "packager",
-          "problems": []
-        }
-      }
-    },
-    {
-      "id": "terms-authority-named-by-owner",
-      "description": "Contract §15.2, attestations §4a: a valid publisher terms statement names the package's signing key in packagers.",
-      "target": "fixtures/terms/by-packager",
-      "options": {
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "now": "2026-11-16T00:00:00Z",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq8-names-packager.dsse.json"
-        ]
-      },
-      "expect": {
-        "valid": true,
-        "capabilities": [
-          "core",
-          "signed"
-        ],
-        "codes": [],
-        "terms": {
-          "authority": "packager-named-by-owner",
-          "problems": []
-        }
-      }
-    },
-    {
-      "id": "terms-publisher-rollback",
-      "description": "Attestations §4a: of two valid statements for one subject, the higher sequence is used; the older one is U005.",
-      "target": "fixtures/terms/by-packager",
-      "options": {
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "now": "2026-11-16T00:00:00Z",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq7-deny.dsse.json",
-          "fixtures/terms/statements/seq5-allow.dsse.json"
-        ]
-      },
-      "expect": {
-        "valid": true,
-        "capabilities": [
-          "core",
-          "signed"
-        ],
-        "codes": [
-          "U005_PUBLISHER_STATEMENT_REFUSED"
-        ],
-        "terms": {
-          "authority": "packager",
-          "problems": []
-        }
-      }
-    },
-    {
-      "id": "terms-publisher-expired",
-      "description": "Attestations §4a: an expired statement is U005 and not used.",
-      "target": "fixtures/terms/by-packager",
-      "options": {
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "now": "2026-11-16T00:00:00Z",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq9-expired.dsse.json"
-        ]
-      },
-      "expect": {
-        "valid": true,
-        "capabilities": [
-          "core",
-          "signed"
-        ],
-        "codes": [
-          "U005_PUBLISHER_STATEMENT_REFUSED"
-        ],
-        "terms": {
-          "authority": "packager",
-          "problems": []
-        }
-      }
-    },
-    {
-      "id": "terms-publisher-out-of-scope",
-      "description": "Attestations §4a: a statement about this rights holder signed by a key discovered at another channel is out of scope: U005, not used.",
-      "target": "fixtures/terms/by-packager",
-      "options": {
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "now": "2026-11-16T00:00:00Z",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq10-other-channel.dsse.json"
-        ]
-      },
-      "expect": {
-        "valid": true,
-        "capabilities": [
-          "core",
-          "signed"
-        ],
-        "codes": [
-          "U005_PUBLISHER_STATEMENT_REFUSED"
-        ],
-        "terms": {
-          "authority": "packager",
-          "problems": []
-        }
-      }
-    },
-    {
-      "id": "terms-publisher-no-trust-root",
-      "description": "Attestations §4a: with no trust root, no statement can be valid: U005.",
-      "target": "fixtures/terms/by-packager",
-      "options": {
-        "now": "2026-11-16T00:00:00Z",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq7-deny.dsse.json"
-        ]
-      },
-      "expect": {
-        "valid": true,
-        "capabilities": [
-          "core"
-        ],
-        "codes": [
-          "U005_PUBLISHER_STATEMENT_REFUSED",
-          "A003_ATTESTATION_UNVERIFIABLE"
-        ],
-        "terms": {
-          "authority": "unverified",
           "problems": []
         }
       }
@@ -8652,25 +8503,60 @@
     {
       "id": "search-terms-packager-cannot-loosen",
       "kind": "search",
-      "description": "Contract §15.3 step 1: the publisher's statement denies a provider; a packager's package cannot loosen it.",
+      "description": "Contract §15.3 step 1: a signed package whose rightsHolder names the channel and claims own sets training allow; it cannot loosen the platform default, which stands.",
       "packages": [
-        "fixtures/terms/by-packager"
+        "fixtures/terms/loosen-attempt"
       ],
       "options": {
         "now": "2026-11-16T00:00:00Z",
         "backend": "lexical",
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq7-deny.dsse.json"
-        ]
+        "trustRoot": "fixtures/trust-root-terms.json"
       },
       "search": {
         "query": "lantern",
         "limit": 10,
         "terms": {
           "ai": {
-            "destination": "provider",
+            "destination": "device",
             "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-loosen-attempt@1.0.0#ep1.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-loosen-attempt@1.0.0#ep1.md": {
+            "terms.authority": "packager",
+            "terms.ai.training": {
+              "value": "deny",
+              "decidedBy": "platform"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-no-rights-holder-cannot-loosen",
+      "kind": "search",
+      "description": "Contract §15.3 step 1: a signed package with no rights holder sets training allow; the use train is still refused, because the platform default stands.",
+      "packages": [
+        "fixtures/terms/loosen-no-holder"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root-terms.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "train"
           }
         }
       },
@@ -8679,96 +8565,6 @@
           "U004_TERMS_EXCLUDED"
         ],
         "count": 0
-      }
-    },
-    {
-      "id": "search-terms-named-packager-sets",
-      "kind": "search",
-      "description": "Contract §15.3 step 1: a packager the owner names may set the package's own value.",
-      "packages": [
-        "fixtures/terms/by-packager"
-      ],
-      "options": {
-        "now": "2026-11-16T00:00:00Z",
-        "backend": "lexical",
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq8-names-packager.dsse.json"
-        ]
-      },
-      "search": {
-        "query": "lantern",
-        "limit": 10,
-        "terms": {
-          "ai": {
-            "destination": "provider",
-            "use": "answer"
-          }
-        }
-      },
-      "expect": {
-        "codes": [],
-        "include": [
-          "https://example.com/conformance/terms-by-packager@1.0.0#ep1.md"
-        ],
-        "fields": {
-          "https://example.com/conformance/terms-by-packager@1.0.0#ep1.md": {
-            "terms.authority": "packager-named-by-owner",
-            "terms.ai.where.provider": {
-              "value": "allow",
-              "decidedBy": "package"
-            },
-            "terms.ai.machineTranslation": {
-              "value": "deny",
-              "decidedBy": "publisher"
-            }
-          }
-        }
-      }
-    },
-    {
-      "id": "search-terms-owner-may-loosen",
-      "kind": "search",
-      "description": "Contract §15.3 step 1: the owner's own package replaces the publisher default.",
-      "packages": [
-        "fixtures/terms/by-publisher"
-      ],
-      "options": {
-        "now": "2026-11-16T00:00:00Z",
-        "backend": "lexical",
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq7-deny.dsse.json"
-        ]
-      },
-      "search": {
-        "query": "lantern",
-        "limit": 10,
-        "terms": {
-          "ai": {
-            "destination": "provider",
-            "use": "answer"
-          }
-        }
-      },
-      "expect": {
-        "codes": [],
-        "include": [
-          "https://example.com/conformance/terms-by-publisher@1.0.0#ep1.md"
-        ],
-        "fields": {
-          "https://example.com/conformance/terms-by-publisher@1.0.0#ep1.md": {
-            "terms.authority": "owner",
-            "terms.ai.where.provider": {
-              "value": "allow",
-              "decidedBy": "package"
-            },
-            "terms.ai.machineTranslation": {
-              "value": "deny",
-              "decidedBy": "package"
-            }
-          }
-        }
       }
     },
     {
@@ -8798,83 +8594,6 @@
           "U004_TERMS_EXCLUDED"
         ],
         "count": 0
-      }
-    },
-    {
-      "id": "search-terms-publisher-rollback",
-      "kind": "search",
-      "description": "Attestations §4a: the older statement allowing a provider is refused; the newer one denies it.",
-      "packages": [
-        "fixtures/terms/by-packager"
-      ],
-      "options": {
-        "now": "2026-11-16T00:00:00Z",
-        "backend": "lexical",
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq7-deny.dsse.json",
-          "fixtures/terms/statements/seq5-allow.dsse.json"
-        ]
-      },
-      "search": {
-        "query": "lantern",
-        "limit": 10,
-        "terms": {
-          "ai": {
-            "destination": "provider",
-            "use": "answer"
-          }
-        }
-      },
-      "expect": {
-        "codes": [
-          "U004_TERMS_EXCLUDED"
-        ],
-        "count": 0
-      }
-    },
-    {
-      "id": "search-terms-publisher-expired",
-      "kind": "search",
-      "description": "Attestations §4a: an expired statement is not used; the package and platform decide.",
-      "packages": [
-        "fixtures/terms/by-packager"
-      ],
-      "options": {
-        "now": "2026-11-16T00:00:00Z",
-        "backend": "lexical",
-        "trustRoot": "fixtures/trust-root-terms.json",
-        "publisherStatements": [
-          "fixtures/terms/statements/seq9-expired.dsse.json"
-        ]
-      },
-      "search": {
-        "query": "lantern",
-        "limit": 10,
-        "terms": {
-          "ai": {
-            "destination": "provider",
-            "use": "answer"
-          }
-        }
-      },
-      "expect": {
-        "codes": [],
-        "include": [
-          "https://example.com/conformance/terms-by-packager@1.0.0#ep1.md"
-        ],
-        "fields": {
-          "https://example.com/conformance/terms-by-packager@1.0.0#ep1.md": {
-            "terms.ai.where.provider": {
-              "value": "allow",
-              "decidedBy": "package"
-            },
-            "terms.ai.machineTranslation": {
-              "value": "allow",
-              "decidedBy": "platform"
-            }
-          }
-        }
       }
     },
     {
