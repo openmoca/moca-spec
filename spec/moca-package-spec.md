@@ -681,13 +681,18 @@ crawlers look, and MAY read them in, but only to make terms stricter. The
 mapping is partial: where a term cannot be expressed, map to the stricter one.
 When they disagree, the package is the source for a Reader and its host.
 
-| `terms` | IETF `draft-ietf-aipref-vocab-08` | RSL 1.0 | TDMRep |
+| `terms` | IETF `draft-ietf-aipref-vocab-08` | RSL 1.0 | [W3C TDMRep](https://www.w3.org/community/tdmrep/) |
 | --- | --- | --- | --- |
 | `training: deny` | `train-ai=n` | prohibits `ai-train` | `tdm-reservation: 1` |
 | `training: allow` | `train-ai=y` | permits `ai-train` | no statement |
 | any `where` destination `deny` | `ai-use=n` | prohibits `ai-input ai-index` | — |
 | every `where` destination `allow` | `ai-use=y` | permits `ai-input ai-index` | — |
 | `providerRequires`, `answerSources`, `machineTranslation` | not expressible | not expressible | — |
+
+TDMRep is the TDM Reservation Protocol of a W3C Community Group (not a W3C
+Standard). Its `tdm-reservation: 1` reserves all text and data mining, so a
+producer that reads it in sets `training: deny` and nothing looser. Its
+`tdm-policy` points at a licence offer; `terms` has no field for it.
 
 Ratings: `explicit` corresponds to `itunes:explicit` (`true`, `yes` and
 `explicit` mean true; `false`, `no` and `clean` mean false; an absent tag is
