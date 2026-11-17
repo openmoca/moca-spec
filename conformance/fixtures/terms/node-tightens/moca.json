@@ -5,8 +5,8 @@
   "language": "en",
   "terms": {
     "ai": {
-      "where": {
-        "provider": "allow"
+      "allowed": {
+        "provider": true
       }
     },
     "nodes": [
@@ -15,8 +15,8 @@
           "content/private.md"
         ],
         "ai": {
-          "where": {
-            "provider": "deny"
+          "allowed": {
+            "provider": false
           }
         }
       }

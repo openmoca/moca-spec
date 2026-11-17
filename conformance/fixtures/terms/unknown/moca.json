@@ -5,10 +5,10 @@
   "language": "en",
   "terms": {
     "ai": {
-      "answerSources": "web",
-      "where": {
-        "edge": "allow"
-      }
+      "allowed": {
+        "edge": true
+      },
+      "answerSources": "web"
     }
   }
 }

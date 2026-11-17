@@ -5,10 +5,10 @@
   "language": "en",
   "terms": {
     "ai": {
-      "where": {
-        "provider": "allow"
-      },
-      "machineTranslation": "deny"
+      "allowed": {
+        "provider": true,
+        "machineTranslation": false
+      }
     },
     "rights": {
       "rightsHolder": {

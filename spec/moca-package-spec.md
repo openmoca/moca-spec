@@ -103,6 +103,24 @@ The same holds for every rule in the document set that names characters:
 - **A string ends** at its last character: a trailing line feed is part of
   the value, never ignored.
 
+**Values.** Fields this specification adds follow one rule, so that every
+value has one fixed shape:
+
+- **A yes-or-no answer is a JSON boolean**, never a string such as
+  `"allow"` or `"yes"`. The field is named so that `true` is the positive
+  answer (`allowed.training: false`, `explicit: true`).
+- **Not set is an absent field**, never `null` or a placeholder string.
+- **A choice is one key from a closed list** of short lowerCamel tokens
+  (`answerSources: "work"`); several choices are an array of unique keys
+  (`providerRequires: ["noTraining"]`).
+- **A condition is a separate field**, never a third value of a boolean.
+- **An object is closed**: a member it does not list is malformed, unless
+  the specification says where extensions go (§4.5).
+- **No field takes either of two shapes**, such as a string or an object.
+
+The schemas under `schemas/v1/` (JSON Schema 2020-12) state each field's
+shape.
+
 Diagnostic codes are defined, with their full names, in
 [Reader contract §11](moca-reader-contract.md#11-diagnostics). Elsewhere a code
 is cited by its full name where it first appears in a section, and by its first four
@@ -584,18 +602,22 @@ a new version.
 ```json
 "terms": {
   "ai": {
-    "where": { "device": "allow", "host": "allow", "provider": "deny" },
-    "providerRequires": ["no-training", "no-retention"],
-    "training": "deny",
-    "answerSources": "work",
-    "machineTranslation": "deny"
+    "allowed": {
+      "device": true,
+      "host": true,
+      "provider": false,
+      "training": false,
+      "machineTranslation": false
+    },
+    "providerRequires": ["noTraining", "noRetention"],
+    "answerSources": "work"
   },
   "rating": { "explicit": false, "typicalAgeRange": "12-", "declaredBy": "signer" },
   "rights": {
     "rightsHolder": { "id": "https://podcast.example.org", "name": "Example Podcast" },
     "basis": "license",
     "contact": "mailto:rights@example.org",
-    "repackage": { "allowed": "deny" }
+    "repackage": { "allowed": false }
   },
   "nodes": [
     { "paths": ["content/episodes/12/"], "rating": { "explicit": true, "declaredBy": "feed" } }
@@ -603,19 +625,22 @@ a new version.
 }
 ```
 
-**Two kinds of value.** *Permissions* (every field of `ai`, and
-`rights.repackage.allowed`) have three values: absent (not set), `allow` and
-`deny`. *Labels* (`rating`, and the rest of `rights`) describe the work.
+**Two kinds of value.** *Permissions* (`ai.allowed` and
+`rights.repackage.allowed`) are booleans (§2, "Values"): absent means not
+set, otherwise `true` or `false`. Conditions (`ai.providerRequires`) and
+choices (`ai.answerSources`) are separate fields, never a third value of a
+permission. *Labels* (`rating`, and the rest of `rights`) describe the work.
 
 **Fields.** Every object is closed: a member not listed here is malformed.
 
 | Field | Type | Limits | Absent |
 | --- | --- | --- | --- |
-| `ai.where` | Object with any of `device`, `host`, `provider`; each `allow` or `deny`. Where answers and other AI use may run: on the person's own device, in the host's own service, or with a third party's model (Reader contract §15.4). | 3 members | Each destination not set |
-| `ai.providerRequires` | Array of `no-training`, `no-retention`, unique. Conditions a provider must meet, as the host states them. | 2 items | No condition |
-| `ai.training` | `allow` or `deny`: whether the work may be used to train a model. | — | Not set |
+| `ai.allowed` | Object with any of the booleans below. | 5 members | Each permission not set |
+| `ai.allowed.device`, `.host`, `.provider` | Booleans: whether answers and other AI use may run on the person's own device, in the host's own service, or with a third party's model (Reader contract §15.4). | — | Not set |
+| `ai.allowed.training` | Boolean: whether the work may be used to train a model. | — | Not set |
+| `ai.allowed.machineTranslation` | Boolean: whether the work may be translated by a machine. The package's own representations (§5.4) are not machine translation. | — | Not set |
+| `ai.providerRequires` | Array of `noTraining`, `noRetention`, unique. Conditions a provider must meet, as the host states them. | 2 items | No condition |
 | `ai.answerSources` | `work` (every sentence backed by the work) or `model` (the model's general knowledge allowed, and marked). | — | Not set |
-| `ai.machineTranslation` | `allow` or `deny`: whether the work may be translated by a machine. The package's own representations (§5.4) are not machine translation. | — | Not set |
 | `rating.explicit` | Boolean. | — | No statement; never `false` |
 | `rating.contentRating` | Array of `{ scheme, value }`. `scheme` matches `^[a-z0-9][a-z0-9-]{0,31}$`, from the list of schemes on openmoca.org (an open list); `value` is 1 to 32 characters with no control characters. One entry per scheme. | 8 entries | No statement |
 | `rating.typicalAgeRange` | String matching `^[0-9]{1,2}-([0-9]{1,2})?$`, the lower bound not above the upper. As schema.org `typicalAgeRange`: who the work is meant for, not whether it suits them. | — | No statement |
@@ -623,7 +648,7 @@ a new version.
 | `rights.rightsHolder` | `{ id, name? }`. `id` is an `https:` origin with no path, or the `https:` URL of a feed: the channel where the rights holder publishes. `name` is 1 to 200 characters, for display. | `id` 2048 characters | No rights holder |
 | `rights.basis` | `own` (the rights holder made the package), `consent` (made with the rights holder's consent) or `license` (made under the open licence in `license`, §4.1). | — | Not stated |
 | `rights.contact` | A `mailto:` or `https:` URI, for people to report a problem or claim the work. Never fetched. | 2048 characters | No contact |
-| `rights.repackage` | `{ allowed, packagers? }`. `allowed` is `allow` or `deny`. `packagers` names who may package the work anyway, in the form of `issuedCopies.issuers` (§4.11). | 32 packagers | Not set |
+| `rights.repackage` | `{ allowed, packagers? }`. `allowed` is a boolean. `packagers` names who may package the work anyway, in the form of `issuedCopies.issuers` (§4.11). | 32 packagers | Not set |
 | `nodes` | Array of `{ paths, ai?, rating? }`: values for some nodes (below). | 256 entries; 64 paths each | No node values |
 
 Enums are closed except rating schemes: a new value needs a new minor release.
@@ -660,8 +685,13 @@ strictest value wherever a host asks the Reader to apply terms
 signed, not who owns the work: `rightsHolder`, `basis` and
 `declaredBy: signer` are the signer's claims. The Reader works out an
 *authority* for the terms from signatures, never from these fields
-(Reader contract §15.2). In this version no authority lets a package loosen
-the platform defaults: its permissions only make them stricter.
+(Reader contract §15.2).
+
+**In this version no package can loosen the platform defaults.** A
+package's permissions only make them stricter, whoever signed it: for
+example `ai.allowed.training: true` has no effect, because training is not
+allowed by default. Letting the rights holder loosen them needs owner
+authority, which comes in a later version.
 
 **Not configuration, not instructions.** Naming a destination, a condition
 or a packager is a restriction, never configuration (§13.2): a host never
@@ -683,15 +713,15 @@ When they disagree, the package is the source for a Reader and its host.
 
 | `terms` | IETF `draft-ietf-aipref-vocab-08` | RSL 1.0 | [W3C TDMRep](https://www.w3.org/community/tdmrep/) |
 | --- | --- | --- | --- |
-| `training: deny` | `train-ai=n` | prohibits `ai-train` | `tdm-reservation: 1` |
-| `training: allow` | `train-ai=y` | permits `ai-train` | no statement |
-| any `where` destination `deny` | `ai-use=n` | prohibits `ai-input ai-index` | — |
-| every `where` destination `allow` | `ai-use=y` | permits `ai-input ai-index` | — |
-| `providerRequires`, `answerSources`, `machineTranslation` | not expressible | not expressible | — |
+| `allowed.training: false` | `train-ai=n` | prohibits `ai-train` | `tdm-reservation: 1` |
+| `allowed.training: true` | `train-ai=y` | permits `ai-train` | no statement |
+| any of `allowed.device`, `.host`, `.provider` `false` | `ai-use=n` | prohibits `ai-input ai-index` | — |
+| `allowed.device`, `.host` and `.provider` all `true` | `ai-use=y` | permits `ai-input ai-index` | — |
+| `providerRequires`, `answerSources`, `allowed.machineTranslation` | not expressible | not expressible | — |
 
 TDMRep is the TDM Reservation Protocol of a W3C Community Group (not a W3C
 Standard). Its `tdm-reservation: 1` reserves all text and data mining, so a
-producer that reads it in sets `training: deny` and nothing looser. Its
+producer that reads it in sets `allowed.training: false` and nothing looser. Its
 `tdm-policy` points at a licence offer; `terms` has no field for it.
 
 Ratings: `explicit` corresponds to `itunes:explicit` (`true`, `yes` and
@@ -699,7 +729,7 @@ Ratings: `explicit` corresponds to `itunes:explicit` (`true`, `yes` and
 no statement) and to the inverse of schema.org `isFamilyFriendly`;
 `contentRating` to schema.org `contentRating`; `typicalAgeRange` to
 schema.org `typicalAgeRange` and to ONIX audience age ranges.
-`rights.repackage.allowed: deny` corresponds to Podcasting 2.0
+`rights.repackage.allowed: false` corresponds to Podcasting 2.0
 `podcast:locked`.
 
 ## 5. Content

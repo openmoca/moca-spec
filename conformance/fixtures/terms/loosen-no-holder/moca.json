@@ -5,7 +5,9 @@
   "language": "en",
   "terms": {
     "ai": {
-      "training": "allow"
+      "allowed": {
+        "training": true
+      }
     }
   }
 }

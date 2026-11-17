@@ -1016,7 +1016,7 @@ A Reader MUST expose, in the package result
 - `terms.declared`: the manifest's `terms`, exactly as written, when the
   manifest passes its schema; absent when the manifest has none;
 - `terms.problems`: the `U001` and `U003` findings for it, each with the path
-  of the field (for example `ai.where.provider`);
+  of the field (for example `ai.allowed.provider`);
 - `terms.authority`: `packager` or `unverified` (§15.2).
 
 It MUST NOT fill in defaults: absent fields stay absent.
@@ -1034,7 +1034,8 @@ the signer writes:
 A signature shows who signed the package, not who owns the work: a package
 whose `rights.rightsHolder` names a channel has the authority `packager`
 like any other signed package. Neither authority lets a package loosen the
-platform defaults (§15.3).
+platform defaults (§15.3): in this version no package can, so
+`ai.allowed.training: true` has no effect.
 
 ### 15.3 Resolving terms
 
@@ -1055,14 +1056,15 @@ permission:
 4. **Host.** The host's limits apply only if they are stricter. A limit is a
    floor, never a value.
 
-"Stricter" is defined per field: `deny` is stricter than `allow`; a
-destination denied anywhere is denied; more `providerRequires` conditions are
+"Stricter" is defined per field: `false` is stricter than `true`; a
+destination not allowed anywhere is not allowed; more `providerRequires` conditions are
 stricter; `work` is stricter than `model`. A malformed or unknown value counts
 as the strictest value.
 
-**Platform defaults**, used only when no level sets a field: every `where`
-destination `allow`, no `providerRequires` conditions, `machineTranslation`
-`allow`, `answerSources` `model`, and `training` `deny`.
+**Platform defaults**, used only when no level sets a field:
+`allowed.device`, `allowed.host` and `allowed.provider` `true`,
+`allowed.machineTranslation` `true`, `allowed.training` `false`, no
+`providerRequires` conditions, and `answerSources` `model`.
 
 Each resolved field says which level decided it: `platform`, `package`,
 `node`, `composite` or `host`.
@@ -1081,10 +1083,11 @@ Without one, terms remove nothing. With one, the gate (§9.2, step 5.3) also
 removes:
 
 - for `ai` (`{ destination, conditions, use }`): records whose resolved
-  terms do not allow the destination (`device`, `host` or `provider`), whose
-  `providerRequires` conditions are not all among the host's `conditions`
-  for a `provider`, whose `training` is not `allow` for the use `train`, or
-  whose `machineTranslation` is not `allow` for the use `translate`. The
+  terms do not allow the destination (`allowed.device`, `allowed.host` or
+  `allowed.provider` is not `true`), whose `providerRequires` conditions are
+  not all among the host's `conditions` (`noTraining`, `noRetention`) for a
+  `provider`, whose `allowed.training` is not `true` for the use `train`, or
+  whose `allowed.machineTranslation` is not `true` for the use `translate`. The
   other uses are `answer`, `embed` and `summarise`;
 - for `rating` (`{ explicit, schemes, allowUnrated, acceptFeedRatings, mode }`):
   records rated `explicit: true` when `explicit` is `false`; records with a

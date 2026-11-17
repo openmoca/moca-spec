@@ -8050,15 +8050,15 @@
           "problems": [],
           "declared": {
             "ai": {
-              "where": {
-                "provider": "deny"
+              "allowed": {
+                "provider": false,
+                "training": false,
+                "machineTranslation": true
               },
               "providerRequires": [
-                "no-training"
+                "noTraining"
               ],
-              "training": "deny",
-              "answerSources": "work",
-              "machineTranslation": "allow"
+              "answerSources": "work"
             },
             "rating": {
               "explicit": false,
@@ -8078,7 +8078,7 @@
               "basis": "own",
               "contact": "mailto:rights@podcast.example.org",
               "repackage": {
-                "allowed": "deny"
+                "allowed": false
               }
             },
             "nodes": [
@@ -8095,8 +8095,8 @@
                   "content/notes/"
                 ],
                 "ai": {
-                  "where": {
-                    "host": "deny"
+                  "allowed": {
+                    "host": false
                   }
                 }
               }
@@ -8139,7 +8139,7 @@
           "problems": [
             {
               "code": "U001_TERMS_INVALID",
-              "path": "ai.where.provider"
+              "path": "ai.allowed.provider"
             },
             {
               "code": "U001_TERMS_INVALID",
@@ -8174,7 +8174,7 @@
             },
             {
               "code": "U003_TERMS_UNKNOWN_VALUE",
-              "path": "ai.where.edge"
+              "path": "ai.allowed.edge"
             }
           ]
         }
@@ -8297,12 +8297,12 @@
         "fields": {
           "https://example.com/conformance/terms-node-tightens@1.0.0#public.md": {
             "terms.authority": "unverified",
-            "terms.ai.where.provider": {
-              "value": "allow",
+            "terms.ai.allowed.provider": {
+              "value": true,
               "decidedBy": "package"
             },
-            "terms.ai.training": {
-              "value": "deny",
+            "terms.ai.allowed.training": {
+              "value": false,
               "decidedBy": "platform"
             }
           }
@@ -8394,7 +8394,7 @@
             "destination": "provider",
             "use": "answer",
             "conditions": [
-              "no-retention"
+              "noRetention"
             ]
           }
         }
@@ -8530,8 +8530,8 @@
         "fields": {
           "https://example.com/conformance/terms-loosen-attempt@1.0.0#ep1.md": {
             "terms.authority": "packager",
-            "terms.ai.training": {
-              "value": "deny",
+            "terms.ai.allowed.training": {
+              "value": false,
               "decidedBy": "platform"
             }
           }
@@ -8646,8 +8646,8 @@
         "now": "2026-11-16T00:00:00Z",
         "backend": "lexical",
         "termsLimits": {
-          "where": {
-            "provider": "allow"
+          "allowed": {
+            "provider": true
           }
         }
       },

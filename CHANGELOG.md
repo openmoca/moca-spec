@@ -201,9 +201,13 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Package spec §4.10, informative: a member that contains later steps hides
   them, so list the steps themselves and keep an overview that contains them
   off the reading order.
-- **Draft, Proposed until the maintainer's review (ADR-0036, ADR-0037).**
-  The creator's terms: package spec §4.13 `terms` (`ai`, `rating`,
-  `rights`, node values in the manifest), §4.3 (a terms change is at least
+- **The creator's terms (ADR-0036, ADR-0037, Accepted).**
+  Package spec §4.13 `terms` (`ai`, `rating`,
+  `rights`, node values in the manifest), with permissions as booleans
+  under `ai.allowed` (`device`, `host`, `provider`, `training`,
+  `machineTranslation`) and `rights.repackage.allowed`, and provider
+  conditions `noTraining` and `noRetention`; §2 "Values", the rule every
+  field this version adds follows; §4.3 (a terms change is at least
   minor), §13.3 widened to "Labels, not locks", §13.5, §13.6 and a new §13.7.
   Reader contract §15 (exposing, authority, resolution, the terms gate),
   §9.2 step 5.3, §9.4, §9.5, §12, and the codes `U001`–`U004`. Reader
@@ -212,7 +216,8 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   record and envelope schemas; `generated.model` in the node and citation
   record schemas. The authority is `packager` or `unverified`, from the
   package's signatures only, and a package's permissions only make the
-  platform defaults stricter. Discovering a rights holder's keys,
+  platform defaults stricter: in 0.7.0 no package can loosen them, so
+  `ai.allowed.training: true` has no effect. Discovering a rights holder's keys,
   channel-scoped keys and publisher terms statements, which would let an
   owner loosen them, come in a later version.
   Package spec §4.13: the line between `U001` and `U003` is mechanical.

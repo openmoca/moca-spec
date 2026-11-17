@@ -5,15 +5,15 @@
   "language": "en",
   "terms": {
     "ai": {
-      "where": {
-        "provider": "deny"
+      "allowed": {
+        "provider": false,
+        "training": false,
+        "machineTranslation": true
       },
       "providerRequires": [
-        "no-training"
+        "noTraining"
       ],
-      "training": "deny",
-      "answerSources": "work",
-      "machineTranslation": "allow"
+      "answerSources": "work"
     },
     "rating": {
       "explicit": false,
@@ -33,7 +33,7 @@
       "basis": "own",
       "contact": "mailto:rights@podcast.example.org",
       "repackage": {
-        "allowed": "deny"
+        "allowed": false
       }
     },
     "nodes": [
@@ -50,8 +50,8 @@
           "content/notes/"
         ],
         "ai": {
-          "where": {
-            "host": "deny"
+          "allowed": {
+            "host": false
           }
         }
       }

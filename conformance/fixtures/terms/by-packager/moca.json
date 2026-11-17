@@ -5,8 +5,8 @@
   "language": "en",
   "terms": {
     "ai": {
-      "where": {
-        "provider": "allow"
+      "allowed": {
+        "provider": true
       },
       "answerSources": "work"
     },

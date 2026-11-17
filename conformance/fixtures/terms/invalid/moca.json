@@ -5,8 +5,8 @@
   "language": "en",
   "terms": {
     "ai": {
-      "where": {
-        "provider": true
+      "allowed": {
+        "provider": "allow"
       }
     },
     "rating": {
