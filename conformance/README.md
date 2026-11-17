@@ -50,7 +50,7 @@ conformance/
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
 | `expect.distribution` | The result's `distribution` ([package spec §4.1](../spec/moca-package-spec.md#41-properties)): `open`, `encrypted-only`, `service-only`, or `null` when the result has none. |
-| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps`, `expect.readingOrder`, `expect.datePublished`, `expect.issuedCopy` | The result's `images`, `translations`, `tags`, `apps`, `readingOrder`, `datePublished` ([package spec §4.6–4.12](../spec/moca-package-spec.md#46-images)) and `issuedCopy` (`{ originalDigest, issuers, changedFiles }`, [attestations §7.1](../spec/moca-attestations.md#71-issued-copies-two-passes)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
+| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps`, `expect.readingOrder`, `expect.datePublished`, `expect.publisher`, `expect.url`, `expect.contributors`, `expect.issuedCopy` | The result's `images`, `translations`, `tags`, `apps`, `readingOrder`, `datePublished`, `publisher`, `url`, `contributors` ([package spec §4.6–4.13](../spec/moca-package-spec.md#46-images)) and `issuedCopy` (`{ originalDigest, issuers, changedFiles }`, [attestations §7.1](../spec/moca-attestations.md#71-issued-copies-two-passes)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
 | `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
@@ -255,7 +255,7 @@ standard output.
 - Input: `{ "root": "<absolute path of conformance/>", "case": { … } }`.
 - Output for a package case: `{ "valid", "codes", "capabilities", "digest",
   "distribution", "images", "translations", "tags", "apps", "readingOrder",
-  "datePublished", "issuedCopy", "sidecarUsable", "evidenceMatched", "evidenceLocated",
+  "datePublished", "publisher", "url", "contributors", "issuedCopy", "sidecarUsable", "evidenceMatched", "evidenceLocated",
   "envelope" }`, as defined above.
   `envelope` is the package result's `envelope` field for an envelope, and
   absent otherwise.

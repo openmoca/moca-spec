@@ -168,7 +168,9 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `language` | No | BCP 47 tag of the default-language content. |
 | `locales` | No | BCP 47 tags of additional representations (§5.4). |
 | `license` | No | SPDX license expression. |
-| `publisher` | No | Who publishes the package. Informative; identity is proven by attestations, not by this field. |
+| `publisher` | No | Who publishes the package: an object with `name`, and optionally `url`, `description`, `image` and `sameAs` (§4.13). A label: who signed is shown by attestations, not by this field. |
+| `url` | No | The work's own web page (§4.13). |
+| `contributors` | No | People and organisations credited for the package, each with MARC relator roles (§4.13). |
 | `distribution` | No | How the publisher intends the package to be handed out: `open` (the default), `encrypted-only` or `service-only`. A label, not access control (§13.3). |
 | `images` | No | Pictures of the package for a catalogue or a library: package files under `media/`, each with a role (§4.6). |
 | `translations` | No | The manifest's `title`, `description`, `tags` and image `alt` text in other languages, keyed by a tag in `locales` (§4.7). |
@@ -561,6 +563,110 @@ Rules:
   `package.datePublished` and `node.datePublished`, when present
   ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
 
+### 4.13 Credits
+
+Credits say who made the work and who publishes it, in one fixed shape, so
+a catalogue, an app or an assistant can show them and say where an answer
+came from.
+
+```json
+"publisher": {
+  "name": "Example Podcast Ltd",
+  "url": "https://podcast.example.org",
+  "description": "An independent studio making shows about the sea.",
+  "image": { "src": "media/publisher.png", "type": "image/png", "alt": "The studio's logo" },
+  "sameAs": ["https://www.wikidata.org/entity/Q4115189"]
+},
+"url": "https://podcast.example.org/harbour-lights",
+"contributors": [
+  { "name": "Ada Example", "roles": ["hst", "aut"], "sameAs": ["https://orcid.org/0000-0002-1825-0097"] },
+  { "name": "LibriVox volunteers", "roles": ["nrt"], "url": "https://librivox.org" }
+]
+```
+
+| Field | Type | Limits |
+| --- | --- | --- |
+| `publisher` | Object: `name` (required), `url`, `description`, `image`, `sameAs`. | — |
+| `publisher.name`, `contributors[].name` | String: the name to show. | 1 to 200 characters |
+| `publisher.description` | String, in the default language. | 1 to 1000 characters |
+| `url`, `publisher.url`, `contributors[].url` | An `http:` or `https:` URL: the work's, the publisher's or the contributor's own page. | 2048 characters |
+| `image` (of a publisher or contributor) | `{ src, type, alt? }`, as an entry of `images` (§4.6) without `role`: a package file under `media/`, PNG, JPEG or WebP. | `alt` 1 to 250 characters |
+| `sameAs` | Array of `https:` URIs naming the same party elsewhere, such as ISNI (`https://isni.org/isni/…`), ORCID (`https://orcid.org/…`) or Wikidata (`https://www.wikidata.org/entity/Q…`). Unique. | 8 items |
+| `contributors` | Array of `{ name, roles, url?, image?, sameAs? }`. | 64 in the manifest; 32 in a node |
+| `contributors[].roles` | Array of MARC relator codes ([Library of Congress](https://id.loc.gov/vocabulary/relators)): three lower-case letters, such as `aut` (author), `nrt` (narrator), `hst` (host), `spk` (speaker), `edt` (editor), `trl` (translator), `pro` (producer), `ctb` (contributor). Unique. | 1 to 8 items |
+
+Rules:
+
+- **One shape each.** `publisher` is always an object; there is no string
+  form. Every object is closed: a member not listed here, a wrong type or a
+  value outside its limits fails the schema (`M002`). A Reader does not check
+  a role code against the relator list, which grows; a host that does not
+  know a code shows it as written, or as `ctb`.
+- **Nodes.** A node MAY credit its own contributors with
+  `moca.contributors` (§5.3), in the same shape: the guest of one episode,
+  the translator of one chapter. A node's contributors do not inherit the
+  package's, and neither replaces the other. A node's list that does not
+  match the node schema is `C005_FIELD_INVALID` (warning) and treated as
+  absent.
+- **Images** are checked as manifest images are (§4.6): a missing file, one
+  over `maxImageBytes`, or one that does not start with the signature of its
+  `type` is `M010_IMAGE_INVALID` (warning), and the Reader leaves that
+  `image` out of what it exposes. The rest of the credit stands.
+- **Exposed, never acted on.** The package result carries `publisher`, `url`
+  and `contributors` as written (less any image left out), when the manifest
+  passes its schema; citation records carry a node's own `contributors`
+  ([Reader contract §7](moca-reader-contract.md#7-citation-records)). A Reader
+  never fetches a URL from a credit and never changes what it retrieves
+  because of one.
+- **Labels, not proof.** A credit is what the signer wrote. A signature shows
+  who signed the package, not that the people listed made it or agreed to be
+  named, nor that the publisher named here signed. A host that shows credits
+  SHOULD show who signed beside them, and MUST NOT present a listed
+  contributor as verified because the package is signed.
+- **No contact details.** Credits have no e-mail field. Producers MUST NOT
+  put a person's e-mail address or telephone number in any credit field, and
+  SHOULD credit people by the name they publish under (§13.6).
+
+**Other standards (informative).** Credits map onto the vocabularies
+catalogues already use:
+
+| MOCA | schema.org | Dublin Core | ONIX for Books 3.0 |
+| --- | --- | --- | --- |
+| `publisher` | `publisher` (an `Organization` or `Person`) | `dcterms:publisher` | `<Publisher>` (`<PublisherName>`, `<Website>`) |
+| `url` | `url` of the `CreativeWork` | — | `<Website>`, by `<WebsiteRole>` |
+| `contributors[]` with role `aut` | `author` | `dcterms:creator` | `<Contributor>` with `<ContributorRole>` `A01` |
+| `contributors[]` with another role | the matching property (`editor`, `translator`, `illustrator`, `contributor`), or a `Role` | `dcterms:contributor`, refined by the MARC relator (`marcrel:` terms) | `<Contributor>` with the matching code from list 17 (`B01` edited by, `B06` translated by, `E07` read by, `A12` illustrated by) |
+| `name` | `name` | the value of the property | `<PersonName>` or `<CorporateName>` |
+| `sameAs` | `sameAs` | — | `<NameIdentifier>` (ISNI and ORCID are listed identifier types) |
+| `image` | `image` | — | — |
+
+Podcasting 2.0 `podcast:person` roles
+([the taxonomy](https://github.com/Podcastindex-org/podcast-namespace/blob/main/taxonomy.json))
+map to relator codes as follows; a role not listed maps to `ctb`:
+
+| `podcast:person` role | Relator code |
+| --- | --- |
+| host, co-host, guest host | `hst` |
+| guest | `spk` |
+| narrator | `nrt` |
+| author, writer, co-writer, guest writer | `aut` |
+| editor, managing editor, story editor, script editor | `edt` |
+| producer, executive producer, senior producer, associate producer | `pro` |
+| director | `drt` |
+| composer | `cmp` |
+| translator | `trl` |
+| transcriber | `trc` |
+| researcher | `res` |
+| sound designer | `sds` |
+| audio engineer, remote recording engineer | `rce` |
+| cover art designer | `cov` |
+
+A `podcast:person` element's `href` maps to `url` and its `img` to an `image`
+the producer copies into `media/`. An EPUB's `dc:creator` and
+`dc:contributor` map to `contributors`, with their `role` refinement (already
+a relator code) as `roles`; with no refinement, `dc:creator` is `aut` and
+`dc:contributor` is `ctb`.
+
 ## 5. Content
 
 ### 5.1 An OKF bundle
@@ -673,6 +779,7 @@ moca:
 | `profiles` | Profile URI to that profile's node-level data (§9). |
 | `media` | Descriptions of the node's audio and video sources, hosted outside the package or not (§5.7): a list of `{ source, type, duration?, digest?, transcript? }`. |
 | `date_published` | When the node's content was first published, in the form of `datePublished` (§4.12). A value that does not parse is `C005_FIELD_INVALID` and treated as absent. |
+| `contributors` | People and organisations credited for this node, in the shape of the manifest's `contributors` (§4.13), at most 32. A list that does not match is `C005_FIELD_INVALID` and treated as absent. |
 
 ### 5.4 Locales
 
@@ -1568,6 +1675,11 @@ log. Content and sources may hold more.
   titles and descriptions, tags, `alt` text and images are package data like
   any other. A picture of a person is personal data. The rules above apply
   to them.
+- **Credits name people** (§4.13). A contributor's name, picture and
+  identifiers stay in every old version. Producers SHOULD credit people as
+  they credit themselves in public (a show's own credits, a book's title
+  page), and SHOULD NOT copy a name, picture or identifier from anywhere a
+  person did not publish it for that purpose.
 
 ## 14. Versioning of this specification
 

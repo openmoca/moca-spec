@@ -297,6 +297,7 @@ and `profiles`, are left out, as they are in a real record):
   | `profiles` | The manifest's profile URIs, in manifest order; absent when there are none. |
   | `package.datePublished` | The manifest's `datePublished`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-date)). |
   | `node.datePublished` | The node's `moca.date_published`, as written, when it parses; absent otherwise. The package's date is never copied to it. |
+  | `node.contributors` | The node's `moca.contributors`, as written, less any image that failed its check, when they match the node schema; absent otherwise ([package spec §4.13](moca-package-spec.md#413-credits)). The package's contributors are never copied to it. |
   | `node.media` | The node's valid media descriptions ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ source, resource, type, duration?, digest?, transcript?, alternateOf?, sync? }`, where `resource` is the source's `resource` as written. A valid alternate carries `alternateOf` and its `sync`, which is `[{ "at": 0, "offset": 0 }]` when the node gave none. Absent when there are none. |
 
   A consumer of citation records (a store, an application) SHOULD ignore
@@ -852,7 +853,7 @@ withhold only the `structured` capability.
 | `M007_UNREGISTERED_URN` | info | The package id uses a URN namespace that is not registered with IANA. |
 | `M008_DIGEST_V1_PACKAGE` | info | The package was written for a `mocaVersion` before 0.4; digests, pins and attestations made then will not match `moca-digest-v2` ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
 | `M009_MOCA_VERSION_NEWER` | warning | The package was written for a newer `mocaVersion` than this Reader implements; it is read under the newest rules this Reader implements ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
-| `M010_IMAGE_INVALID` | warning | A manifest image is missing, over `maxImageBytes`, or does not start with the signature of its `type`. It is left out of the result ([package spec §4.6](moca-package-spec.md#46-images)). |
+| `M010_IMAGE_INVALID` | warning | A manifest image, or the image of a credit ([package spec §4.13](moca-package-spec.md#413-credits)), is missing, over `maxImageBytes`, or does not start with the signature of its `type`. It is left out of the result ([package spec §4.6](moca-package-spec.md#46-images)). |
 | `M011_TRANSLATION_LOCALE_UNDECLARED` | error | A key of `translations` is not a tag in `locales` ([package spec §4.7](moca-package-spec.md#47-translations)). |
 | `M012_TAG_DUPLICATE` | warning | Two tags in one list are equal, compared case-insensitively. The repeat is dropped ([package spec §4.8](moca-package-spec.md#48-tags)). |
 | `M013_ALT_IMAGE_UNKNOWN` | warning | A translated `alt` text names no image in `images`. It is dropped. |

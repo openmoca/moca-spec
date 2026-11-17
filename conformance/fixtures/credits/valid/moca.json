@@ -1,0 +1,40 @@
+{
+  "id": "https://example.com/conformance/credits-valid",
+  "version": "1.0.0",
+  "title": "Credits fixture",
+  "language": "en",
+  "mocaVersion": "0.7",
+  "publisher": {
+    "name": "Example Podcast Ltd",
+    "url": "https://podcast.example.org",
+    "description": "An independent studio making shows about the sea.",
+    "image": {
+      "src": "media/publisher.png",
+      "type": "image/png",
+      "alt": "The studio's logo"
+    },
+    "sameAs": [
+      "https://www.wikidata.org/entity/Q4115189"
+    ]
+  },
+  "url": "https://podcast.example.org/harbour-lights",
+  "contributors": [
+    {
+      "name": "Ada Example",
+      "roles": [
+        "hst",
+        "aut"
+      ],
+      "sameAs": [
+        "https://orcid.org/0000-0002-1825-0097"
+      ]
+    },
+    {
+      "name": "LibriVox volunteers",
+      "roles": [
+        "nrt"
+      ],
+      "url": "https://librivox.org"
+    }
+  ]
+}

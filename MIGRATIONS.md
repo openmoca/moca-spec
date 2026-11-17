@@ -4,7 +4,8 @@ How to move packages and Readers between versions of the specification.
 
 ## From 0.6.0 to 0.7.0
 
-Packages written for `mocaVersion` `0.6` read exactly as before, with the same digests, and need no change. Every
+Packages written for `mocaVersion` `0.6` read exactly as before, with the same digests, and need no change, unless
+they have a string `publisher`: that is now an object, and a string fails the schema (`M002`). Every other
 addition is optional. New packages that use one declare `mocaVersion` `0.7`. Trust roots that list the new role
 `issued-copy` cannot be read by 0.6 Readers.
 
@@ -28,6 +29,8 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
 | Single file extensions: an envelope is `.mocae` (was `.moca.enc`) and a sidecar index archive is `.mocai` (was `.moca.idx.zip`) | — | Nothing to convert: Readers recognise files by content, so files with the old names still read. The tools now write the new names: `moca-sign encrypt -o <name>.mocae`; `moca-index build -o <name>.mocai` writes the Zip archive (any other `-o` a folder); the MCP server finds `<name>.mocai` beside a package, and still finds the old names. Rename files when convenient. |
 | Time ranges must end within the media: at or before the latest cue end, or the declared `duration` | `C011` | Check ranges that end after the last caption (a chapter that runs to the end of a video): declare the media's `duration`. |
 | `datePublished` in the manifest and `moca.date_published` on nodes ([ADR-0031](docs/adr/0031-date-published.md)) | `M002`, `C005` | Optional. A full date or an RFC 3339 date-time with an offset. |
+| **Breaking:** `publisher` is an object, `{ name, url?, description?, image?, sameAs? }`; there is no string form ([ADR-0038](docs/adr/0038-credits-in-fixed-shapes.md)) | `M002` for a string | Replace `"publisher": "Acme"` with `"publisher": { "name": "Acme" }`, declare `mocaVersion` `0.7`, and sign again. |
+| Credits: a package-level `url`, and `contributors` in the manifest and in `moca.contributors`, with MARC relator roles (package spec §4.13) | `M002`, `C005`, `M010` | Optional. Credit people only as they credit themselves in public; never put an e-mail address or telephone number in a credit. Copy pictures into `media/`. |
 | Binding by composition: a composite package's structure may use its members' package ids and node ids as concepts ([ADR-0030](docs/adr/0030-series-bind-members-by-composition.md)) | — | Optional. Declare each as a `skos:Concept`. See composite packages (package spec §7.3). |
 | `isPartOf`, a core relation type; other types that no declared profile defines are reported ([ADR-0032](docs/adr/0032-is-part-of-and-unknown-relation-types.md)) | `R005` (info) | Rename invented relation types, or declare the profile that defines them. |
 | An issued copy matches a member pin through its verified original digest ([ADR-0033](docs/adr/0033-issued-copies-match-pins-and-sidecars.md)) | `R002` when it does not verify | Pin the publisher's package in a members' composite package; hosts need the issuer in their trust root. |
@@ -38,6 +41,7 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
 | --- | --- | --- |
 | Validity: a package is valid when it has no error in the `T`, `P`, `M`, `C` or `E` families (Reader contract §11) | `E001`–`E006` | Treat an envelope that does not open as invalid. |
 | Result fields: `distribution`, `envelope`, `images`, `translations`, `tags`, `apps`, `readingOrder` and `issuedCopy` (Reader interface §4) | — | Read them if you need them. `apps` and `distribution` are advice: never fetch, open or enforce them. |
+| Credits: the result carries `publisher` (an object), `url` and `contributors`; citation records carry `node.contributors` (Reader interface §4, contract §7) | `M010` for a credit's image | Readers: vendor the new manifest, node and citation-record schemas; expose credits as written, less images that fail their check. Hosts: show credits as the signer's claim, beside who signed; never as verified. |
 | The optional feature `encryption` (Reader contract §14): a key provider, age for X25519 and scrypt, and the limits `maxScryptWorkFactor` (an integer from 1 to 22; default 20, about 1 GiB of memory per encrypted entry) and the decrypted `maxBytes` | `E001` with no key provider | Hosts that open envelopes supply a key provider (encrypted packages §5.1). In .NET, add `OpenMoca.Reader.Age`; in TypeScript, `@openmoca/moca-core/age`. Servers may lower `maxScryptWorkFactor`. |
 | Trust roots gain the role `issued-copy`, which requires `ids` (attestations §6) | — (the trust root is refused when `ids` is missing) | Give the role only to issuers you trust to put a publisher's name on changed bytes, with `ids` that cover those publishers' packages. `moca-sign trust add --roles issued-copy --ids …`. |
 | Issued copies are verified in two passes: the publisher's attestations against the rebuilt original digest (attestations §7.1). Records carry `package.issuedCopy` and `node.issuedChange`; reviews of changed files are listed with `fileChanged` and never count | `A002` | Applications: show that a record comes from a changed file. Share `issuedCopy.originalDigest`, not the copy's digest, outside the licensee's own use. |
@@ -64,7 +68,9 @@ addition is optional. New packages that use one declare `mocaVersion` `0.7`. Tru
   under `requireSignature`. That fails safe.
 - **A trust root that lists `issued-copy`** is refused, because the `roles` enum is closed.
 - **New manifest keys** (`distribution`, `images`, `translations`, `tags`, `apps`, `readingOrder`,
-  `issuedCopies`, `datePublished`) are unknown keys (`M004`, info) and are ignored. `moca.media` and
+  `issuedCopies`, `datePublished`, `url`, `contributors`) are unknown keys (`M004`, info) and are ignored.
+- **A `publisher` object** fails the 0.6 manifest schema (`M002`): the package is invalid to a 0.6 Reader. A
+  package that must reach 0.6 Readers leaves `publisher` out. `moca.media` and
   `moca.date_published` are ignored.
 - **A composite package's structure** that uses member ids as concepts reads as before; its bindings have no effect.
 - **A member that is an issued copy** does not match its pin (`R002`), and the publisher's sidecar is stale on it
