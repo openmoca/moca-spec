@@ -1,0 +1,15 @@
+{
+  "id": "https://example.com/conformance/credits-role-not-relator",
+  "version": "1.0.0",
+  "title": "Credits fixture",
+  "language": "en",
+  "mocaVersion": "0.7",
+  "contributors": [
+    {
+      "name": "Ada Example",
+      "roles": [
+        "Host"
+      ]
+    }
+  ]
+}

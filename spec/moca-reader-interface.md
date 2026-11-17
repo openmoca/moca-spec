@@ -59,7 +59,7 @@ Everything a Reader touches outside a package's bytes comes from the host
 | Embedder | §5.3. | Dense search. |
 | Retrieval hooks | `ingress` and `egress` (§5.4). | Ontology-guided retrieval strategies. |
 | Audience set | A list of audience labels. | Removing records outside it. |
-| Terms limits | The host's own `ai` values, with the shape of `terms.ai` ([package spec §4.13](moca-package-spec.md#413-terms)). | Tightening a creator's terms, never loosening them. |
+| Terms limits | The host's own `ai` values, with the shape of `terms.ai` ([package spec §4.14](moca-package-spec.md#414-terms)). | Tightening a creator's terms, never loosening them. |
 | Key provider | Given an envelope's age stanzas, its unverified outline and which file is being opened, returns X25519 identities, a passphrase or a file key (one or more of them), or nothing; MAY be asynchronous where the language's read is ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). | Opening encrypted packages, for a Reader that implements `encryption`. |
 
 A package never supplies any of these.
@@ -113,6 +113,11 @@ contract:
   manifest passes its schema; absent otherwise
   ([package spec §4.12](moca-package-spec.md#412-publication-date)).
   Informative only;
+- `publisher`, `url` and `contributors`: the manifest's credits, as written,
+  less any image that failed its check, when the manifest passes its schema;
+  each absent otherwise
+  ([package spec §4.13](moca-package-spec.md#413-credits)). Labels, not
+  proof: the signer's claim;
 - `envelope`, for an envelope only: `{ format, opened }`, plus the
   unverified `outline` when it was not opened
   ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).

@@ -186,8 +186,24 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `.moca.idx.zip`. Files with the old names still read, because Readers go
   by content. Readers do not depend on the types either. IANA registration templates in `docs/iana/`, to be
   submitted after the release.
+- **Credits ([ADR-0038](docs/adr/0038-credits-in-fixed-shapes.md), Proposed).**
+  Package spec §4.13: a package-level `url`; `contributors` in the manifest
+  and in node frontmatter (`moca.contributors`), each with a name, MARC
+  relator `roles`, and an optional `url`, `image` and `sameAs` (ISNI, ORCID,
+  Wikidata); informative mappings to schema.org, Dublin Core, ONIX and
+  Podcasting 2.0 `podcast:person` roles. Credits are labels, not proof.
+  Reader interface §4: the package result carries `publisher`, `url` and
+  `contributors`; contract §7: citation records carry `node.contributors`.
+  A credit's image is checked as a manifest image (`M010`). Eight corpus
+  cases (`credits-*`, `search-credits-node`) and the runner fields
+  `expect.publisher`, `expect.url` and `expect.contributors`.
 
 ### Changed
+
+- **Breaking: `publisher` is an object** (package spec §4.1, §4.13): `name`,
+  and optionally `url`, `description`, `image` and `sameAs`. The string form
+  fails the schema (`M002`). The examples `support-kb` and `acme-support`
+  use the object and declare `mocaVersion` `0.7`.
 
 - Package spec §1 and the README: the opening says what MOCA adds to OKF.
   OKF shapes knowledge for AI; MOCA is for the people who make and own it.
@@ -207,7 +223,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   them, so list the steps themselves and keep an overview that contains them
   off the reading order.
 - **The creator's terms (ADR-0036, ADR-0037, Accepted).**
-  Package spec §4.13 `terms` (`ai`, `rating`,
+  Package spec §4.14 `terms` (`ai`, `rating`,
   `rights`, node values in the manifest), with permissions as booleans
   under `ai.allowed` (`device`, `host`, `provider`, `training`,
   `machineTranslation`) and `rights.repackage.allowed`, and provider
@@ -228,7 +244,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `ai.allowed.training: true` has no effect. Discovering a rights holder's keys,
   channel-scoped keys and publisher terms statements, which would let an
   owner loosen them, come in a later version.
-  Package spec §4.13: the line between `U001` and `U003` is mechanical.
+  Package spec §4.14: the line between `U001` and `U003` is mechanical.
   Contract §15.3: `U002` for a node entry is reported when the package is
   read. The citation record's resolved `terms.ai` has the shape of
   `terms.ai`. 26 corpus cases (`terms-*`, `search-terms-*`) from the worked

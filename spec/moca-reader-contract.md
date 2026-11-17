@@ -298,6 +298,7 @@ and `profiles`, are left out, as they are in a real record):
   | `profiles` | The manifest's profile URIs, in manifest order; absent when there are none. |
   | `package.datePublished` | The manifest's `datePublished`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-date)). |
   | `node.datePublished` | The node's `moca.date_published`, as written, when it parses; absent otherwise. The package's date is never copied to it. |
+  | `node.contributors` | The node's `moca.contributors`, as written, less any image that failed its check, when they match the node schema; absent otherwise ([package spec §4.13](moca-package-spec.md#413-credits)). The package's contributors are never copied to it. |
   | `node.media` | The node's valid media descriptions ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ source, resource, type, duration?, digest?, transcript?, alternateOf?, sync? }`, where `resource` is the source's `resource` as written. A valid alternate carries `alternateOf` and its `sync`, which is `[{ "at": 0, "offset": 0 }]` when the node gave none. Absent when there are none. |
 
   A consumer of citation records (a store, an application) SHOULD ignore
@@ -858,7 +859,7 @@ withhold only the `structured` capability.
 | `M007_UNREGISTERED_URN` | info | The package id uses a URN namespace that is not registered with IANA. |
 | `M008_DIGEST_V1_PACKAGE` | info | The package was written for a `mocaVersion` before 0.4; digests, pins and attestations made then will not match `moca-digest-v2` ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
 | `M009_MOCA_VERSION_NEWER` | warning | The package was written for a newer `mocaVersion` than this Reader implements; it is read under the newest rules this Reader implements ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
-| `M010_IMAGE_INVALID` | warning | A manifest image is missing, over `maxImageBytes`, or does not start with the signature of its `type`. It is left out of the result ([package spec §4.6](moca-package-spec.md#46-images)). |
+| `M010_IMAGE_INVALID` | warning | A manifest image, or the image of a credit ([package spec §4.13](moca-package-spec.md#413-credits)), is missing, over `maxImageBytes`, or does not start with the signature of its `type`. It is left out of the result ([package spec §4.6](moca-package-spec.md#46-images)). |
 | `M011_TRANSLATION_LOCALE_UNDECLARED` | error | A key of `translations` is not a tag in `locales` ([package spec §4.7](moca-package-spec.md#47-translations)). |
 | `M012_TAG_DUPLICATE` | warning | Two tags in one list are equal, compared case-insensitively. The repeat is dropped ([package spec §4.8](moca-package-spec.md#48-tags)). |
 | `M013_ALT_IMAGE_UNKNOWN` | warning | A translated `alt` text names no image in `images`. It is dropped. |
@@ -910,7 +911,7 @@ withhold only the `structured` capability.
 | `S008_UPTO_UNRESOLVED` | warning | A search's `upTo` is on no loaded package's reading order, neither a member nor a descendant of one. It limits nothing (§9). |
 | `S009_SIDECAR_ITEMS_REPLACED` | info | A sidecar built from the publisher's package is bound to an issued copy, and the items of the files the issuer changed were replaced by each file's whole body, without a vector ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)). |
 | `S010_SEARCH_TRUNCATED` | warning | A search stopped at a bound the host set before `limit` records passed the gate; better-matching records that pass may exist (§9.2). |
-| `U001_TERMS_INVALID` | warning | A field of `terms` is malformed ([package spec §4.13](moca-package-spec.md#413-terms)). The package stays valid; the field counts as its strictest value when terms are applied (§15). |
+| `U001_TERMS_INVALID` | warning | A field of `terms` is malformed ([package spec §4.14](moca-package-spec.md#414-terms)). The package stays valid; the field counts as its strictest value when terms are applied (§15). |
 | `U002_TERMS_LOOSENED` | warning | A `terms.nodes` entry, or a composing package, is looser than the package for a permission; the stricter value stands (§15.3). |
 | `U003_TERMS_UNKNOWN_VALUE` | warning | A `terms` field has a value this version does not know, such as one from a later release. It is exposed, and counts as its strictest value when terms are applied (§15). |
 | `U004_TERMS_EXCLUDED` | info | A search's terms request removed records; the finding counts them by reason (§15.4). |
@@ -1003,7 +1004,7 @@ protocol in [conformance/README.md](../conformance/README.md).
 
 ## 15. Creators' terms
 
-A package's `terms` ([package spec §4.13](moca-package-spec.md#413-terms))
+A package's `terms` ([package spec §4.14](moca-package-spec.md#414-terms))
 are labels, not locks. A Reader exposes them exactly, works out who stated
 them, and resolves them only when the host asks. It never fetches anything
 because of them, and never lets them change how it reads a package.

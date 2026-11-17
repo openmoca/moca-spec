@@ -1,0 +1,14 @@
+{
+  "id": "https://example.com/conformance/credits-image-missing",
+  "version": "1.0.0",
+  "title": "Credits fixture",
+  "language": "en",
+  "mocaVersion": "0.7",
+  "publisher": {
+    "name": "Example Podcast Ltd",
+    "image": {
+      "src": "media/missing.png",
+      "type": "image/png"
+    }
+  }
+}

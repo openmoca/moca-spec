@@ -2220,6 +2220,213 @@
       }
     },
     {
+      "id": "credits-valid",
+      "description": "Package spec §4.13, Reader interface §4: publisher, url and contributors are exposed exactly as written, with no diagnostic.",
+      "target": "fixtures/credits/valid",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "publisher": {
+          "name": "Example Podcast Ltd",
+          "url": "https://podcast.example.org",
+          "description": "An independent studio making shows about the sea.",
+          "image": {
+            "src": "media/publisher.png",
+            "type": "image/png",
+            "alt": "The studio's logo"
+          },
+          "sameAs": [
+            "https://www.wikidata.org/entity/Q4115189"
+          ]
+        },
+        "url": "https://podcast.example.org/harbour-lights",
+        "contributors": [
+          {
+            "name": "Ada Example",
+            "roles": [
+              "hst",
+              "aut"
+            ],
+            "sameAs": [
+              "https://orcid.org/0000-0002-1825-0097"
+            ]
+          },
+          {
+            "name": "LibriVox volunteers",
+            "roles": [
+              "nrt"
+            ],
+            "url": "https://librivox.org"
+          }
+        ]
+      }
+    },
+    {
+      "id": "credits-publisher-string",
+      "description": "Package spec §4.13: publisher is always an object; the string form fails the schema (M002).",
+      "target": "fixtures/credits/publisher-string",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "publisher": null,
+        "url": null,
+        "contributors": null
+      }
+    },
+    {
+      "id": "credits-closed-shape",
+      "description": "Package spec §4.13: every credit object is closed; a contributor with an email member fails the schema (M002).",
+      "target": "fixtures/credits/unknown-member",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "publisher": null,
+        "url": null,
+        "contributors": null
+      }
+    },
+    {
+      "id": "credits-role-not-relator",
+      "description": "Package spec §4.13: a role is a MARC relator code, three lower-case letters; Host fails the schema (M002).",
+      "target": "fixtures/credits/role-not-relator",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "publisher": null,
+        "url": null,
+        "contributors": null
+      }
+    },
+    {
+      "id": "credits-same-as-not-https",
+      "description": "Package spec §4.13: sameAs entries are https: URIs; an http: one fails the schema (M002).",
+      "target": "fixtures/credits/same-as-not-https",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "publisher": null,
+        "url": null,
+        "contributors": null
+      }
+    },
+    {
+      "id": "credits-image-missing",
+      "description": "Package spec §4.13: a credit's image is checked as a manifest image; a missing file is M010 and the image is left out, the rest of the credit stands.",
+      "target": "fixtures/credits/image-missing",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "publisher": {
+          "name": "Example Podcast Ltd"
+        }
+      }
+    },
+    {
+      "id": "credits-node-checks",
+      "description": "Package spec §4.13, §5.3: a node's contributors with no roles are C005; a node credit's missing image is M010. The package stays valid.",
+      "target": "fixtures/credits/node",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID",
+          "M010_IMAGE_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "contributors": [
+          {
+            "name": "Ada Example",
+            "roles": [
+              "hst",
+              "aut"
+            ],
+            "sameAs": [
+              "https://orcid.org/0000-0002-1825-0097"
+            ]
+          },
+          {
+            "name": "LibriVox volunteers",
+            "roles": [
+              "nrt"
+            ],
+            "url": "https://librivox.org"
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-credits-node",
+      "kind": "search",
+      "description": "Contract §7: node.contributors is the node's own moca.contributors as written, less an image that failed its check; absent when invalid or not given. The package's contributors are never copied to a node.",
+      "packages": [
+        "fixtures/credits/node"
+      ],
+      "options": {
+        "now": "2026-11-17T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "lantern"
+      },
+      "expect": {
+        "fields": {
+          "https://example.com/conformance/credits-node@1.0.0#guest.md": {
+            "node.contributors": [
+              {
+                "name": "Grace Example",
+                "roles": [
+                  "spk"
+                ],
+                "image": {
+                  "src": "media/guest.png",
+                  "type": "image/png",
+                  "alt": "Grace at the microphone"
+                }
+              }
+            ]
+          },
+          "https://example.com/conformance/credits-node@1.0.0#missing-image.md": {
+            "node.contributors": [
+              {
+                "name": "Lin Example",
+                "roles": [
+                  "spk",
+                  "trl"
+                ]
+              }
+            ]
+          },
+          "https://example.com/conformance/credits-node@1.0.0#invalid.md": {
+            "node.contributors": null
+          },
+          "https://example.com/conformance/credits-node@1.0.0#plain.md": {
+            "node.contributors": null
+          }
+        }
+      }
+    },
+    {
       "id": "translation-alt-unknown",
       "description": "Package spec §4.7: a translated alt text for an image not in images is M013 (warning) and dropped.",
       "target": "fixtures/translation-alt-unknown",
@@ -8049,7 +8256,7 @@
     },
     {
       "id": "terms-valid",
-      "description": "Package spec §4.13, contract §15.1: well-formed terms are exposed exactly as written, with no problems; unsigned, so the authority is unverified.",
+      "description": "Package spec §4.14, contract §15.1: well-formed terms are exposed exactly as written, with no problems; unsigned, so the authority is unverified.",
       "target": "fixtures/terms/valid",
       "expect": {
         "valid": true,
@@ -8136,7 +8343,7 @@
     },
     {
       "id": "terms-malformed",
-      "description": "Package spec §4.13: a wrong type, an age range the wrong way round and two ratings for one scheme are each U001 (warning); the package stays valid.",
+      "description": "Package spec §4.14: a wrong type, an age range the wrong way round and two ratings for one scheme are each U001 (warning); the package stays valid.",
       "target": "fixtures/terms/invalid",
       "expect": {
         "valid": true,
@@ -8167,7 +8374,7 @@
     },
     {
       "id": "terms-null-undeclared",
-      "description": "Package spec §2, \"Values\", and §4.13: null where a permission wants a boolean is malformed, U001 (warning); the package stays valid and the block is exposed as written.",
+      "description": "Package spec §2, \"Values\", and §4.14: null where a permission wants a boolean is malformed, U001 (warning); the package stays valid and the block is exposed as written.",
       "target": "fixtures/terms/null",
       "expect": {
         "valid": true,
@@ -8198,7 +8405,7 @@
     },
     {
       "id": "terms-unknown-value",
-      "description": "Package spec §4.13: a string where only listed strings are allowed, and a member name the schema does not list, are U003 (warning), never U001 or M002.",
+      "description": "Package spec §4.14: a string where only listed strings are allowed, and a member name the schema does not list, are U003 (warning), never U001 or M002.",
       "target": "fixtures/terms/unknown",
       "expect": {
         "valid": true,
@@ -8387,7 +8594,7 @@
     {
       "id": "search-terms-node-prefix",
       "kind": "search",
-      "description": "Package spec §4.13: a nodes entry ending in / applies to every node under it.",
+      "description": "Package spec §4.14: a nodes entry ending in / applies to every node under it.",
       "packages": [
         "fixtures/terms/valid"
       ],
@@ -8454,7 +8661,7 @@
     {
       "id": "search-terms-malformed-fails-closed",
       "kind": "search",
-      "description": "Package spec §4.13: a malformed permission counts as its strictest value.",
+      "description": "Package spec §4.14: a malformed permission counts as its strictest value.",
       "packages": [
         "fixtures/terms/invalid"
       ],
@@ -8482,7 +8689,7 @@
     {
       "id": "search-terms-unknown-fails-closed",
       "kind": "search",
-      "description": "Package spec §4.13: an unknown answerSources value counts as the strictest, work.",
+      "description": "Package spec §4.14: an unknown answerSources value counts as the strictest, work.",
       "packages": [
         "fixtures/terms/unknown"
       ],

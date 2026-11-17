@@ -1,0 +1,16 @@
+{
+  "id": "https://example.com/conformance/credits-unknown-member",
+  "version": "1.0.0",
+  "title": "Credits fixture",
+  "language": "en",
+  "mocaVersion": "0.7",
+  "contributors": [
+    {
+      "name": "Ada Example",
+      "roles": [
+        "hst"
+      ],
+      "email": "ada@example.org"
+    }
+  ]
+}

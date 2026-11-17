@@ -1,6 +1,6 @@
 {
   "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
-  "mocaVersion": "0.4",
+  "mocaVersion": "0.7",
   "id": "https://example.com/moca/support-kb",
   "version": "4.2.0",
   "title": "Acme Support Knowledge Base",
@@ -10,5 +10,5 @@
     "fr"
   ],
   "license": "CC-BY-4.0",
-  "publisher": "Acme Support"
+  "publisher": { "name": "Acme Support" }
 }

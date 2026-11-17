@@ -11,7 +11,7 @@
           "package": {
             "id": "https://example.com/moca/support-kb",
             "version": "4.2.0",
-            "digest": "sha256:4992176b90ea0992037617ee56d5dcafecf60aeb400cfa9369c9164453df96da",
+            "digest": "sha256:0320e4a0b9aedcc3085a5fcd8e2f738f17bf9f7523c99cca1e5a3b764e33d3c0",
             "signed": true,
             "signers": [
               "MOCA examples publisher (INSECURE, published private key)"
