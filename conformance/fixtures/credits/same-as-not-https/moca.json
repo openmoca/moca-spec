@@ -1,0 +1,13 @@
+{
+  "id": "https://example.com/conformance/credits-same-as-not-https",
+  "version": "1.0.0",
+  "title": "Credits fixture",
+  "language": "en",
+  "mocaVersion": "0.7",
+  "publisher": {
+    "name": "Example Podcast Ltd",
+    "sameAs": [
+      "http://www.wikidata.org/entity/Q4115189"
+    ]
+  }
+}

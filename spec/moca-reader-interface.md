@@ -108,6 +108,11 @@ contract:
   manifest passes its schema; absent otherwise
   ([package spec §4.12](moca-package-spec.md#412-publication-date)).
   Informative only;
+- `publisher`, `url` and `contributors`: the manifest's credits, as written,
+  less any image that failed its check, when the manifest passes its schema;
+  each absent otherwise
+  ([package spec §4.13](moca-package-spec.md#413-credits)). Labels, not
+  proof: the signer's claim;
 - `envelope`, for an envelope only: `{ format, opened }`, plus the
   unverified `outline` when it was not opened
   ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).

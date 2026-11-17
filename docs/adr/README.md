@@ -45,5 +45,6 @@ carried over.
 | [0033](0033-issued-copies-match-pins-and-sidecars.md) | Issued copies match member pins and the publisher's sidecar |
 | [0034](0034-alternate-media-sync-by-stretches.md) | Alternate media line up stretch by stretch |
 | [0035](0035-time-ranges-refined-by-a-quote.md) | A time range can be refined by the words spoken in it |
+| [0038](0038-credits-in-fixed-shapes.md) | Credits are labels in fixed shapes (Proposed) |
 
 New records use the template in [0000-template.md](0000-template.md).
