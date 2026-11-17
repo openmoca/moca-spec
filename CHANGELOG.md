@@ -205,6 +205,11 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   fails the schema (`M002`). The examples `support-kb` and `acme-support`
   use the object and declare `mocaVersion` `0.7`.
 
+- Package spec §1 and the README: the opening says what MOCA adds to OKF.
+  OKF shapes knowledge for AI; MOCA is for the people who make and own it.
+  The signed manifest says who made the work, who owns it and on what terms,
+  and a signature shows who said so, and no more. Informative wording; no
+  rule changes.
 - Package spec §5.6: `skos:altLabel`, a concept's other names (synonyms,
   abbreviations, short names, plurals), any number per language. Reader
   contract §10: `concept()` gives `altLabels` by language. Reader interface

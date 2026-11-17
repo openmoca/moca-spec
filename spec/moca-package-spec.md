@@ -6,10 +6,17 @@ License: [Apache License 2.0](../LICENSE)
 
 ## 1. Scope
 
-MOCA (Modular Ontology, Content & Attestation) is a **package layer** for
-knowledge that AI systems use. It wraps an
+The
 [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md)
-(OKF) v0.2 bundle (OKF v0.2 as published at commit `ad30107`, 21 August 2026) in a small manifest and adds what OKF leaves out:
+(OKF) shapes knowledge for AI. MOCA (Modular Ontology, Content & Attestation)
+is for the people who make and own it. A MOCA package wraps an OKF v0.2
+bundle (OKF v0.2 as published at commit `ad30107`, 21 August 2026) in a
+manifest that says **who made the work, who owns it and on what terms** it
+may be used. When the package is signed, the signature shows **who said
+so**: the holder of the signing key, as the reader's trust root names them.
+It does not show that what they wrote is true, or that they own the work.
+
+MOCA adds what OKF leaves out:
 
 - an identity and a content version for the whole package;
 - a **digest** that identifies the package's exact content however it is
