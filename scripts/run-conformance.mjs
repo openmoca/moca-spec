@@ -63,6 +63,18 @@ function checkPackage(e, actual) {
     const got = actual[field] ?? null;
     if (JSON.stringify(canonical(got)) !== JSON.stringify(canonical(e[field]))) problems.push(`${field}: expected ${JSON.stringify(e[field])}, got ${JSON.stringify(got)}`);
   }
+  // Contract §15.1: the terms result. `authority` is compared exactly, `problems` as a set of "code path", and
+  // `declared` as a JSON value; each only when the case gives it. null means the result has no terms.
+  if (e.terms === null && actual.terms != null) problems.push(`terms: expected none, got ${JSON.stringify(actual.terms)}`);
+  if (e.terms) {
+    const got = actual.terms ?? {};
+    if (e.terms.authority !== undefined && e.terms.authority !== got.authority) problems.push(`terms.authority: expected ${e.terms.authority}, got ${got.authority}`);
+    if (e.terms.problems !== undefined) {
+      const key = (p) => `${p.code} ${p.path}`;
+      if (!same(e.terms.problems.map(key), (got.problems ?? []).map(key))) problems.push(`terms.problems: expected [${e.terms.problems.map(key)}], got [${(got.problems ?? []).map(key)}]`);
+    }
+    if (e.terms.declared !== undefined && JSON.stringify(canonical(e.terms.declared)) !== JSON.stringify(canonical(got.declared ?? null))) problems.push(`terms.declared: expected ${JSON.stringify(e.terms.declared)}, got ${JSON.stringify(got.declared ?? null)}`);
+  }
   // Encrypted packages §5.3: the fields of envelope the case gives are compared exactly.
   for (const [field, want] of Object.entries(e.envelope ?? {})) {
     const got = actual.envelope?.[field];

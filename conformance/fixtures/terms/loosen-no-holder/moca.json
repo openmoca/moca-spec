@@ -1,0 +1,13 @@
+{
+  "id": "https://example.com/conformance/terms-loosen-no-holder",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "training": true
+      }
+    }
+  }
+}

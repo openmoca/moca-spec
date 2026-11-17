@@ -1,0 +1,60 @@
+{
+  "id": "https://example.com/conformance/terms-valid",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "provider": false,
+        "training": false,
+        "machineTranslation": true
+      },
+      "providerRequires": [
+        "noTraining"
+      ],
+      "answerSources": "work"
+    },
+    "rating": {
+      "explicit": false,
+      "contentRating": [
+        {
+          "scheme": "example-scheme",
+          "value": "PG"
+        }
+      ],
+      "typicalAgeRange": "12-"
+    },
+    "rights": {
+      "rightsHolder": {
+        "id": "https://podcast.example.org",
+        "name": "Example Podcast"
+      },
+      "basis": "own",
+      "contact": "mailto:rights@podcast.example.org",
+      "repackage": {
+        "allowed": false
+      }
+    },
+    "nodes": [
+      {
+        "paths": [
+          "content/ep2.md"
+        ],
+        "rating": {
+          "explicit": true
+        }
+      },
+      {
+        "paths": [
+          "content/notes/"
+        ],
+        "ai": {
+          "allowed": {
+            "host": false
+          }
+        }
+      }
+    ]
+  }
+}

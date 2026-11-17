@@ -52,6 +52,22 @@
       "key": "publisher"
     },
     {
+      "package": "conformance/fixtures/terms/by-publisher",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/terms/by-packager",
+      "key": "issuer"
+    },
+    {
+      "package": "conformance/fixtures/terms/loosen-attempt",
+      "key": "issuer"
+    },
+    {
+      "package": "conformance/fixtures/terms/loosen-no-holder",
+      "key": "issuer"
+    },
+    {
       "package": "examples/acme-support",
       "key": "publisher"
     },

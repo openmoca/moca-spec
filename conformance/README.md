@@ -55,6 +55,7 @@ conformance/
 | `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
 | `expect.evidenceLocated` | For each node path, the `located` value (`{ start, end }`) of each `evidence` entry, in order; `null` means absent ([contract §7](../spec/moca-reader-contract.md#7-citation-records)). |
+| `expect.terms` | The result's `terms` ([contract §15.1](../spec/moca-reader-contract.md#151-exposing-terms)): `authority` compared exactly, `problems` as a set of `code` and `path`, and `declared` as a JSON value (`null`: absent), each only when given. `expect.terms: null` means the result has none. |
 
 Order, counts and message text are not compared.
 
@@ -91,7 +92,8 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `options.allowUnsignedRelations` | `true`: the library applies relations from unsigned or unscoped packages ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). Absent means false. |
 | `options.sidecar` | A sidecar offered to every loaded package. A package it does not match reports the binding code (for example `S002`) and is searched without it. |
 | `options.embedder` | The conformance embedder's identity: `name`, optional `version`, `dimensions`, and optional `queryPrefix` and `documentPrefix` it declares. It returns `[1, 0, …, 0]` of that length for every text, whatever the role. |
-| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a concept on a reading order, contract §9). |
+| `options.termsLimits` | The host's terms limits, an `ai` object ([contract §15.3](../spec/moca-reader-contract.md#153-resolving-terms)): floors that only tighten. |
+| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a concept on a reading order, contract §9), `terms` (the host's terms request, [contract §15.4](../spec/moca-reader-contract.md#154-the-terms-gate)). |
 | `expect.codes` | The set of diagnostic codes from sidecars, the backend, the library (`L` codes) and the search itself (`Search.diagnostics`, such as `S008`). |
 | `expect.include` | Results that must be returned. |
 | `expect.exclude` | Results that must never be returned. |

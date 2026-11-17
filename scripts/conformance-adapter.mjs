@@ -137,7 +137,7 @@ export async function actualFor(root, c) {
       : o.hooks === 'hostile-ingress' ? hostileIngressHooks()
         : o.hooks === 'ontology-guided' ? ontologyGuided() : undefined;
     const s = c.search;
-    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, concepts: s.concepts, scope: s.scope, upTo: s.upTo };
+    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, concepts: s.concepts, scope: s.scope, upTo: s.upTo, terms: s.terms };
     if (o.backend === 'store') {
       // Everything listed is ingested (each package on its own with
       // `ingestSeparately`); only the packages in `allow` are "loaded", and the
@@ -158,7 +158,7 @@ export async function actualFor(root, c) {
           if (r.valid) structure.add(r);
         }
       }
-      const search = new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true, structure }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks });
+      const search = new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true, structure }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks, termsLimits: o.termsLimits });
       const records = await search.search(s.query, searchOptions);
       codes.push(...search.diagnostics.map((d) => d.code));
       return { codes, records };
@@ -171,7 +171,7 @@ export async function actualFor(root, c) {
     codes.push(...(backend.diagnostics ?? []).map((d) => d.code));
     // Library diagnostics (L): for example two digests for one id@version.
     codes.push(...library.diagnostics.items.filter((d) => d.code.startsWith('L')).map((d) => d.code));
-    const search = new Search(library, { backend, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks });
+    const search = new Search(library, { backend, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks, termsLimits: o.termsLimits });
     const records = await search.search(s.query, searchOptions);
     // Contract §9: the search's own findings, such as S008.
     codes.push(...search.diagnostics.map((d) => d.code));
@@ -200,7 +200,7 @@ export async function actualFor(root, c) {
       if (r.evidence.length > 0) evidenceLocated[r.node.path] = r.evidence.map((e) => e.located ?? null);
     }
   }
-  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, issuedCopy: result.issuedCopy ?? null, datePublished: result.datePublished ?? null, publisher: result.publisher ?? null, url: result.url ?? null, contributors: result.contributors ?? null, sidecarUsable, evidenceMatched, evidenceLocated, envelope: result.envelope };
+  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, issuedCopy: result.issuedCopy ?? null, datePublished: result.datePublished ?? null, publisher: result.publisher ?? null, url: result.url ?? null, contributors: result.contributors ?? null, terms: result.terms ?? null, sidecarUsable, evidenceMatched, evidenceLocated, envelope: result.envelope };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

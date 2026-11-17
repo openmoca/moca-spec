@@ -59,6 +59,7 @@ Everything a Reader touches outside a package's bytes comes from the host
 | Embedder | §5.3. | Dense search. |
 | Retrieval hooks | `ingress` and `egress` (§5.4). | Ontology-guided retrieval strategies. |
 | Audience set | A list of audience labels. | Removing records outside it. |
+| Terms limits | The host's own `ai` values, with the shape of `terms.ai` ([package spec §4.14](moca-package-spec.md#414-terms)). | Tightening a creator's terms, never loosening them. |
 | Key provider | Given an envelope's age stanzas, its unverified outline and which file is being opened, returns X25519 identities, a passphrase or a file key (one or more of them), or nothing; MAY be asynchronous where the language's read is ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). | Opening encrypted packages, for a Reader that implements `encryption`. |
 
 A package never supplies any of these.
@@ -104,6 +105,10 @@ contract:
 - `readingOrder`: the manifest's `readingOrder`, when the manifest passes its
   schema and the IRI resolves; absent otherwise
   ([package spec §4.10](moca-package-spec.md#410-reading-order));
+- `terms`: `{ declared, problems, authority }`, when the manifest passes its
+  schema ([Reader contract §15.1](moca-reader-contract.md#151-exposing-terms));
+  absent when the manifest fails it. Exposed exactly; never acted on unless a
+  search has a terms request;
 - `datePublished`: the manifest's `datePublished`, as written, when the
   manifest passes its schema; absent otherwise
   ([package spec §4.12](moca-package-spec.md#412-publication-date)).
@@ -127,7 +132,7 @@ and `line`.
 | Operation | Takes | Returns |
 | --- | --- | --- |
 | `Search(source, options)` | A library, or, for a store backend, the loaded packages' states (`packageState`) and a clock; then a backend, an audience set and optional hooks. | A search. |
-| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`, `upTo`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`, `upTo`, `terms`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
 | `Search.diagnostics` | Nothing. | The findings of the latest `search` call on this search, such as `S008_UPTO_UNRESOLVED`. Empty when it found none. |
 
 Every call follows
@@ -146,6 +151,9 @@ examines. Unset by default. When it stops a call before `limit` records pass
 the gate, `diagnostics` holds `S010_SEARCH_TRUNCATED`.
 `includeAll` is the host's opt-in from contract §8; a host that lets a caller
 set it has chosen to.
+`terms` is the host's terms request, `{ ai?, rating? }`
+([Reader contract §15.4](moca-reader-contract.md#154-the-terms-gate)); like
+the audience set, it is the host's, and a hook never changes it.
 
 ### 5.2 Backends
 

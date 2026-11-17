@@ -979,6 +979,18 @@
       }
     },
     {
+      "id": "null-undeclared",
+      "description": "Package spec §2, \"Values\": not set is an absent field. null is allowed only where a schema says what it means; datePublished does not, so null fails the schema.",
+      "target": "fixtures/null-undeclared",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
       "id": "signature-untrusted-key",
       "description": "Signed with a key the trust root does not list.",
       "target": "fixtures/signature-untrusted-key",
@@ -8239,6 +8251,812 @@
         ],
         "exclude": [
           "https://example.com/conformance/issued-original@1.0.0#lessons/one.md"
+        ]
+      }
+    },
+    {
+      "id": "terms-valid",
+      "description": "Package spec §4.14, contract §15.1: well-formed terms are exposed exactly as written, with no problems; unsigned, so the authority is unverified.",
+      "target": "fixtures/terms/valid",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [],
+        "terms": {
+          "authority": "unverified",
+          "problems": [],
+          "declared": {
+            "ai": {
+              "allowed": {
+                "provider": false,
+                "training": false,
+                "machineTranslation": true
+              },
+              "providerRequires": [
+                "noTraining"
+              ],
+              "answerSources": "work"
+            },
+            "rating": {
+              "explicit": false,
+              "contentRating": [
+                {
+                  "scheme": "example-scheme",
+                  "value": "PG"
+                }
+              ],
+              "typicalAgeRange": "12-"
+            },
+            "rights": {
+              "rightsHolder": {
+                "id": "https://podcast.example.org",
+                "name": "Example Podcast"
+              },
+              "basis": "own",
+              "contact": "mailto:rights@podcast.example.org",
+              "repackage": {
+                "allowed": false
+              }
+            },
+            "nodes": [
+              {
+                "paths": [
+                  "content/ep2.md"
+                ],
+                "rating": {
+                  "explicit": true
+                }
+              },
+              {
+                "paths": [
+                  "content/notes/"
+                ],
+                "ai": {
+                  "allowed": {
+                    "host": false
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "terms-absent-defaults",
+      "description": "Contract §15.1: a manifest with no terms has a terms result with no declared block, and no defaults filled in.",
+      "target": "fixtures/terms/unrated",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [],
+        "terms": {
+          "authority": "unverified",
+          "problems": [],
+          "declared": null
+        }
+      }
+    },
+    {
+      "id": "terms-malformed",
+      "description": "Package spec §4.14: a wrong type, an age range the wrong way round and two ratings for one scheme are each U001 (warning); the package stays valid.",
+      "target": "fixtures/terms/invalid",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U001_TERMS_INVALID"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": [
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "ai.allowed.provider"
+            },
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "rating.typicalAgeRange"
+            },
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "rating.contentRating"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "terms-null-undeclared",
+      "description": "Package spec §2, \"Values\", and §4.14: null where a permission wants a boolean is malformed, U001 (warning); the package stays valid and the block is exposed as written.",
+      "target": "fixtures/terms/null",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U001_TERMS_INVALID"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": [
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "ai.allowed.training"
+            }
+          ],
+          "declared": {
+            "ai": {
+              "allowed": {
+                "training": null,
+                "device": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "terms-unknown-value",
+      "description": "Package spec §4.14: a string where only listed strings are allowed, and a member name the schema does not list, are U003 (warning), never U001 or M002.",
+      "target": "fixtures/terms/unknown",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U003_TERMS_UNKNOWN_VALUE"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": [
+            {
+              "code": "U003_TERMS_UNKNOWN_VALUE",
+              "path": "ai.answerSources"
+            },
+            {
+              "code": "U003_TERMS_UNKNOWN_VALUE",
+              "path": "ai.allowed.edge"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "terms-node-cannot-loosen",
+      "description": "Contract §15.3 step 2: a nodes entry looser than the package is U002 (warning), reported when the package is read.",
+      "target": "fixtures/terms/node-loosened",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U002_TERMS_LOOSENED"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": []
+        }
+      }
+    },
+    {
+      "id": "terms-authority-packager",
+      "description": "Contract §15.2: signed by a key the trust root holds with no channel scope: the authority is packager, whatever rightsHolder says.",
+      "target": "fixtures/terms/by-publisher",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-11-16T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "codes": [],
+        "terms": {
+          "authority": "packager",
+          "problems": []
+        }
+      }
+    },
+    {
+      "id": "terms-authority-not-from-fields",
+      "description": "Contract §15.2: rightsHolder names the podcast's channel and basis says own, but a signature shows only who signed: packager, never owner from fields.",
+      "target": "fixtures/terms/by-packager",
+      "options": {
+        "trustRoot": "fixtures/trust-root-terms.json",
+        "now": "2026-11-16T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core",
+          "signed"
+        ],
+        "codes": [],
+        "terms": {
+          "authority": "packager",
+          "problems": []
+        }
+      }
+    },
+    {
+      "id": "search-terms-no-request",
+      "kind": "search",
+      "description": "Contract §15.5: without a terms request, terms remove nothing.",
+      "packages": [
+        "fixtures/terms/node-tightens"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md",
+          "https://example.com/conformance/terms-node-tightens@1.0.0#private.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-node-tightens",
+      "kind": "search",
+      "description": "Contract §15.3–15.4: a node denying a provider is removed for a provider; the package allows it for the others. U004 counts the removal.",
+      "packages": [
+        "fixtures/terms/node-tightens"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "include": [
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/terms-node-tightens@1.0.0#private.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md": {
+            "terms.authority": "unverified",
+            "terms.ai.allowed.provider": {
+              "value": true,
+              "decidedBy": "package"
+            },
+            "terms.ai.allowed.training": {
+              "value": false,
+              "decidedBy": "platform"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-node-cannot-loosen",
+      "kind": "search",
+      "description": "Contract §15.3 step 2: a node allowing what the package denies does not loosen it.",
+      "packages": [
+        "fixtures/terms/node-loosened"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0,
+        "exclude": [
+          "https://example.com/conformance/terms-node-loosened@1.0.0#open.md",
+          "https://example.com/conformance/terms-node-loosened@1.0.0#closed.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-node-prefix",
+      "kind": "search",
+      "description": "Package spec §4.14: a nodes entry ending in / applies to every node under it.",
+      "packages": [
+        "fixtures/terms/valid"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "host",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "include": [
+          "https://example.com/conformance/terms-valid@1.0.0#ep1.md",
+          "https://example.com/conformance/terms-valid@1.0.0#ep2.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/terms-valid@1.0.0#notes/ep1-notes.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-provider-conditions",
+      "kind": "search",
+      "description": "Contract §15.4: for a provider, every providerRequires condition must be among the host's conditions.",
+      "packages": [
+        "fixtures/terms/node-tightens"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer",
+            "conditions": [
+              "noRetention"
+            ]
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "include": [
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-malformed-fails-closed",
+      "kind": "search",
+      "description": "Package spec §4.14: a malformed permission counts as its strictest value.",
+      "packages": [
+        "fixtures/terms/invalid"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-unknown-fails-closed",
+      "kind": "search",
+      "description": "Package spec §4.14: an unknown answerSources value counts as the strictest, work.",
+      "packages": [
+        "fixtures/terms/unknown"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-unknown@1.0.0#ep1.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-unknown@1.0.0#ep1.md": {
+            "terms.ai.answerSources": {
+              "value": "work",
+              "decidedBy": "package"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-use-train",
+      "kind": "search",
+      "description": "Contract §15.4: the use train needs training allow; the platform default is deny.",
+      "packages": [
+        "fixtures/terms/node-tightens"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "train"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-packager-cannot-loosen",
+      "kind": "search",
+      "description": "Contract §15.3 step 1: a signed package whose rightsHolder names the channel and claims own sets training allow; it cannot loosen the platform default, which stands.",
+      "packages": [
+        "fixtures/terms/loosen-attempt"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root-terms.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-loosen-attempt@1.0.0#ep1.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-loosen-attempt@1.0.0#ep1.md": {
+            "terms.authority": "packager",
+            "terms.ai.allowed.training": {
+              "value": false,
+              "decidedBy": "platform"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-no-rights-holder-cannot-loosen",
+      "kind": "search",
+      "description": "Contract §15.3 step 1: a signed package with no rights holder sets training allow; the use train is still refused, because the platform default stands.",
+      "packages": [
+        "fixtures/terms/loosen-no-holder"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root-terms.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "train"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-use-translate",
+      "kind": "search",
+      "description": "Contract §15.4: the use translate needs machineTranslation allow.",
+      "packages": [
+        "fixtures/terms/by-publisher"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root-terms.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "translate"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-host-lock-tightens",
+      "kind": "search",
+      "description": "Contract §15.3 step 4: the host's limit tightens answerSources to work.",
+      "packages": [
+        "fixtures/terms/node-tightens"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical",
+        "termsLimits": {
+          "answerSources": "work"
+        }
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md": {
+            "terms.ai.answerSources": {
+              "value": "work",
+              "decidedBy": "host"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-host-cannot-loosen",
+      "kind": "search",
+      "description": "Contract §15.3 step 4: a host's limit is a floor, never a value; it cannot allow what the package denies.",
+      "packages": [
+        "fixtures/terms/node-loosened"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical",
+        "termsLimits": {
+          "allowed": {
+            "provider": true
+          }
+        }
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-rating-node-own",
+      "kind": "search",
+      "description": "Contract §15.3: a node's rating is its own: a clean episode in an explicit show passes a filter that excludes explicit records.",
+      "packages": [
+        "fixtures/terms/ratings"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "explicit": false
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "include": [
+          "https://example.com/conformance/terms-ratings@1.0.0#clean.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/terms-ratings@1.0.0#explicit.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-feed-rating-weak",
+      "kind": "search",
+      "description": "Contract §15.4: a feed's explicit false counts as unrated unless the host accepts feed ratings.",
+      "packages": [
+        "fixtures/terms/feed-rating"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "explicit": false
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-feed-rating-accepted",
+      "kind": "search",
+      "description": "Contract §15.4: with acceptFeedRatings, a feed's explicit false counts.",
+      "packages": [
+        "fixtures/terms/feed-rating"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "explicit": false,
+            "acceptFeedRatings": true
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-feed-rating@1.0.0#ep1.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-unrated-excluded",
+      "kind": "search",
+      "description": "Contract §15.4: an unrated record is removed by a rating request unless allowUnrated.",
+      "packages": [
+        "fixtures/terms/unrated"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "explicit": false
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-unrated-allowed",
+      "kind": "search",
+      "description": "Contract §15.4: with allowUnrated, an unrated record passes.",
+      "packages": [
+        "fixtures/terms/unrated"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "explicit": false,
+            "allowUnrated": true
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-unrated@1.0.0#ep1.md"
         ]
       }
     }

@@ -1,0 +1,14 @@
+{
+  "id": "https://example.com/conformance/terms-null",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "training": null,
+        "device": true
+      }
+    }
+  }
+}

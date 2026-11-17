@@ -1,0 +1,12 @@
+{
+  "id": "https://example.com/conformance/terms-feed-rating",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "rating": {
+      "explicit": false,
+      "declaredBy": "feed"
+    }
+  }
+}
