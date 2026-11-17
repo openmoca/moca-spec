@@ -3,17 +3,21 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status: before 1.0](https://img.shields.io/badge/status-before%201.0-blue.svg)](#status)
 
-**Portable grounding for AI.** A MOCA package holds the knowledge an AI system
-uses, how that knowledge is organised, and the original sources it came from.
-Any system can read it the same way, on a server or on a device with no
-network, whatever model, vector database or agent framework it runs.
+**Knowledge that says who made it.** The
+[Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+(OKF) shapes knowledge for AI. MOCA is for the people who make and own it: a
+MOCA package wraps an OKF bundle in a signed manifest that says who made the
+work, who owns it and on what terms it may be used, and the signature shows
+who said so. The package also holds how the knowledge is organised and the
+original sources it came from. Any system can read it the same way, on a
+server or on a device with no network, whatever model, vector database or
+agent framework it runs.
 
 MOCA stands for **Modular Ontology, Content & Attestation**. Read more at
 [openmoca.org](https://openmoca.org).
 
-A MOCA package wraps an
-[Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
-(OKF) bundle, a folder of Markdown with YAML frontmatter, in three layers:
+Around the OKF bundle, a folder of Markdown with YAML frontmatter, a package
+has three layers:
 
 | Layer | Holds | Built on |
 | --- | --- | --- |
@@ -22,8 +26,9 @@ A MOCA package wraps an
 | **Evidence** | The original sources, and selectors that point into them | W3C Web Annotation, Media Fragments, WebVTT |
 
 **Trust runs across all three.** The package's digest covers every file, so
-the originals travel with the knowledge and arrive unchanged. A signed package
-proves who published it, and signed reviews prove who checked which node.
+the originals travel with the knowledge and arrive unchanged. A signature
+shows who signed the package, and a signed review shows who checked which
+node: each shows who said so, and no more.
 MOCA ships knowledge with its evidence, sealed when signed.
 
 ## The problem
