@@ -28,7 +28,7 @@
     "adm-zip": "^0.6.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
-    "markdownlint-cli2": "^0.23.2"
+    "markdownlint-cli2": "^0.24.1"
   },
   "overrides": {
     "markdown-it": "^15.0.3",
