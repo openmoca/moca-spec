@@ -128,6 +128,13 @@ the role `issued-copy` (§6). Neither alone is enough.
 `signed` by its publisher, and the result says which files the issuer changed
 and who the issuer is.
 
+**Privacy (informative).** A mark exists so that the issuer can recognise a
+copy, not so that anyone else can recognise a person. An issuer SHOULD make
+each mark unique to one copy and meaningless outside its own records, SHOULD
+NOT reuse one identifier for a person across packages or publishers, and
+SHOULD keep the link from a mark to a person private, for no longer than it
+needs. A mark says which copy was shared; it does not prove who shared it.
+
 ## 4. Review attestations
 
 Predicate type: `https://w3id.org/moca/attestation/review/v1`

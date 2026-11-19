@@ -222,6 +222,12 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Package spec §4.10, informative: a member that contains later steps hides
   them, so list the steps themselves and keep an overview that contains them
   off the reading order.
+- **Guidance from review.** Package spec §4.12: `datePackaged` is not a
+  trusted time. §7.1.1: encrypted members are opened through the host's key
+  provider, and access to a composing package never grants access to a
+  member. §13.3: hosts showing terms keep the declaration, the signer, the
+  host's enforcement and the host's own claims apart. Attestations §3a: the
+  privacy of issued-copy marks.
 - **Rights and dates.** Package spec §4.14: the permission
   `rights.export.allowed` (whether an app may let people copy, save or export
   the work's text; platform default `true`; package and composing package only),

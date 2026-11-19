@@ -620,6 +620,9 @@ Rules:
 - It belongs to this version. It is not `dateModified`: what changed is shown
   by `version` and the digest, and `datePackaged` only records when the bytes
   were made.
+- It is the producer's statement, not a trusted time. When the time of
+  signing matters, it comes from the attestation (a Sigstore transparency log
+  entry) or another timestamp authority, never from this field.
 - It is covered by the digest, like everything in `moca.json`, so a signature
   covers it. A producer that wants the same bytes from the same sources, so
   that a rebuild gives the same digest, SHOULD take it from the sources (for
@@ -1458,6 +1461,12 @@ one, members are listed as unresolved and nothing is reported.
 - **What a failed member costs.** A member that is unresolved, mismatched or
   in a cycle is not used. The composing package, and its other members, stay
   usable. `R` codes never make a package invalid.
+- **Encrypted members.** A member that is an encrypted package is opened like
+  any read, through the host's key provider
+  ([encrypted packages §5](moca-encrypted-package.md#5-opening-an-envelope)).
+  Members of one composition may have different recipients: access to the
+  composing package never grants access to a member. A member the host cannot
+  open is not used, as above, and the rest stays usable.
 
 What composition means for nodes and trust:
 
@@ -1837,6 +1846,13 @@ An encrypted package is the one case where a holder cannot read every file:
 only the recipients of its envelope can. Encryption protects confidentiality
 in transit and at rest, not after decryption
 ([encrypted packages §7](moca-encrypted-package.md#7-security-considerations)).
+
+**Showing terms honestly.** A person can easily take a label for a lock. A
+host that shows a package's terms SHOULD keep four things apart: what the
+signer declared (`terms`), who signed it (the authority, Reader contract
+§15.2), what the host itself enforces, and any claim the host makes about
+itself (such as the host claim of ADR-0037). A declaration is not
+enforcement, and a signature is not ownership.
 
 ### 13.4 Identifier control
 
