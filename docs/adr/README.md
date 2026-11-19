@@ -48,5 +48,6 @@ carried over.
 | [0036](0036-creators-terms-travel-with-the-work.md) | The creator's terms travel with the work, and only the rights holder can loosen them |
 | [0037](0037-a-named-host-claim-for-creators-terms.md) | A named claim for hosts that honour creators' terms, narrowing ADR-0022 |
 | [0038](0038-credits-in-fixed-shapes.md) | Credits are labels in fixed shapes (Proposed) |
+| [0039](0039-a-conformance-programme-and-an-implementations-registry.md) | A conformance programme and an implementations registry: self-certified, signed, reproducible records; capabilities shown one by one; part of 1.0 (Proposed) |
 
 New records use the template in [0000-template.md](0000-template.md).
