@@ -222,6 +222,12 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Package spec §4.10, informative: a member that contains later steps hides
   them, so list the steps themselves and keep an overview that contains them
   off the reading order.
+- **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
+  a composing package whose signer's ids cover the member makes the member's
+  `ai` and export terms stricter (`decidedBy: composite`) and its gate removes
+  the member's record; an unsigned composer changes nothing; a composer cannot
+  loosen a member. Found by an independent review: the cases were missing, so
+  a Reader could skip the step and still pass.
 - **Guidance from review.** Package spec §4.12: `datePackaged` is not a
   trusted time. §7.1.1: encrypted members are opened through the host's key
   provider, and access to a composing package never grants access to a

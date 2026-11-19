@@ -9286,6 +9286,169 @@
           }
         }
       }
+    },
+    {
+      "id": "search-terms-composite-tightens",
+      "kind": "search",
+      "description": "Contract §15.3 step 3: a composing package whose signer's ids cover the member makes the member's terms stricter, for ai and for export; decidedBy is composite.",
+      "packages": [
+        "fixtures/terms/composite/signed"
+      ],
+      "options": {
+        "now": "2026-11-19T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/terms/composite/member"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md": {
+            "terms.ai.allowed.host": {
+              "value": false,
+              "decidedBy": "composite"
+            },
+            "terms.rights.export": {
+              "value": false,
+              "decidedBy": "composite"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-composite-gate",
+      "kind": "search",
+      "description": "Contract §15.3–15.4: the composing package's stricter terms remove the member's record for the destination it does not allow.",
+      "packages": [
+        "fixtures/terms/composite/signed"
+      ],
+      "options": {
+        "now": "2026-11-19T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/terms/composite/member"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "host",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "exclude": [
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-composite-unsigned",
+      "kind": "search",
+      "description": "Contract §15.3 step 3: an unsigned composing package does not speak for its member, so its terms change nothing.",
+      "packages": [
+        "fixtures/terms/composite/unsigned"
+      ],
+      "options": {
+        "now": "2026-11-19T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/terms/composite/member"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "host",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md": {
+            "terms.ai.allowed.host": {
+              "value": true,
+              "decidedBy": "package"
+            },
+            "terms.rights.export": {
+              "value": true,
+              "decidedBy": "platform"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-composite-cannot-loosen",
+      "kind": "search",
+      "description": "Contract §15.3: a composing package that speaks for the member still only makes terms stricter; it cannot loosen the member's own.",
+      "packages": [
+        "fixtures/terms/composite/loosen"
+      ],
+      "options": {
+        "now": "2026-11-19T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/terms/composite/strict-member"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/terms-composite-strict-member@1.0.0#lesson.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-composite-strict-member@1.0.0#lesson.md": {
+            "terms.ai.allowed.host": {
+              "value": false,
+              "decidedBy": "package"
+            },
+            "terms.rights.export": {
+              "value": false,
+              "decidedBy": "package"
+            }
+          }
+        }
+      }
     }
   ]
 }
