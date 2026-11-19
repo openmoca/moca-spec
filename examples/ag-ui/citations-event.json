@@ -29,7 +29,8 @@
               "refunds",
               "policy"
             ],
-            "digest": "sha256:f125562daf254a2eccb0637496ce1247b39ece0ba598963e291ae01999c1d2ab"
+            "digest": "sha256:f125562daf254a2eccb0637496ce1247b39ece0ba598963e291ae01999c1d2ab",
+            "license": "CC-BY-4.0"
           },
           "span": {
             "start": 753,

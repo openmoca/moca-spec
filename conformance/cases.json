@@ -9059,6 +9059,233 @@
           "https://example.com/conformance/terms-unrated@1.0.0#ep1.md"
         ]
       }
+    },
+    {
+      "id": "date-packaged",
+      "description": "Package spec §4.12: datePackaged as written in the result.",
+      "target": "fixtures/date-packaged",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "datePackaged": "2026-11-19T18:30:00Z",
+        "datePublished": "2026-03-01"
+      }
+    },
+    {
+      "id": "date-packaged-invalid",
+      "description": "Package spec §4.12: a datePackaged without an offset fails the schema (M002).",
+      "target": "fixtures/date-packaged-invalid",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": [],
+        "datePackaged": null
+      }
+    },
+    {
+      "id": "terms-rights-valid",
+      "description": "Package spec §4.14: export, copyright, the creator's notice and a node's licence and copyright are exposed exactly as written, with no problems.",
+      "target": "fixtures/terms/rights",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [],
+        "datePackaged": "2026-11-19T18:30:00+01:00",
+        "terms": {
+          "authority": "unverified",
+          "problems": [],
+          "declared": {
+            "rights": {
+              "rightsHolder": {
+                "id": "https://podcast.example.org",
+                "name": "Example Podcast"
+              },
+              "basis": "own",
+              "export": {
+                "allowed": false
+              },
+              "copyright": {
+                "year": "2024-2026",
+                "notice": "© 2024-2026 Example Podcast Ltd"
+              },
+              "notice": "Listen and ask as much as you like. Please don't copy the transcripts elsewhere."
+            },
+            "nodes": [
+              {
+                "paths": [
+                  "content/photo.md"
+                ],
+                "rights": {
+                  "license": "CC-BY-4.0",
+                  "copyright": {
+                    "year": "2025",
+                    "holder": {
+                      "name": "A. Photographer",
+                      "url": "https://photographer.example.org"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "terms-rights-invalid",
+      "description": "Package spec §4.14: a non-boolean export, a copyright year range out of order, a holder with no name and an empty notice are U001; an unknown member of a node's rights is U003. The package stays valid.",
+      "target": "fixtures/terms/rights-invalid",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U001_TERMS_INVALID",
+          "U003_TERMS_UNKNOWN_VALUE"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": [
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "rights.export.allowed"
+            },
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "rights.copyright.year"
+            },
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "rights.copyright.holder"
+            },
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "rights.notice"
+            },
+            {
+              "code": "U003_TERMS_UNKNOWN_VALUE",
+              "path": "nodes.0.rights.attribution"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "reference-node",
+      "description": "Package spec §5.1: a node needs only frontmatter with a type; a reference node with an OKF resource and no body is valid.",
+      "target": "fixtures/reference-node",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "search-rights-fields",
+      "kind": "search",
+      "description": "Contract §7: node.license and node.copyright come from the node's terms.nodes entry, else the manifest's license and terms.rights.copyright; package.datePackaged as written.",
+      "packages": [
+        "fixtures/terms/rights"
+      ],
+      "options": {
+        "now": "2026-11-19T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern"
+      },
+      "expect": {
+        "fields": {
+          "https://example.com/conformance/terms-rights@1.0.0#ep1.md": {
+            "node.license": "CC-BY-SA-4.0",
+            "node.copyright": {
+              "year": "2024-2026",
+              "notice": "© 2024-2026 Example Podcast Ltd"
+            },
+            "package.datePackaged": "2026-11-19T18:30:00+01:00"
+          },
+          "https://example.com/conformance/terms-rights@1.0.0#photo.md": {
+            "node.license": "CC-BY-4.0",
+            "node.copyright": {
+              "year": "2025",
+              "holder": {
+                "name": "A. Photographer",
+                "url": "https://photographer.example.org"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-rights-invalid-fields",
+      "kind": "search",
+      "description": "Contract §7: a copyright statement with a terms problem is skipped, so node.copyright is absent; node.license still comes from the manifest where the node's entry has a problem in its rights.",
+      "packages": [
+        "fixtures/terms/rights-invalid"
+      ],
+      "options": {
+        "now": "2026-11-19T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern"
+      },
+      "expect": {
+        "fields": {
+          "https://example.com/conformance/terms-rights-invalid@1.0.0#ep1.md": {
+            "node.license": "CC-BY-SA-4.0",
+            "node.copyright": null,
+            "package.datePackaged": null
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-export",
+      "kind": "search",
+      "description": "Contract §15.3: export resolves from the package; a record from a search with a terms request carries terms.rights.export with the level that decided it. Export removes nothing.",
+      "packages": [
+        "fixtures/terms/rights"
+      ],
+      "options": {
+        "now": "2026-11-19T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/terms-rights@1.0.0#ep1.md",
+          "https://example.com/conformance/terms-rights@1.0.0#photo.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-rights@1.0.0#ep1.md": {
+            "terms.rights.export": {
+              "value": false,
+              "decidedBy": "package"
+            }
+          }
+        }
+      }
     }
   ]
 }

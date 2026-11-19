@@ -111,7 +111,11 @@ contract:
   search has a terms request;
 - `datePublished`: the manifest's `datePublished`, as written, when the
   manifest passes its schema; absent otherwise
-  ([package spec §4.12](moca-package-spec.md#412-publication-date)).
+  ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)).
+  Informative only;
+- `datePackaged`: the manifest's `datePackaged`, as written, when the
+  manifest passes its schema; absent otherwise
+  ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)).
   Informative only;
 - `publisher`, `url` and `contributors`: the manifest's credits, as written,
   less any image that failed its check, when the manifest passes its schema;

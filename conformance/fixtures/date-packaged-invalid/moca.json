@@ -1,0 +1,8 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/date-packaged-invalid",
+  "version": "1.0.0",
+  "title": "Packaging date without an offset",
+  "language": "en",
+  "datePackaged": "2026-11-19T18:30:00"
+}
