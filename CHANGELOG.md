@@ -222,6 +222,19 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Package spec §4.10, informative: a member that contains later steps hides
   them, so list the steps themselves and keep an overview that contains them
   off the reading order.
+- **Rights and dates.** Package spec §4.14: the permission
+  `rights.export.allowed` (whether an app may let people copy, save or export
+  the work's text; platform default `true`; package and composing package only),
+  `rights.copyright` (`year`, `holder`, `notice`, as schema.org), the creator's
+  own message `rights.notice` (display only), and `rights` in `terms.nodes`
+  entries (`license` and `copyright` for a part). §4.12: `datePackaged`, when
+  this version was made (an RFC 3339 date-time with an offset; informative).
+  Reader contract §7: record fields `package.datePackaged`, `node.license` and
+  `node.copyright`, and `terms.rights.export` in records from a search with a
+  terms request; §15.3: how export resolves. Encrypted packages §5.1
+  (short-lived keys), §6 (what derived data covers) and §7 (delivery routes).
+  New guide: [protected sources](docs/guides/protected-sources.md), sealed or
+  as reference nodes. Schemas: manifest, terms and citation record.
 - **The creator's terms (ADR-0036, ADR-0037, Accepted).**
   Package spec §4.14 `terms` (`ai`, `rating`,
   `rights`, node values in the manifest), with permissions as booleans

@@ -19,7 +19,7 @@ different thing ([issue #10](https://github.com/openmoca/moca-spec/issues/10)).
 
 ## Decision
 
-Option 3 ([package spec §4.12](../../spec/moca-package-spec.md#412-publication-date)).
+Option 3 ([package spec §4.12](../../spec/moca-package-spec.md#412-publication-and-packaging-dates)).
 
 - The value is a full date or an RFC 3339 date-time with an offset, like every
   other date here: stricter than the Publication Manifest's ISO 8601, so no

@@ -195,6 +195,7 @@ same `id` from the same bytes. A leading byte order mark is ignored.
 | `mocaVersion` | No | The version of this specification the package was written for, `major.minor`. |
 | `description` | No | Summary. |
 | `datePublished` | No | When the package was first published (§4.12). Informative. |
+| `datePackaged` | No | When this version of the package was made (§4.12). Informative. |
 | `language` | No | BCP 47 tag of the default-language content. |
 | `locales` | No | BCP 47 tags of additional representations (§5.4). |
 | `license` | No | SPDX license expression. |
@@ -570,7 +571,7 @@ Rules:
   attestations already in the package. It never contacts anything because of
   it.
 
-### 4.12 Publication date
+### 4.12 Publication and packaging dates
 
 `datePublished` says when the package was first published. It follows the
 W3C Publication Manifest's `datePublished`
@@ -603,6 +604,31 @@ Rules:
 - The package result carries `datePublished`, and citation records carry
   `package.datePublished` and `node.datePublished`, when present
   ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
+
+`datePackaged` says when this version of the package was made: when its
+producer built these bytes. It is the package's own schema.org `dateCreated`,
+not the work's.
+
+```json
+"datePackaged": "2026-11-19T18:30:00Z"
+```
+
+Rules:
+
+- The value is an RFC 3339 date-time with an offset (`Z` or `±hh:mm`). A
+  date alone, or a date-time without an offset, fails the schema (`M002`).
+- It belongs to this version. It is not `dateModified`: what changed is shown
+  by `version` and the digest, and `datePackaged` only records when the bytes
+  were made.
+- It is covered by the digest, like everything in `moca.json`, so a signature
+  covers it. A producer that wants the same bytes from the same sources, so
+  that a rebuild gives the same digest, SHOULD take it from the sources (for
+  example the `SOURCE_DATE_EPOCH` convention of reproducible builds) rather
+  than from its clock.
+- **Informative**, like `datePublished`: a Reader never compares it with its
+  clock, and it never changes what is retrieved or the validity window (§4.4).
+- The package result carries `datePackaged`, and citation records carry
+  `package.datePackaged`, when present.
 
 ### 4.13 Credits
 
@@ -735,16 +761,20 @@ a new version.
     "rightsHolder": { "id": "https://podcast.example.org", "name": "Example Podcast" },
     "basis": "license",
     "contact": "mailto:rights@example.org",
-    "repackage": { "allowed": false }
+    "repackage": { "allowed": false },
+    "export": { "allowed": false },
+    "copyright": { "year": "2024-2026", "notice": "© 2024-2026 Example Podcast Ltd" },
+    "notice": "Listen and ask as much as you like. Please don't copy the transcripts elsewhere."
   },
   "nodes": [
-    { "paths": ["content/episodes/12/"], "rating": { "explicit": true, "declaredBy": "feed" } }
+    { "paths": ["content/episodes/12/"], "rating": { "explicit": true, "declaredBy": "feed" } },
+    { "paths": ["content/photos/studio.md"], "rights": { "license": "CC-BY-4.0", "copyright": { "holder": { "name": "A. Photographer" } } } }
   ]
 }
 ```
 
-**Two kinds of value.** *Permissions* (`ai.allowed` and
-`rights.repackage.allowed`) are booleans (§2, "Values"): absent means not
+**Two kinds of value.** *Permissions* (`ai.allowed`,
+`rights.repackage.allowed` and `rights.export.allowed`) are booleans (§2, "Values"): absent means not
 set, otherwise `true` or `false`. Conditions (`ai.providerRequires`) and
 choices (`ai.answerSources`) are separate fields, never a third value of a
 permission. *Labels* (`rating`, and the rest of `rights`) describe the work.
@@ -767,21 +797,28 @@ permission. *Labels* (`rating`, and the rest of `rights`) describe the work.
 | `rights.basis` | `own` (the rights holder made the package), `consent` (made with the rights holder's consent) or `license` (made under the open licence in `license`, §4.1). | — | Not stated |
 | `rights.contact` | A `mailto:` or `https:` URI, for people to report a problem or claim the work. Never fetched. | 2048 characters | No contact |
 | `rights.repackage` | `{ allowed, packagers? }`. `allowed` is a boolean. `packagers` names who may package the work anyway, in the form of `issuedCopies.issuers` (§4.11). | 32 packagers | Not set |
-| `nodes` | Array of `{ paths, ai?, rating? }`: values for some nodes (below). | 256 entries; 64 paths each | No node values |
+| `rights.export` | `{ allowed }`. `allowed` is a boolean: whether an app may let people copy, save or export the work's text outside the app. Quoting it in an answer, playing a moment and reading it in the app are not export. | — | Not set |
+| `rights.copyright` | `{ year?, holder?, notice? }`, as schema.org `copyrightYear`, `copyrightHolder` and `copyrightNotice`. `year` is a year or a range (`2024-2026`), the first not after the last. `holder` is `{ name, url? }`; when absent, the rights holder's name applies. `notice` is the exact line to show, 1 to 300 characters. | — | No statement |
+| `rights.notice` | A short message from the creator, in their own words, for an app to show beside the work: 1 to 500 characters. Display only: it grants and restricts nothing. | 500 characters | No message |
+| `nodes` | Array of `{ paths, ai?, rating?, rights? }`: values for some nodes (below). `rights` here holds only `license` (an SPDX expression) and `copyright`, for a part under a different licence or copyright, such as a licensed photo or a guest's segment. | 256 entries; 64 paths each | No node values |
 
 Enums are closed except rating schemes: a new value needs a new minor release.
 A `rights.basis` of `license` needs the manifest's `license`.
 
 **Node values.** A node's terms are found in one place, the manifest. Each
 `nodes` entry names node paths, or directory prefixes ending in `/`, under
-`content/` (NFC, no segment starting with `.`), and gives `ai` or `rating`
-values for them. For a node, the entry with the longest matching path
+`content/` (NFC, no segment starting with `.`), and gives `ai`, `rating` or
+`rights` values for them. For a node, the entry with the longest matching path
 applies; a node with no entry has the package's values. Every representation
 of a node (§5.4) has the node's values. Frontmatter never carries terms: a
 `moca.*` key that looks like one has no effect. A node's `ai` values may only
 make a permission stricter (Reader contract §15.3). A node's `rating` is its
 own, and may describe the node as less strict than the package: a clean
-episode in an explicit show.
+episode in an explicit show. A node's `rights` describe the node: its
+`license` and `copyright` replace the package's for that node, for display
+and citation, and never change a permission. An entry applies whole: an
+entry that gives only `rights` gives its nodes no `ai` or `rating` values,
+so a node's values belong in one entry.
 
 **Malformed terms are a warning, never `M002`.** The manifest schema checks
 only that `terms` is an object. The Reader checks the inside against
@@ -793,7 +830,8 @@ string where the schema allows only listed strings, and a member name the
 schema does not list, are `U003`; anything else that fails the schema (a
 wrong type, a pattern, a limit), and the checks the schema cannot express
 (a `typicalAgeRange` whose lower bound is above its upper, two
-`contentRating` entries for one scheme), are `U001`. The package stays
+`contentRating` entries for one scheme, a copyright `year` range whose first
+year is after its last), are `U001`. The package stays
 valid. The Reader exposes the block as written,
 with its problems, and a malformed or unknown permission counts as the
 strictest value wherever a host asks the Reader to apply terms
@@ -835,7 +873,7 @@ When they disagree, the package is the source for a Reader and its host.
 | `allowed.training: true` | `train-ai=y` | permits `ai-train` | no statement |
 | any of `allowed.device`, `.host`, `.provider` `false` | `ai-use=n` | prohibits `ai-input ai-index` | — |
 | `allowed.device`, `.host` and `.provider` all `true` | `ai-use=y` | permits `ai-input ai-index` | — |
-| `providerRequires`, `answerSources`, `allowed.machineTranslation` | not expressible | not expressible | — |
+| `providerRequires`, `answerSources`, `allowed.machineTranslation`, `rights.export.allowed` | not expressible | not expressible | — |
 
 TDMRep is the TDM Reservation Protocol of a W3C Community Group (not a W3C
 Standard). Its `tdm-reservation: 1` reserves all text and data mining, so a
@@ -848,7 +886,10 @@ no statement) and to the inverse of schema.org `isFamilyFriendly`;
 `contentRating` to schema.org `contentRating`; `typicalAgeRange` to
 schema.org `typicalAgeRange` and to ONIX audience age ranges.
 `rights.repackage.allowed: false` corresponds to Podcasting 2.0
-`podcast:locked`.
+`podcast:locked`. `rights.copyright` corresponds to schema.org
+`copyrightYear` (the first year of a range), `copyrightHolder` and
+`copyrightNotice`; a node's `rights.license` to schema.org `license` on that
+part.
 
 ## 5. Content
 

@@ -291,13 +291,16 @@ and `profiles`, are left out, as they are in a real record):
   | `text` | When included, the representation file's UTF-8 text after the closing frontmatter delimiter, or the text at `span` for a chunk. |
   | `trust.status` | OKF `status` when it is `draft`, `stable` or `deprecated`; otherwise `stable`. |
   | `trust.generated`, `trust.declaredVerified` | OKF `generated` and `verified`; an entry with no `by` is left out. `generated.model` is kept when it is a string. |
-  | `terms` | Only in records from a search with a terms request (§15.4): `{ authority, ai, rating }` for the record's node, where each `ai` field is `{ value, decidedBy }` (§15.3) and `rating` is the node's effective rating. Absent otherwise. |
+  | `terms` | Only in records from a search with a terms request (§15.4): `{ authority, ai, rating, rights }` for the record's node, where each `ai` field and `rights.export` is `{ value, decidedBy }` (§15.3) and `rating` is the node's effective rating. Absent otherwise. |
   | `trust.validFrom`, `trust.validUntil` | The node's effective window ([package spec §4.4](moca-package-spec.md#44-validity-window)), as written. |
   | `trust.contestedBy` | The node's `moca.contested_by`, as written, then `<id>@<version>` of each loaded package it conflicts with. |
   | `audience` | As in [§8](#8-default-retrieval-policy); `audienceInvalid` is `true` when the label is malformed. |
   | `profiles` | The manifest's profile URIs, in manifest order; absent when there are none. |
-  | `package.datePublished` | The manifest's `datePublished`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-date)). |
+  | `package.datePublished` | The manifest's `datePublished`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)). |
   | `node.datePublished` | The node's `moca.date_published`, as written, when it parses; absent otherwise. The package's date is never copied to it. |
+  | `package.datePackaged` | The manifest's `datePackaged`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)). |
+  | `node.license` | The node's licence: the `rights.license` of the node's `terms.nodes` entry ([package spec §4.14](moca-package-spec.md#414-terms)), else the manifest's `license`; a value with a terms problem at its path is skipped. Absent when neither gives one. |
+  | `node.copyright` | The node's copyright statement, as written: the `rights.copyright` of its `terms.nodes` entry, else `terms.rights.copyright`; a value with a terms problem at or under its path is skipped. Absent when neither gives one. |
   | `node.contributors` | The node's `moca.contributors`, as written, less any image that failed its check, when they match the node schema; absent otherwise ([package spec §4.13](moca-package-spec.md#413-credits)). The package's contributors are never copied to it. |
   | `node.media` | The node's valid media descriptions ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ source, resource, type, duration?, digest?, transcript?, alternateOf?, sync? }`, where `resource` is the source's `resource` as written. A valid alternate carries `alternateOf` and its `sync`, which is `[{ "at": 0, "offset": 0 }]` when the node gave none. Absent when there are none. |
 
@@ -1065,10 +1068,18 @@ as the strictest value.
 **Platform defaults**, used only when no level sets a field:
 `allowed.device`, `allowed.host` and `allowed.provider` `true`,
 `allowed.machineTranslation` `true`, `allowed.training` `false`, no
-`providerRequires` conditions, and `answerSources` `model`.
+`providerRequires` conditions, `answerSources` `model`, and
+`rights.export.allowed` `true`.
 
 Each resolved field says which level decided it: `platform`, `package`,
 `node`, `composite` or `host`.
+
+**Export** (`rights.export.allowed`) resolves the same way, with two levels:
+the package, and a composing package whose signers speak for the member.
+Nodes have no export value, and the host needs none: a host that does not
+export text simply never does. Its platform default is `true`. It removes
+nothing from a search: a host that lets people copy, save or export text
+outside the app checks it first.
 
 **Ratings are not resolved.** A node's effective rating is its own `nodes`
 entry, if any, else the package's. A Reader also gives the package's

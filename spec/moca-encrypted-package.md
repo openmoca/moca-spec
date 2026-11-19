@@ -187,6 +187,13 @@ keyProvider(request) → result, or nothing; MAY be asynchronous
 - A key provider MUST NOT contact, or send credentials to, an address taken
   from a stanza or the outline. Key routes come only from host configuration
   ([package spec §13.2](moca-package-spec.md#132-a-package-is-never-configuration)).
+- **Short-lived keys (informative).** A host that grants access for a time,
+  such as a membership, can hand out keys for a limited period and stop
+  handing them out when access ends; the envelope never changes. How long a
+  device may keep a key offline is the host's choice; a host that also uses a
+  signed status document can end access when the device next checks in. A key
+  already used to open an envelope can still open it: what was opened can be
+  kept (§7).
 
 ### 5.2 The order
 
@@ -269,7 +276,12 @@ turned back into text.
   package's validity. The decrypted index is then bound as any sidecar
   ([sidecar specification §5](moca-sidecar-index-spec.md#5-binding-and-staleness)).
 - A host SHOULD keep indexes it builds itself, and chats, summaries, traces
-  and store records made from an encrypted package, encrypted at rest.
+  and store records made from an encrypted package, encrypted at rest. That
+  includes the places content leaks to without being asked: a database's
+  write-ahead log and journal, temporary files, caches, logs, crash reports,
+  backups and exported chats. A host SHOULD keep such content out of logs and
+  crash reports altogether, and out of device backups unless they are
+  encrypted too.
 
 ## 7. Security considerations
 
@@ -295,6 +307,19 @@ SHOULD read with `requireSignature`.
   recipient means a new file. Copies already held stay readable.
 - Content shown on a screen or sent to a model is plain on that device
   ([Reader contract §12](moca-reader-contract.md#12-handing-content-to-a-model)).
+
+**Delivery routes (informative).** The same package can reach people three
+ways, and each protects something different:
+
+| Route | What travels | What protects it | What it cannot do |
+| --- | --- | --- | --- |
+| Sending a package | An open package; an envelope to named recipients or a passphrase; or an issued copy marked for one recipient ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)) | Signatures show who signed; the envelope limits who can open it; an issued copy shows whose copy it is | Stop a recipient copying what they opened |
+| Delivering over the web | Nothing: the package stays with a host that answers, searches and shows parts of it (`distribution: service-only`) | The host's keys, its access checks and its records | Bind a host that ignores the label |
+| A local app | Envelopes, with an encrypted sidecar index (§6) | Keys the host keeps in the device's secure store, the rule that a Reader keeps decrypted bytes in memory (§5.4), and the host's at-rest encryption of what it derives (§6) | Stop the device's owner reading what is shown to them |
+
+In every route, labels such as `distribution` and `terms` say what the
+publisher intends; they are not locks
+([package spec §13.3](moca-package-spec.md#133-labels-not-locks)).
 
 **Parsing.** The envelope, its marker, the age header and the decrypted
 archive are untrusted input. The limits in Reader contract §3 apply to each,

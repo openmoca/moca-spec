@@ -200,7 +200,7 @@ export async function actualFor(root, c) {
       if (r.evidence.length > 0) evidenceLocated[r.node.path] = r.evidence.map((e) => e.located ?? null);
     }
   }
-  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, issuedCopy: result.issuedCopy ?? null, datePublished: result.datePublished ?? null, publisher: result.publisher ?? null, url: result.url ?? null, contributors: result.contributors ?? null, terms: result.terms ?? null, sidecarUsable, evidenceMatched, evidenceLocated, envelope: result.envelope };
+  return { valid: result.valid, codes, capabilities: result.capabilities, digest: result.digest, distribution: result.distribution ?? null, images: result.images ?? null, translations: result.translations ?? null, tags: result.tags ?? null, apps: result.apps ?? null, readingOrder: result.readingOrder ?? null, issuedCopy: result.issuedCopy ?? null, datePublished: result.datePublished ?? null, datePackaged: result.datePackaged ?? null, publisher: result.publisher ?? null, url: result.url ?? null, contributors: result.contributors ?? null, terms: result.terms ?? null, sidecarUsable, evidenceMatched, evidenceLocated, envelope: result.envelope };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
