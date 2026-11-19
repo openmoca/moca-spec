@@ -44,6 +44,24 @@
       "search": [
         "conformance/fixtures/member-other-version"
       ]
+    },
+    {
+      "package": "conformance/fixtures/terms/composite/signed",
+      "search": [
+        "conformance/fixtures/terms/composite/member"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/terms/composite/unsigned",
+      "search": [
+        "conformance/fixtures/terms/composite/member"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/terms/composite/loosen",
+      "search": [
+        "conformance/fixtures/terms/composite/strict-member"
+      ]
     }
   ],
   "sign": [
@@ -101,6 +119,14 @@
     },
     {
       "package": "conformance/fixtures/issued/closed",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/terms/composite/signed",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/terms/composite/loosen",
       "key": "publisher"
     }
   ],
