@@ -59,32 +59,32 @@ the host does everything the specification asks of a host, on both sides:
 
 **The creator's side**
 
-1. Before content leaves the host for an AI model, or is shown or played
-   under a rating filter, it asks a Reader to resolve the terms and gate the
-   result set, stating the real destination and use (as ADR-0037).
-2. It never loosens a creator's terms; absent terms get the platform
-   defaults, and training is not allowed.
-3. It honours `rights.export`: no export where the work does not allow it.
-4. It keeps the creator's credits, licence and copyright with what it shows,
-   and records, for each answer, where each part came from and which level
-   decided each term.
-5. It shows terms honestly: the creator's declaration, who signed it, what
-   the host enforces, and what it claims about itself, told apart.
-6. Encrypted packages are handled as the encrypted-package guidance says:
-   decrypted only in memory, no plaintext in logs, caches or derived data
-   that outlive the key.
+- **1.** Before content leaves the host for an AI model, or is shown or played
+  under a rating filter, it asks a Reader to resolve the terms and gate the
+  result set, stating the real destination and use (as ADR-0037).
+- **2.** It never loosens a creator's terms; absent terms get the platform
+  defaults, and training is not allowed.
+- **3.** It honours `rights.export`: no export where the work does not allow it.
+- **4.** It keeps the creator's credits, licence and copyright with what it shows,
+  and records, for each answer, where each part came from and which level
+  decided each term.
+- **5.** It shows terms honestly: the creator's declaration, who signed it, what
+  the host enforces, and what it claims about itself, told apart.
+- **6.** Encrypted packages are handled as the encrypted-package guidance says:
+  decrypted only in memory, no plaintext in logs, caches or derived data
+  that outlive the key.
 
 **The person's side**
 
-7. A person's own settings (which destinations their reading may go to, the
-   ratings they see, what is kept) take part in resolution as host limits:
-   stricter wins, and the host never overrides a person's setting with a
-   looser one of its own.
-8. What a person brings or keeps private is theirs: it is not shown to other
-   people on the same host, sent anywhere they have not allowed, or
-   published, and the person is its creator for the terms that apply.
-9. A person can see why something was left out: the deciding level is shown,
-   not hidden.
+- **7.** A person's own settings (which destinations their reading may go to, the
+  ratings they see, what is kept) take part in resolution as host limits:
+  stricter wins, and the host never overrides a person's setting with a
+  looser one of its own.
+- **8.** What a person brings or keeps private is theirs: it is not shown to other
+  people on the same host, sent anywhere they have not allowed, or
+  published, and the person is its creator for the terms that apply.
+- **9.** A person can see why something was left out: the deciding level is shown,
+  not hidden.
 
 ### Tested, or declared, and said which
 
