@@ -48,6 +48,6 @@ carried over.
 | [0036](0036-creators-terms-travel-with-the-work.md) | The creator's terms travel with the work, and only the rights holder can loosen them |
 | [0037](0037-a-named-host-claim-for-creators-terms.md) | A named claim for hosts that honour creators' terms, narrowing ADR-0022 |
 | [0038](0038-credits-in-fixed-shapes.md) | Credits are labels in fixed shapes (Proposed) |
-| [0039](0039-a-conformance-programme-and-an-implementations-registry.md) | Two marks for two audiences ("OpenMOCA conformant" for builders; "Honours creators' and people's rules" for people choosing an app) and a public registry; supersedes ADR-0037's claim wording in part (Proposed) |
+| [0039](0039-a-conformance-programme-and-an-implementations-registry.md) | OpenMOCA Conformant (software that passes a test suite: Official, Verified, Self-tested) and the OpenMOCA Commitment (a company's signed promise to honour creators' and people's rules; not tested); supersedes ADR-0037's claim in part (Proposed) |
 
 New records use the template in [0000-template.md](0000-template.md).
