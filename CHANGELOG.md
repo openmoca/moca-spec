@@ -186,7 +186,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `.moca.idx.zip`. Files with the old names still read, because Readers go
   by content. Readers do not depend on the types either. IANA registration templates in `docs/iana/`, to be
   submitted after the release.
-- **Credits ([ADR-0038](docs/adr/0038-credits-in-fixed-shapes.md), Proposed).**
+- **Credits ([ADR-0038](docs/adr/0038-credits-in-fixed-shapes.md)).**
   Package spec §4.13: a package-level `url`; `contributors` in the manifest
   and in node frontmatter (`moca.contributors`), each with a name, MARC
   relator `roles`, and an optional `url`, `image` and `sameAs` (ISNI, ORCID,
@@ -222,6 +222,10 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Package spec §4.10, informative: a member that contains later steps hides
   them, so list the steps themselves and keep an overview that contains them
   off the reading order.
+- **OpenMOCA Conformant and the OpenMOCA Commitment** (ADR-0039). Conformant software is listed by kind
+  (Reader, Producer, linter) and standing (Official, Verified, Self-tested). The Commitment is a company's signed
+  promise that a named product and version honours creators' and people's rules ([COMMITMENT.md](COMMITMENT.md)),
+  listed but not tested; it replaces ADR-0037's host claim. TRADEMARKS.md updated to match.
 - **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
   a composing package whose signer's ids cover the member makes the member's
   `ai` and export terms stricter (`decidedBy: composite`) and its gate removes
