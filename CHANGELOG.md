@@ -222,6 +222,10 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Package spec §4.10, informative: a member that contains later steps hides
   them, so list the steps themselves and keep an overview that contains them
   off the reading order.
+- **Machine-made content.** Guidance in package spec §4.14: checked by a person (`generated` with `verified`), mixed
+  authorship (one node per part; for a conversation, one node per turn), the original never changed, and how the mark
+  relates to IPTC's digital source types and C2PA (informative). Three corpus cases check that `trust.generated` keeps
+  its actor, time and model, and that `trust.declaredVerified` is kept beside it. 411 cases.
 - **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
   a composing package whose signer's ids cover the member makes the member's
   `ai` and export terms stricter (`decidedBy: composite`) and its gate removes

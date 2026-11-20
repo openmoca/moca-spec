@@ -1,0 +1,7 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/machine-made",
+  "version": "1.0.0",
+  "title": "Who wrote each part: a person, a machine, or a machine checked by a person",
+  "language": "en"
+}

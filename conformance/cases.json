@@ -9449,6 +9449,100 @@
           }
         }
       }
+    },
+    {
+      "id": "search-machine-made-model",
+      "kind": "search",
+      "description": "Package spec §4.14 'Machine-made content', Reader contract §7: a node marked with OKF generated keeps its actor, time and model in the citation record's trust.generated.",
+      "packages": [
+        "fixtures/machine-made"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/machine-made@1.0.0#by-a-model.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/machine-made@1.0.0#by-a-model.md": {
+            "trust.generated": {
+              "by": "example-summariser/1.0",
+              "at": "2026-11-20T09:00:00Z",
+              "model": "example-model-7b-v2"
+            },
+            "trust.declaredVerified": []
+          }
+        }
+      }
+    },
+    {
+      "id": "search-machine-made-checked",
+      "kind": "search",
+      "description": "Package spec §4.14 'Machine-made content': machine-made content a person checked keeps both marks: trust.generated (with its model) and trust.declaredVerified.",
+      "packages": [
+        "fixtures/machine-made"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/machine-made@1.0.0#by-a-model-checked.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/machine-made@1.0.0#by-a-model-checked.md": {
+            "trust.generated": {
+              "by": "example-transcriber/2.0",
+              "at": "2026-11-20T09:00:00Z",
+              "model": "example-speech-model-large-v3"
+            },
+            "trust.declaredVerified": [
+              {
+                "by": "human:keeper",
+                "at": "2026-11-20T12:00:00Z"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "search-machine-made-unmarked",
+      "kind": "search",
+      "description": "Package spec §4.14 'Machine-made content': a node with no generated mark has trust.generated null. The absence of a mark proves nothing about who wrote it.",
+      "packages": [
+        "fixtures/machine-made"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/machine-made@1.0.0#by-a-person.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/machine-made@1.0.0#by-a-person.md": {
+            "trust.generated": null,
+            "trust.declaredVerified": []
+          }
+        }
+      }
     }
   ]
 }

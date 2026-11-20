@@ -865,6 +865,25 @@ MAY carry `model`, the model's name and version as one string. A `sources`
 entry MAY carry `generated` too, for files with no frontmatter of their own,
 such as a WebVTT transcript. The absence of a mark proves nothing.
 
+- **Checked by a person.** Machine-made content a person has checked keeps
+  `generated` and adds OKF `verified`; both reach the citation record
+  (`trust.generated`, `trust.declaredVerified`, Reader contract §7), so an
+  app can say "machine-made, checked by a person".
+- **Mixed authorship.** The mark is per node. Where a person and a machine
+  each wrote part of one work, such as a conversation with an AI assistant,
+  put each part in its own node and mark the machine's (for a conversation,
+  one node per turn). A node marked `generated` says it is machine-made as a
+  whole.
+- **The original is never changed.** The marks live in the package's own
+  files (frontmatter and the manifest), never in a creator's original
+  media. Watermarks or content credentials a creator puts in their own files
+  are theirs, and a Reader neither reads nor changes them.
+- **Other marks (informative).** In IPTC's digital source type vocabulary, a
+  node marked `generated` with a `model` corresponds to
+  `trainedAlgorithmicMedia`, and a package mixing such nodes with a person's
+  work to `compositeWithTrainedAlgorithmicMedia`. Media files may also carry
+  C2PA content credentials; they travel with the file, unchanged.
+
 **Other standards (informative).** A producer MAY publish the same terms where
 crawlers look, and MAY read them in, but only to make terms stricter. The
 mapping is partial: where a term cannot be expressed, map to the stricter one.
