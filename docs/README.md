@@ -15,7 +15,7 @@ sources and terms with their work, wherever it goes.
 | [Ontology for AI retrieval](ontology.md) | Topics, order and prerequisites as structure, and retrieval that uses them |
 | [Sovereign and offline AI](sovereign-ai.md) | Grounding that runs on infrastructure you control, with no outside calls |
 | [Use cases](use-cases.md) | Where a package layer pays off, and where it does not |
-| [Architecture](architecture.md) | MOCA Package, Reader and Application; layers and overlays; how it fits your retrieval stack |
+| [Architecture](architecture.md) | The MOCA package, the Reader and the application; layers and overlays; how it fits your retrieval stack |
 | [MOCA, OKF and MCP](moca-okf-mcp.md) | How the three fit together |
 | [FAQ](faq.md) | Short answers: what MOCA is, and how it relates to RAG, vector stores, OKF and MCP |
 

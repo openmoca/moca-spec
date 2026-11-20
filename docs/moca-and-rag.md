@@ -79,7 +79,7 @@ never as instructions
 
 ## Try it
 
-[Try OpenMOCA](https://try.openmoca.org) runs lexical, semantic and hybrid
+[The OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org) runs lexical, semantic and hybrid
 search over eight real packages, and shows where each result ranked in each
 list. The [walkthrough](walkthrough.md) builds and serves a package to an AI
 agent in fifteen minutes.

@@ -334,6 +334,6 @@ not access control: anyone with the file can read all of it
   own vector store.
 - [Sidecar index specification](../../spec/moca-sidecar-index-spec.md): the
   index format.
-- Try [Try OpenMOCA](https://try.openmoca.org): lexical, semantic and hybrid
+- Try [the OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org): lexical, semantic and hybrid
   search over eight packages, with two models, and where each result ranked in
   each list.

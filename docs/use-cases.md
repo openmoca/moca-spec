@@ -38,7 +38,7 @@ Every use case below gets the same foundations:
 These are examples, not a complete list: MOCA fits wherever the signs above
 hold. They are described at the same depth on purpose. MOCA is neutral between
 domains, and none of them is special to the standard. The "Try it" links open
-a package in [Try OpenMOCA](https://try.openmoca.org), an example site you can
+a package in [the OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org), an example site you can
 search without an account.
 
 ## Sharing knowledge for grounding

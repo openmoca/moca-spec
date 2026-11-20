@@ -139,7 +139,8 @@ Readers agree on every case, but it may still change before 1.0
 
 ## Where do I start?
 
-[Try OpenMOCA](https://try.openmoca.org) in the browser, follow the
+Try [the OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org) in the
+browser, follow the
 [walkthrough](walkthrough.md), make a package with the
 [quickstart](quickstart.md), or read one with the Reader for
 [TypeScript](https://github.com/openmoca/moca-reader-typescript/blob/main/docs/getting-started.md),

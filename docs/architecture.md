@@ -5,9 +5,9 @@ MOCA has three pillars
 
 ```mermaid
 flowchart TB
-  app["<b>MOCA Application</b><br/>agents, prompts, workflow, policy, runtime state<br/><i>yours, on the agent framework of your choice</i>"]
+  app["<b>MOCA application</b><br/>agents, prompts, workflow, policy, runtime state<br/><i>yours, on the agent framework of your choice</i>"]
   reader["<b>MOCA Reader</b><br/>read · verify · search · navigate structure · cite<br/><i>in-process, one per language, one conformance corpus</i>"]
-  pkg["<b>MOCA Package</b><br/>structure (optional) · content · evidence<br/><i>identity, digest and signatures across all three</i>"]
+  pkg["<b>MOCA package</b><br/>structure (optional) · content · evidence<br/><i>identity, digest and signatures across all three</i>"]
   bind["<b>Bindings</b><br/>retrievers, context providers,<br/>vector stores, an MCP server"]
   app -- "citation records · structure answers" --- reader
   bind -. "present the Reader in each framework" .- reader

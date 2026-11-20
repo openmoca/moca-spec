@@ -440,5 +440,5 @@ You took a folder of Markdown and:
 - [Signing and review](guides/signing-and-review.md): Sigstore, trust roots
   and reviews in depth.
 - [Consuming packages](guides/consuming.md): use the Reader in your own code.
-- [Try OpenMOCA](https://try.openmoca.org): this package, and seven others,
+- [The OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org): this package, and seven others,
   in the browser.

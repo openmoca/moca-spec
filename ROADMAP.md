@@ -20,7 +20,7 @@ What has shipped is in [CHANGELOG.md](CHANGELOG.md).
   machine-made marks, carried in the signed manifest and applied by a Reader
   when an app asks (0.7.0).
 - Tools to convert, check, sign and index packages, and an MCP server.
-- A live example, [Try OpenMOCA](https://try.openmoca.org), with real packages.
+- A live example, [the OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org), with real packages.
 
 ## Now: get it into people's hands
 
