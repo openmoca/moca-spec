@@ -42,8 +42,8 @@ Conformant"** only if:
 2. Your claim names the kind and the version, for example "OpenMOCA 0.7 Conformant Reader", and
 3. You keep the claim true: if a later release of your software fails that suite, update or remove the claim.
 
-You run the suite yourself. There is no fee and no application. Publish the signed result and ask us to list it, and
-your software is listed as **Self-tested**. The project's own software is listed as **Official**, and software whose
+You run the suite yourself. There is no fee and no application. For 0.7.0, publish your public test run and ask us to
+list it; once the signing tool ships, a signed result is required. Your software is then listed as **Self-tested**. The project's own software is listed as **Official**, and software whose
 result we have re-run ourselves as **Verified**. We may ask you to show a passing run, and we remove a listing or ask
 you to remove a claim that is not true.
 
