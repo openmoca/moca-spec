@@ -1,6 +1,6 @@
 # 0039 — OpenMOCA Conformant and the OpenMOCA Commitment
 
-- **Status:** Proposed
+- **Status:** Accepted (owner, 2026-11-20, with TRADEMARKS.md and COMMITMENT.md). Was: Proposed (2026-11-19)
 - **Date:** 2026-11-19 (reworked 2026-11-20 with the owner: two audiences, two
   marks, and the names)
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))

@@ -1,6 +1,6 @@
 # The OpenMOCA Commitment
 
-*Draft with [ADR-0039](docs/adr/0039-a-conformance-programme-and-an-implementations-registry.md) (Proposed).*
+*Set by [ADR-0039](docs/adr/0039-a-conformance-programme-and-an-implementations-registry.md).*
 
 An app that makes the OpenMOCA Commitment promises to honour what creators
 ask and what people ask, as the OpenMOCA specification sets out. The company

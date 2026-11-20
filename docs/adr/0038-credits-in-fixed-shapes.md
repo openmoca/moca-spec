@@ -1,6 +1,6 @@
 # 0038 — Credits are labels in fixed shapes
 
-- **Status:** Proposed
+- **Status:** Accepted (owner, 2026-11-20). Was: Proposed (2026-11-17)
 - **Date:** 2026-11-17
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 

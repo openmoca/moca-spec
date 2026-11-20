@@ -222,7 +222,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
 - Package spec §4.10, informative: a member that contains later steps hides
   them, so list the steps themselves and keep an overview that contains them
   off the reading order.
-- **OpenMOCA Conformant and the OpenMOCA Commitment** (ADR-0039, Proposed). Conformant software is listed by kind
+- **OpenMOCA Conformant and the OpenMOCA Commitment** (ADR-0039). Conformant software is listed by kind
   (Reader, Producer, linter) and standing (Official, Verified, Self-tested). The Commitment is a company's signed
   promise that a named product and version honours creators' and people's rules ([COMMITMENT.md](COMMITMENT.md)),
   listed but not tested; it replaces ADR-0037's host claim. TRADEMARKS.md updated to match.
