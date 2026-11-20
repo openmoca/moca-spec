@@ -6,9 +6,10 @@ anyone check it? Is it still in force?** In most AI systems nobody can answer
 them, because the knowledge was copied into an index and its history stayed
 behind.
 
-**A MOCA package answers all four, and lets you prove it later.** Trust is
-built into the format: it is the "Attestation" in Modular Ontology, Content &
-Attestation.
+**A MOCA package answers all four, and lets you check them later**: through
+its digest, signatures from keys you trust, signed reviews and the evidence
+from its sources. Trust is built into the format: it is the "Attestation" in
+Modular Ontology, Content & Attestation.
 
 ## What a package proves
 

@@ -27,14 +27,22 @@ When an app shows the OpenMOCA Commitment mark, its makers have promised that:
 - Your own settings, such as where your reading may be sent or what you want
   to see, are always applied. The app never overrides them with a looser
   setting of its own.
-- What you bring into the app or keep private stays yours. It is not shown to
-  other people, sent anywhere you have not allowed, or published.
+- What you bring into the app or keep private is not shown to other people,
+  not sent anywhere you have not allowed, and not published.
 - When something is left out, the app tells you why.
 
 **You can check and challenge it.** The promise is signed by the company and
 listed publicly with the product and version it covers. If you think an app
-breaks it, you can report it to the company and to OpenMOCA, and the signed
-promise is your evidence.
+breaks it, the signed promise is a public record you can refer to when
+challenging the company.
+
+### How challenges work
+
+1. Report it to the company, at the contact in its listing, and to OpenMOCA,
+   at [hello@openmoca.org](mailto:hello@openmoca.org).
+2. The company can respond.
+3. A listing shown to be untrue is removed, and the app may no longer show the
+   Commitment mark.
 
 ## For companies: what you commit to
 

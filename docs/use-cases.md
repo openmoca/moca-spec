@@ -31,7 +31,7 @@ Every use case below gets the same foundations:
 | [Recorded talks and video series](#recorded-talks-and-video-series) | Searchable speech, every answer opening the video at the moment | [Try&nbsp;it](https://try.openmoca.org/p/claude-first-steps) |
 | [Onboarding](#onboarding) | Foundations before advanced material, with named owners' reviews | [Try&nbsp;it](https://try.openmoca.org/p/gitlab-handbook) |
 | [Documentation shipped to customers](#documentation-shipped-to-customers) | Customers verify who published it, and stop quoting last year's release | [Try&nbsp;it](https://try.openmoca.org/p/kubernetes-docs) |
-| [Customer support knowledge](#customer-support-knowledge) | AI drafts kept apart from what a person checked, internal answers kept internal | [Try&nbsp;it](https://try.openmoca.org/p/support-kb) |
+| [Customer support knowledge](#customer-support-knowledge) | AI drafts kept apart from what a person checked, internal answers kept internal where the app enforces audiences | [Try&nbsp;it](https://try.openmoca.org/p/support-kb) |
 | [Audit and regulated AI](#audit-and-regulated-ai) | A record of exactly which content each answer used | [Try&nbsp;it](https://try.openmoca.org/p/support-kb?view=inspect) |
 | [Clinical guidelines](#clinical-guidelines) | The pathway's order kept, every citation checked against the guideline | |
 
@@ -241,8 +241,10 @@ leak into the public assistant.
   lead's review attestation marks what a person actually checked.
 - **Answers are re-checked.** `stale_after` sets when a node is due for
   review again.
-- **Internal stays internal.** `audience: internal` keeps agent-only
-  procedures out of the public assistant, before retrieval.
+- **Internal stays internal, where the app enforces it.** `audience: internal`
+  keeps agent-only procedures out of the public assistant, before retrieval,
+  when the app sets its audience filter. It is a label, not access control:
+  anyone with the package can read every file.
 - **One answer, several languages.** A node can carry translations, and the
   Reader picks the one for the caller's language.
 
