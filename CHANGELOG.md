@@ -186,7 +186,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `.moca.idx.zip`. Files with the old names still read, because Readers go
   by content. Readers do not depend on the types either. IANA registration templates in `docs/iana/`, to be
   submitted after the release.
-- **Credits ([ADR-0038](docs/adr/0038-credits-in-fixed-shapes.md), Proposed).**
+- **Credits ([ADR-0038](docs/adr/0038-credits-in-fixed-shapes.md)).**
   Package spec §4.13: a package-level `url`; `contributors` in the manifest
   and in node frontmatter (`moca.contributors`), each with a name, MARC
   relator `roles`, and an optional `url`, `image` and `sameAs` (ISNI, ORCID,
