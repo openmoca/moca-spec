@@ -57,7 +57,7 @@ its own behaviour.
 "Honours creators' and people's rules" replaces ADR-0037's wording. It means
 the host does everything the specification asks of a host, on both sides:
 
-**The creator's side**
+#### The creator's side
 
 - **1.** Before content leaves the host for an AI model, or is shown or played
   under a rating filter, it asks a Reader to resolve the terms and gate the
@@ -74,7 +74,7 @@ the host does everything the specification asks of a host, on both sides:
   decrypted only in memory, no plaintext in logs, caches or derived data
   that outlive the key.
 
-**The person's side**
+#### The person's side
 
 - **7.** A person's own settings (which destinations their reading may go to, the
   ratings they see, what is kept) take part in resolution as host limits:
