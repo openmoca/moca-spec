@@ -39,38 +39,39 @@ promise is your evidence.
 ## For companies: what you commit to
 
 By publishing a signed Commitment for a product and version, the company
-states that the product, as a host of OpenMOCA packages:
+states that the product, as an app that reads OpenMOCA packages:
 
 ### Creators' terms
 ([package spec §4.14](spec/moca-package-spec.md),
 [Reader contract §15](spec/moca-reader-contract.md))
 
 1. Before content is sent to an AI model, played, or shown under a rating
-   filter, resolves the creator's terms through a Reader and applies the
-   terms gate, naming the real destination (device, the host's own service,
-   or a third-party provider) and use.
+   filter, checks the creator's terms with a Reader, naming where the content
+   really goes (the person's device, the app's own service, or another
+   company's AI provider) and what it is used for.
 2. Never loosens a creator's terms with its own settings; applies the
-   specification's platform defaults where terms are absent; treats training
-   as not allowed unless allowed.
-3. Honours `rights.export`.
+   standard defaults where the creator has set nothing; treats AI training
+   as not allowed unless it is allowed.
+3. Honours the creator's export setting.
 4. Keeps credits, licence and copyright
    ([package spec §4.13](spec/moca-package-spec.md)) with what it shows, and
    records for each answer where each part came from and which level decided
    each term.
 5. Shows terms honestly, telling apart the creator's declaration, who signed
-   it, what the host enforces, and what the host says about itself
+   it, what the app enforces, and what the app says about itself
    ([package spec §13.3](spec/moca-package-spec.md)).
 6. Handles encrypted packages as the
    [encrypted-package guidance](spec/moca-encrypted-package.md) sets out:
-   decrypted in memory only, with no plaintext kept in logs, caches or derived
-   data beyond the key's life.
+   decrypted in memory only, with no readable copy kept in logs, caches or
+   anything derived from it beyond the key's life.
 
 ### People's rules
 
-1. Applies each person's own settings as host limits: stricter wins, and the
-   host never overrides a person's setting with a looser one of its own.
+1. Applies each person's own settings as the app's own limits: stricter wins,
+   and the app never overrides a person's setting with a looser one of its
+   own.
 2. Keeps what a person brings or keeps private to that person: not shown to
-   others on the same host, not sent where they have not allowed, not
+   others using the same app, not sent where they have not allowed, not
    published.
 3. Shows a person why something was left out.
 
@@ -78,7 +79,7 @@ states that the product, as a host of OpenMOCA packages:
 covered, the date, the models and destinations the product uses, the set-ups
 the Commitment covers (for example, "our own AI service; not when a person
 connects their own provider"), and a contact for challenges. It is signed
-with the [attestation format](spec/moca-attestations.md) packages use, and is
+in the [same signed format](spec/moca-attestations.md) packages use, and is
 listed on openmoca.org. A new version of the product needs a new statement.
 
 **What OpenMOCA does and does not do.** OpenMOCA publishes the rules, lists
