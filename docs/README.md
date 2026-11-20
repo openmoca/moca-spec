@@ -6,7 +6,7 @@ sources and terms with their work, wherever it goes.
 
 ## Understand
 
-| | |
+| Page | What it covers |
 | --- | --- |
 | [Why MOCA?](why-moca.md) | The problem, what MOCA adds to OKF, and what it is not |
 | [MOCA and RAG](moca-and-rag.md) | What a package adds to retrieval-augmented generation |
@@ -21,7 +21,7 @@ sources and terms with their work, wherever it goes.
 
 ## Do
 
-| | |
+| Page | What it covers |
 | --- | --- |
 | [Quickstart](quickstart.md) | A valid package in five minutes |
 | [Walkthrough](walkthrough.md) | Check, sign, review, index and serve a package to an AI agent |
@@ -40,7 +40,7 @@ sources and terms with their work, wherever it goes.
 
 ## Decide and plan
 
-| | |
+| Page | What it covers |
 | --- | --- |
 | [Decision records](adr/README.md) | Why the design is what it is, and what would change it |
 | [Plans](plans/README.md) | Work in progress |

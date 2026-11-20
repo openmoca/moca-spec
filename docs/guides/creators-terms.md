@@ -115,8 +115,8 @@ It starts from the platform default, then each level may only make it
 stricter:
 
 ```mermaid
-flowchart LR
-  platform["Platform default"] --> package["The package"] --> node["The node's entry"] --> composite["A composing package<br/>that speaks for it"] --> host["The app's own limits"]
+flowchart TB
+  platform["Platform default"] --> package["The package"] --> node["The node's entry"] --> composite["A composing package that speaks for it"] --> host["The app's own limits"]
 ```
 
 - **Platform defaults**, used when no level sets a field: AI on the device,
