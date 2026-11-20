@@ -1870,7 +1870,8 @@ in transit and at rest, not after decryption
 host that shows a package's terms SHOULD keep four things apart: what the
 signer declared (`terms`), who signed it (the authority, Reader contract
 §15.2), what the host itself enforces, and any claim the host makes about
-itself (such as the host claim of ADR-0037). A declaration is not
+itself (such as the OpenMOCA Commitment, [COMMITMENT.md](../COMMITMENT.md)).
+A declaration is not
 enforcement, and a signature is not ownership.
 
 ### 13.4 Identifier control

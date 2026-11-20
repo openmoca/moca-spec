@@ -47,6 +47,7 @@ carried over.
 | [0035](0035-time-ranges-refined-by-a-quote.md) | A time range can be refined by the words spoken in it |
 | [0036](0036-creators-terms-travel-with-the-work.md) | The creator's terms travel with the work, and only the rights holder can loosen them |
 | [0037](0037-a-named-host-claim-for-creators-terms.md) | A named claim for hosts that honour creators' terms, narrowing ADR-0022 |
-| [0038](0038-credits-in-fixed-shapes.md) | Credits are labels in fixed shapes (Proposed) |
+| [0038](0038-credits-in-fixed-shapes.md) | Credits are labels in fixed shapes |
+| [0039](0039-a-conformance-programme-and-an-implementations-registry.md) | OpenMOCA Conformant (software that passes a test suite: Official, Verified, Self-tested) and the OpenMOCA Commitment (a company's signed promise to honour creators' and people's rules; not tested); supersedes ADR-0037's claim in part |
 
 New records use the template in [0000-template.md](0000-template.md).
