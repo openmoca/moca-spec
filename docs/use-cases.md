@@ -26,6 +26,7 @@ Every use case below gets the same foundations:
 | [Sharing knowledge for grounding](#sharing-knowledge-for-grounding) | Package a body of knowledge once; any assistant, model or framework grounds on it | [Try&nbsp;it](https://try.openmoca.org/p/kubernetes-docs) |
 | [Manuals and procedures](#manuals-and-procedures) | Steps in order, the checks that come first, cited to the PDF page, offline | [Try&nbsp;it](https://try.openmoca.org/p/flying-handbook) |
 | [Law and regulation](#law-and-regulation) | Only the version in force, with the exact clause cited | [Try&nbsp;it](https://try.openmoca.org/p/data-protection-act) |
+| [Creators' work, with their terms](#creators-work-with-their-terms) | Credits, sources and the creator's terms kept with a podcast, book or course, wherever it is copied | |
 | [Courses and training](#courses-and-training) | Modules, lessons in order and prerequisites, cited to the moment in a lecture | [Try&nbsp;it](https://try.openmoca.org/p/copilot-studio) |
 | [Recorded talks and video series](#recorded-talks-and-video-series) | Searchable speech, every answer opening the video at the moment | [Try&nbsp;it](https://try.openmoca.org/p/claude-first-steps) |
 | [Onboarding](#onboarding) | Foundations before advanced material, with named owners' reviews | [Try&nbsp;it](https://try.openmoca.org/p/gitlab-handbook) |
@@ -124,6 +125,28 @@ paraphrases without a citation, gives a confident wrong one.
 versions of one policy. Try the
 [Data Protection Act 2018](https://try.openmoca.org/p/data-protection-act),
 section by section.
+
+## Creators' work, with their terms
+
+**The problem.** When a podcast, a book or a course is copied into an AI app,
+the creator's name, the people who helped make it, its sources and the
+creator's wishes usually stay behind. AI opt-outs on a website, such as the
+TDM Reservation Protocol, do not travel with a copy.
+
+**What MOCA adds.**
+
+- **Credits travel with the work.** The publisher and contributors, with their
+  roles, and a part's own credits, such as an episode's guest
+  ([credits and dates](guides/credits-and-dates.md)).
+- **The creator's terms travel with the work.** The creator can rule out
+  third-party AI providers, machine translation or export; training is never
+  allowed by default. A Reader applies them when the app asks, and each
+  answer records which level decided
+  ([the creator's terms](guides/creators-terms.md)).
+- **Answers that show where they came from.** A citation opens the original
+  at the passage or the moment.
+- **Labels, not locks.** Terms are what the creator accepts, not a lock; apps
+  that honour them can make the [OpenMOCA Commitment](../COMMITMENT.md).
 
 ## Courses and training
 

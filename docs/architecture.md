@@ -132,14 +132,17 @@ flowchart TB
   ingress --> backend["<b>Backend</b><br/>lexical · semantic · hybrid · store"]
   backend --> resolve["<b>Resolve</b><br/>each hit becomes a citation record"]
   resolve --> egress["<b>Egress</b> · optional hook<br/>reorder, add what results require"]
-  egress --> gate{{"<b>Gate</b> · always last<br/>policy · audience · locale · scope"}}
+  egress --> gate{{"<b>Gate</b> · always last<br/>policy · audience · locale · scope · terms"}}
   gate --> out(["Citation records"])
 ```
 
 The gate removes content from packages that are not loaded, content that is
 out of force, superseded or deprecated, content outside the host's audience
-set, and content outside the caller's locale, concepts or scope. Whatever a
-backend or a hook did, nothing the policy excludes is returned.
+set, and content outside the caller's locale, concepts or scope. When the
+host makes a terms request, it also removes what the creator's terms exclude
+for that destination and use
+([the creator's terms](guides/creators-terms.md)). Whatever a backend or a
+hook did, nothing the policy excludes is returned.
 
 ### Ontology-guided retrieval
 
