@@ -136,7 +136,7 @@ be at least those below, which the conformance corpus assumes:
 | Bytes of one manifest image ([package spec §4.6](moca-package-spec.md#46-images)), or of an envelope's cover copy | `maxImageBytes` | 1 MiB | `M010` for that image (`E005` for a cover copy) |
 | Frontmatter block size | `maxFrontmatterBytes` | 64 KiB | `C002` for that node (`C004` for a reserved file) |
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |
-| Nesting of JSON and of YAML frontmatter (below). This one is fixed, not a default, so every Reader agrees on what is malformed | — | 128 levels | The text is malformed: `M001` for `moca.json`, `C002` for a node's frontmatter (`C004` for a reserved file), `A001` for an attestation file or its statement, `E005` for `moca-enc.json`, `S001` for a sidecar's `index.json`, `S004` for a payload line |
+| Nesting of JSON and of YAML frontmatter (below). This one is fixed, not a default, so every Reader agrees on what is malformed | — | 64 levels | The text is malformed: `M001` for `moca.json`, `C002` for a node's frontmatter (`C004` for a reserved file), `A001` for an attestation file or its statement, `E005` for `moca-enc.json`, `S001` for a sidecar's `index.json`, `S004` for a payload line |
 | Structure file size | `maxStructureBytes` | 4 MiB | `O001` |
 | Triples in a structure file | `maxTriples` | 100,000 | `O001` |
 | Collection members in a structure file: the list cells reached from every `skos:memberList` statement, added together, so a list that several collections name counts once for each | `maxTriples` | 100,000 | `O001` |
@@ -182,10 +182,10 @@ many arguments one call can take: a long chain of relations, or a transcript
 of many cues, must not exhaust the call stack.
 
 **Nesting.** JSON and YAML frontmatter in a package or a sidecar are nested at
-most 128 levels deep. A value's level is the number of arrays and objects
+most 64 levels deep. A value's level is the number of arrays and objects
 (in YAML, sequences and mappings) it lies inside, so the outermost object or
-mapping is level 1, and a scalar may lie inside 128 of them. A text that
-opens a 129th is malformed, with the code its kind of file already has for
+mapping is level 1, and a scalar may lie inside 64 of them. A text that
+opens a 65th is malformed, with the code its kind of file already has for
 text that does not parse (the limits table, above), and a Reader refuses it
 without parsing deeper: the check MUST NOT itself depend on recursion depth.
 This covers `moca.json`, every node's and reserved file's frontmatter, each
@@ -916,7 +916,7 @@ withhold only the `structured` capability.
 | `P001_UNSUPPORTED_ENTRY` | error | The package contains a symbolic link or other non-regular file. |
 | `P002_UNREADABLE_ENTRY` | error | A package entry could not be read. |
 | `P003_PATH_COLLISION` | error | Two package paths are equal after Unicode NFC normalisation, or after normalisation and simple lowercase mapping ([package spec §6.3](moca-package-spec.md#63-entries-that-make-a-package-invalid)). |
-| `M001_MANIFEST_INVALID_JSON` | error | moca.json is not valid UTF-8 JSON, or is nested more than 128 levels deep (§3). |
+| `M001_MANIFEST_INVALID_JSON` | error | moca.json is not valid UTF-8 JSON, or is nested more than 64 levels deep (§3). |
 | `M002_MANIFEST_SCHEMA` | error | moca.json does not validate against the manifest schema. |
 | `M003_NO_CONTENT` | error | The package has neither a content node nor a member. |
 | `M004_UNKNOWN_KEY` | info | A top-level manifest key is neither defined by the spec nor a vendor x-<vendor>-<key> key. |
@@ -931,7 +931,7 @@ withhold only the `structured` capability.
 | `M013_ALT_IMAGE_UNKNOWN` | warning | A translated `alt` text names no image in `images`. It is dropped. |
 | `M014_READING_ORDER_UNRESOLVED` | warning | `readingOrder` does not name a `skos:OrderedCollection` with a `skos:memberList` in the package's own `structure.ttl`. It is ignored ([package spec §4.10](moca-package-spec.md#410-reading-order)). |
 | `C001_FRONTMATTER_MISSING` | error | A concept document has no YAML frontmatter (OKF MUST). |
-| `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML, is not a mapping, repeats a key, uses an alias, is nested more than 128 levels deep (§3), or lists two sources with one `id`. |
+| `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML, is not a mapping, repeats a key, uses an alias, is nested more than 64 levels deep (§3), or lists two sources with one `id`. |
 | `C003_TYPE_MISSING` | error | Frontmatter has no non-empty type (OKF MUST). |
 | `C004_RESERVED_FILE_INVALID` | error | index.md or log.md breaks the OKF reserved-file rules. |
 | `C005_FIELD_INVALID` | warning | A frontmatter field does not match the node schema. |

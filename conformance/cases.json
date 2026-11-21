@@ -10298,7 +10298,7 @@
     },
     {
       "id": "manifest-nesting-at-limit",
-      "description": "Contract §3: JSON nested 128 levels deep is read. The manifest object is the first level; a vendor key holds 127 arrays.",
+      "description": "Contract §3: JSON nested 64 levels deep is read. The manifest object is the first level; a vendor key holds 63 arrays.",
       "target": "fixtures/manifest-nesting-at-limit",
       "expect": {
         "valid": true,
@@ -10310,7 +10310,7 @@
     },
     {
       "id": "manifest-nesting-over-limit",
-      "description": "Contract §3: a moca.json nested more than 128 levels deep is malformed (M001).",
+      "description": "Contract §3: a moca.json nested more than 64 levels deep is malformed (M001).",
       "target": "fixtures/manifest-nesting-over-limit",
       "expect": {
         "valid": false,
@@ -10322,7 +10322,7 @@
     },
     {
       "id": "frontmatter-nesting-at-limit",
-      "description": "Contract §3: frontmatter nested 128 levels deep is read. The frontmatter mapping is the first level.",
+      "description": "Contract §3: frontmatter nested 64 levels deep is read. The frontmatter mapping is the first level.",
       "target": "fixtures/frontmatter-nesting-at-limit",
       "expect": {
         "valid": true,
@@ -10334,7 +10334,7 @@
     },
     {
       "id": "frontmatter-nesting-over-limit",
-      "description": "Contract §3: frontmatter nested more than 128 levels deep is invalid (C002).",
+      "description": "Contract §3: frontmatter nested more than 64 levels deep is invalid (C002).",
       "target": "fixtures/frontmatter-nesting-over-limit",
       "expect": {
         "valid": false,
@@ -10346,7 +10346,7 @@
     },
     {
       "id": "attestation-nesting-over-limit",
-      "description": "Contract §3: an attestation file nested more than 128 levels deep is malformed (A001), whatever else it holds.",
+      "description": "Contract §3: an attestation file nested more than 64 levels deep is malformed (A001), whatever else it holds.",
       "target": "fixtures/attestation-nesting-over-limit",
       "options": {
         "trustRoot": "fixtures/trust-root.json",

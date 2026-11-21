@@ -274,7 +274,7 @@ each with corpus cases. 445 cases.
   of the wrong type never stops the read. Cases `manifest-not-object`, `manifest-locales-wrong-type`.
 - `scripts/limit-fixtures.mjs` builds the fixtures for these cases.
 - **A nesting limit.** Contract §3: JSON (`moca.json`, attestation files and their statements, `moca-enc.json`, a
-  sidecar's `index.json` and payload lines) and YAML frontmatter are nested at most 128 levels deep, counting the
+  sidecar's `index.json` and payload lines) and YAML frontmatter are nested at most 64 levels deep, counting the
   outermost object or mapping. Deeper text is malformed, with the code its file already has for text that does not
   parse: `M001`, `C002` (`C004`), `A001`, `E005`, `S001`, `S004`. The limit is fixed. Cases
   `manifest-nesting-at-limit`, `manifest-nesting-over-limit`, `frontmatter-nesting-at-limit`,

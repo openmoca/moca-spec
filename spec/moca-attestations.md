@@ -357,7 +357,7 @@ that fails ends the verification of that file with the outcome named.
    The envelope has a string `payload` and a string `payloadType`, and if it
    has a `signatures` array, that array has no more than 16 entries.
    Otherwise: **malformed**. The 16 is fixed, so every Reader agrees. A
-   file nested more than 128 levels deep is **malformed** too, as is a
+   file nested more than 64 levels deep is **malformed** too, as is a
    statement that deep (step 4)
    ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)).
 3. **Payload type.** `payloadType` is `application/vnd.in-toto+json`.
