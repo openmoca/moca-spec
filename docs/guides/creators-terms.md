@@ -53,10 +53,24 @@ platform default applies (below).
 | `ai.allowed.provider` | Whether a third party's model may use it |
 | `ai.allowed.training` | Whether the work may be used to train a model |
 | `ai.allowed.machineTranslation` | Whether a machine may translate it. The package's own translations are not machine translation |
+| `ai.allowed.mention` | Whether a model that may not receive this work may be told the work exists. Only for the whole package |
 | `ai.providerRequires` | Conditions a third-party provider must meet: `noTraining`, `noRetention` |
 | `ai.answerSources` | `work` (every sentence of an answer backed by the work) or `model` (the model's general knowledge allowed, and marked) |
 
 The permissions are booleans: `true` or `false`, or left out.
+
+**What `mention: false` does, and what it cannot do.** When you close your
+work to a destination, an honest app may still tell that model your work's
+title and publisher, so it can explain to the person why it cannot answer
+from it. Set `"mention": false` when the title itself should not reach a
+model your work is closed to: an app that honours your terms then tells that
+model nothing about the work, not even that it exists. It does nothing while
+the model is allowed to read the work, and it never changes what an app shows
+people on its own screens. It cannot stop a model that already knows your
+work from elsewhere, and it cannot bind an app that ignores terms. It applies
+to the whole package; you cannot set it for one part. A value that is not
+`true` or `false`, or an `allowed` that is not an object, hides the package
+too, as everything malformed fails closed.
 
 ### Rating: `rating`
 
@@ -121,8 +135,8 @@ flowchart TB
 
 - **Platform defaults**, used when no level sets a field: AI on the device,
   in the app's own service and with providers allowed; machine translation
-  allowed; export allowed; **training not allowed**; no provider conditions;
-  `answerSources` `model`.
+  allowed; a closed work may be mentioned; export allowed; **training not
+  allowed**; no provider conditions; `answerSources` `model`.
 - **Stricter wins.** `false` is stricter than `true`; more provider conditions
   are stricter; `work` is stricter than `model`. A malformed or unknown value
   counts as the strictest.
@@ -162,6 +176,9 @@ channel, comes in a later version
   leaves out what the terms exclude for that destination and use, and counts
   what it left out
   ([Reader contract §15.4](../../spec/moca-reader-contract.md#154-the-terms-gate)).
+  The same applies to everything else a model receives: text sent to be
+  embedded, your topic labels and definitions, and what the model is told
+  about your package.
 - Without that request, terms remove nothing.
 - Terms are never configuration and never instructions to a model. Naming a
   destination never makes an app use it, and text in the content that claims
