@@ -230,6 +230,49 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   (Reader, Producer, linter) and standing (Official, Verified, Self-tested). The Commitment is a company's signed
   promise that a named product and version honours creators' and people's rules ([COMMITMENT.md](COMMITMENT.md)),
   listed but not tested; it replaces ADR-0037's host claim. TRADEMARKS.md updated to match.
+
+### Changed (limits, exact rules and signer binding)
+
+A hardening pass before release: places where two careful Readers could reach different answers, now stated exactly,
+each with corpus cases. 445 cases.
+
+- **`ids` bind a signer to package ids** (ADR-0040). Attestations §6: a trust-root key or identity with the `package`
+  role and `ids` signs only packages whose `id` its `ids` cover. A valid signature from an entry that does not cover
+  the package is reported as the new `A010_SIGNER_NOT_FOR_PACKAGE` (error) and does not make the package `signed` or
+  meet `requireSignature`. An entry without `ids` signs any id, as before. **A trust root that already had `ids` for
+  relations now also limits what that entry signs** (MIGRATIONS.md). Cases `signer-binding-*`,
+  `require-signature-signer-not-covered`, `sigstore-signer-not-covered`.
+- **Terms: a malformed container fails closed.** Package spec §4.14 and contract §15.3: an `ai`, `ai.allowed`,
+  `rights`, `rights.export`, `nodes` or `nodes` entry that is present with the wrong type sets every permission under
+  it to its strictest value; a `nodes` value or entry that does not say which nodes it means counts for every node.
+  Cases `terms-container-malformed`, `search-terms-*-fails-closed`.
+- **Ratings: what "rated" means.** Contract §15.4: a record is rated, for one host's filter, only by an `explicit`
+  value that counts or an entry under a scheme the host listed; a record rated only under another scheme is unrated,
+  and removed unless `allowUnrated`. A malformed rating counts as the strictest. Cases
+  `search-terms-rating-unlisted-scheme*`, `search-terms-rating-listed-scheme`,
+  `search-terms-rating-not-object-fails-closed`, `search-terms-rating-explicit-malformed-fails-closed`.
+- **Removed: rating `mode: "strict-path"`.** It was drafted in contract §15.4 and never specified precisely enough to
+  implement the same way twice, so it is not part of 0.7.0. A rating request with a member this version does not
+  define removes every record, so a host never gets a weaker filter than it asked for. Case
+  `search-terms-rating-request-unknown-member`.
+- **Archives: one central directory.** Contract §3 says which end-of-central-directory record is the one, and what is
+  rejected (`T003`): no such record or more than one, multi-disk archives, Zip64, a directory that does not hold what
+  it declares, and a local header whose name or method differs from the directory's. An entry that yields fewer bytes
+  than it declares is unreadable (`P002`), as one that yields more already was. Cases `archive-two-end-records`,
+  `archive-zip64`, `archive-local-name-mismatch`, `archive-entry-short`.
+- **Sigstore's rules, in MOCA's words.** Attestations §7: the bundle versions read, what the transparency-log entry,
+  the time and the certificate must each show, and that the Reader compares the certificate's issuer and subject with
+  the trust root's itself, as whole strings. §6: offline means no request of any kind. Cases
+  `sigstore-subject-shorter`, `sigstore-subject-other-character`, `sigstore-issuer-shorter`.
+- **New limits.** Contract §3: attestation files in a package (`maxAttestations`, 256), bytes of one attestation file
+  (`maxAttestationBytes`, 1 MiB), signature entries in one DSSE envelope (16, fixed), and collection members in a
+  structure file, counted for every collection that names a list (`maxTriples`). Work on a node's links and on an
+  evidence source stays roughly linear in the text. Cases `attestation-signatures-at-limit`,
+  `attestation-signatures-over-limit`, `limit-attestation-files`, `limit-attestation-bytes`, `structure-shared-list*`,
+  `limit-structure-members`.
+- **Manifests of the wrong shape.** Contract §5: a `moca.json` that is JSON but not an object is `M002`, and a member
+  of the wrong type never stops the read. Cases `manifest-not-object`, `manifest-locales-wrong-type`.
+- `scripts/limit-fixtures.mjs` builds the fixtures for these cases.
 - **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
   a composing package whose signer's ids cover the member makes the member's
   `ai` and export terms stricter (`decidedBy: composite`) and its gate removes

@@ -1,0 +1,11 @@
+{
+  "id": "https://example.com/conformance/terms-node-entry-not-object",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "nodes": [
+      "content/a.md"
+    ]
+  }
+}

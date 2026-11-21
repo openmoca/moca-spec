@@ -208,7 +208,8 @@ expected by at least one case or is listed below as untestable.
 | --- | --- | --- |
 | Targets: not found, no manifest, archives | Contract §3 | `target-*`, `valid-archive`, `archive-*`, `limit-archive-*` |
 | Entry names, collisions, unsafe paths | Contract §3, package spec §6.3 | `path-collision-*`, `unsafe-path*`, `valid-noncharacter-path`, `valid-dotted-i`, `valid-hidden-entries` |
-| Resource limits | Contract §3 | `limit-*`, `structure-deep-chain` |
+| Resource limits | Contract §3 | `limit-*`, `structure-deep-chain`, `structure-shared-list*`, `attestation-signatures-*` |
+| Archive records: the end record, Zip64, local headers, short entries | Contract §3 | `archive-two-end-records`, `archive-zip64`, `archive-local-name-mismatch`, `archive-entry-short` |
 | The digest | Package spec §6.4 | every valid package case (`expect.digest`), `digest-v1-package`, `attestations-as-file` |
 | Manifest | Package spec §4 | `manifest-*`, `distribution-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
 | Images, translations, tags and apps | Package spec §4.6–4.9 | `catalogue-valid`, `image-*`, `translation-*`, `tags-*`, `apps-*` |
@@ -225,7 +226,10 @@ expected by at least one case or is listed below as untestable.
 | Members | Package spec §7.1 | `composed-*`, `member-*`, `duplicate-member` |
 | Relations | Package spec §7.2 | `relation-*`, `search-relation-*` |
 | Attestations and trust roots | Attestations §5–§7 | `attestation-*`, `signature-*`, `signed-*`, `key-*`, `trust-root-empty-roles`, `require-signature-*` |
+| A signer's `ids` cover the package | Attestations §6, ADR-0040 | `signer-binding-*`, `require-signature-signer-not-covered`, `sigstore-signer-not-covered` |
 | Sigstore, offline against the host's trusted root (optional feature) | Attestations §6–§7 | `sigstore-*` |
+| Sigstore identities are compared exactly | Attestations §6 | `sigstore-identity-not-listed`, `sigstore-subject-shorter`, `sigstore-subject-other-character`, `sigstore-issuer-shorter` |
+| Terms and ratings fail closed | Package spec §4.14, contract §15.3–15.4 | `terms-container-malformed`, `search-terms-*-fails-closed`, `search-terms-rating-unlisted-scheme*`, `search-terms-rating-listed-scheme`, `search-terms-rating-request-unknown-member` |
 | Reviews and `reviewed` | Package spec §11, attestations §4 | `review-*`, `search-review-*`, `signed-reviewed` |
 | Strict mode | Contract §11 | `strict-*` |
 | Encrypted packages: recognition, the layout and marker, keys, decryption, the outline check, limits | Encrypted packages §2–§5, contract §3 | `envelope-*` |
