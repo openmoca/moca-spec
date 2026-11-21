@@ -142,3 +142,5 @@ Maintainers: see [docs/releasing.md](docs/releasing.md).
 Use the **Bug report** template for problems in the specification, schemas,
 tools, examples or documentation. Report security issues privately; see
 [SECURITY.md](SECURITY.md).
+
+Built with the help of AI assistants; every change is reviewed and accepted by the maintainer.

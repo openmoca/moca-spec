@@ -1,6 +1,9 @@
 # 0037 — A named claim for hosts that honour creators' terms
 
-- **Status:** Accepted
+- **Status:** Accepted; superseded in part by
+  [ADR-0039](0039-a-conformance-programme-and-an-implementations-registry.md)
+  (2026-11-20): the host claim is now the OpenMOCA Commitment, a signed
+  promise rather than a tested claim
 - **Date:** 2026-11-16
 - **Deciders:** MOCA maintainer (see [GOVERNANCE.md](../../GOVERNANCE.md))
 - **Narrows:** [ADR-0022](0022-applications-get-advice.md)
