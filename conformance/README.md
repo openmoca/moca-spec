@@ -209,6 +209,7 @@ expected by at least one case or is listed below as untestable.
 | Targets: not found, no manifest, archives | Contract §3 | `target-*`, `valid-archive`, `archive-*`, `limit-archive-*` |
 | Entry names, collisions, unsafe paths | Contract §3, package spec §6.3 | `path-collision-*`, `unsafe-path*`, `valid-noncharacter-path`, `valid-dotted-i`, `valid-hidden-entries` |
 | Resource limits | Contract §3 | `limit-*`, `structure-deep-chain`, `structure-shared-list*`, `attestation-signatures-*` |
+| Nesting of JSON and frontmatter | Contract §3 | `manifest-nesting-*`, `frontmatter-nesting-*`, `attestation-nesting-over-limit` |
 | Archive records: the end record, Zip64, local headers, short entries | Contract §3 | `archive-two-end-records`, `archive-zip64`, `archive-local-name-mismatch`, `archive-entry-short` |
 | The digest | Package spec §6.4 | every valid package case (`expect.digest`), `digest-v1-package`, `attestations-as-file` |
 | Manifest | Package spec §4 | `manifest-*`, `distribution-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
