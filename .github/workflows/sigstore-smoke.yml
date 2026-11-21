@@ -26,12 +26,12 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: openmoca/moca-reader-typescript
-          ref: 082f7c2ecda446b15dbfd30dd706d79e9686c315  # 0.7.0 release candidate; v0.7.0 once tagged
+          ref: b2e196d0d948cf8a412a4e058cccf623251387f2  # release-0.7.0 (0.7.0 release candidate); v0.7.0 once tagged
           path: moca-reader-typescript
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: openmoca/moca-tools
-          ref: e07ec76efd4b8783c67d1997d3659a57986f7170  # 0.7.0 release candidate; v0.7.0 once tagged
+          ref: 7e40fa802e0fb974e8745d5ae0eb75284a78182b  # release-0.7.0 (0.7.0 release candidate); v0.7.0 once tagged
           path: moca-tools
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
