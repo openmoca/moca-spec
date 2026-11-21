@@ -24,7 +24,7 @@ search runs on.
 
 This guide builds both kinds of index for the FAA's *Airplane Flying
 Handbook* (251 pages, from [`examples/pdf`](../../examples/pdf)), then
-searches it three ways. Every command and output below was run with the 0.6.0
+searches it three ways. Every command and output below was run with the 0.7.0
 tools, and the code was run in all three Readers, which print the same
 results.
 
@@ -88,9 +88,9 @@ No findings.
 Usable: 1651 chunk(s)
 ```
 
-It took about ten seconds. The index is a folder: `index.json` says what it
-is, and `payload/` holds the passages and a binary file of vectors (2.4 MB
-here). `index.json` records the model, so a Reader can refuse a question
+It took about ten seconds. The index is one file, `afh-minilm.mocai` (2.7 MB
+here): a Zip that holds `index.json`, which says what the index is, and
+`payload/`, the passages and a binary file of vectors. `index.json` records the model, so a Reader can refuse a question
 embedded with a different one:
 
 ```json
@@ -240,9 +240,9 @@ semantic:
   0.505  Rejected Takeoff/Engine Failure
   0.494  Low Altitude Engine Failure Scenarios
 hybrid:
-  0.016  Engine Failure During Flight
-  0.016  Before-Takeoff Check
-  0.016  Door Opening In-Flight
+  0.032  Before-Takeoff Check
+  0.029  Rejected Takeoff/Engine Failure
+  0.029  Engine Failure After Takeoff (Single-Engine)
 ```
 
 - **Lexical** search misses: the question says "quits" and "leave the
@@ -250,7 +250,10 @@ hybrid:
 - **Semantic** search finds the right sections by meaning.
 - **Hybrid** merges the two ranked lists (reciprocal rank fusion), so a
   passage either search ranks well comes back. Its scores are small because
-  they come from ranks, not from similarity.
+  they come from ranks, not from similarity. Each search ranks every passage
+  before any filter or limit (Reader contract §9.2), so a passage near the
+  top of both lists, such as the takeoff sections here, rises above one that
+  only one search found.
 
 The question is embedded on your machine; the Reader never sends anything
 anywhere. The results are citation records, exactly as in

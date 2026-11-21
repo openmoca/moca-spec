@@ -17,7 +17,7 @@ Every Reader answers questions about it the same way, can limit a search to
 one topic, and can use it to add what a result depends on. This guide uses
 [`examples/handbook/incident-response`](../../examples/handbook/incident-response),
 a four-step incident procedure. Every command and output below was run with the
-0.6.0 tools, and the code was run in all three Readers, which print the same
+0.7.0 tools, and the code was run in all three Readers, which print the same
 thing.
 
 To follow along, download the example:
