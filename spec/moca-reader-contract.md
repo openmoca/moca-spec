@@ -136,7 +136,7 @@ be at least those below, which the conformance corpus assumes:
 | Bytes of one manifest image ([package spec §4.6](moca-package-spec.md#46-images)), or of an envelope's cover copy | `maxImageBytes` | 1 MiB | `M010` for that image (`E005` for a cover copy) |
 | Frontmatter block size | `maxFrontmatterBytes` | 64 KiB | `C002` for that node (`C004` for a reserved file) |
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |
-| Nesting of JSON and of YAML frontmatter (below). This one is fixed, not a default, so every Reader agrees on what is malformed | — | 64 levels | The text is malformed: `M001` for `moca.json`, `C002` for a node's frontmatter (`C004` for a reserved file), `A001` for an attestation file or its statement, `E005` for `moca-enc.json`, `S001` for a sidecar's `index.json`, `S004` for a payload line |
+| Nesting of JSON, of YAML frontmatter and of `structure.ttl` (below). This one is fixed, not a default, so every Reader agrees on what is malformed | — | 64 levels | The text is malformed: `M001` for `moca.json`, `C002` for a node's frontmatter (`C004` for a reserved file), `A001` for an attestation file or its statement, `E005` for `moca-enc.json`, `S001` for a sidecar's `index.json`, `S004` for a payload line, `O001` for `structure.ttl` |
 | Structure file size | `maxStructureBytes` | 4 MiB | `O001` |
 | Triples in a structure file | `maxTriples` | 100,000 | `O001` |
 | Collection members in a structure file: the list cells reached from every `skos:memberList` statement, added together, so a list that several collections name counts once for each | `maxTriples` | 100,000 | `O001` |
@@ -193,6 +193,14 @@ attestation file and the statement decoded from its payload, `moca-enc.json`,
 and a sidecar's `index.json` and payload lines. The host's own input, such as
 a trust root, is not package content, and a Reader may refuse it as it sees
 fit.
+
+A package's `structure.ttl` is nested at most 64 levels deep too. In Turtle,
+each blank-node property list (`[ ]`) or collection (`( )`) is one level, so
+the outermost one is level 1 and a term may lie inside 64 of them. A file
+that opens a 65th is refused with `O001`, and its structure is not read. The
+check follows Turtle's own rules for what is a bracket: one inside an IRI, a
+string, a comment or a prefixed name (escaped characters included) does not
+count. Like the others, it MUST NOT depend on recursion depth.
 
 **Numbers too large.** A frontmatter number too large for a finite double,
 however it is written (`1e400`, or a decimal, octal or hex integer of any
@@ -964,7 +972,7 @@ withhold only the `structured` capability.
 | `L001_IDENTITY_CONFLICT` | error | A library was given a second package with the same `id` and `version` but a different digest; the second is refused (§7). Reported by the library, not the package. |
 | `L002_ISSUED_COPY_DUPLICATE` | info | A library was given a second issued copy of the same original (§7): the same `id` and `version`, another digest, and the same `issuedCopy.originalDigest`. The second is not loaded. Reported by the library. |
 | `F001_PROFILE_UNRECOGNISED` | info | A declared profile is not recognised by this Reader. |
-| `O001_ONTOLOGY_UNPARSEABLE` | warning | `structure.ttl` or a host overlay is over the size or triple limit (§3), or is not parseable Turtle. |
+| `O001_ONTOLOGY_UNPARSEABLE` | warning | `structure.ttl` or a host overlay is over the size or triple limit (§3), or is not parseable Turtle; or `structure.ttl` is nested more than 64 levels deep (§3). |
 | `O002_CONCEPT_UNDECLARED` | warning | A relation, ordered collection or node binding uses a concept that is not declared as a `skos:Concept`. |
 | `O003_REMOTE_REFERENCE` | warning | `structure.ttl` or a node binding relies on something a Reader would have to fetch or resolve: `owl:imports`, or an IRI that is not absolute. |
 | `O005_STRUCTURE_CYCLE` | warning | `requires`, `broader` or `hasPart` forms a cycle ([package spec §5.6](moca-package-spec.md#56-structure)). |

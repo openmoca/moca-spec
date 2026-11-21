@@ -1,0 +1,4 @@
+@prefix e: <https://example.org/conformance#> .
+
+# 64 levels of blank nodes, on the line of a name that holds an escaped "#".
+e:boundary\#1 e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part [ e:part 1 ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] .

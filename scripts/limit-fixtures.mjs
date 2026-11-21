@@ -218,11 +218,9 @@ write('manifest-locales-wrong-type/content/hello.md', NODE);
     write(`${name}/content/hello.md`, NODE);
     write(`${name}/content/nested.md`, `---\ntype: Article\ntitle: Nested\nx-example-nested: ${arrays(depth)}\n---\n\n# Nested\n\nNested.\n`);
   }
-  // A structure file nested past the limit on the line of a prefixed name that holds an escaped '#', which is part of
-  // the name, not a comment.
-  {
-    const name = 'structure-nesting-over-limit';
-    const depth = 257;
+  // Structure files at and past the limit, on the line of a prefixed name that holds an escaped '#', which is part of
+  // the name, not a comment. Each blank-node property list is one level.
+  for (const [name, depth] of [['structure-nesting-at-limit', 64], ['structure-nesting-over-limit', 65]]) {
     write(`${name}/moca.json`, json({ id: `https://example.com/conformance/${name}`, version: '1.0.0', title: 'Fixture' }));
     write(`${name}/content/hello.md`, NODE);
     write(`${name}/structure.ttl`, '@prefix e: <https://example.org/conformance#> .\n\n'
