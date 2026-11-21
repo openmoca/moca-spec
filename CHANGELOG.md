@@ -285,7 +285,9 @@ each with corpus cases. 445 cases.
   outermost object or mapping. Deeper text is malformed, with the code its file already has for text that does not
   parse: `M001`, `C002` (`C004`), `A001`, `E005`, `S001`, `S004`. The limit is fixed. Cases
   `manifest-nesting-at-limit`, `manifest-nesting-over-limit`, `frontmatter-nesting-at-limit`,
-  `frontmatter-nesting-over-limit`, `attestation-nesting-over-limit`. 450 cases.
+  `frontmatter-nesting-over-limit`, `attestation-nesting-over-limit`.
+- **Every YAML error is `C002`.** Frontmatter the YAML library cannot read is `C002`, whatever the error. Case
+  `frontmatter-escape-past-unicode`: a double-quoted escape for a code point past U+10FFFF. 451 cases.
 ### Changed (before the hardening pass)
 
 - **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
