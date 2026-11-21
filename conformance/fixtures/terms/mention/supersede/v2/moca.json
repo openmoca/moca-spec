@@ -1,0 +1,22 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-supersede",
+  "version": "2.0.0",
+  "title": "A policy, second version",
+  "language": "en",
+  "relations": [
+    {
+      "type": "supersedes",
+      "target": "https://example.com/conformance/terms-mention-supersede",
+      "version": "1.0.0"
+    }
+  ],
+  "terms": {
+    "ai": {
+      "allowed": {
+        "provider": false,
+        "mention": false
+      }
+    }
+  }
+}

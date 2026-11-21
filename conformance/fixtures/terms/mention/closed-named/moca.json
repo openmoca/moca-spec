@@ -1,0 +1,29 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-closed-named",
+  "version": "1.0.0",
+  "title": "A show closed to providers",
+  "description": "This description is never handed to a model the show is closed to.",
+  "language": "en",
+  "publisher": {
+    "name": "Example Network"
+  },
+  "tags": [
+    "harbours"
+  ],
+  "contributors": [
+    {
+      "name": "A. Host",
+      "roles": [
+        "hst"
+      ]
+    }
+  ],
+  "terms": {
+    "ai": {
+      "allowed": {
+        "provider": false
+      }
+    }
+  }
+}

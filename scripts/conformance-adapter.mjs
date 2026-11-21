@@ -69,6 +69,12 @@ function hostileIngressHooks() {
   return { ingress: () => ({ includeAll: true, limit: 1000, locale: 'fr', upTo: null }) };
 }
 
+/** Contract §15.4: the search's U004 counts, `{ excluded, hidden }`, or null when it has none. */
+function termsExcludedOf(diagnostics) {
+  const u = diagnostics.find((d) => d.code === 'U004_TERMS_EXCLUDED');
+  return u ? { excluded: u.excluded ?? {}, hidden: u.hidden ?? 0 } : null;
+}
+
 const conceptItem = (x) => x && ({ iri: x.iri, ...(x.label !== undefined ? { label: x.label } : {}), layer: x.layer });
 
 export async function actualFor(root, c) {
@@ -99,12 +105,13 @@ export async function actualFor(root, c) {
   }
 
   if (c.kind === 'structure') {
-    const library = new Library({ overlays });
+    const library = new Library({ overlays, ...(o.now ? { clock: () => new Date(o.now) } : {}) });
     for (const target of c.packages) {
       const result = await readPackage(join(root, target), readOptions);
       if (result.valid) library.add(result);
     }
-    const s = library.structure;
+    // Contract §10, "Under a terms request": the structure of the packages not closed for the request.
+    const s = o.terms ? library.structureFor({ terms: o.terms, termsLimits: o.termsLimits }) : library.structure;
     const a = c.args ?? {};
     const ops = {
       concept: () => s.concept(c.iri),
@@ -118,6 +125,17 @@ export async function actualFor(root, c) {
       nodes: () => s.nodes(c.iri, a).map((r) => r.node.ref),
     };
     return { codes: library.diagnostics.items.map((d) => d.code), result: ops[c.op]() };
+  }
+
+  // Contract §15.4, "The catalogue rule": what a model may be told about the loaded packages.
+  if (c.kind === 'catalogue') {
+    const library = new Library({ clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true });
+    for (const target of c.packages) {
+      const result = await readPackage(join(root, target), readOptions);
+      if (result.valid) library.add(result);
+    }
+    const result = library.catalogue({ terms: c.terms, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, includeAll: o.includeAll === true, termsLimits: o.termsLimits });
+    return { codes: library.diagnostics.items.map((d) => d.code), result };
   }
 
   if (c.kind === 'search') {
@@ -143,10 +161,16 @@ export async function actualFor(root, c) {
       // `ingestSeparately`); only the packages in `allow` are "loaded", and the
       // search gets their package states (contract §9.4).
       const store = new MemoryStoreBackend({ filterPushdown: false });
+      // Contract §9.4: ingest with the host's terms request for the embedder's destination, when the case gives one.
+      const ingestOptions = o.ingestTerms ? { terms: o.ingestTerms, termsLimits: o.termsLimits } : {};
       if (o.ingestSeparately) {
-        for (const p of library.packages) await store.ingest(new Library({ clock: () => new Date(o.now) }).add(p.result));
+        for (const p of library.packages) {
+          await store.ingest(new Library({ clock: () => new Date(o.now) }).add(p.result), ingestOptions);
+          codes.push(...(store.ingestDiagnostics ?? []).map((d) => d.code));
+        }
       } else {
-        await store.ingest(library);
+        await store.ingest(library, ingestOptions);
+        codes.push(...(store.ingestDiagnostics ?? []).map((d) => d.code));
       }
       const allowed = library.packages.filter(({ result }) => (o.allow ?? []).some((t) => join(root, t) === result.source?.location)).map(({ result }) => packageState(result));
       // Contract §9.4: the structure source, packages read into a small library whose structure the hooks see.
@@ -161,7 +185,7 @@ export async function actualFor(root, c) {
       const search = new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true, structure }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks, termsLimits: o.termsLimits });
       const records = await search.search(s.query, searchOptions);
       codes.push(...search.diagnostics.map((d) => d.code));
-      return { codes, records };
+      return { codes, records, termsExcluded: termsExcludedOf(search.diagnostics) };
     }
     const dense = () => new DenseBackend(library, { embedder: conformanceEmbedder(o.embedder) });
     const backend = o.backend === 'all' ? everyHitBackend(library)
@@ -175,7 +199,7 @@ export async function actualFor(root, c) {
     const records = await search.search(s.query, searchOptions);
     // Contract §9: the search's own findings, such as S008.
     codes.push(...search.diagnostics.map((d) => d.code));
-    return { codes, records };
+    return { codes, records, termsExcluded: termsExcludedOf(search.diagnostics) };
   }
 
   const result = await readPackage(join(root, c.target), readOptions);

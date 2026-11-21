@@ -150,7 +150,7 @@ teaches it to make, check, sign, index, read and serve packages.
 | [Citations over AG-UI](spec/moca-ag-ui-citations.md) | The `moca.citations` event: how a service sends the citation records an answer cites to any AG-UI client |
 | [Profiles](profiles/README.md) | Optional extensions; today the ontology profile (extra vocabulary files) |
 | [Schemas](schemas/v1) | Manifest, node, structure, citation record, search hit, sidecar, review predicate, trust root, AG-UI citations event |
-| [Conformance corpus](conformance/README.md) | 451 cases, with pinned digests, that any Reader must pass, in any language |
+| [Conformance corpus](conformance/README.md) | 486 cases, with pinned digests, that any Reader must pass, in any language |
 
 Identifiers use `https://w3id.org/moca/...`, permanent names that redirect to
 openmoca.org: each schema resolves to itself and each profile to its

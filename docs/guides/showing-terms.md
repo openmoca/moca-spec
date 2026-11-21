@@ -18,8 +18,9 @@ a `terms` request
   meets (`noTraining`, `noRetention`), and the **use** (`answer`, `embed`,
   `summarise`, `translate` or `train`).
 - `rating`: what the person or the setting allows (`explicit`, rating
-  schemes, whether unrated work passes), and `strict-path` mode to check a
-  node's, its package's and any composing package's rating.
+  schemes, whether unrated work passes, and whether a feed's own
+  `explicit: false` counts). Send only these members: a request with any
+  other member removes everything.
 
 The search leaves out what the resolved terms exclude, and reports how many
 records it left out, by reason (`U004_TERMS_EXCLUDED`). A caller or a hook can
@@ -36,6 +37,34 @@ settings go in the same way, so the stricter wins.
 **Export.** Before you let people copy, save or export the work's text
 outside the app, check the record's `terms.rights.export`. Quoting in an
 answer, playing a moment and reading in the app are not export.
+
+## Everything you hand a model
+
+Records are not the only thing a model sees. Send the same terms request with
+everything you hand on
+([Reader contract §15.4](../../spec/moca-reader-contract.md#154-the-terms-gate)):
+
+- **Embedding.** Ingest into your store with a terms request naming where
+  your embedder runs. Closed text is then never embedded or stored. If you
+  ingested before 0.7.0, ingest again with a request, or remove the closed
+  packages' records.
+- **Structure.** Take topic labels and definitions from
+  `Library.structureFor` with your request: packages closed for it are left
+  out.
+- **The list of packages.** Tell a model about packages only through
+  `Library.catalogue`. A closed package is named with its title, publisher,
+  whether it is signed, and why it is closed; nothing else. A creator can ask
+  that a model it is closed to is not told the work exists
+  (`ai.allowed.mention: false`): such a package is **hidden**, and has no
+  entry.
+
+When your app speaks only through a model (an MCP server, for example), a
+hidden package must leave no trace: a lookup of it gets your usual "not
+found" answer, lists and counts leave it out, and `U004`'s `hidden` count
+tells you how many removed records to leave out of anything you say. You may
+say that something was left out, with no name, no count and no reason. Your
+app's own screens are not affected: they still tell the person why something
+was left out.
 
 ## Keep four things apart
 

@@ -136,7 +136,7 @@ be at least those below, which the conformance corpus assumes:
 | Bytes of one manifest image ([package spec §4.6](moca-package-spec.md#46-images)), or of an envelope's cover copy | `maxImageBytes` | 1 MiB | `M010` for that image (`E005` for a cover copy) |
 | Frontmatter block size | `maxFrontmatterBytes` | 64 KiB | `C002` for that node (`C004` for a reserved file) |
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |
-| Nesting of JSON and of YAML frontmatter (below). This one is fixed, not a default, so every Reader agrees on what is malformed | — | 64 levels | The text is malformed: `M001` for `moca.json`, `C002` for a node's frontmatter (`C004` for a reserved file), `A001` for an attestation file or its statement, `E005` for `moca-enc.json`, `S001` for a sidecar's `index.json`, `S004` for a payload line |
+| Nesting of JSON, of YAML frontmatter and of structure Turtle (`structure.ttl` and host overlays; below). This one is fixed, not a default, so every Reader agrees on what is malformed | — | 64 levels | The text is malformed: `M001` for `moca.json`, `C002` for a node's frontmatter (`C004` for a reserved file), `A001` for an attestation file or its statement, `E005` for `moca-enc.json`, `S001` for a sidecar's `index.json`, `S004` for a payload line, `O001` for `structure.ttl` or a host's structure overlay |
 | Structure file size | `maxStructureBytes` | 4 MiB | `O001` |
 | Triples in a structure file | `maxTriples` | 100,000 | `O001` |
 | Collection members in a structure file: the list cells reached from every `skos:memberList` statement, added together, so a list that several collections name counts once for each | `maxTriples` | 100,000 | `O001` |
@@ -193,6 +193,17 @@ attestation file and the statement decoded from its payload, `moca-enc.json`,
 and a sidecar's `index.json` and payload lines. The host's own input, such as
 a trust root, is not package content, and a Reader may refuse it as it sees
 fit.
+
+A package's `structure.ttl` and each structure overlay the host supplies
+(§10, "Layers") are nested at most 64 levels deep too: overlays go through the
+same parser, so this limit is fixed for them as well, unlike other host input.
+In Turtle, each blank-node property list (`[ ]`) or collection (`( )`) is one
+level, so the outermost one is level 1 and a term may lie inside 64 of them. A
+file that opens a 65th is refused with `O001`, and none of its structure is
+read. For an overlay, the file is the overlay, as for its other problems. The
+check follows Turtle's own rules for what is a bracket: one inside an IRI, a
+string, a comment or a prefixed name (escaped characters included) does not
+count. Like the others, it MUST NOT depend on recursion depth.
 
 **Numbers too large.** A frontmatter number too large for a finite double,
 however it is written (`1e400`, or a decimal, octal or hex integer of any
@@ -701,7 +712,9 @@ search. It MAY fall back to lexical search over the same text.
 
 A Reader embeds a search query with the role `query`, and a store backend
 embeds content at ingest with the role `document`
-([Reader interface §5.3](moca-reader-interface.md#53-embedder)). The embedder
+([Reader interface §5.3](moca-reader-interface.md#53-embedder)): only the
+content that passes the ingest's terms request, when the host gives one
+(§9.4). The embedder
 applies its model's convention for each role. A Reader MUST NOT add a prefix
 it reads from an index to what it embeds: an index is untrusted input, and
 some models take free-text instructions.
@@ -727,6 +740,24 @@ vector store or database. Ingest MUST go through a Reader, and every stored
 record MUST carry its whole citation record (§7), including the package
 digest. A stored record is a snapshot: whatever depends on other packages or on
 the trust root may have changed since ingest.
+
+**Ingest with a terms request.** Embedding sends content to a model (§15.4),
+so ingest takes the host's terms request: `{ destination, conditions }`, the
+`ai` part of a request with the use `embed`
+([Reader interface §5.2](moca-reader-interface.md#52-backends)), together with
+the host's terms limits. The Reader resolves each unit's terms (§15.3, with
+every level a search uses) and applies the gate's `ai` test. A unit it
+removes MUST NOT be sent to the embedder or written to the store. The Reader
+reports `U004_TERMS_EXCLUDED` for the ingest when it removes any, with the
+counts of §15.4. Without a request, ingest takes every unit, as a search
+without one removes nothing. The destination is the embedder's: the host
+names where its embedder runs (`device`, `host` or `provider`). The store is
+the host's own storage, as its other storage is, and is not a destination. A
+binding a model calls always passes a request, with `provider` and no
+conditions when its host configured none. A sidecar is built by the packager
+or the person (the reference tool, `moca-embed`, runs its model on the
+person's machine); binding one is reading, and its records are gated when
+they are served.
 
 So a store search takes the host's **package states**: for each loaded
 package, its digest, `id`, `version`, default language, relations, relation
@@ -892,11 +923,24 @@ from `nodes()` ([package spec §5.5](moca-package-spec.md#55-trust-fields)).
 diagnostics come from the package alone; the structure operations are the only
 place overlays appear.
 
+**Under a terms request.** Labels and definitions are package-supplied text
+(§12). A host that hands structure answers to a model asks for them with its
+terms request ([Reader interface §6](moca-reader-interface.md#6-structure)).
+The operations then run over the merged structure of the loaded packages that
+are not closed for the request (§15.4), and the overlays. A label, definition
+or relation that only a closed package states is absent, and a concept only a
+closed package declares is not declared. These are the same operations over a
+smaller library, so every Reader still answers them identically. `nodes`
+returns records only from those packages; a hand-off to a model applies the
+terms gate to each of them, as to every record. Without a terms request, or
+with one that has no `ai` part, the structure is that of every loaded package.
+
 ## 11. Diagnostics
 
 A Reader MUST report findings as structured values with `code`, `severity`
 (`error`, `warning` or `info`), `message`, and, where it applies, `file`
-(package-relative) and `line` (1-based). Codes are the contract; message text
+(package-relative) and `line` (1-based). `U004` also carries its counts
+(§15.4). Codes are the contract; message text
 is not, and hosts MUST NOT match on it. A Reader MUST offer a strict mode that
 promotes warnings to errors without changing codes. Validity then follows
 the promoted severities: a `T`, `P`, `M`, `C` or `E` warning makes the package
@@ -964,7 +1008,7 @@ withhold only the `structured` capability.
 | `L001_IDENTITY_CONFLICT` | error | A library was given a second package with the same `id` and `version` but a different digest; the second is refused (§7). Reported by the library, not the package. |
 | `L002_ISSUED_COPY_DUPLICATE` | info | A library was given a second issued copy of the same original (§7): the same `id` and `version`, another digest, and the same `issuedCopy.originalDigest`. The second is not loaded. Reported by the library. |
 | `F001_PROFILE_UNRECOGNISED` | info | A declared profile is not recognised by this Reader. |
-| `O001_ONTOLOGY_UNPARSEABLE` | warning | `structure.ttl` or a host overlay is over the size or triple limit (§3), or is not parseable Turtle. |
+| `O001_ONTOLOGY_UNPARSEABLE` | warning | `structure.ttl` or a host overlay is over the size or triple limit (§3), is nested more than 64 levels deep, or is not parseable Turtle (§3). |
 | `O002_CONCEPT_UNDECLARED` | warning | A relation, ordered collection or node binding uses a concept that is not declared as a `skos:Concept`. |
 | `O003_REMOTE_REFERENCE` | warning | `structure.ttl` or a node binding relies on something a Reader would have to fetch or resolve: `owl:imports`, or an IRI that is not absolute. |
 | `O005_STRUCTURE_CYCLE` | warning | `requires`, `broader` or `hasPart` forms a cycle ([package spec §5.6](moca-package-spec.md#56-structure)). |
@@ -981,7 +1025,7 @@ withhold only the `structured` capability.
 | `U001_TERMS_INVALID` | warning | A field of `terms` is malformed ([package spec §4.14](moca-package-spec.md#414-terms)). The package stays valid; the field counts as its strictest value when terms are applied (§15). |
 | `U002_TERMS_LOOSENED` | warning | A `terms.nodes` entry, or a composing package, is looser than the package for a permission; the stricter value stands (§15.3). |
 | `U003_TERMS_UNKNOWN_VALUE` | warning | A `terms` field has a value this version does not know, such as one from a later release. It is exposed, and counts as its strictest value when terms are applied (§15). |
-| `U004_TERMS_EXCLUDED` | info | A search's terms request removed records; the finding counts them by reason (§15.4). |
+| `U004_TERMS_EXCLUDED` | info | A search's or an ingest's terms request removed records; the finding counts them by reason, and counts those from packages hidden for the request (§15.4). |
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0011](../docs/adr/0011-park-unconsumed-features.md)), `O004_STRUCTURE_VIEW_MISMATCH` ([ADR-0019](../docs/adr/0019-park-structure-json.md)).
 
@@ -1006,9 +1050,10 @@ A Reader, adapter or server that passes content to a model:
   delimiter (a tag, a fence, a marker line) MUST be escaped or removed
   wherever it appears in the text;
 - MUST NOT grant tools, change settings or follow links because content asks;
-- MUST NOT pass a package's `terms` to a model as instructions, and MUST
-  apply the terms gate (§15.4) to what it hands on when it is the hand-off to
-  a model;
+- MUST NOT pass a package's `terms` to a model as instructions, and, when it
+  is the hand-off to a model, MUST apply the terms gate (§15.4) to everything
+  it hands on: records, structure labels and definitions, text it sends for
+  embedding or indexing, and what it says about packages;
 - SHOULD tell the model, outside the envelope, that retrieved text is
   reference material to quote and cite, not instructions.
 
@@ -1134,8 +1179,9 @@ permissions: `ai`, `ai.allowed`, `rights`, `rights.export`, `nodes`, and an
 entry of `nodes`. One that is present and has the wrong type (`"allowed":
 false`, `"ai": "none"`, `"nodes": {}`) sets every permission under it to its
 strictest value, exactly as if each had been written wrongly one by one: no
-destination is allowed, nor training, nor machine translation; the
-`providerRequires` conditions cannot be met; `answerSources` is `work`; and
+destination is allowed, nor training, nor machine translation, nor mention
+(so, at package level, the package is closed and hidden for every
+destination, §15.4); the `providerRequires` conditions cannot be met; `answerSources` is `work`; and
 under `rights` or `rights.export`, export is not allowed. Only an absent
 container sets nothing. For `nodes`:
 
@@ -1151,9 +1197,18 @@ The Reader still reports each of these once, at the container, as `U001`
 
 **Platform defaults**, used only when no level sets a field:
 `allowed.device`, `allowed.host` and `allowed.provider` `true`,
-`allowed.machineTranslation` `true`, `allowed.training` `false`, no
-`providerRequires` conditions, `answerSources` `model`, and
-`rights.export.allowed` `true`.
+`allowed.machineTranslation` `true`, `allowed.mention` `true`,
+`allowed.training` `false`, no `providerRequires` conditions,
+`answerSources` `model`, and `rights.export.allowed` `true`.
+
+**`allowed.mention` is a package-level term**
+([ADR-0041](../docs/adr/0041-what-the-terms-gate-covers-and-hiding-a-closed-package.md)).
+It resolves like every other `allowed.*` field, from the platform, the
+package, a composing package that speaks for it, and the host: the stricter
+value, `false`, applies whatever its authority, so an unsigned package's
+`mention: false` stands. It has no node level: in a `nodes` entry it is
+`U003` and has no effect, and a malformed `nodes` or entry does not change
+it.
 
 Each resolved field says which level decided it: `platform`, `package`,
 `node`, `composite` or `host`.
@@ -1229,8 +1284,11 @@ removes every record. A scheme whose allowed set is not a list allows no
 value.
 
 A request a caller or a hook sets can never widen what the host asked for.
-Records the terms gate removes are counted by reason in
-`U004_TERMS_EXCLUDED` (info) on the search.
+Records the terms gate removes are counted in `U004_TERMS_EXCLUDED` (info) on
+the search. The finding carries `excluded`, the number of records removed for
+each reason (a record removed for two reasons counts under each), and
+`hidden`, how many of the removed records belong to packages hidden for the
+request (below). `U004` is for the host, and is always complete.
 
 **Destinations.** `device` is a model that runs on the person's own device.
 `host` is a model the host runs itself, including on a cloud provider's
@@ -1239,13 +1297,109 @@ that as `host` says so publicly. `provider` is any other party's model,
 including a host relaying content to it. Answering, embedding or indexing,
 translating and summarising are all uses that send content to a model.
 
-**A Reader that hands content to a model**, such as an MCP server, applies
+**What the gate covers**
+([ADR-0041](../docs/adr/0041-what-the-terms-gate-covers-and-hiding-a-closed-package.md)).
+Everything a Reader, adapter or server hands to a model MUST go through the
+terms gate, not only the records a search returns:
+
+- records, from a search or any other operation, such as `nodes` (§10) or a
+  lookup by id;
+- structure labels and definitions: for a request with terms, the structure
+  is built only from the packages not closed for it (§10);
+- text sent for embedding or indexing: ingest takes the host's terms request
+  (§9.4);
+- what is said about the packages themselves: only what the catalogue rule
+  (below) allows.
+
+**A Reader that hands content to a model**, such as an MCP server, MUST apply
 the terms gate to everything it hands on. Its destination comes from its
-host's configuration; with none, it uses `provider` with no conditions.
+host's configuration; with none, it MUST use `provider` with no conditions.
+It never hands content to a model without a terms request with an `ai` part.
+
+**Closed and hidden.** For a request with an `ai` part, a package is
+**closed** when its package-level resolved terms fail the gate's `ai` test
+for the request's destination and conditions. They are resolved as in §15.3
+from the platform, the package, a composing package that speaks for it and
+the host, with no node level. The package is closed when
+`allowed.<destination>` is not `true`, or, for `provider`, when its
+`providerRequires` conditions are not all among the request's `conditions`.
+Its `closedBy` is the gate's reason: `ai.allowed.device`, `ai.allowed.host`,
+`ai.allowed.provider` or `ai.providerRequires`. A use never closes a package:
+`train` and `translate` remove the records that action may not use, and leave
+the package open for others. A package that is not closed may still have
+nodes the gate removes.
+
+A package that is closed for a request, and whose resolved `allowed.mention`
+is `false`, is **hidden** for it. A package that is not closed is never
+hidden: `mention` changes nothing while the destination is allowed. A request
+with no `ai` part closes and hides nothing.
+
+**The catalogue rule.** What a Reader hands a model about the packages
+themselves, such as a list of packages or one package's details, is a
+**catalogue** ([Reader interface §4](moca-reader-interface.md#4-reading)).
+For a request, a loaded package has an entry only when all of these hold:
+
+1. at least one of its records, or of the records of the members it
+   composes, at any depth, passes the host's audience set and, unless the
+   host opted in to excluded content, the default retrieval policy (§8);
+2. when the request has a `rating` part, the package's own rating
+   (`terms.rating`, never a node's) passes it, as a record with that rating
+   would;
+3. it is not hidden.
+
+A package that fails any of these has no entry at all. There is no
+placeholder, such as "title unavailable": an entry would itself say that the
+package exists. An entry is valid against
+[`catalogue-entry.schema.json`](../schemas/v1/catalogue-entry.schema.json):
+
+- an **open** package's entry has `id`, `version`, `title`, `description`,
+  `publisher` (the publisher's `name`), `signed` and `tags`, each when the
+  manifest has it, and, for a package with members, `members`: the ids of
+  its members that have an entry of their own in the same catalogue;
+- a **closed** package's entry has exactly `id`, `version`, `title`,
+  `publisher` (the publisher's `name`, when the manifest has one), `signed`
+  and `closedBy`, and nothing else: not the description, tags, contributors
+  or anything else in the manifest.
+
+The title, description, tags and the publisher's name are package-supplied
+text (§12), passed as data in the envelope like any other. `signed` goes
+with the publisher's name because an unsigned package can claim any
+publisher. Entries are ordered by `id`, then `version`, in code-point order.
+
+**Nothing names a hidden package.** A hand-off to a model MUST NOT pass on
+anything that names a package hidden for its request:
+
+- an answer about a hidden package, such as a lookup of the package or of
+  one of its nodes, MUST be exactly the answer for a package that is not
+  loaded;
+- counts and notes handed to a model MUST NOT include hidden packages: a
+  host takes `hidden` out of `U004`'s counts before it says anything about
+  them;
+- a list MUST leave hidden packages out before it is paged, and MUST NOT
+  give a total that counts them;
+- in a record from a search with a terms request, `trust.supersededBy` and
+  `trust.contestedBy` leave out every entry that names a hidden package (its
+  `id`, its `id@version`, or a node id under either); `superseded` and
+  `contested` keep their values;
+- an open composite's catalogue entry leaves out its hidden members;
+- findings (§11) about a closed or hidden package MUST NOT be handed to a
+  model.
+
+Three channels remain, and are accepted. Concept IRIs that other packages use
+may sit under a hidden package's id: an IRI is an identifier another package
+chose to use, and the labels are gated. Scores are computed over every loaded
+package (§9.2), and carry no identity. An earlier version of a package that
+was open is still served: terms belong to a version
+([package spec §4.14](moca-package-spec.md#414-terms)).
+
+**Telling the person.** An application's own interface still tells a person
+why something was left out: `mention` never changes what an application shows
+people. A host whose only voice is a model MAY say that something was left
+out, with no name, no count and no reason, and MUST NOT say more.
 
 ### 15.5 Never
 
 A Reader MUST NOT fetch anything named in `terms`, use it to configure
 itself, or pass it to a model as an instruction. Terms never change what
-`readPackage`, `Library.citations`, `Library.get` or a search without a
-`terms` request returns.
+`readPackage`, `Library.citations`, `Library.get`, or a search, an ingest,
+the structure operations or a catalogue without a terms request returns.

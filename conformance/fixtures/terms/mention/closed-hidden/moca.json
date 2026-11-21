@@ -1,0 +1,19 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-closed-hidden",
+  "version": "1.0.0",
+  "title": "A show that is hidden from providers",
+  "description": "Never named to a provider's model.",
+  "language": "en",
+  "publisher": {
+    "name": "Example Network"
+  },
+  "terms": {
+    "ai": {
+      "allowed": {
+        "provider": false,
+        "mention": false
+      }
+    }
+  }
+}

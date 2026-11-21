@@ -3,7 +3,7 @@
 A language-neutral test suite for anything that reads MOCA packages. An
 implementation conforms to the [Reader contract](../spec/moca-reader-contract.md)
 when it reaches the same conclusions as these cases: package, `search`,
-`structure` and `map-time` cases all apply to every Reader.
+`structure`, `map-time` and `catalogue` cases all apply to every Reader.
 
 ## OpenMOCA Conformant
 
@@ -101,7 +101,8 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `options.allowUnsignedRelations` | `true`: the library applies relations from unsigned or unscoped packages ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). Absent means false. |
 | `options.sidecar` | A sidecar offered to every loaded package. A package it does not match reports the binding code (for example `S002`) and is searched without it. |
 | `options.embedder` | The conformance embedder's identity: `name`, optional `version`, `dimensions`, and optional `queryPrefix` and `documentPrefix` it declares. It returns `[1, 0, …, 0]` of that length for every text, whatever the role. |
-| `options.termsLimits` | The host's terms limits, an `ai` object ([contract §15.3](../spec/moca-reader-contract.md#153-resolving-terms)): floors that only tighten. |
+| `options.termsLimits` | The host's terms limits, an `ai` object ([contract §15.3](../spec/moca-reader-contract.md#153-resolving-terms)): floors that only tighten. They apply to the search and, with `options.ingestTerms`, to the ingest. |
+| `options.ingestTerms` | With `backend: store`: the host's terms request for the ingest, `{ destination, conditions }`, with the use `embed` ([contract §9.4](../spec/moca-reader-contract.md#94-store-backends)). Units it removes are never stored; the ingest's codes (`U004`) join `expect.codes`. Absent means an ingest with no request. |
 | `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a concept on a reading order, contract §9), `terms` (the host's terms request, [contract §15.4](../spec/moca-reader-contract.md#154-the-terms-gate)). |
 | `expect.codes` | The set of diagnostic codes from sidecars, the backend, the library (`L` codes) and the search itself (`Search.diagnostics`, such as `S008`). |
 | `expect.include` | Results that must be returned. |
@@ -114,6 +115,7 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `expect.contested` | For each listed result, whether `trust.contested` is true ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). |
 | `expect.locales` | The `node.locale` a result must have. |
 | `expect.fields` | For each listed result, fields named by a dotted path (`node.media`, `package.datePublished`), compared as JSON values; `null` means absent ([package spec §4.12, §5.7](../spec/moca-package-spec.md#57-media)). |
+| `expect.termsExcluded` | The counts of the search's `U004` ([contract §15.4](../spec/moca-reader-contract.md#154-the-terms-gate)): `excluded` (removed records by reason) and `hidden` (how many came from packages hidden for the request), each compared exactly when given. `null` means the search has no `U004`. |
 
 Every result must be a valid citation record with a `score`. Ranking is never
 compared, so lexical and dense implementations can differ.
@@ -135,11 +137,41 @@ compared, so lexical and dense implementations can differ.
 
 Every valid package in `packages` is loaded with the overlays, then one
 structure operation runs ([contract §10](../spec/moca-reader-contract.md#10-structure)).
+With `options.terms`, a terms request (and optionally `options.termsLimits`),
+the operation runs over the structure for that request: the packages not
+closed for it, and the overlays (contract §10, "Under a terms request";
+`Library.structureFor` in [Reader interface §6](../spec/moca-reader-interface.md#6-structure)).
+`options.now`, `options.trustRoot` and `options.members` are as for a package
+case.
 `op` is `concept`, `requires`, `requiredBy`, `parts`, `narrower`, `broader`,
 `related`, `sequence` or `nodes`; `args` holds `transitive` or `include`.
 Concept items are compared as `{ iri, label, layer }`; `nodes` as the list of
 `node.ref`; `concept` as the whole object. Structure answers are facts, so
 they are compared **exactly**, order included.
+
+## A catalogue case
+
+```json
+{
+  "id": "catalogue-terms-closed-named",
+  "kind": "catalogue",
+  "packages": ["fixtures/terms/mention/open", "fixtures/terms/mention/closed-named"],
+  "options": { "now": "2026-11-21T00:00:00Z", "trustRoot": "fixtures/trust-root.json" },
+  "terms": { "ai": { "destination": "provider", "use": "answer" } },
+  "expect": { "codes": [], "result": [ { "id": "…closed-named", "version": "1.0.0", "title": "A show closed to providers", "publisher": "Example Network", "signed": true, "closedBy": ["ai.allowed.provider"] }, { "id": "…open", "…": "…" } ] }
+}
+```
+
+Every valid package in `packages` is loaded into one library, then the
+library's catalogue is asked for `terms` (absent: no terms request)
+([Reader interface §4](../spec/moca-reader-interface.md#4-reading),
+[contract §15.4](../spec/moca-reader-contract.md#154-the-terms-gate), "The
+catalogue rule"). `options` takes `now`, `trustRoot`, `members`,
+`audiences`, `allowUnlabelled`, `includeAll` and `termsLimits`, as for a
+search case. `codes` are the library's own findings. `result` is the list of
+entries, compared **exactly**, in order (members of an entry object in any
+order); each entry must be valid against
+[`catalogue-entry.schema.json`](../schemas/v1/catalogue-entry.schema.json).
 
 ## A map-time case
 
@@ -180,6 +212,9 @@ nothing, and is compared **exactly**.
 - Search: the default retrieval policy, the host's opt-in, audience
   sets, the re-check of every hit whatever the backend returns, locale,
   concepts, and the dense model check.
+- Creators' terms: the block as written and its problems, resolution at every
+  level, the terms gate on search, ingest and structure, `mention`, and the
+  catalogue rule.
 - Podcast and video series content: media descriptions and time ranges bounded
   by a transcript or a duration; `datePublished`; binding by composition and
   `upTo` across members, in a library and in a store; `isPartOf` and unknown
@@ -231,6 +266,8 @@ expected by at least one case or is listed below as untestable.
 | Sigstore, offline against the host's trusted root (optional feature) | Attestations §6–§7 | `sigstore-*` |
 | Sigstore identities are compared exactly | Attestations §6 | `sigstore-identity-not-listed`, `sigstore-subject-shorter`, `sigstore-subject-other-character`, `sigstore-issuer-shorter` |
 | Terms and ratings fail closed | Package spec §4.14, contract §15.3–15.4 | `terms-container-malformed`, `search-terms-*-fails-closed`, `search-terms-rating-unlisted-scheme*`, `search-terms-rating-listed-scheme`, `search-terms-rating-request-unknown-member` |
+| `ai.allowed.mention`, closed and hidden packages | Package spec §4.14, contract §15.3–15.4, ADR-0041 | `terms-mention-*`, `search-terms-mention-*`, `search-terms-hidden-count`, `search-terms-superseded-by-*` |
+| What the terms gate covers: ingest, structure and the catalogue | Contract §9.4, §10, §15.4, Reader interface §4–§6, ADR-0041 | `search-store-ingest-*`, `structure-terms-*`, `catalogue-terms-*` |
 | Reviews and `reviewed` | Package spec §11, attestations §4 | `review-*`, `search-review-*`, `signed-reviewed` |
 | Strict mode | Contract §11 | `strict-*` |
 | Encrypted packages: recognition, the layout and marker, keys, decryption, the outline check, limits | Encrypted packages §2–§5, contract §3 | `envelope-*` |
@@ -251,6 +288,7 @@ feature or a model, so each implementation tests them itself:
 | Online Sigstore verification; `A004_ATTESTATION_INDETERMINATE` | Attestations §7 | Needs the network. Offline verification is tested (`sigstore-*`). |
 | Symbolic links and unreadable entries in a directory | Contract §3 | Git cannot store them portably; each Reader's own tests. |
 | Handing content to a model, and rendering it | Contract §12 | Needs a model or a client; the bindings' own tests (for example the .NET envelope test). |
+| What a binding a model calls never says about a hidden package: the not-found answer, counts and notes, paging, findings | Contract §15.4, Reader interface §7 | The hand-off is the binding's, not the Reader's; each model-facing server tests that a hidden package's id and title reach no tool answer, resource, note or error. The corpus tests what the Reader gives it: `U004`'s `hidden` count, relation ids, the catalogue and the structure. |
 | A Reader never writes decrypted bytes to a file | Encrypted packages §5.4 | A fixture cannot show an absence. Each Reader reads an envelope with a temporary directory it cannot write to, in its own tests. |
 | A host's bound on a search; `S010_SEARCH_TRUNCATED` | Contract §9.2 | Whether a bound stops a search depends on how a Reader's backends check candidates, which conformance leaves open. Each reference Reader's own tests set `maxCandidates` with a backend that applies no filter. |
 | Ranking | Contract §9.6 | Informative ([ADR-0018](../docs/adr/0018-ranking-is-informative.md)); the reference Readers' parity tests. |
@@ -275,11 +313,15 @@ standard output.
   "envelope" }`, as defined above.
   `envelope` is the package result's `envelope` field for an envelope, and
   absent otherwise.
-- Output for a search case: `{ "codes", "records" }`, where `records` are the
-  citation records the search returned.
+- Output for a search case: `{ "codes", "records", "termsExcluded" }`, where
+  `records` are the citation records the search returned and
+  `termsExcluded` is `{ excluded, hidden }` from the search's `U004`, or
+  `null` when it has none.
 - Output for a structure case: `{ "codes", "result" }`, shaped as above.
 - Output for a map-time case: `{ "codes", "result" }`: the package's codes and
   the answer to each call, `null` for nothing.
+- Output for a catalogue case: `{ "codes", "result" }`: the library's codes
+  and the catalogue entries.
 
 Run the corpus through it from a clone of this repository at a release tag,
 so you test against a fixed corpus. You need Node.js 22 or later:
