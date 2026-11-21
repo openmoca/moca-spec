@@ -1,0 +1,16 @@
+{
+  "id": "https://example.com/conformance/terms-rating-other-scheme",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "rating": {
+      "contentRating": [
+        {
+          "scheme": "other-scheme",
+          "value": "18"
+        }
+      ]
+    }
+  }
+}

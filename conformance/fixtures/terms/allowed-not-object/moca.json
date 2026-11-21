@@ -1,0 +1,11 @@
+{
+  "id": "https://example.com/conformance/terms-allowed-not-object",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": false
+    }
+  }
+}

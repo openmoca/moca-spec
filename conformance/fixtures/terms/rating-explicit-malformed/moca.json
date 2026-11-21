@@ -1,0 +1,11 @@
+{
+  "id": "https://example.com/conformance/terms-rating-explicit-malformed",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "rating": {
+      "explicit": "no"
+    }
+  }
+}
