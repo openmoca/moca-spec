@@ -10295,6 +10295,72 @@
         ],
         "count": 0
       }
+    },
+    {
+      "id": "manifest-nesting-at-limit",
+      "description": "Contract §3: JSON nested 64 levels deep is read. The manifest object is the first level; a vendor key holds 63 arrays.",
+      "target": "fixtures/manifest-nesting-at-limit",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "manifest-nesting-over-limit",
+      "description": "Contract §3: a moca.json nested more than 64 levels deep is malformed (M001).",
+      "target": "fixtures/manifest-nesting-over-limit",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M001_MANIFEST_INVALID_JSON"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "frontmatter-nesting-at-limit",
+      "description": "Contract §3: frontmatter nested 64 levels deep is read. The frontmatter mapping is the first level.",
+      "target": "fixtures/frontmatter-nesting-at-limit",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "frontmatter-nesting-over-limit",
+      "description": "Contract §3: frontmatter nested more than 64 levels deep is invalid (C002).",
+      "target": "fixtures/frontmatter-nesting-over-limit",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C002_FRONTMATTER_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "attestation-nesting-over-limit",
+      "description": "Contract §3: an attestation file nested more than 64 levels deep is malformed (A001), whatever else it holds.",
+      "target": "fixtures/attestation-nesting-over-limit",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
     }
   ]
 }

@@ -201,3 +201,30 @@ write('manifest-locales-wrong-type/content/hello.md', NODE);
   write('sigstore/trust-root-issuer-shorter.json', json(publisher((i) => ({ ...i, issuer: i.issuer.slice(0, -1) }))));
   write('sigstore/trust-root-other-ids.json', json(publisher((i) => ({ ...i, ids: ['https://example.com/other/'] }))));
 }
+
+// --- Nesting (Reader contract §3): 64 levels are read, 65 are not ---
+
+{
+  const arrays = (n) => `${'['.repeat(n)}${']'.repeat(n)}`;
+  // The manifest object is level 1, so a member's value may hold 63 more.
+  const manifest = (name, depth) => `{\n  "id": "https://example.com/conformance/${name}",\n  "version": "1.0.0",\n  "title": "Fixture",\n  "x-example-nested": ${arrays(depth)}\n}\n`;
+  for (const [name, depth] of [['manifest-nesting-at-limit', 63], ['manifest-nesting-over-limit', 64]]) {
+    write(`${name}/moca.json`, manifest(name, depth));
+    write(`${name}/content/hello.md`, NODE);
+  }
+  // The frontmatter mapping is level 1 too.
+  for (const [name, depth] of [['frontmatter-nesting-at-limit', 63], ['frontmatter-nesting-over-limit', 64]]) {
+    write(`${name}/moca.json`, json({ id: `https://example.com/conformance/${name}`, version: '1.0.0', title: 'Fixture' }));
+    write(`${name}/content/hello.md`, NODE);
+    write(`${name}/content/nested.md`, `---\ntype: Article\ntitle: Nested\nx-example-nested: ${arrays(depth)}\n---\n\n# Nested\n\nNested.\n`);
+  }
+  // A signed envelope with one more member, nested past the limit.
+  const dir = 'attestation-nesting-over-limit';
+  const id = `https://example.com/conformance/${dir}`;
+  write(`${dir}/moca.json`, json({ id, version: '1.0.0', title: 'Fixture' }));
+  write(`${dir}/content/hello.md`, NODE);
+  const result = await readPackage(join(fixtures, dir));
+  const statement = packageStatement({ id, version: '1.0.0', digest: result.digest });
+  const envelope = createEnvelope({ payload: Buffer.from(JSON.stringify(statement)), payloadType: 'application/vnd.in-toto+json', privateKeyPem: publisherKey, keyid: KEYID });
+  write(`${dir}/attestations/package.${KEYID}.dsse.json`, `${JSON.stringify(envelope, null, 2).replace(/\n\}$/, `,\n  "x-example-nested": ${arrays(64)}\n}`)}\n`);
+}
