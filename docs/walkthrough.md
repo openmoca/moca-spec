@@ -4,7 +4,7 @@ In about fifteen minutes you will take a small knowledge base and turn it into
 a package that is checked, signed, reviewed, searchable and served to an AI
 agent. Then you will change one word and watch the signatures fail.
 
-Every command and output below was run with the 0.6.0 tools. You need some
+Every command and output below was run with the 0.7.0 tools. You need some
 comfort with a terminal, but no knowledge of MOCA.
 
 ## The story
@@ -77,12 +77,19 @@ npx @openmoca/moca-lint lint acme-support
 ```
 
 ```text
-No findings.
+moca.json
+  INFO LINT_TRANSLATION_MISSING  locale fr has no translation of the manifest's title and description
 
-sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
+0 error(s), 0 warning(s), 1 info
+
+sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9
 capabilities: core, localized, located-evidence, self-contained-evidence, structured
 ```
 
+- **The info line is a suggestion, not a problem**: the pages are in French
+  as well as English, but the manifest's title and description are not
+  (`translations`, [authoring](guides/authoring.md#how-the-package-appears-in-a-catalogue)).
+  Infos never make a package invalid.
 - **The `sha256:` line is the package's digest**: a fingerprint of every file
   in it. Change one character anywhere and the digest changes. Yours will
   match the one above, because you have the same files.
@@ -145,7 +152,7 @@ npx @openmoca/moca-sign sign acme-support --key keys/acme-publisher.pem --keyid 
 ```
 
 ```text
-Signed sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
+Signed sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9
 Wrote attestations/package.acme-publisher.dsse.json
 ```
 
@@ -166,7 +173,7 @@ npx @openmoca/moca-sign review acme-support --nodes returns/refund-window.md ret
 
 ```text
 Reviewed content/returns/refund-window.md, content/returns/refund-window.fr.md
-Wrote attestations/reviews/human-sam-ortiz-2026-11-03.dsse.json
+Wrote attestations/reviews/human-sam-ortiz-2026-11-21.dsse.json
 ```
 
 - The file name carries the reviewer and the day. Yours will show today's
@@ -186,9 +193,9 @@ npx @openmoca/moca-sign verify acme-support --trust-root keys/trust-root.json
 
 ```text
 VALID         attestations/package.acme-publisher.dsse.json  (Acme publishing key)
-VALID         attestations/reviews/human-sam-ortiz-2026-11-03.dsse.json  (Sam Ortiz)
+VALID         attestations/reviews/human-sam-ortiz-2026-11-21.dsse.json  (Sam Ortiz)
 
-Verified sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
+Verified sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9
 ```
 
 Check the package again, this time with the trust root:
@@ -198,9 +205,12 @@ npx @openmoca/moca-lint lint acme-support --trust-root keys/trust-root.json
 ```
 
 ```text
-No findings.
+moca.json
+  INFO LINT_TRANSLATION_MISSING  locale fr has no translation of the manifest's title and description
 
-sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
+0 error(s), 0 warning(s), 1 info
+
+sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9
 capabilities: core, localized, located-evidence, reviewed, self-contained-evidence, signed, structured
 ```
 
@@ -224,7 +234,7 @@ npx @openmoca/moca-index build acme-support -o acme-support.mocai --chunk headin
 ```
 
 ```text
-Wrote acme-support.mocai (68 item(s)) bound to sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
+Wrote acme-support.mocai (68 item(s)) bound to sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9
 ```
 
 The index is **bound to the digest**. If the package changes, a Reader
@@ -236,10 +246,15 @@ npx @openmoca/moca-lint lint acme-support --sidecar acme-support.mocai --trust-r
 ```
 
 ```text
-No findings.
+moca.json
+  INFO LINT_TRANSLATION_MISSING  locale fr has no translation of the manifest's title and description
+
+0 error(s), 0 warning(s), 1 info
 ```
 
 (followed by the same digest and capabilities as in step 5).
+The same info as in step 1, and nothing about the index: it belongs to this
+package.
 
 ## 7. Pack it into one file
 
@@ -250,8 +265,11 @@ npx @openmoca/moca-lint digest acme-support.moca
 
 ```text
 Wrote acme-support.moca
-sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
+sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9
+sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9
 ```
+
+`pack` prints the digest of the file it wrote, and `digest` prints it again.
 
 `acme-support.moca` is the whole package, signatures included, in one file. It
 has the same digest as the folder, so it is provably the same content. Ship it
@@ -269,7 +287,7 @@ moca-mcp acme-support.moca --trust-root keys/trust-root.json --audience public
 ```
 
 ```text
-moca-mcp: loaded https://example.com/moca/acme-support@1.0.0 sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b [core, localized, located-evidence, reviewed, self-contained-evidence, signed, structured]
+moca-mcp: loaded https://example.com/moca/acme-support@1.0.0 sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9 [core, localized, located-evidence, reviewed, self-contained-evidence, signed, structured]
 ```
 
 It then waits for a client; stop it with Ctrl+C. `--audience public` says this
@@ -304,7 +322,7 @@ result is a **citation record** for the refund page. Shortened, it holds:
 
 ```json
 {
-  "package": { "version": "1.0.0", "digest": "sha256:3fb4f2bb…", "signed": true, "signers": ["Acme publishing key"] },
+  "package": { "version": "1.0.0", "digest": "sha256:8ffe976b…", "signed": true, "signers": ["Acme publishing key"] },
   "node": { "ref": "https://example.com/moca/acme-support@1.0.0#returns/refund-window.md", "title": "Refund window" },
   "trust": {
     "attestedReviews": [{ "signer": "Sam Ortiz", "scope": "Checked against the customer terms", "outcome": "accurate" }],
@@ -384,11 +402,11 @@ npx @openmoca/moca-sign verify acme-support --trust-root keys/trust-root.json
 
 ```text
 INVALID       attestations/package.acme-publisher.dsse.json  (Acme publishing key)  subject digest does not match the package digest
-VALID         attestations/reviews/human-sam-ortiz-2026-11-03.dsse.json  (Sam Ortiz)
+VALID         attestations/reviews/human-sam-ortiz-2026-11-21.dsse.json  (Sam Ortiz)
 
 attestations/package.acme-publisher.dsse.json
   ERROR A008_PACKAGE_DIGEST_MISMATCH  package attestation does not match this package: subject digest does not match the package digest
-attestations/reviews/human-sam-ortiz-2026-11-03.dsse.json
+attestations/reviews/human-sam-ortiz-2026-11-21.dsse.json
   WARNING A006_REVIEW_OUTDATED  review of content/returns/refund-window.md no longer matches the file
 
 1 error(s), 1 warning(s), 0 info
@@ -413,9 +431,9 @@ npx @openmoca/moca-sign verify acme-support --trust-root keys/trust-root.json
 
 ```text
 VALID         attestations/package.acme-publisher.dsse.json  (Acme publishing key)
-VALID         attestations/reviews/human-sam-ortiz-2026-11-03.dsse.json  (Sam Ortiz)
+VALID         attestations/reviews/human-sam-ortiz-2026-11-21.dsse.json  (Sam Ortiz)
 
-Verified sha256:3fb4f2bbdbe4d0793b2f61f8f01dec39f33189961f8627ecfb3f72948f26888b
+Verified sha256:8ffe976be676fcfe8be1dc6eb1fc27295536201b4ea3cc290b0a1425caba69e9
 ```
 
 ## What you have done

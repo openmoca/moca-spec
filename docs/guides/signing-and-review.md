@@ -16,7 +16,7 @@ changes what it signs.
 This guide signs and reviews the package from
 [authoring packages](authoring.md), then shows what happens when it changes
 version and when the publisher changes key. Every command and output below
-was run with the 0.6.0 tools. The [walkthrough](../walkthrough.md) is a
+was run with the 0.7.0 tools. The [walkthrough](../walkthrough.md) is a
 shorter first run of the same commands.
 
 ## Choose how to sign
@@ -78,13 +78,15 @@ npx @openmoca/moca-sign sign kb --key publisher/acme-2026.pem --keyid acme-2026
 ```
 
 ```text
-Signed sha256:e58a7cfca2bb0c8178e74d3f9408e4238809135d646a628685c60d78bf0c34ac
+Signed sha256:1be1efa0ea5230cd4270adcc94ce19e2cb05a8c7f3c96a40e1acaddc825570df
 Wrote attestations/package.acme-2026.dsse.json
 ```
 
 The signature names the package's id, its version and its digest. `sign`
 refuses a package that is not valid, so check it first with
-`moca-lint lint --strict`.
+`moca-lint lint --strict`. A manifest whose `publisher` is a string, as 0.6
+allowed, is not valid: `publisher` must be an object, such as
+`{ "name": "Acme Ltd" }` (`M002`).
 
 ## 3. Record reviews
 
@@ -99,7 +101,7 @@ npx @openmoca/moca-sign review kb --nodes refund-window.md refund-window.fr.md \
 
 ```text
 Reviewed content/refund-window.md, content/refund-window.fr.md
-Wrote attestations/reviews/human-sam-ortiz-2026-11-03.dsse.json
+Wrote attestations/reviews/human-sam-ortiz-2026-11-21.dsse.json
 ```
 
 Sam also looked at the 2027 page, and is not happy with it yet:
@@ -153,10 +155,10 @@ npx @openmoca/moca-sign verify kb --trust-root trust-root.json
 
 ```text
 VALID         attestations/package.acme-2026.dsse.json  (Acme publishing key 2026)
-VALID         attestations/reviews/human-sam-ortiz-2026-11-03.dsse.json  (Sam Ortiz)
+VALID         attestations/reviews/human-sam-ortiz-2026-11-21.dsse.json  (Sam Ortiz)
 VALID         attestations/reviews/sam-2027-draft.dsse.json  (Sam Ortiz)
 
-Verified sha256:e58a7cfca2bb0c8178e74d3f9408e4238809135d646a628685c60d78bf0c34ac
+Verified sha256:1be1efa0ea5230cd4270adcc94ce19e2cb05a8c7f3c96a40e1acaddc825570df
 ```
 
 `verify` exits 0 only when every attestation verifies and at least one
@@ -171,7 +173,7 @@ re-signing:
 
 ```text
 INVALID       attestations/package.acme-2026.dsse.json  (Acme publishing key 2026)  subject "https://example.com/moca/acme-policies@1.0.0" does not name https://example.com/moca/acme-policies@1.1.0
-VALID         attestations/reviews/human-sam-ortiz-2026-11-03.dsse.json  (Sam Ortiz)
+VALID         attestations/reviews/human-sam-ortiz-2026-11-21.dsse.json  (Sam Ortiz)
 VALID         attestations/reviews/sam-2027-draft.dsse.json  (Sam Ortiz)
 
 attestations/package.acme-2026.dsse.json
@@ -193,11 +195,12 @@ Verification failed.
 ## 6. Change keys
 
 Before `acme-2026` expires, Acme makes `acme-2027`, gives readers its public
-key, and signs with both:
+key, and signs version 1.1.0 with both:
 
 ```sh
 npx @openmoca/moca-sign keygen --keyid acme-2027 --roles package \
   --identity "Acme publishing key 2027" --expires 2028-06-30 --out publisher
+npx @openmoca/moca-sign sign kb --key publisher/acme-2026.pem --keyid acme-2026
 npx @openmoca/moca-sign sign kb --key publisher/acme-2027.pem --keyid acme-2027
 ```
 
@@ -216,8 +219,12 @@ VALID         attestations/package.acme-2027.dsse.json  (Acme publishing key 202
 The Reader still counts the valid one, so the package is `signed`:
 
 ```text
-capabilities: core, localized, located-evidence, reviewed, self-contained-evidence, signed
+capabilities: core, localized, located-evidence, self-contained-evidence, signed
 ```
+
+It is not `reviewed`: Sam's latest review of the 2027 page is
+`needs-change`, and a package is `reviewed` only when every reviewed page is
+approved (step 3).
 
 ## Sign in CI with Sigstore
 
