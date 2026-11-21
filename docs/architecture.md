@@ -5,9 +5,9 @@ MOCA has three pillars
 
 ```mermaid
 flowchart TB
-  app["<b>MOCA Application</b><br/>agents, prompts, workflow, policy, runtime state<br/><i>yours, on the agent framework of your choice</i>"]
+  app["<b>MOCA application</b><br/>agents, prompts, workflow, policy, runtime state<br/><i>yours, on the agent framework of your choice</i>"]
   reader["<b>MOCA Reader</b><br/>read · verify · search · navigate structure · cite<br/><i>in-process, one per language, one conformance corpus</i>"]
-  pkg["<b>MOCA Package</b><br/>structure (optional) · content · evidence<br/><i>identity, digest and signatures across all three</i>"]
+  pkg["<b>MOCA package</b><br/>structure (optional) · content · evidence<br/><i>identity, digest and signatures across all three</i>"]
   bind["<b>Bindings</b><br/>retrievers, context providers,<br/>vector stores, an MCP server"]
   app -- "citation records · structure answers" --- reader
   bind -. "present the Reader in each framework" .- reader
@@ -132,14 +132,17 @@ flowchart TB
   ingress --> backend["<b>Backend</b><br/>lexical · semantic · hybrid · store"]
   backend --> resolve["<b>Resolve</b><br/>each hit becomes a citation record"]
   resolve --> egress["<b>Egress</b> · optional hook<br/>reorder, add what results require"]
-  egress --> gate{{"<b>Gate</b> · always last<br/>policy · audience · locale · scope"}}
+  egress --> gate{{"<b>Gate</b> · always last<br/>policy · audience · locale · scope · terms"}}
   gate --> out(["Citation records"])
 ```
 
 The gate removes content from packages that are not loaded, content that is
 out of force, superseded or deprecated, content outside the host's audience
-set, and content outside the caller's locale, concepts or scope. Whatever a
-backend or a hook did, nothing the policy excludes is returned.
+set, and content outside the caller's locale, concepts or scope. When the
+host makes a terms request, it also removes what the creator's terms exclude
+for that destination and use
+([the creator's terms](guides/creators-terms.md)). Whatever a backend or a
+hook did, nothing the policy excludes is returned.
 
 ### Ontology-guided retrieval
 

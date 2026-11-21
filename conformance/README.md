@@ -5,11 +5,20 @@ implementation conforms to the [Reader contract](../spec/moca-reader-contract.md
 when it reaches the same conclusions as these cases: package, `search`,
 `structure` and `map-time` cases all apply to every Reader.
 
+## OpenMOCA Conformant
+
+Software that passes the suite for what it is, for a named specification
+version, may say so: "OpenMOCA 0.7 Conformant Reader". You run the suite
+yourself; there is no fee and no application. Publish the signed result and
+ask for it to be listed on openmoca.org as **Self-tested**. The project's own
+software is listed as **Official**, and software whose result the project has
+re-run itself as **Verified** ([TRADEMARKS.md](../TRADEMARKS.md)).
+
 ## Layout
 
 ```text
 conformance/
-├── cases.json          445 cases: target, options, expected conclusions
+├── cases.json          every case: target, options, expected conclusions
 ├── fixtures/           the packages, sidecars and .zip archives they read
 └── fixtures/trust-root.json
 ```

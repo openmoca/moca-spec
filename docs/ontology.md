@@ -61,7 +61,7 @@ cross-references), clinical pathways (tests before treatments), and courses
 
 - The [structure guide](guides/structure.md) writes, checks and uses an
   ontology, with code in TypeScript, .NET and Python.
-- [Try OpenMOCA](https://try.openmoca.org/p/flying-handbook) shows the FAA's
+- [The OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org/p/flying-handbook) shows the FAA's
   Airplane Flying Handbook with a 72-concept ontology: each topic shows what
   it builds on.
 - [Package spec §5.6](../spec/moca-package-spec.md#56-structure) has every
