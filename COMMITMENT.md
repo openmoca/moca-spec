@@ -29,7 +29,9 @@ When an app shows the OpenMOCA Commitment mark, its makers have promised that:
   setting of its own.
 - What you bring into the app or keep private is not shown to other people,
   not sent anywhere you have not allowed, and not published.
-- When something is left out, the app tells you why.
+- When something is left out, the app tells you why. One exception: if the
+  app speaks to you only through an AI, and a creator has asked that AI not
+  even be told their work exists, it says only that something was left out.
 
 **You can check and challenge it.** The promise is signed by the company and
 listed publicly with the product and version it covers. If you think an app
@@ -81,7 +83,11 @@ states that the product, as an app that reads OpenMOCA packages:
 2. Keeps what a person brings or keeps private to that person: not shown to
    others using the same app, not sent where they have not allowed, not
    published.
-3. Shows a person why something was left out.
+3. Shows a person why something was left out. Where the product speaks to
+   the person only through an AI model, and the creator has asked that the
+   model not be told the work exists, the product says only that something
+   was left out, with no name, count or reason
+   ([Reader contract §15.4](spec/moca-reader-contract.md)).
 
 **The signed statement** names the company, the product, the versions
 covered, the date, the models and destinations the product uses, the set-ups

@@ -238,6 +238,37 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   promise that a named product and version honours creators' and people's rules ([COMMITMENT.md](COMMITMENT.md)),
   listed but not tested; it replaces ADR-0037's host claim. TRADEMARKS.md updated to match.
 
+### Changed (what the terms gate covers)
+
+Everything a Reader hands to a model now goes through the terms gate, and a creator can hide a closed package from a
+model (ADR-0041). 483 cases.
+
+- **Coverage.** Reader contract §12 and §15.4: records, structure labels and definitions, text sent for embedding or
+  indexing, and what is said about packages all go through the gate. A Reader that hands content to a model always
+  has a terms request with an `ai` part, `provider` when its host configured none.
+- **Closed and hidden.** Contract §15.4: a package is closed for a request when its package-level resolved terms
+  (platform, package, composite, host; no node) fail the gate's `ai` test for the destination and conditions. A use
+  (`train`, `translate`) never closes a package.
+- **`ai.allowed.mention`**, a new boolean term, platform default `true`: whether a model that may not receive the work
+  may be told it exists. Package level only: in a `nodes` entry it is `U003` and has no effect. It resolves like
+  every `allowed.*` field, so an unsigned package's `false` stands; a malformed value or container hides. The terms
+  schema gains it at package level only. Cases `terms-mention-*`, `search-terms-mention-*`.
+- **The catalogue rule.** Contract §15.4: a closed package that is not hidden is named to a model with exactly `id`,
+  `version`, `title`, the publisher's name, `signed` and `closedBy`; a hidden package, one outside the audience set
+  and one whose own rating the request removes have no entry. Reader interface §4: `Library.catalogue`. New schema
+  `catalogue-entry.schema.json`. Cases `catalogue-terms-*`, a new case kind.
+- **Structure under a terms request.** Contract §10: the structure is built only from the packages not closed for the
+  request, and the overlays. Reader interface §6: `Library.structureFor`. Cases `structure-terms-*`.
+- **Ingest with a terms request.** Contract §9.3–9.4 and Reader interface §5.2: ingest takes
+  `{ destination, conditions }` with the use `embed`; units the gate removes are never embedded or stored, and the
+  ingest reports `U004`. Without a request, ingest is unchanged. Cases `search-store-ingest-*`.
+- **What never names a hidden package**, as one list in contract §15.4: the not-found answer, counts and notes,
+  paging, `supersededBy` and `contestedBy`, a composite's members, and findings. `U004` gains the `excluded` and
+  `hidden` counts. Cases `search-terms-hidden-count`, `search-terms-superseded-by-*`.
+- **Conformance runner:** `options.ingestTerms` on store cases, `options.terms` on structure cases,
+  `expect.termsExcluded` on search cases, and the `catalogue` case kind; the reference adapter outputs
+  `termsExcluded` for a search and `{ codes, result }` for a catalogue.
+
 ### Changed (limits, exact rules and signer binding)
 
 A hardening pass before release: places where two careful Readers could reach different answers, now stated exactly,

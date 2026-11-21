@@ -1,0 +1,5 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix t: <https://example.org/conformance/terms-structure#> .
+
+t:Topic a skos:Concept ; skos:prefLabel "Harbours"@en .
+t:Open a skos:Concept ; skos:prefLabel "Open harbours"@en ; skos:broader t:Topic .

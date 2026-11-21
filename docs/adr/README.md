@@ -50,5 +50,6 @@ carried over.
 | [0038](0038-credits-in-fixed-shapes.md) | Credits are labels in fixed shapes |
 | [0039](0039-a-conformance-programme-and-an-implementations-registry.md) | OpenMOCA Conformant (software that passes a test suite: Official, Verified, Self-tested) and the OpenMOCA Commitment (a company's signed promise to honour creators' and people's rules; not tested); supersedes ADR-0037's claim in part |
 | [0040](0040-ids-bind-a-signer-to-package-ids.md) | A trust-root entry's `ids` say which package ids it may sign; an entry without `ids` signs any |
+| [0041](0041-what-the-terms-gate-covers-and-hiding-a-closed-package.md) | Everything a Reader hands to a model goes through the terms gate, and `ai.allowed.mention` lets a creator hide a closed package from a model |
 
 New records use the template in [0000-template.md](0000-template.md).

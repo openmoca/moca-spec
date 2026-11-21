@@ -62,6 +62,25 @@
       "search": [
         "conformance/fixtures/terms/composite/strict-member"
       ]
+    },
+    {
+      "package": "conformance/fixtures/terms/mention/series",
+      "search": [
+        "conformance/fixtures/terms/mention/closed-hidden",
+        "conformance/fixtures/terms/mention/open"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/terms/composite/hides",
+      "search": [
+        "conformance/fixtures/terms/composite/member"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/terms/composite/hides-unsigned",
+      "search": [
+        "conformance/fixtures/terms/composite/member"
+      ]
     }
   ],
   "sign": [
@@ -131,6 +150,18 @@
     },
     {
       "package": "conformance/fixtures/terms/composite/loosen",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/terms/mention/closed-named",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/terms/mention/supersede/v2",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/terms/composite/hides",
       "key": "publisher"
     }
   ],

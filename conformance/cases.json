@@ -10297,6 +10297,1164 @@
       }
     },
     {
+      "id": "terms-mention-valid",
+      "description": "Package spec §4.14 (ADR-0041): ai.allowed.mention is a boolean at package level; false is exposed exactly as written, with no problems.",
+      "target": "fixtures/terms/mention/valid",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [],
+        "terms": {
+          "authority": "unverified",
+          "problems": [],
+          "declared": {
+            "ai": {
+              "allowed": {
+                "mention": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "terms-mention-malformed",
+      "description": "Package spec §4.14: a string where mention wants a boolean is U001 (warning) at ai.allowed.mention; the package stays valid.",
+      "target": "fixtures/terms/mention/malformed",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U001_TERMS_INVALID"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": [
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "ai.allowed.mention"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "terms-mention-node-unknown",
+      "description": "Package spec §4.14, contract §15.3: mention is package level only. In a nodes entry it is a member this version does not know, U003 (warning), never U002; the package stays valid.",
+      "target": "fixtures/terms/mention/node",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U003_TERMS_UNKNOWN_VALUE"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": [
+            {
+              "code": "U003_TERMS_UNKNOWN_VALUE",
+              "path": "nodes.0.ai.allowed.mention"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-resolved",
+      "kind": "search",
+      "description": "Contract §15.3: mention false resolves from the package. The destination is allowed, so the record is returned, with terms.ai.allowed.mention { value: false, decidedBy: package }.",
+      "packages": [
+        "fixtures/terms/mention/valid"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-mention-valid@1.0.0#ep1.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-mention-valid@1.0.0#ep1.md": {
+            "terms.ai.allowed.mention": {
+              "value": false,
+              "decidedBy": "package"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-default",
+      "kind": "search",
+      "description": "Contract §15.3: with no level setting mention, the platform default is true.",
+      "packages": [
+        "fixtures/terms/node-tightens"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md": {
+            "terms.ai.allowed.mention": {
+              "value": true,
+              "decidedBy": "platform"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-open-changes-nothing",
+      "kind": "search",
+      "description": "Contract §15.4: mention changes nothing while the destination is allowed: the record is returned and nothing is removed (no U004).",
+      "packages": [
+        "fixtures/terms/mention/valid"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "host",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/terms-mention-valid@1.0.0#ep1.md"
+        ],
+        "termsExcluded": null
+      }
+    },
+    {
+      "id": "search-terms-mention-malformed-fails-closed",
+      "kind": "search",
+      "description": "Package spec §4.14: a malformed mention (\"no\") counts as its strictest value, false.",
+      "packages": [
+        "fixtures/terms/mention/malformed"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-mention-malformed@1.0.0#ep1.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-mention-malformed@1.0.0#ep1.md": {
+            "terms.ai.allowed.mention": {
+              "value": false,
+              "decidedBy": "package"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-container-malformed",
+      "kind": "search",
+      "description": "Contract §15.3–15.4: ai.allowed is false, a malformed container, so every permission under it is strictest, mention included: the package is closed for every destination and hidden, and every removed record counts as hidden.",
+      "packages": [
+        "fixtures/terms/allowed-not-object"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0,
+        "termsExcluded": {
+          "excluded": {
+            "ai.allowed.device": 2
+          },
+          "hidden": 2
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-unsigned-applies",
+      "kind": "search",
+      "description": "Contract §15.3 (ADR-0041): a stricter value applies whatever its authority, so an unsigned package's mention false stands.",
+      "packages": [
+        "fixtures/terms/mention/valid"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-mention-valid@1.0.0#ep1.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-mention-valid@1.0.0#ep1.md": {
+            "terms.authority": "unverified",
+            "terms.ai.allowed.mention": {
+              "value": false,
+              "decidedBy": "package"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-host-hides",
+      "kind": "search",
+      "description": "Contract §15.3 step 4: a host limit of mention false applies; decidedBy is host.",
+      "packages": [
+        "fixtures/terms/node-tightens"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical",
+        "termsLimits": {
+          "allowed": {
+            "mention": false
+          }
+        }
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md": {
+            "terms.ai.allowed.mention": {
+              "value": false,
+              "decidedBy": "host"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-host-cannot-unhide",
+      "kind": "search",
+      "description": "Contract §15.3 step 4: a host limit is a floor, never a value: true cannot loosen the package's false.",
+      "packages": [
+        "fixtures/terms/mention/valid"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical",
+        "termsLimits": {
+          "allowed": {
+            "mention": true
+          }
+        }
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-mention-valid@1.0.0#ep1.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-mention-valid@1.0.0#ep1.md": {
+            "terms.ai.allowed.mention": {
+              "value": false,
+              "decidedBy": "package"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-composite-hides",
+      "kind": "search",
+      "description": "Contract §15.3 step 3: a composing package whose signer's ids cover the member makes the member's mention false; decidedBy is composite.",
+      "packages": [
+        "fixtures/terms/composite/hides"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/terms/composite/member"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md": {
+            "terms.ai.allowed.mention": {
+              "value": false,
+              "decidedBy": "composite"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-composite-unsigned",
+      "kind": "search",
+      "description": "Contract §15.3 step 3, ADR-0040: an unsigned composing package does not speak for its member, so its mention false changes nothing.",
+      "packages": [
+        "fixtures/terms/composite/hides-unsigned"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/terms/composite/member"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-composite-member@1.0.0#lesson.md": {
+            "terms.ai.allowed.mention": {
+              "value": true,
+              "decidedBy": "platform"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-mention-node-no-effect",
+      "kind": "search",
+      "description": "Contract §15.3: mention in a nodes entry has no effect; the node's mention is the platform default.",
+      "packages": [
+        "fixtures/terms/mention/node"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-mention-node@1.0.0#ep1.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-mention-node@1.0.0#ep1.md": {
+            "terms.ai.allowed.mention": {
+              "value": true,
+              "decidedBy": "platform"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-hidden-count",
+      "kind": "search",
+      "description": "Contract §15.4: U004 counts every removed record by reason, and counts separately those from packages hidden for the request. The hidden package's two records are hidden; the open package's closed node is not.",
+      "packages": [
+        "fixtures/terms/mention/closed-hidden",
+        "fixtures/terms/node-tightens"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "include": [
+          "https://example.com/conformance/terms-node-tightens@1.0.0#public.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/terms-mention-closed-hidden@1.0.0#ep1.md",
+          "https://example.com/conformance/terms-mention-closed-hidden@1.0.0#ep2.md",
+          "https://example.com/conformance/terms-node-tightens@1.0.0#private.md"
+        ],
+        "termsExcluded": {
+          "excluded": {
+            "ai.allowed.provider": 3
+          },
+          "hidden": 2
+        }
+      }
+    },
+    {
+      "id": "search-terms-superseded-by-hidden",
+      "kind": "search",
+      "description": "Contract §15.4, \"Nothing names a hidden package\": version 2 supersedes version 1 and is closed and hidden for a provider. With includeAll, version 1's record is returned with superseded true and no supersededBy.",
+      "packages": [
+        "fixtures/terms/mention/supersede/v1",
+        "fixtures/terms/mention/supersede/v2"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "includeAll": true,
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "include": [
+          "https://example.com/conformance/terms-mention-supersede@1.0.0#policy.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/terms-mention-supersede@2.0.0#policy.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-mention-supersede@1.0.0#policy.md": {
+            "trust.superseded": true,
+            "trust.supersededBy": null
+          }
+        }
+      }
+    },
+    {
+      "id": "search-terms-superseded-by-open",
+      "kind": "search",
+      "description": "Contract §15.4: for a destination version 2 allows, it is not hidden, and version 1's record names it in supersededBy.",
+      "packages": [
+        "fixtures/terms/mention/supersede/v1",
+        "fixtures/terms/mention/supersede/v2"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "lexical",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "includeAll": true,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-mention-supersede@1.0.0#policy.md",
+          "https://example.com/conformance/terms-mention-supersede@2.0.0#policy.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/terms-mention-supersede@1.0.0#policy.md": {
+            "trust.superseded": true,
+            "trust.supersededBy": [
+              "https://example.com/conformance/terms-mention-supersede@2.0.0"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "search-store-ingest-terms-provider",
+      "kind": "search",
+      "description": "Contract §9.4 (ADR-0041): ingest for a provider's embedder leaves out the closed package's units: they are never embedded or stored, so a search with no terms request cannot return them. The ingest reports U004.",
+      "packages": [
+        "fixtures/terms/mention/open",
+        "fixtures/terms/mention/closed-named"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/terms/mention/open",
+          "fixtures/terms/mention/closed-named"
+        ],
+        "trustRoot": "fixtures/trust-root.json",
+        "ingestTerms": {
+          "destination": "provider"
+        }
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "include": [
+          "https://example.com/conformance/terms-mention-open@1.0.0#ep1.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/terms-mention-closed-named@1.0.0#ep1.md"
+        ]
+      }
+    },
+    {
+      "id": "search-store-ingest-terms-device",
+      "kind": "search",
+      "description": "Contract §9.4: ingest for an embedder on the person's device takes both packages: neither is closed for device.",
+      "packages": [
+        "fixtures/terms/mention/open",
+        "fixtures/terms/mention/closed-named"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/terms/mention/open",
+          "fixtures/terms/mention/closed-named"
+        ],
+        "trustRoot": "fixtures/trust-root.json",
+        "ingestTerms": {
+          "destination": "device"
+        }
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-mention-open@1.0.0#ep1.md",
+          "https://example.com/conformance/terms-mention-closed-named@1.0.0#ep1.md"
+        ]
+      }
+    },
+    {
+      "id": "search-store-ingest-no-request",
+      "kind": "search",
+      "description": "Contract §9.4: without a terms request, ingest takes every unit, as before.",
+      "packages": [
+        "fixtures/terms/mention/open",
+        "fixtures/terms/mention/closed-named"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/terms/mention/open",
+          "fixtures/terms/mention/closed-named"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-mention-open@1.0.0#ep1.md",
+          "https://example.com/conformance/terms-mention-closed-named@1.0.0#ep1.md"
+        ]
+      }
+    },
+    {
+      "id": "structure-terms-closed-package-label",
+      "kind": "structure",
+      "description": "Contract §10, \"Under a terms request\": two packages state one concept; the package closed for a provider is left out of the merge, so its label and definition are absent.",
+      "packages": [
+        "fixtures/terms/structure/open",
+        "fixtures/terms/structure/closed"
+      ],
+      "options": {
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "op": "concept",
+      "iri": "https://example.org/conformance/terms-structure#Topic",
+      "expect": {
+        "codes": [],
+        "result": {
+          "iri": "https://example.org/conformance/terms-structure#Topic",
+          "label": "Harbours",
+          "labels": {
+            "en": "Harbours"
+          },
+          "altLabels": {},
+          "deprecated": false,
+          "replacedBy": [],
+          "replaces": [],
+          "layer": "package"
+        }
+      }
+    },
+    {
+      "id": "structure-terms-closed-only-concept",
+      "kind": "structure",
+      "description": "Contract §10: a concept only the closed package declares is not declared for the request.",
+      "packages": [
+        "fixtures/terms/structure/open",
+        "fixtures/terms/structure/closed"
+      ],
+      "options": {
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "op": "concept",
+      "iri": "https://example.org/conformance/terms-structure#Closed",
+      "expect": {
+        "codes": [],
+        "result": null
+      }
+    },
+    {
+      "id": "structure-terms-closed-only-narrower",
+      "kind": "structure",
+      "description": "Contract §10: a concept only the closed package declares is absent from narrower.",
+      "packages": [
+        "fixtures/terms/structure/open",
+        "fixtures/terms/structure/closed"
+      ],
+      "options": {
+        "terms": {
+          "ai": {
+            "destination": "provider",
+            "use": "answer"
+          }
+        }
+      },
+      "op": "narrower",
+      "iri": "https://example.org/conformance/terms-structure#Topic",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/conformance/terms-structure#Open",
+            "label": "Open harbours",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "structure-terms-open-unchanged",
+      "kind": "structure",
+      "description": "Contract §10: for a destination both packages allow, the answer is the same as with no request.",
+      "packages": [
+        "fixtures/terms/structure/open",
+        "fixtures/terms/structure/closed"
+      ],
+      "options": {
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "op": "concept",
+      "iri": "https://example.org/conformance/terms-structure#Topic",
+      "expect": {
+        "codes": [],
+        "result": {
+          "iri": "https://example.org/conformance/terms-structure#Topic",
+          "label": "Harbours",
+          "labels": {
+            "en": "Harbours",
+            "fr": "Ports"
+          },
+          "altLabels": {},
+          "definition": "Text a provider may not receive.",
+          "deprecated": false,
+          "replacedBy": [],
+          "replaces": [],
+          "layer": "package"
+        }
+      }
+    },
+    {
+      "id": "catalogue-terms-open",
+      "kind": "catalogue",
+      "description": "Contract §15.4, \"The catalogue rule\": an open package's entry has its id, version, title, description, publisher, signed and tags.",
+      "packages": [
+        "fixtures/terms/mention/open"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "terms": {
+        "ai": {
+          "destination": "device",
+          "use": "answer"
+        }
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/terms-mention-open",
+            "version": "1.0.0",
+            "title": "An open show",
+            "description": "A show any model may read.",
+            "publisher": "Example Network",
+            "signed": false,
+            "tags": [
+              "harbours",
+              "lanterns"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "catalogue-terms-closed-named",
+      "kind": "catalogue",
+      "description": "Contract §15.4: a package closed for the request and not hidden is named with exactly id, version, title, publisher, signed and closedBy: never its description, tags or contributors.",
+      "packages": [
+        "fixtures/terms/mention/open",
+        "fixtures/terms/mention/closed-named"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "terms": {
+        "ai": {
+          "destination": "provider",
+          "use": "answer"
+        }
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/terms-mention-closed-named",
+            "version": "1.0.0",
+            "title": "A show closed to providers",
+            "publisher": "Example Network",
+            "signed": true,
+            "closedBy": [
+              "ai.allowed.provider"
+            ]
+          },
+          {
+            "id": "https://example.com/conformance/terms-mention-open",
+            "version": "1.0.0",
+            "title": "An open show",
+            "description": "A show any model may read.",
+            "publisher": "Example Network",
+            "signed": false,
+            "tags": [
+              "harbours",
+              "lanterns"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "catalogue-terms-closed-hidden",
+      "kind": "catalogue",
+      "description": "Contract §15.4 (ADR-0041): a package closed for the request whose mention is false has no entry at all.",
+      "packages": [
+        "fixtures/terms/mention/open",
+        "fixtures/terms/mention/closed-hidden"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "terms": {
+        "ai": {
+          "destination": "provider",
+          "use": "answer"
+        }
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/terms-mention-open",
+            "version": "1.0.0",
+            "title": "An open show",
+            "description": "A show any model may read.",
+            "publisher": "Example Network",
+            "signed": false,
+            "tags": [
+              "harbours",
+              "lanterns"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "catalogue-terms-closed-providerRequires",
+      "kind": "catalogue",
+      "description": "Contract §15.4: a package is closed for a provider whose conditions do not meet its providerRequires; closedBy names ai.providerRequires.",
+      "packages": [
+        "fixtures/terms/mention/provider-requires"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "terms": {
+        "ai": {
+          "destination": "provider",
+          "use": "answer",
+          "conditions": [
+            "noTraining"
+          ]
+        }
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/terms-mention-provider-requires",
+            "version": "1.0.0",
+            "title": "A show for providers that keep nothing",
+            "signed": false,
+            "closedBy": [
+              "ai.providerRequires"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "catalogue-terms-outside-audience",
+      "kind": "catalogue",
+      "description": "Contract §15.4: the catalogue rule comes after the audience set: a closed, mentionable package none of whose records is in the host's audience set has no entry.",
+      "packages": [
+        "fixtures/terms/mention/open",
+        "fixtures/terms/mention/closed-named"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json",
+        "audiences": [
+          "public"
+        ]
+      },
+      "terms": {
+        "ai": {
+          "destination": "provider",
+          "use": "answer"
+        }
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/terms-mention-open",
+            "version": "1.0.0",
+            "title": "An open show",
+            "description": "A show any model may read.",
+            "publisher": "Example Network",
+            "signed": false,
+            "tags": [
+              "harbours",
+              "lanterns"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "catalogue-terms-rating-removed",
+      "kind": "catalogue",
+      "description": "Contract §15.4: a package whose own rating the request's rating gate removes has no entry, whatever mention says.",
+      "packages": [
+        "fixtures/terms/mention/open",
+        "fixtures/terms/mention/explicit"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "terms": {
+        "ai": {
+          "destination": "provider",
+          "use": "answer"
+        },
+        "rating": {
+          "explicit": false,
+          "allowUnrated": true
+        }
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/terms-mention-open",
+            "version": "1.0.0",
+            "title": "An open show",
+            "description": "A show any model may read.",
+            "publisher": "Example Network",
+            "signed": false,
+            "tags": [
+              "harbours",
+              "lanterns"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "catalogue-terms-composite-hidden-member",
+      "kind": "catalogue",
+      "description": "Contract §15.4: an open composite's entry lists only the members that have an entry of their own; a hidden member is left out.",
+      "packages": [
+        "fixtures/terms/mention/series"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json",
+        "members": [
+          "fixtures/terms/mention/open",
+          "fixtures/terms/mention/closed-hidden"
+        ]
+      },
+      "terms": {
+        "ai": {
+          "destination": "provider",
+          "use": "answer"
+        }
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/terms-mention-open",
+            "version": "1.0.0",
+            "title": "An open show",
+            "description": "A show any model may read.",
+            "publisher": "Example Network",
+            "signed": false,
+            "tags": [
+              "harbours",
+              "lanterns"
+            ]
+          },
+          {
+            "id": "https://example.com/conformance/terms-mention-series",
+            "version": "1.0.0",
+            "title": "A series of shows",
+            "signed": false,
+            "members": [
+              "https://example.com/conformance/terms-mention-open"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "catalogue-terms-container-malformed",
+      "kind": "catalogue",
+      "description": "Contract §15.3–15.4: ai.allowed is false, a malformed container: the package is closed for every destination and hidden, so it has no entry.",
+      "packages": [
+        "fixtures/terms/allowed-not-object"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "terms": {
+        "ai": {
+          "destination": "device",
+          "use": "answer"
+        }
+      },
+      "expect": {
+        "codes": [],
+        "result": []
+      }
+    },
+    {
+      "id": "catalogue-terms-no-request",
+      "kind": "catalogue",
+      "description": "Contract §15.5: without a terms request, nothing is closed or hidden: every package has an open entry.",
+      "packages": [
+        "fixtures/terms/mention/open",
+        "fixtures/terms/mention/closed-hidden"
+      ],
+      "options": {
+        "now": "2026-11-21T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/terms-mention-closed-hidden",
+            "version": "1.0.0",
+            "title": "A show that is hidden from providers",
+            "description": "Never named to a provider's model.",
+            "publisher": "Example Network",
+            "signed": false
+          },
+          {
+            "id": "https://example.com/conformance/terms-mention-open",
+            "version": "1.0.0",
+            "title": "An open show",
+            "description": "A show any model may read.",
+            "publisher": "Example Network",
+            "signed": false,
+            "tags": [
+              "harbours",
+              "lanterns"
+            ]
+          }
+        ]
+      }
+    },
+    {
       "id": "manifest-nesting-at-limit",
       "description": "Contract §3: JSON nested 64 levels deep is read. The manifest object is the first level; a vendor key holds 63 arrays.",
       "target": "fixtures/manifest-nesting-at-limit",

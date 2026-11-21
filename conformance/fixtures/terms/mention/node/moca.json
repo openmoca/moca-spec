@@ -1,0 +1,21 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-node",
+  "version": "1.0.0",
+  "title": "A show with mention on a node",
+  "language": "en",
+  "terms": {
+    "nodes": [
+      {
+        "paths": [
+          "content/ep1.md"
+        ],
+        "ai": {
+          "allowed": {
+            "mention": false
+          }
+        }
+      }
+    ]
+  }
+}

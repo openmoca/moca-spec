@@ -1,0 +1,14 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-valid",
+  "version": "1.0.0",
+  "title": "A show that asks not to be mentioned",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "mention": false
+      }
+    }
+  }
+}
