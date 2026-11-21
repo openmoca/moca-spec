@@ -59,7 +59,7 @@ Everything a Reader touches outside a package's bytes comes from the host
 | Embedder | §5.3. | Dense search. |
 | Retrieval hooks | `ingress` and `egress` (§5.4). | Ontology-guided retrieval strategies. |
 | Audience set | A list of audience labels. | Removing records outside it. |
-| Terms limits | The host's own `ai` values, with the shape of `terms.ai` ([package spec §4.14](moca-package-spec.md#414-terms)). | Tightening a creator's terms, never loosening them. |
+| Terms limits | The host's own `ai` values, with the shape of `terms.ai` ([package spec §4.14](moca-package-spec.md#414-terms)). | Tightening a creator's terms, never loosening them, in a search, an ingest, the structure operations and a catalogue. |
 | Key provider | Given an envelope's age stanzas, its unverified outline and which file is being opened, returns X25519 identities, a passphrase or a file key (one or more of them), or nothing; MAY be asynchronous where the language's read is ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). | Opening encrypted packages, for a Reader that implements `encryption`. |
 
 A package never supplies any of these.
@@ -74,6 +74,7 @@ A package never supplies any of these.
 | `Library.add` | A valid package result, and optionally its sidecar chunks and index. | The library, with the package and its resolved members loaded. |
 | `Library.citations` | Options: locale, include text. | Every node's citation record. |
 | `Library.get` | A node id or a versioned node reference, and options: locale. | One citation record, or nothing. |
+| `Library.catalogue` | Options: a terms request (`terms`), and the host's audience set, `allowUnlabelled`, `includeAll` and terms limits, as for a search. | Catalogue entries, ordered by `id` then `version`: what a model may be told about the loaded packages ([Reader contract §15.4](moca-reader-contract.md#154-the-terms-gate), "The catalogue rule"). With no terms request, every package that passes the audience set and the default retrieval policy, each with an open entry. |
 | `mapTime` | A citation record, the `source` of the description a moment is on, the `source` of the description to map it to, and the moment in seconds. | The same moment on the other description, in seconds, or nothing when it is not there ([package spec §5.7](moca-package-spec.md#57-media)): the two are not in one group of alternates, or the moment falls in no stretch or outside a duration. A description maps a moment on its own timeline to itself. |
 
 A **package result** has at least these fields, with the meanings in the
@@ -178,6 +179,14 @@ Reciprocal Rank Fusion, with weights and a constant the host sets
 part of a binding. It stores whole citation records at ingest, and returns
 each one with its hit.
 
+A store backend's `ingest` takes a library and options: `terms`, the host's
+terms request for the ingest, `{ destination, conditions }`, with the use
+`embed`; and the host's terms limits. Units the terms gate removes are not
+embedded and not stored, and the ingest reports `U004_TERMS_EXCLUDED` with
+its counts ([Reader contract §9.4](moca-reader-contract.md#94-store-backends)).
+Without `terms`, every unit is ingested. A store backend also removes what it
+ingested from a package digest (`remove`).
+
 ### 5.3 Embedder
 
 The host supplies the embedder:
@@ -188,7 +197,8 @@ The host supplies the embedder:
   query and each document, declared so they can be compared with an index's;
 - `embed(texts, { role })`, which returns one vector per text. `role` is
   `query` or `document`: a Reader passes `query` when it embeds a search
-  query, and `document` when a store backend ingests content. The embedder
+  query, and `document` when a store backend ingests content that passed the
+  ingest's terms request. The embedder
   applies its own model's convention for each role, such as the `query:` and
   `passage:` prefixes of e5.
 
@@ -256,6 +266,13 @@ carries its `layer`:
 | `sequence(iri)` | Ordered concept items, or nothing |
 | `nodes(iri, { include })` | Citation records |
 
+A host that hands the answers to a model asks for the structure with its
+terms request and terms limits: `Library.structureFor({ terms, termsLimits })`
+answers the same operations over the loaded packages that are not closed for
+the request, and the overlays
+([Reader contract §10](moca-reader-contract.md#10-structure), "Under a terms
+request").
+
 ## 7. Bindings
 
 A binding maps citation records to a framework's own types, and a framework's
@@ -285,6 +302,18 @@ audience set and, unless the host opted in, the default retrieval policy
 ([Reader contract §8](moca-reader-contract.md#8-default-retrieval-policy)) to
 every such record. In a binding a model calls, the opt-in to excluded content
 and to unlabelled content is host configuration, never a tool argument.
+
+A binding a model calls also MUST pass a terms request with an `ai` part to
+every operation whose result it hands on: search, ingest, the structure
+operations and the catalogue. Its destination and conditions are host
+configuration, never a tool argument; with none, it uses `provider` with no
+conditions. It follows the rules in
+[Reader contract §15.4](moca-reader-contract.md#154-the-terms-gate) for
+closed and hidden packages: it says nothing about a package beyond its
+catalogue entry, answers a lookup of a hidden package exactly as for one that
+is not loaded, leaves hidden packages out of lists before paging and out of
+every count and note, and never hands on a finding about a closed or hidden
+package.
 
 ## 8. Conformance
 
