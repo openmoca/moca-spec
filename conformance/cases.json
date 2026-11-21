@@ -9765,6 +9765,33 @@
       }
     },
     {
+      "id": "structure-nesting-at-limit",
+      "description": "Contract §3: structure.ttl nests blank nodes 64 levels deep, the fixed limit, on the line of a prefixed name that holds an escaped \"#\". It is read.",
+      "target": "fixtures/structure-nesting-at-limit",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ]
+      }
+    },
+    {
+      "id": "structure-nesting-over-limit",
+      "description": "Contract §3: structure.ttl nests blank nodes 65 levels deep, one past the fixed limit of 64, on the line of a prefixed name that holds an escaped \"#\". The \"#\" is part of the name, not a comment, so the nesting after it counts: the file is refused (O001).",
+      "target": "fixtures/structure-nesting-over-limit",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O001_ONTOLOGY_UNPARSEABLE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
       "id": "signer-binding-covered",
       "description": "Attestations §6 (ADR-0040): the publisher key has the package role and ids that name this package's id, so it counts as its signer.",
       "target": "fixtures/signed-reviewed",
