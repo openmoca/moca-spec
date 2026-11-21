@@ -286,9 +286,10 @@ each with corpus cases. 445 cases.
   parse: `M001`, `C002` (`C004`), `A001`, `E005`, `S001`, `S004`. The limit is fixed. Cases
   `manifest-nesting-at-limit`, `manifest-nesting-over-limit`, `frontmatter-nesting-at-limit`,
   `frontmatter-nesting-over-limit`, `attestation-nesting-over-limit`. 450 cases.
-- **Nesting in `structure.ttl`.** Contract §3: a package's `structure.ttl` is nested at most 64 levels deep, fixed,
-  like JSON and YAML. Each blank-node property list or collection is one level; a bracket inside an IRI, a string, a
-  comment or a prefixed name (escaped characters included) does not count. Past the limit the file is `O001`. Cases
+- **Nesting in `structure.ttl`.** Contract §3: a package's `structure.ttl`, and each structure overlay a host
+  supplies, is nested at most 64 levels deep, fixed, like JSON and YAML. Each blank-node property list or collection
+  is one level; a bracket inside an IRI, a string, a comment or a prefixed name (escaped characters included) does not
+  count. Past the limit the file is `O001`, with the overlay as the file for an overlay. Cases
   `structure-nesting-at-limit`, `structure-nesting-over-limit` (built by `scripts/limit-fixtures.mjs`). 452 cases.
 ### Changed (before the hardening pass)
 
