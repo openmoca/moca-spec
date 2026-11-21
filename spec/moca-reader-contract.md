@@ -69,12 +69,40 @@ follows:
   unsupported (`P001_UNSUPPORTED_ENTRY`).
 - **Compression.** A Reader MUST read entries that are stored or deflated, and
   MUST NOT read any other method: such an entry is unreadable
-  (`P002_UNREADABLE_ENTRY`), so every Reader reaches the same conclusion.
+  (`P002_UNREADABLE_ENTRY`), so every Reader reaches the same conclusion. An
+  entry with the encryption flag (general purpose bit 0) is unreadable too
+  (`P002`).
 - **Sizes.** An entry is never inflated past its declared uncompressed size.
   Every entry, stored or deflated, MUST be exactly its declared size and
-  match its CRC-32; one that is not is unreadable (`P002`). The byte limit is checked against
+  match its CRC-32; one that yields fewer bytes, or more, or fails its
+  CRC-32, is unreadable (`P002`). The byte limit is checked against
   declared sizes before reading.
-- **Directory.** The central directory is authoritative.
+- **Directory.** One central directory is authoritative, and a Reader finds
+  it the same way every time:
+  - **One end record.** The end-of-central-directory record is the one that
+    ends exactly at the end of the file: its signature, its 22 bytes, and a
+    comment of the length it declares, with nothing after. A Reader searches
+    back from the end of the file through the longest comment a record can
+    declare (65,535 bytes). If no position qualifies, or more than one does,
+    the archive is rejected (`T003`).
+  - **One file, no Zip64.** A multi-disk archive (a disk number that is not
+    0, or two different entry counts) is rejected (`T003`). So is an archive
+    that uses Zip64 in its directory: an end record whose entry count is
+    0xFFFF or whose directory size or offset is 0xFFFFFFFF, or a Zip64
+    end-of-central-directory locator just before the end record (`T003`).
+    This version does not read Zip64; no package within the default limits
+    needs it.
+  - **The directory holds what it declares.** The central directory starts
+    at the offset the end record gives, ends at or before the end record,
+    and holds exactly the declared number of entries in exactly the declared
+    number of bytes. Otherwise: `T003`.
+  - **Local headers agree.** Each entry's local header is at the offset the
+    directory gives, before the central directory, and has the same name,
+    byte for byte, and the same compression method. Otherwise: `T003`.
+  - **Everything else comes from the directory.** Names, flags, sizes and
+    CRC-32 values are read from the central directory, never from a local
+    header or a data descriptor. The Info-ZIP Unicode path extra field is
+    ignored: the name is the directory's file name field.
 
 When an entry cannot be read, the Reader stops with `P002`: it does not go on
 with missing bytes.
@@ -110,6 +138,10 @@ be at least those below, which the conformance corpus assumes:
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |
 | Structure file size | `maxStructureBytes` | 4 MiB | `O001` |
 | Triples in a structure file | `maxTriples` | 100,000 | `O001` |
+| Collection members in a structure file: the list cells reached from every `skos:memberList` statement, added together, so a list that several collections name counts once for each | `maxTriples` | 100,000 | `O001` |
+| Attestation files in a package ([attestations §7](moca-attestations.md#7-verifying-an-attestation), step 1) | `maxAttestations` | 256 | None of them is read; `A001`, once |
+| Bytes of one attestation file | `maxAttestationBytes` | 1 MiB | `A001` for that file; it is not parsed |
+| Signature entries in one DSSE envelope, in a `.dsse.json` file or a Sigstore bundle. This one is fixed, not a default, so every Reader agrees on which envelopes are malformed | — | 16 | `A001` for that file; no entry is tried |
 | Evidence entries checked per node representation | `maxEvidencePerNode` | 256 | Further entries are not checked; `matched` is absent |
 | Source file size checked for evidence | `maxSourceBytesChecked` | 8 MiB | Not checked; `matched` is absent |
 | Evidence checks in one read, by the package and all its members together (below) | `maxEvidenceChecksPerPackage` | 10,000 | Further entries are not checked; `matched` is absent |
@@ -160,7 +192,16 @@ members by composition ([package spec §5.6](moca-package-spec.md#56-structure))
 MUST take work and memory roughly in proportion to the structure's triples
 plus the members and nodes involved, not to their product. For example, a
 Reader walks the ordered collection once, and finds a concept's ancestors
-once, not once per node bound to it or per member of the list.
+once, not once per node bound to it or per member of the list. A member
+list that several collections name is walked once and shared, and what the
+collections hold together is bounded (the limits table, above): the subjects
+and the list members of a structure file never multiply into more work than
+its triple limit allows.
+
+**Text work stays roughly linear.** Finding the links in a node's body, and
+normalising an evidence source (§7), MUST take work roughly in proportion to
+the size of the text, whatever it holds: a line of unclosed brackets or
+unclosed tags costs no more than any other line of its length.
 
 A Reader MUST NOT request a path from a host source that the source did not
 list.
@@ -211,7 +252,10 @@ stay strings.
 
 A Reader MUST report every problem in a package as a diagnostic, never as an
 exception or a crash. Malformed content is a finding; exceptions are only for
-programming errors, such as a missing argument.
+programming errors, such as a missing argument. A `moca.json` that is valid
+JSON but not an object fails its schema (`M002`), and nothing more of the
+package is read. A member of the manifest with the wrong type is `M002` too,
+and a Reader that reads on does so as if that member were absent.
 
 ## 6. Attestations
 
@@ -222,6 +266,11 @@ rules. In summary:
 - with no trust root, every attestation is **unverifiable**
   (`A003`), never valid;
 - a key or identity is trusted only for the roles the trust root gives it;
+- a key or identity with `ids` signs only the packages those ids cover: a
+  valid signature from one that does not cover the package's `id` is reported
+  (`A010`) and does not make the package `signed`;
+- a Sigstore identity matches only when its issuer and its subject each equal
+  the certificate's, character for character; never as a pattern;
 - offline verification is the default; online checks are opt-in, and an
   online check that cannot complete is **indeterminate** (`A004`) unless the
   host allowed an offline fallback;
@@ -884,7 +933,7 @@ withhold only the `structured` capability.
 | `E004_OUTLINE_MISMATCH` | error | An envelope's outline differs from the decrypted manifest, structure or cover. |
 | `E005_ENVELOPE_INVALID` | error | An envelope has a missing, repeated or unexpected entry, an encrypted entry that is not stored, a cover copy over `maxImageBytes`, or an invalid `moca-enc.json`, or a Zip has both `moca.json` and `moca-enc.json` at its root. |
 | `E006_AGE_HEADER_INVALID` | error | An envelope's age header is malformed or unsupported, over 64 KiB, breaks the scrypt rules or the work-factor limit, has no full payload nonce, or has a low-order X25519 share. |
-| `A001_ATTESTATION_MALFORMED` | error | An attestation file is not a parseable envelope and statement. |
+| `A001_ATTESTATION_MALFORMED` | error | An attestation file is not a parseable envelope and statement, is over a limit (its size, or its signature entries), or the package has more attestation files than the limit (§3). |
 | `A002_ATTESTATION_INVALID` | error | An attestation failed verification or does not match the package. |
 | `A003_ATTESTATION_UNVERIFIABLE` | warning | An attestation could not be checked ([attestations §7](moca-attestations.md#7-verifying-an-attestation) says when). |
 | `A004_ATTESTATION_INDETERMINATE` | warning | Online verification was requested but could not complete. |
@@ -892,6 +941,7 @@ withhold only the `structured` capability.
 | `A007_REVIEW_DATE_FUTURE` | warning | A review is dated later than the host clock, so it does not count ([attestations §4](moca-attestations.md#4-review-attestations)). |
 | `A008_PACKAGE_DIGEST_MISMATCH` | error | A package attestation names this package's `id` and `version` with a different digest: the content changed after it was signed ([attestations §3](moca-attestations.md#3-package-attestations)). |
 | `A009_SIGNATURE_REQUIRED` | error | The host requires a valid package attestation (`requireSignature`) and the package has none. This one makes the package invalid. |
+| `A010_SIGNER_NOT_FOR_PACKAGE` | error | A package attestation's signature verifies and its statement matches, but the signer's `ids` in the trust root do not cover this package's `id` ([attestations §6](moca-attestations.md#6-trust-roots)). The attestation does not count, so it does not make the package `signed`. |
 | `R001_MEMBER_UNRESOLVED` | warning | A member could not be resolved by the host resolver. |
 | `R002_MEMBER_DIGEST_MISMATCH` | error | A resolved member does not match its pinned digest, or, for an issued copy that verified, its original digest ([package spec §7.1](moca-package-spec.md#71-members)). |
 | `R003_MEMBER_CYCLE` | error | Members form a cycle. |
@@ -1065,6 +1115,26 @@ destination not allowed anywhere is not allowed; more `providerRequires` conditi
 stricter; `work` is stricter than `model`. A malformed or unknown value counts
 as the strictest value.
 
+**A malformed container fails closed.** A container is a value that holds
+permissions: `ai`, `ai.allowed`, `rights`, `rights.export`, `nodes`, and an
+entry of `nodes`. One that is present and has the wrong type (`"allowed":
+false`, `"ai": "none"`, `"nodes": {}`) sets every permission under it to its
+strictest value, exactly as if each had been written wrongly one by one: no
+destination is allowed, nor training, nor machine translation; the
+`providerRequires` conditions cannot be met; `answerSources` is `work`; and
+under `rights` or `rights.export`, export is not allowed. Only an absent
+container sets nothing. For `nodes`:
+
+- a `nodes` that is not a list, an entry that is not an object, and an entry
+  whose `paths` is missing or is not a list of strings do not say which nodes
+  they mean. Each counts for **every** node of the package, with every
+  permission at its strictest and a malformed rating (§15.4);
+- inside a well-formed entry, a malformed `ai` or `ai.allowed` sets the
+  permissions under it to their strictest for that entry's nodes only.
+
+The Reader still reports each of these once, at the container, as `U001`
+([package spec §4.14](moca-package-spec.md#414-terms)).
+
 **Platform defaults**, used only when no level sets a field:
 `allowed.device`, `allowed.host` and `allowed.provider` `true`,
 `allowed.machineTranslation` `true`, `allowed.training` `false`, no
@@ -1101,14 +1171,48 @@ removes:
   `provider`, whose `allowed.training` is not `true` for the use `train`, or
   whose `allowed.machineTranslation` is not `true` for the use `translate`. The
   other uses are `answer`, `embed` and `summarise`;
-- for `rating` (`{ explicit, schemes, allowUnrated, acceptFeedRatings, mode }`):
+- for `rating` (`{ explicit, schemes, allowUnrated, acceptFeedRatings }`):
   records rated `explicit: true` when `explicit` is `false`; records with a
   `contentRating` value outside the host's allowed set for that scheme;
-  records with no rating unless `allowUnrated`; records whose rating has
-  `declaredBy: feed` and says `explicit: false`, unless `acceptFeedRatings`.
-  In `mode: "strict-path"`, a record passes only if its own rating, its
-  package's and every composing package's pass. `typicalAgeRange` never
-  removes anything.
+  unrated records unless `allowUnrated`. `typicalAgeRange` never removes
+  anything. The rules below say exactly what "rated" means.
+
+**Rated, for this host's filter.** A record's rating is its node's effective
+rating (§15.3). For one rating request, the record is **rated** when at least
+one of these holds:
+
+- its rating has an `explicit` value that counts. A rating with
+  `declaredBy: feed` that says `explicit: false` counts only when the request
+  has `acceptFeedRatings: true`; every other boolean counts;
+- its rating has a `contentRating` entry under a scheme the request lists in
+  `schemes`.
+
+Otherwise it is **unrated**, and the gate removes it unless the request has
+`allowUnrated: true`. So a record rated only under a scheme the host did not
+list is unrated for that host: a rating the host cannot compare says nothing
+to its filter, and never lets a record through on its own.
+
+A rated record is then checked. It is removed when the request has
+`explicit: false` and the record's `explicit` counts and is `true`; and, for
+each scheme the request lists under which the record has an entry, when the
+entry's `value` is not in the request's list for that scheme. A scheme the
+request lists and the record has no entry under removes nothing.
+
+**A malformed rating fails closed.** A rating that is present and is not an
+object counts as `explicit: true` and as a value outside the allowed set of
+every scheme the request lists. Inside a rating object, an `explicit` that
+is not a boolean counts as `true`; a `contentRating` that is not a list, or
+that has an entry that is not an object with a string `scheme`, counts as a
+value outside the allowed set of every scheme the request lists. A citation
+record shows a rating that is not an object as `{ "explicit": true }`.
+
+**A request the Reader cannot honour removes everything.** This version
+defines the four members above and no others; a `mode` member drafted
+earlier, with the value `strict-path`, is not part of it. A `rating` request
+that is not an object, that has a member this version does not define, or
+whose `schemes` is not an object, is never run as a weaker filter: the gate
+removes every record. A scheme whose allowed set is not a list allows no
+value.
 
 A request a caller or a hook sets can never widen what the host asked for.
 Records the terms gate removes are counted by reason in

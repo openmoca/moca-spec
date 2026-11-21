@@ -838,7 +838,11 @@ year is after its last), are `U001`. The package stays
 valid. The Reader exposes the block as written,
 with its problems, and a malformed or unknown permission counts as the
 strictest value wherever a host asks the Reader to apply terms
-(Reader contract §15).
+(Reader contract §15). The same holds one level up: a container that is
+present and has the wrong type, such as `"allowed": false` where an object
+belongs, makes every permission under it the strictest. Nothing malformed
+ever reads as "not set"
+([Reader contract §15.3](moca-reader-contract.md#153-resolving-terms)).
 
 **Who said it.** `terms` is what the signer wrote. A signature proves who
 signed, not who owns the work: `rightsHolder`, `basis` and
@@ -1739,7 +1743,7 @@ a package actually has from what it contains and what verifies:
 | `self-contained-evidence` | The package has `located-evidence`, and every evidence entry of every node is checkable inside the package: its source has a `resource` that resolves, relative to the node file (§5.1), to a file under `sources/` or `media/`, with no `C007` or `C008` diagnostic for it; or the entry is a media time range (§5.3) whose source has a valid media description with a `transcript`, or is a valid alternate with none whose reference has one (§5.7). |
 | `localized` | At least one node has a locale representation. |
 | `structured` | `structure.ttl` is present, parses, and every relation and node binding resolves, with no `O` diagnostic (§5.6). |
-| `signed` | At least one package attestation verifies against the host's trust root. For an issued copy, against the rebuilt original digest ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |
+| `signed` | At least one package attestation verifies against the host's trust root, from a signer that may sign this package's `id` ([attestations §6](moca-attestations.md#6-trust-roots)). For an issued copy, against the rebuilt original digest ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |
 | `reviewed` | The package is `signed`, at least one review attestation verifies and matches a current file, and every reviewed file is approved: at least one current review says `accurate` and none says otherwise ([attestations §4](moca-attestations.md#4-review-attestations)). An issued copy whose issuer changed a reviewed file is not `reviewed` ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). |
 
 `signed` and `reviewed` depend on the host's trust root: the same

@@ -9543,6 +9543,758 @@
           }
         }
       }
+    },
+    {
+      "id": "manifest-not-object",
+      "description": "Contract §5: a moca.json that is valid JSON but not an object fails its schema (M002). Every problem is a diagnostic; the read never fails.",
+      "target": "fixtures/manifest-not-object",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "manifest-locales-wrong-type",
+      "description": "Contract §5: a manifest member of the wrong type is M002, and the rest of the read goes on without it.",
+      "target": "fixtures/manifest-locales-wrong-type",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "M002_MANIFEST_SCHEMA"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-two-end-records",
+      "description": "Contract §3: an archive has exactly one end-of-central-directory record that ends at the end of the file. This one has two (T003).",
+      "target": "fixtures/archive-two-end-records.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-zip64",
+      "description": "Contract §3: this version does not read Zip64. An archive with a Zip64 end-of-central-directory locator is rejected (T003).",
+      "target": "fixtures/archive-zip64.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-local-name-mismatch",
+      "description": "Contract §3: an entry's local header names the same file as the central directory. This one does not (T003).",
+      "target": "fixtures/archive-local-name-mismatch.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "T003_ARCHIVE_REJECTED"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "archive-entry-short",
+      "description": "Contract §3: an entry is exactly its declared size. A deflated entry that holds fewer bytes than it declares is unreadable (P002).",
+      "target": "fixtures/archive-entry-short.zip",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "P002_UNREADABLE_ENTRY"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "attestation-signatures-at-limit",
+      "description": "Attestations §7: an envelope may hold up to 16 signature entries. The sixteenth verifies, so the package is signed.",
+      "target": "fixtures/attestation-signatures-at-limit",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "attestation-signatures-over-limit",
+      "description": "Attestations §7: an envelope with more than 16 signature entries is malformed (A001), and none of its entries is tried.",
+      "target": "fixtures/attestation-signatures-over-limit",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "limit-attestation-files",
+      "description": "Contract §3: a package with more attestation files than the limit has none of them read (A001, once).",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "limits": {
+          "maxAttestations": 1
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "limit-attestation-bytes",
+      "description": "Contract §3: an attestation file over the size limit is not parsed (A001).",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-09-27T00:00:00Z",
+        "limits": {
+          "maxAttestationBytes": 64
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A001_ATTESTATION_MALFORMED"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "structure-shared-list",
+      "description": "Package spec §5.6: six ordered collections that name one member list. Each has the six members.",
+      "target": "fixtures/structure-shared-list",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured"
+        ]
+      }
+    },
+    {
+      "id": "structure-shared-list-sequence",
+      "kind": "structure",
+      "description": "A collection that shares its member list with others has the same sequence as they do.",
+      "packages": [
+        "fixtures/structure-shared-list"
+      ],
+      "op": "sequence",
+      "iri": "https://example.org/conformance/shared#PathF",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "iri": "https://example.org/conformance/shared#One",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/conformance/shared#Two",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/conformance/shared#Three",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/conformance/shared#Four",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/conformance/shared#Five",
+            "layer": "package"
+          },
+          {
+            "iri": "https://example.org/conformance/shared#Six",
+            "layer": "package"
+          }
+        ]
+      }
+    },
+    {
+      "id": "limit-structure-members",
+      "description": "Contract §3: the members of every collection in a structure file, added together, stay within the triple limit. Here 30 triples give 36 members, over a limit of 30 (O001).",
+      "target": "fixtures/structure-shared-list",
+      "options": {
+        "limits": {
+          "maxTriples": 30
+        }
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O001_ONTOLOGY_UNPARSEABLE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "signer-binding-covered",
+      "description": "Attestations §6 (ADR-0040): the publisher key has the package role and ids that name this package's id, so it counts as its signer.",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-signer-exact-id.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "signer-binding-no-ids",
+      "description": "Attestations §6 (ADR-0040): a key with the package role and no ids signs a package with any id, as before.",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-signer-no-ids.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "reviewed",
+          "signed"
+        ]
+      }
+    },
+    {
+      "id": "signer-binding-not-covered",
+      "description": "Attestations §6 (ADR-0040): the signature verifies, but the key's ids do not cover this package's id (A010). The package is not signed, so it is not reviewed either.",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-narrow-ids.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A010_SIGNER_NOT_FOR_PACKAGE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "require-signature-signer-not-covered",
+      "description": "Attestations §8: a signature from a key whose ids do not cover the package's id does not meet requireSignature (A009).",
+      "target": "fixtures/signed-reviewed",
+      "options": {
+        "trustRoot": "fixtures/trust-root-narrow-ids.json",
+        "now": "2026-09-27T00:00:00Z",
+        "requireSignature": true
+      },
+      "expect": {
+        "valid": false,
+        "codes": [
+          "A009_SIGNATURE_REQUIRED",
+          "A010_SIGNER_NOT_FOR_PACKAGE"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "sigstore-subject-shorter",
+      "description": "Attestations §6: issuer and subject are compared exactly. The trust root's subject is the certificate's subject without its last character: not equal, so invalid.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-signed",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root-subject-shorter.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-subject-other-character",
+      "description": "Attestations §6: issuer and subject are compared exactly. The trust root's subject differs from the certificate's in one character: not equal, so invalid. A subject is text, never a pattern.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-signed",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root-subject-other-character.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-issuer-shorter",
+      "description": "Attestations §6: issuer and subject are compared exactly. The trust root's issuer is the certificate's issuer without its last character: not equal, so invalid.",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-signed",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root-issuer-shorter.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A002_ATTESTATION_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "sigstore-signer-not-covered",
+      "description": "Attestations §6 (ADR-0040): the identity is listed for the package role with ids that do not cover this package's id (A010).",
+      "requires": [
+        "sigstore"
+      ],
+      "target": "fixtures/sigstore/sigstore-signed",
+      "options": {
+        "trustRoot": "fixtures/sigstore/trust-root-other-ids.json",
+        "now": "2026-09-27T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A010_SIGNER_NOT_FOR_PACKAGE"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "terms-container-malformed",
+      "description": "Package spec §4.14: `ai.allowed` is not an object. One U001 at the container; the package stays valid.",
+      "target": "fixtures/terms/allowed-not-object",
+      "expect": {
+        "valid": true,
+        "capabilities": [
+          "core"
+        ],
+        "codes": [
+          "U001_TERMS_INVALID"
+        ],
+        "terms": {
+          "authority": "unverified",
+          "problems": [
+            {
+              "code": "U001_TERMS_INVALID",
+              "path": "ai.allowed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "search-terms-allowed-not-object-fails-closed",
+      "kind": "search",
+      "description": "Contract §15.3: `ai.allowed` is present and not an object, so every permission under it counts as its strictest value. No destination is allowed.",
+      "packages": [
+        "fixtures/terms/allowed-not-object"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-ai-not-object-fails-closed",
+      "kind": "search",
+      "description": "Contract §15.3: `ai` is present and not an object, so every permission under it counts as its strictest value.",
+      "packages": [
+        "fixtures/terms/ai-not-object"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-nodes-not-array-fails-closed",
+      "kind": "search",
+      "description": "Contract §15.3: `nodes` is present and not a list. Which nodes it meant cannot be known, so every node has every permission at its strictest.",
+      "packages": [
+        "fixtures/terms/nodes-not-array"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-node-entry-not-object-fails-closed",
+      "kind": "search",
+      "description": "Contract §15.3: a `nodes` entry that is not an object counts for every node, with every permission at its strictest.",
+      "packages": [
+        "fixtures/terms/node-entry-not-object"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-node-paths-malformed-fails-closed",
+      "kind": "search",
+      "description": "Contract §15.3: a `nodes` entry whose `paths` is not a list of strings counts for every node, with every permission at its strictest.",
+      "packages": [
+        "fixtures/terms/node-paths-malformed"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-node-allowed-not-object-fails-closed",
+      "kind": "search",
+      "description": "Contract §15.3: a malformed container in a `nodes` entry makes the permissions under it the strictest for that entry's nodes only.",
+      "packages": [
+        "fixtures/terms/node-allowed-not-object"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "ai": {
+            "destination": "device",
+            "use": "answer"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "include": [
+          "https://example.com/conformance/terms-node-allowed-not-object@1.0.0#b.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/terms-node-allowed-not-object@1.0.0#a.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-rating-unlisted-scheme",
+      "kind": "search",
+      "description": "Contract §15.4: a record rated only under a scheme the host did not list is unrated for that filter, and an unrated record is removed.",
+      "packages": [
+        "fixtures/terms/rating-other-scheme"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "schemes": {
+              "example-scheme": [
+                "PG"
+              ]
+            }
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-rating-unlisted-scheme-allow-unrated",
+      "kind": "search",
+      "description": "Contract §15.4: with allowUnrated, a record rated only under a scheme the host did not list passes.",
+      "packages": [
+        "fixtures/terms/rating-other-scheme"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "schemes": {
+              "example-scheme": [
+                "PG"
+              ]
+            },
+            "allowUnrated": true
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-rating-other-scheme@1.0.0#a.md",
+          "https://example.com/conformance/terms-rating-other-scheme@1.0.0#b.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-rating-listed-scheme",
+      "kind": "search",
+      "description": "Contract §15.4: a record rated under a scheme the host listed, with an allowed value, passes.",
+      "packages": [
+        "fixtures/terms/rating-other-scheme"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "schemes": {
+              "other-scheme": [
+                "18"
+              ]
+            }
+          }
+        }
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/terms-rating-other-scheme@1.0.0#a.md",
+          "https://example.com/conformance/terms-rating-other-scheme@1.0.0#b.md"
+        ]
+      }
+    },
+    {
+      "id": "search-terms-rating-not-object-fails-closed",
+      "kind": "search",
+      "description": "Contract §15.4: a `rating` that is present and not an object counts as the strictest rating: explicit.",
+      "packages": [
+        "fixtures/terms/rating-not-object"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "explicit": false,
+            "allowUnrated": true
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-rating-explicit-malformed-fails-closed",
+      "kind": "search",
+      "description": "Contract §15.4: an `explicit` that is not a boolean counts as true.",
+      "packages": [
+        "fixtures/terms/rating-explicit-malformed"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "explicit": false,
+            "allowUnrated": true
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
+    },
+    {
+      "id": "search-terms-rating-request-unknown-member",
+      "kind": "search",
+      "description": "Contract §15.4: a rating request with a member this version does not define cannot be honoured, so it removes every record.",
+      "packages": [
+        "fixtures/terms/ratings"
+      ],
+      "options": {
+        "now": "2026-11-16T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lantern",
+        "limit": 10,
+        "terms": {
+          "rating": {
+            "explicit": false,
+            "mode": "strict-path"
+          }
+        }
+      },
+      "expect": {
+        "codes": [
+          "U004_TERMS_EXCLUDED"
+        ],
+        "count": 0
+      }
     }
   ]
 }

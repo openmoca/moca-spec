@@ -278,14 +278,30 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
 - **`issued-copy`** lets an entry sign issued-copy attestations (§3a). For an
   entry with this role, `ids` is REQUIRED (the schema refuses an entry
   without it), and it covers the packages whose copies the entry may issue.
-  This is the reverse of `package`, where a missing `ids` only removes
-  relation authority. An issued-copy attestation lets its signer put another
+  For `package`, `ids` is optional (below). An issued-copy attestation lets its signer put another
   publisher's name on changed bytes, so the role is granted separately from
   `package`.
-- `ids` is OPTIONAL: the package ids a key or identity may speak for when a
-  package it signed supersedes or contests another
-  ([package spec §7.2](moca-package-spec.md#72-relations)). Without `ids`, a
-  package it signs can make no relation take effect.
+- `ids` is OPTIONAL: the package ids a key or identity may speak for. Each
+  entry is an exact id, or a prefix ending in `/`, `:` or `#`
+  ([package spec §7.2](moca-package-spec.md#72-relations)). It does two
+  things for the `package` role
+  ([ADR-0040](../docs/adr/0040-ids-bind-a-signer-to-package-ids.md)):
+  - **Which packages it signs.** An entry with `ids` is a signer only of
+    packages whose `id` its `ids` cover. Its signature on any other package
+    still verifies, but it does not count: the Reader reports
+    `A010_SIGNER_NOT_FOR_PACKAGE`, and that attestation does not make the
+    package `signed` or meet `requireSignature`. An empty `ids` list covers
+    nothing. An entry **without** `ids` signs a package with any `id`, as in
+    earlier versions.
+  - **Which relations take effect.** A package it signed can supersede or
+    contest only the ids its `ids` cover. Without `ids`, a package it signs
+    can make no relation take effect.
+
+  So `signed` means "signed by someone in my trust root" for an entry
+  without `ids`, and "signed by someone my trust root lets speak for this
+  id" for an entry with them. A host that trusts more than one publisher
+  gives each entry the `ids` of its own packages. `ids` does not narrow the
+  `review` role: a reviewer's reach is set by `reviewers` (§4).
 - A key is not trusted from the instant the host's clock reaches `expires`
   (now ≥ `expires`, compared as in
   [package spec §4.4](moca-package-spec.md#44-validity-window)); a key whose
@@ -299,7 +315,11 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
   certificate's OIDC issuer (the Fulcio extension OID 1.3.6.1.4.1.57264.1.8,
   or the older 1.3.6.1.4.1.57264.1.1) and `subject` equals its subject
   alternative name (an email address or a URI), both exactly and
-  case-sensitively. There are no patterns.
+  case-sensitively. There are no patterns: each is compared as a whole
+  string, character for character, and a `subject` or `issuer` is never read
+  as a regular expression, a glob, a prefix or a part of the certificate's
+  value. A Reader that uses a Sigstore library MUST make this comparison
+  itself unless the library's own match is exact.
 - **Sigstore trust material.** `sigstore.trustedRoot` MAY hold a Sigstore
   trusted root: the `trusted_root.json` document of
   [sigstore/protobuf-specs](https://github.com/sigstore/protobuf-specs), with
@@ -307,8 +327,11 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
   keys and timestamp authorities to verify against. When it is present, a
   Reader MUST verify Sigstore bundles against it and nothing else, offline.
   When it is absent, a Reader MAY use trust material it already has, such as
-  a cached copy of the public-good instance's, and MUST NOT fetch any unless
-  the host enabled online checks. A host that runs a private Sigstore
+  a copy of the public-good instance's that ships with its Sigstore library,
+  and MUST NOT fetch any unless the host enabled online checks. Offline
+  means no request of any kind: a Reader MUST NOT start a client that would
+  contact an update server when its cache is empty or out of date, and
+  writes nothing to disk. A host that runs a private Sigstore
   instance, or reads packages offline, supplies `trustedRoot`. A Reader MAY
   verify offline only and use no trust material but `trustedRoot`; without
   it, such a Reader reports Sigstore attestations as unverifiable. To follow
@@ -324,10 +347,16 @@ that fails ends the verification of that file with the outcome named.
 
 1. **Select.** Only regular files under `attestations/` whose names end in
    `.dsse.json` or `.sigstore.json` are attestations. Other files there are
-   ignored.
-2. **Parse.** The file is JSON. For DSSE it is the envelope; for Sigstore the
-   envelope is the bundle's `dsseEnvelope`. The envelope has a string
-   `payload` and a string `payloadType`. Otherwise: **malformed**.
+   ignored. A package with more attestation files than the host's limit
+   (`maxAttestations`, 256 by default) has none of them read: one `A001`
+   for the package, and it has no attestations
+   ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)).
+2. **Parse.** The file is no larger than the host's limit
+   (`maxAttestationBytes`, 1 MiB by default), and it is JSON. For DSSE it is
+   the envelope; for Sigstore the envelope is the bundle's `dsseEnvelope`.
+   The envelope has a string `payload` and a string `payloadType`, and if it
+   has a `signatures` array, that array has no more than 16 entries.
+   Otherwise: **malformed**. The 16 is fixed, so every Reader agrees.
 3. **Payload type.** `payloadType` is `application/vnd.in-toto+json`.
    Otherwise: **malformed**.
 4. **Decode.** `payload` is base64 (RFC 4648 §4) or base64url (§5), with or
@@ -357,14 +386,49 @@ that fails ends the verification of that file with the outcome named.
      group order. The first entry that verifies makes the signature valid;
      one is enough. If none verifies, including when no key matches, a key
      has the wrong role, or a key is not Ed25519: **invalid**.
-   - **Sigstore.** The bundle verifies under Sigstore's rules for an identity
-     the trust root lists for the role (§6). If identities are listed but
-     none for the role, or none matches: **invalid**.
+   - **Sigstore.** The bundle verifies under Sigstore's rules (below) for an
+     identity the trust root lists for the role (§6). If identities are
+     listed but none for the role, or none matches: **invalid**.
 8. **Statement.** A package attestation's statement MUST match the package
    (§3); a review's predicate MUST be valid, MUST name the package's `id`, and
    every subject MUST have a string `name` and a string `sha256` digest (§4).
    An issued-copy attestation MUST pass pass 1 (§7.1). Otherwise:
    **invalid**.
+9. **Signer.** For a package attestation, a signer with `ids` in the trust
+   root MUST cover the package's `id` (§6). Otherwise: **invalid**, reported
+   as `A010` rather than `A002`.
+
+**Sigstore's rules.** "Verifies under Sigstore's rules" means all of the
+following, against the trust material of step 6 and nothing else. A bundle
+that fails any of them is **invalid**.
+
+- **Bundle version.** The bundle's `mediaType` is one of
+  `application/vnd.dev.sigstore.bundle+json;version=0.1`, `…;version=0.2`,
+  `…;version=0.3`, or `application/vnd.dev.sigstore.bundle.v0.3+json`. Any
+  other version is not read.
+- **Content.** The bundle holds a DSSE envelope with exactly one signature,
+  and the signing certificate (not a public-key hint). A bundle that signs a
+  bare message is not an attestation (step 2).
+- **Transparency log.** The bundle has at least one transparency-log entry
+  from a log in the trust material, and every entry it has verifies: by its
+  signed entry timestamp (an inclusion promise), or by an inclusion proof to
+  a checkpoint the log signed. A version 0.1 bundle carries the promise; a
+  version 0.2 or 0.3 bundle carries the proof. The entry's body records this
+  envelope's signature and this certificate.
+- **Time.** At least one verified time exists: the integrated time of an
+  entry verified by its inclusion promise, or an RFC 3161 timestamp over the
+  signature from an authority in the trust material. A bundle with no
+  verified time is invalid, whatever else it holds.
+- **Certificate.** The signing certificate chains to a certificate authority
+  in the trust material, was valid at every verified time, and carries at
+  least one signed certificate timestamp from a certificate-transparency log
+  in the trust material.
+- **Signature.** The envelope's signature verifies with the certificate's
+  key over the DSSE pre-authentication encoding (the DSSE rule above).
+- **Identity.** The certificate's OIDC issuer and its subject alternative
+  name equal the `issuer` and `subject` of one identity the trust root lists
+  for the role, each compared exactly (§6). The Reader takes both values
+  from the certificate it verified, and compares them itself.
 
 An attestation that passes every step is **valid**. Its **signer** is the
 trust-root key's `identity`, or its `keyid` when it has no `identity`; for
@@ -376,7 +440,7 @@ file-name order.
 | --- | --- |
 | Valid | none |
 | Malformed | `A001` (error) |
-| Invalid | `A002` (error) |
+| Invalid | `A002` (error); `A008` for a package attestation whose digest does not match (§3); `A010` for a signer whose `ids` do not cover the package (step 9) |
 | Unverifiable | `A003` (warning) |
 | Indeterminate: online verification was requested and could not complete, and offline fallback was not allowed | `A004` (warning) |
 
@@ -446,6 +510,14 @@ A valid package attestation proves who published the bytes. A valid review
 proves who signed a statement about them. Neither proves the content is true or
 safe to follow. Content remains untrusted input to a model
 ([package spec §13.1](moca-package-spec.md#131-content-is-untrusted-input-to-a-model)).
+
+**A signature is not ownership of an id.** A valid package attestation says
+that a signer the host trusts published these bytes. Whether that signer may
+publish under this package's `id` is the host's to say, with `ids` (§6): an
+entry without `ids` signs any `id`, so a host that trusts more than one
+publisher SHOULD give each entry the `ids` of its own packages. An
+application can also compare a package's `signers` with the publisher it
+expected.
 
 A missing or invalid attestation leaves the rest of the package valid (§7),
 because many hosts read unsigned packages. A host that serves only signed

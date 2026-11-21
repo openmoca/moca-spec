@@ -1,0 +1,25 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix c: <https://example.org/conformance/shared#> .
+
+c:One a skos:Concept .
+c:Two a skos:Concept .
+c:Three a skos:Concept .
+c:Four a skos:Concept .
+c:Five a skos:Concept .
+c:Six a skos:Concept .
+
+# Six collections name one list: 30 triples, 36 members.
+c:PathA a skos:OrderedCollection ; skos:memberList _:l1 .
+c:PathB a skos:OrderedCollection ; skos:memberList _:l1 .
+c:PathC a skos:OrderedCollection ; skos:memberList _:l1 .
+c:PathD a skos:OrderedCollection ; skos:memberList _:l1 .
+c:PathE a skos:OrderedCollection ; skos:memberList _:l1 .
+c:PathF a skos:OrderedCollection ; skos:memberList _:l1 .
+
+_:l1 rdf:first c:One ; rdf:rest _:l2 .
+_:l2 rdf:first c:Two ; rdf:rest _:l3 .
+_:l3 rdf:first c:Three ; rdf:rest _:l4 .
+_:l4 rdf:first c:Four ; rdf:rest _:l5 .
+_:l5 rdf:first c:Five ; rdf:rest _:l6 .
+_:l6 rdf:first c:Six ; rdf:rest rdf:nil .

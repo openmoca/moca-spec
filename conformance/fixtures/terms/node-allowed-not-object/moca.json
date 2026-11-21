@@ -1,0 +1,18 @@
+{
+  "id": "https://example.com/conformance/terms-node-allowed-not-object",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "nodes": [
+      {
+        "paths": [
+          "content/a.md"
+        ],
+        "ai": {
+          "allowed": false
+        }
+      }
+    ]
+  }
+}

@@ -49,5 +49,6 @@ carried over.
 | [0037](0037-a-named-host-claim-for-creators-terms.md) | A named claim for hosts that honour creators' terms, narrowing ADR-0022 |
 | [0038](0038-credits-in-fixed-shapes.md) | Credits are labels in fixed shapes |
 | [0039](0039-a-conformance-programme-and-an-implementations-registry.md) | OpenMOCA Conformant (software that passes a test suite: Official, Verified, Self-tested) and the OpenMOCA Commitment (a company's signed promise to honour creators' and people's rules; not tested); supersedes ADR-0037's claim in part |
+| [0040](0040-ids-bind-a-signer-to-package-ids.md) | A trust-root entry's `ids` say which package ids it may sign; an entry without `ids` signs any |
 
 New records use the template in [0000-template.md](0000-template.md).

@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/terms-rating-not-object",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "rating": "clean"
+  }
+}
