@@ -21,14 +21,16 @@ const lintBin = join(root, 'node_modules', '@openmoca', 'moca-lint', 'bin', 'moc
 const indexBin = join(root, 'node_modules', '@openmoca', 'moca-index', 'bin', 'moca-index.js');
 const trustRoot = join(root, 'fixtures', 'signing-keys', 'trust-root.json');
 
-// Each example package and the file it is released as. The file names are in the download links in the
-// examples' READMEs and on openmoca.org, so keep them stable.
+// Each example package, the file it is released as, and the capabilities it must keep. The file names are in
+// the download links in the examples' READMEs and on openmoca.org, so keep them stable. A signed example whose
+// attestation goes missing would otherwise pack as an unsigned package without a word, so its `signed` (and
+// `reviewed`) capabilities are named here and checked.
 const EXAMPLES = [
   ['minimal', 'minimal.moca'],
-  ['support-kb', 'support-kb.moca'],
-  ['acme-support', 'acme-support.moca'],
+  ['support-kb', 'support-kb.moca', ['signed', 'reviewed']],
+  ['acme-support', 'acme-support.moca', ['signed', 'reviewed']],
   ['policy-corpus/retention-2025', 'policy-corpus-retention-2025.moca'],
-  ['policy-corpus/retention-2026', 'policy-corpus-retention-2026.moca'],
+  ['policy-corpus/retention-2026', 'policy-corpus-retention-2026.moca', ['signed']],
   ['handbook/handbook', 'handbook.moca'],
   ['handbook/incident-response', 'handbook-incident-response.moca'],
   ['handbook/service-ownership', 'handbook-service-ownership.moca'],
@@ -56,13 +58,16 @@ let failed = false;
 try {
   mkdirSync(out, { recursive: true });
   const rows = [];
-  for (const [dir, file] of EXAMPLES) {
+  for (const [dir, file, must = []] of EXAMPLES) {
     const folder = join('examples', dir);
     const target = join(out, file);
     try {
       lint('pack', folder, '-o', target, '--trust-root', trustRoot);
       // A composed package names its members; lint finds them among the folders beside it.
-      lint('lint', target, '--trust-root', trustRoot, '--members', dirname(folder));
+      const report = lint('lint', target, '--trust-root', trustRoot, '--members', dirname(folder));
+      const capabilities = (report.match(/^capabilities: (.*)$/m)?.[1] ?? '').split(', ');
+      const lost = must.filter((c) => !capabilities.includes(c));
+      if (lost.length) throw new Error(`${file} is no longer ${lost.join(' or ')}: check its attestations/ folder`);
       const digest = digestOf(target);
       if (digest !== digestOf(folder)) throw new Error(`${file} has digest ${digest}, but its folder does not`);
       rows.push([file, `${Math.ceil(statSync(target).size / 1024)} KB`, digest]);

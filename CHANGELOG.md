@@ -108,7 +108,7 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   `readingOrder`, the IRI of the ordered collection in the package's own
   `structure.ttl` that orders the whole package; `M014` (warning) when it
   does not resolve. Reader contract §9: the search option `upTo`, applied in
-  the gate (§9.2 step 6), limiting only packages whose reading order places
+  the gate (§9.2, step 5.6), limiting only packages whose reading order places
   it (a member, or a descendant placed at its first member) and never
   records off the reading order; `S008` (warning) when no loaded reading
   order places it. §9.4: package states carry the reading order. The Reader
@@ -243,7 +243,7 @@ each with corpus cases. 445 cases.
   relations now also limits what that entry signs** (MIGRATIONS.md). Cases `signer-binding-*`,
   `require-signature-signer-not-covered`, `sigstore-signer-not-covered`.
 - **Terms: a malformed container fails closed.** Package spec §4.14 and contract §15.3: an `ai`, `ai.allowed`,
-  `rights`, `rights.export`, `nodes` or `nodes` entry that is present with the wrong type sets every permission under
+  `rights`, `rights.export`, `nodes`, or an entry of `nodes`, that is present with the wrong type sets every permission under
   it to its strictest value; a `nodes` value or entry that does not say which nodes it means counts for every node.
   Cases `terms-container-malformed`, `search-terms-*-fails-closed`.
 - **Ratings: what "rated" means.** Contract §15.4: a record is rated, for one host's filter, only by an `explicit`
@@ -279,6 +279,8 @@ each with corpus cases. 445 cases.
   parse: `M001`, `C002` (`C004`), `A001`, `E005`, `S001`, `S004`. The limit is fixed. Cases
   `manifest-nesting-at-limit`, `manifest-nesting-over-limit`, `frontmatter-nesting-at-limit`,
   `frontmatter-nesting-over-limit`, `attestation-nesting-over-limit`. 450 cases.
+### Changed (before the hardening pass)
+
 - **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
   a composing package whose signer's ids cover the member makes the member's
   `ai` and export terms stricter (`decidedBy: composite`) and its gate removes
@@ -304,7 +306,7 @@ each with corpus cases. 445 cases.
   (short-lived keys), §6 (what derived data covers) and §7 (delivery routes).
   New guide: [protected sources](docs/guides/protected-sources.md), sealed or
   as reference nodes. Schemas: manifest, terms and citation record.
-- **The creator's terms (ADR-0036, ADR-0037, Accepted).**
+- **The creator's terms (ADR-0036, Accepted; ADR-0037, Accepted, its host claim since superseded by ADR-0039).**
   Package spec §4.14 `terms` (`ai`, `rating`,
   `rights`, node values in the manifest), with permissions as booleans
   under `ai.allowed` (`device`, `host`, `provider`, `training`,
@@ -380,7 +382,8 @@ each with corpus cases. 445 cases.
   their own concepts on every composer's reading order, bound or not, but
   only when the composer's signers' `ids` cover the member's `id` (as for
   relations, `R004`), or the host allows unsigned packages to
-  (`allowUnsignedRelations`).
+  (the option that allows unsigned relations; `allowUnsignedRelations` in the
+  reference Readers).
 - Reader contract §3: a repeat of a member id (`M005`) is not resolved; a
   refined quote is checked in linear time; `members` is a shared graph, and
   the memory a read needs grows with `maxMemberBytes` by a factor that
@@ -393,8 +396,8 @@ each with corpus cases. 445 cases.
 - Package spec §5.1: `.inf` and `.nan` are not strings either, and a number
   too large to be finite (`1e400`, or a decimal, octal or hex integer too
   large for a finite double) is read as `.inf` is, never failing the read. A
-  number that is not finite may be a mapping key. An integer beyond 64
-  bits is rounded once to the nearest double. An implicit mapping key longer
+  number that is not finite may be a mapping key. A corpus case checks
+  that an integer beyond 64 bits is rounded once to the nearest double. An implicit mapping key longer
   than 1,024 characters is `C002`, as YAML 1.2 says.
 - Reader contract §3: the two evidence budgets (`maxEvidenceChecksPerPackage`
   and `maxEvidenceBytesPerPackage`) now cover the whole read, so members share

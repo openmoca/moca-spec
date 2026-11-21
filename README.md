@@ -150,12 +150,12 @@ teaches it to make, check, sign, index, read and serve packages.
 | [Citations over AG-UI](spec/moca-ag-ui-citations.md) | The `moca.citations` event: how a service sends the citation records an answer cites to any AG-UI client |
 | [Profiles](profiles/README.md) | Optional extensions; today the ontology profile (extra vocabulary files) |
 | [Schemas](schemas/v1) | Manifest, node, structure, citation record, search hit, sidecar, review predicate, trust root, AG-UI citations event |
-| [Conformance corpus](conformance/README.md) | 352 cases, with pinned digests, that any Reader must pass, in any language |
+| [Conformance corpus](conformance/README.md) | 450 cases, with pinned digests, that any Reader must pass, in any language |
 
 Identifiers use `https://w3id.org/moca/...`, permanent names that redirect to
 openmoca.org: each schema resolves to itself and each profile to its
-document. The w3id.org redirect is registered at the 0.6.0 release; until
-then these URIs are stable names, not live links.
+document. The w3id.org redirect is not registered yet; until it is, these
+URIs are stable names, not live links.
 
 ## Readers
 
@@ -194,6 +194,30 @@ Start at [docs/](docs/README.md): [why MOCA](docs/why-moca.md),
 [use cases](docs/use-cases.md), [architecture](docs/architecture.md), the
 guides, and the [decision records](docs/adr/README.md).
 
+## Standards
+
+MOCA builds on existing standards rather than inventing its own. The full
+list, with where each applies, is in
+[package specification §3](spec/moca-package-spec.md#3-standards-used).
+
+| Standard | Where | How strongly |
+| --- | --- | --- |
+| [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format) (OKF) v0.2 | content and node trust fields | follow |
+| [JSON Schema](https://json-schema.org/draft/2020-12) 2020-12 | the schemas in `schemas/v1` | follow |
+| [I-JSON](https://www.rfc-editor.org/rfc/rfc7493) (RFC 7493) | `moca.json` | follow |
+| SHA-256, in the [BagIt](https://www.rfc-editor.org/rfc/rfc8493) (RFC 8493) manifest line format | the package digest | follow |
+| [in-toto Statement](https://github.com/in-toto/attestation) v1, in [DSSE](https://github.com/secure-systems-lab/dsse) or a [Sigstore](https://www.sigstore.dev/) bundle; [Ed25519](https://www.rfc-editor.org/rfc/rfc8032) (RFC 8032) | attestations | follow |
+| [W3C Web Annotation](https://www.w3.org/TR/annotation-model/) selectors, [RFC 3778](https://www.rfc-editor.org/rfc/rfc3778) PDF pages, [W3C Media Fragments](https://www.w3.org/TR/media-frags/) | evidence | follow |
+| [WebVTT](https://www.w3.org/TR/webvtt1/) | captions and transcripts | follow |
+| [W3C SKOS](https://www.w3.org/TR/skos-reference/), [DCMI Metadata Terms](https://www.dublincore.org/specifications/dublin-core/dcmi-terms/), in [Turtle](https://www.w3.org/TR/turtle/) | structure | follow |
+| [BCP 47](https://www.rfc-editor.org/info/bcp47) | languages | follow |
+| [SPDX license expressions](https://spdx.github.io/spdx-spec/v2.3/SPDX-license-expressions/) | licences | follow |
+| [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339) | dates and times | follow |
+| [age](https://c2sp.org/age) v1 | encrypted packages | follow |
+| [AG-UI](https://docs.ag-ui.com/) | the `moca.citations` event | follow |
+| [W3C Publication Manifest](https://www.w3.org/TR/pub-manifest/) | `datePublished` | informative |
+| IETF `draft-ietf-aipref-vocab-08`, RSL 1.0, [W3C TDMRep](https://www.w3.org/community/tdmrep/) | publishing `terms` where crawlers look (§4.14) | informative mapping |
+
 ## Contributing and licence
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [GOVERNANCE.md](GOVERNANCE.md).
@@ -203,3 +227,5 @@ risk. See [NOTICE](NOTICE).
 
 OpenMOCA™ is a trade mark of PI & Mash Solutions Ltd. The licence covers the
 code and text, not the name: see the [trade mark policy](TRADEMARKS.md).
+
+Built with the help of AI assistants; every change is reviewed and accepted by the maintainer.

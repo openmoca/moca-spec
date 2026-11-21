@@ -1964,8 +1964,9 @@ log. Content and sources may hold more.
   ([Reader contract §15](moca-reader-contract.md#15-creators-terms)). It
   cannot see what a host does with content afterwards.
 - A host that has opened a package can ignore its terms. Hosts that honour
-  them can say so with a tested claim
-  ([ADR-0037](../docs/adr/0037-a-named-host-claim-for-creators-terms.md)).
+  them can say so through the OpenMOCA Commitment
+  ([COMMITMENT.md](../COMMITMENT.md)): a signed promise, not a test, kept
+  apart from what the signer declared (§13.3).
 - Encryption limits which hosts can open a package. It cannot stop a host
   that opened it from breaking the terms.
 - Changing terms is detectable only by a host that checks who signed them.
