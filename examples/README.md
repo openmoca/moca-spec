@@ -12,6 +12,7 @@ content.
 | Example | What it shows | Capabilities | Download |
 | --- | --- | --- | --- |
 | [`minimal`](minimal) | The smallest valid package: a manifest and one page. Start here | core | `minimal.moca` |
+| [`rock-pools`](rock-pools/README.md) | A short original guide that shows what travels with a work: credits, signed terms with a stricter term on one part, a machine-made page, a machine-made page a person checked, and quotes checked against a real source the citation can open | core, located-evidence, signed | `rock-pools.moca` |
 | [`acme-support`](acme-support/README.md) | A support knowledge base of 34 pages in English and French: signed, reviewed, structured, with quotes checked against the original sources. The [walkthrough](../docs/walkthrough.md) uses it | core, localized, located-evidence, reviewed, self-contained-evidence, signed, structured | `acme-support.moca` |
 | [`support-kb`](support-kb/README.md) | A four-answer support knowledge base, small enough to read in one sitting: evidence, a signed review, a French translation, a draft and an internal-only page | core, located-evidence, localized, reviewed, self-contained-evidence, signed | `support-kb.moca` |
 | [`policy-corpus`](policy-corpus/README.md) | Two versions of one policy, with validity windows and `supersedes`, so only the one in force is returned | core | `policy-corpus-retention-2025.moca`, `policy-corpus-retention-2026.moca` |

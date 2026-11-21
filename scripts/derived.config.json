@@ -70,6 +70,10 @@
       "key": "publisher"
     },
     {
+      "package": "examples/rock-pools",
+      "key": "publisher"
+    },
+    {
       "package": "conformance/fixtures/terms/by-publisher",
       "key": "publisher"
     },
