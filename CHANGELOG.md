@@ -322,6 +322,8 @@ each with corpus cases. 445 cases.
   is one level; a bracket inside an IRI, a string, a comment or a prefixed name (escaped characters included) does not
   count. Past the limit the file is `O001`, with the overlay as the file for an overlay. Cases
   `structure-nesting-at-limit`, `structure-nesting-over-limit` (built by `scripts/limit-fixtures.mjs`). 485 cases.
+- **Every YAML error is `C002`.** Frontmatter the YAML library cannot read is `C002`, whatever the error. Case
+  `frontmatter-escape-past-unicode`: a double-quoted escape for a code point past U+10FFFF. 486 cases.
 ### Changed (before the hardening pass)
 
 - **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
