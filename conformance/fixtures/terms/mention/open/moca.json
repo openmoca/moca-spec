@@ -1,0 +1,15 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-open",
+  "version": "1.0.0",
+  "title": "An open show",
+  "description": "A show any model may read.",
+  "language": "en",
+  "publisher": {
+    "name": "Example Network"
+  },
+  "tags": [
+    "harbours",
+    "lanterns"
+  ]
+}

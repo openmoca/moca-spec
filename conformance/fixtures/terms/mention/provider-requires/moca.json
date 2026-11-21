@@ -1,0 +1,14 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-provider-requires",
+  "version": "1.0.0",
+  "title": "A show for providers that keep nothing",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "providerRequires": [
+        "noRetention"
+      ]
+    }
+  }
+}

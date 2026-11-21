@@ -1,0 +1,21 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-composite-hides",
+  "version": "1.0.0",
+  "title": "A course that hides its lessons from models that may not read them",
+  "language": "en",
+  "members": [
+    {
+      "id": "https://example.com/conformance/terms-composite-member",
+      "version": "1.0.0",
+      "digest": "sha256:728d080563481f2e9eabc23abb294c4d5f2706ef2de788fdb95d13211baecad5"
+    }
+  ],
+  "terms": {
+    "ai": {
+      "allowed": {
+        "mention": false
+      }
+    }
+  }
+}

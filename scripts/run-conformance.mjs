@@ -142,6 +142,16 @@ function checkSearch(e, actual) {
       if (JSON.stringify(r.package.issuedCopy ?? null) !== JSON.stringify(e.issuedCopy)) problems.push(`${keyOf(r)}: expected package.issuedCopy ${JSON.stringify(e.issuedCopy)}, got ${JSON.stringify(r.package.issuedCopy ?? null)}`);
     }
   }
+  // Contract §15.4: the counts of the search's U004, each member the case gives compared exactly; null means no U004.
+  if (e.termsExcluded !== undefined) {
+    const got = actual.termsExcluded ?? null;
+    if (e.termsExcluded === null ? got !== null : got === null) problems.push(`termsExcluded: expected ${JSON.stringify(e.termsExcluded)}, got ${JSON.stringify(got)}`);
+    else if (e.termsExcluded) {
+      for (const [k, want] of Object.entries(e.termsExcluded)) {
+        if (JSON.stringify(canonical(got[k] ?? null)) !== JSON.stringify(canonical(want))) problems.push(`termsExcluded.${k}: expected ${JSON.stringify(want)}, got ${JSON.stringify(got[k] ?? null)}`);
+      }
+    }
+  }
   for (const r of records) {
     const errors = validateAgainst('citationRecord', r);
     if (errors.length > 0) problems.push(`${keyOf(r)} is not a valid citation record: ${errors[0]}`);
@@ -157,6 +167,19 @@ function checkStructure(e, actual) {
   return problems;
 }
 
+/** Contract §15.4, "The catalogue rule": entries compared exactly, in order (members of an entry in any order), each valid. */
+function checkCatalogue(e, actual) {
+  const problems = [];
+  if (!same(e.codes ?? [], actual.codes ?? [])) problems.push(`codes: expected [${uniqueSorted(e.codes ?? [])}], got [${uniqueSorted(actual.codes ?? [])}]`);
+  const result = Array.isArray(actual.result) ? actual.result : [];
+  if (JSON.stringify(canonical(e.result)) !== JSON.stringify(canonical(result))) problems.push(`result: expected ${JSON.stringify(e.result)}, got ${JSON.stringify(actual.result)}`);
+  for (const entry of result) {
+    const errors = validateAgainst('catalogueEntry', entry);
+    if (errors.length > 0) problems.push(`${entry?.id} is not a valid catalogue entry: ${errors[0]}`);
+  }
+  return problems;
+}
+
 let failures = 0;
 let skipped = 0;
 for (const c of corpus.cases) {
@@ -166,13 +189,14 @@ for (const c of corpus.cases) {
   }
   const actual = await run(c);
   if (showActual) {
-    const shown = c.kind === 'search' ? { codes: uniqueSorted(actual.codes ?? []), results: (actual.records ?? []).map(keyOf) }
-      : c.kind === 'structure' || c.kind === 'map-time' ? actual
+    const shown = c.kind === 'search' ? { codes: uniqueSorted(actual.codes ?? []), results: (actual.records ?? []).map(keyOf), ...(actual.termsExcluded ? { termsExcluded: actual.termsExcluded } : {}) }
+      : c.kind === 'structure' || c.kind === 'map-time' || c.kind === 'catalogue' ? actual
         : { ...actual, codes: uniqueSorted(actual.codes), capabilities: uniqueSorted(actual.capabilities) };
     console.log(`${c.id}: ${JSON.stringify(shown)}`);
     continue;
   }
   const problems = c.kind === 'search' ? checkSearch(c.expect, actual)
+    : c.kind === 'catalogue' ? checkCatalogue(c.expect, actual)
     : c.kind === 'structure' || c.kind === 'map-time' ? checkStructure(c.expect, actual)
       : checkPackage(c.expect, actual);
   if (problems.length > 0) {

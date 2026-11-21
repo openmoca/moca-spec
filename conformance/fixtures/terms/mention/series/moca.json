@@ -1,0 +1,19 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-series",
+  "version": "1.0.0",
+  "title": "A series of shows",
+  "language": "en",
+  "members": [
+    {
+      "id": "https://example.com/conformance/terms-mention-closed-hidden",
+      "version": "1.0.0",
+      "digest": "sha256:c1cfdc1d1dde6b2e906804dfbc3003331932fb1844b4fd2ed3dc45195adbcfeb"
+    },
+    {
+      "id": "https://example.com/conformance/terms-mention-open",
+      "version": "1.0.0",
+      "digest": "sha256:8215e0f1aaea06a38ca11cb35bf42079700d92aaedb65f71d147cf20e23c00f6"
+    }
+  ]
+}
