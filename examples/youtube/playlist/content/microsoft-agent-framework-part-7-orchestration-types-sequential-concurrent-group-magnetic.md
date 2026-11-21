@@ -26,7 +26,12 @@ moca:
       selector:
         type: FragmentSelector
         conformsTo: http://www.w3.org/TR/media-frags/
-        value: t=0,1484
+        value: t=0,1483.039
+  media:
+    - source: video
+      type: text/html
+      duration: 1481
+      transcript: captions
 ---
 # Microsoft Agent Framework - Part#7: Orchestration Types \| Sequential, Concurrent, Group & Magnetic
 

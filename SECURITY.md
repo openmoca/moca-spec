@@ -20,6 +20,18 @@ if you can, a minimal package that shows it.
   links or unreadable files: these must fail closed).
 - Archive handling in the Readers and `moca-lint`: traversal, zip bombs,
   entry limits.
+- Encrypted packages ([encrypted packages](spec/moca-encrypted-package.md)):
+  parsing of the envelope, `moca-enc.json` and the age header; the limits
+  (the scrypt work factor, the decrypted size, the cover copy); the order of
+  checks before decryption; the outline check against the decrypted manifest
+  (`E004`); and anything that leaves decrypted bytes on disk or in a place
+  the host did not choose.
+- Issued copies ([attestations §3a and §7.1](spec/moca-attestations.md#3a-issued-copy-attestations)):
+  a copy accepted that changes a file the rules or the publisher's
+  `issuedCopies` do not allow, or a rebuilt digest that a crafted statement
+  can steer.
+- Manifest images: a Reader that decodes, fetches or renders an image, or
+  serves one over `maxImageBytes`.
 - The MCP server widening what the host allows, for example returning content
   outside the host's audience filter.
 - Schemas that accept what the specification forbids.
@@ -45,6 +57,17 @@ if you can, a minimal package that shows it.
   ([package spec §8](spec/moca-package-spec.md#8-no-agent-material)).
 - **Audience is a label, not access control.** Anyone with the package can
   read every file.
+- **Encryption gives confidentiality, not provenance or control.** Anyone who
+  can decrypt a package can copy it, and the outline is public. Who made a
+  package comes only from attestations checked after decryption
+  ([encrypted packages §7](spec/moca-encrypted-package.md#7-security-considerations)).
+  `distribution` is the publisher's intent, never access control.
+- **An issued copy proves where its bytes came from, not that only marks
+  changed.** The Reader proves the copy differs from the publisher's package
+  only in the listed files and that the publisher allowed them; what changed
+  inside them is the issuer's assertion
+  ([attestations §8](spec/moca-attestations.md#8-what-attestations-do-not-prove)).
+  Marks identify a copy, not a person, and do not survive deliberate removal.
 
 ## The example keys are insecure on purpose
 

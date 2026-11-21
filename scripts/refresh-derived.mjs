@@ -8,13 +8,13 @@
 //
 // --check runs the same refresh on a temporary copy and compares the result
 // with the working tree, so there is only one code path to trust.
-import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
+import { appendFileSync, cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import AdmZip from 'adm-zip';
 import { createPrivateKey, sign as cryptoSign } from 'node:crypto';
-import { readPackage, directoryResolver, packageStatement, preAuthEncode, PAYLOAD_TYPE } from '@openmoca/moca-core';
+import { readPackage, directoryResolver, packageStatement, issuedCopyStatement, rebuiltDigest, preAuthEncode, PAYLOAD_TYPE } from '@openmoca/moca-core';
 import { signPackage, reviewNodes } from '@openmoca/moca-sign';
 import { buildSidecar } from '@openmoca/moca-index';
 
@@ -59,6 +59,27 @@ async function refresh(root) {
     await reviewNodes({ dir: at(r.package), nodes: r.nodes, reviewer: r.reviewer, outcome: r.outcome ?? 'accurate', reviewedAt: r.at, scope: r.scope, name: r.name, ...key(r.key) });
   }
   for (const c of config.copyAttestations) cpSync(at(join(c.from, 'attestations')), at(join(c.to, 'attestations')), { recursive: true });
+
+  // Issued copies (attestations §3a): a copy of a signed original, marked, with issued-copy attestations.
+  for (const c of config.issued) {
+    rmSync(at(c.out), { recursive: true, force: true });
+    cpSync(at(c.from), at(c.out), { recursive: true });
+    for (const [path, text] of Object.entries(c.mark)) appendFileSync(at(join(c.out, path)), text);
+    const original = await readPackage(at(c.from));
+    const copy = await readPackage(at(c.out));
+    for (const a of c.attestations) {
+      const changed = new Map(a.empty ? [] : Object.keys(c.mark).map((p) => [p, original.fileDigests.get(p)]));
+      for (const [p, hash] of Object.entries(a.changed ?? {})) changed.set(p, hash === 'CURRENT' ? copy.fileDigests.get(p) : hash);
+      const originalDigest = a.rebuild ? rebuiltDigest(copy.fileDigests, changed) : (a.original ?? original.digest);
+      const statement = Buffer.from(JSON.stringify(issuedCopyStatement({
+        id: copy.manifest.id, version: copy.manifest.version, digest: copy.digest, originalDigest, changedFiles: Object.fromEntries(changed),
+      })), 'utf8');
+      const { privateKeyPem, keyid } = key(a.key);
+      const sig = cryptoSign(null, preAuthEncode(PAYLOAD_TYPE, statement), createPrivateKey(privateKeyPem));
+      const envelope = { payload: statement.toString('base64'), payloadType: PAYLOAD_TYPE, signatures: [{ keyid, sig: sig.toString('base64') }] };
+      writeFileSync(at(join(c.out, 'attestations', `${a.name ?? `issued.${keyid}`}.dsse.json`)), `${JSON.stringify(envelope, null, 2)}\n`);
+    }
+  }
 
   for (const s of config.sidecars) {
     await buildSidecar({ pkg: at(s.package), out: at(s.out), chunker: s.chunk, force: true });

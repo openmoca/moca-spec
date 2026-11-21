@@ -1,0 +1,11 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/diamond-top",
+  "version": "1.0.0",
+  "title": "The top of the diamond",
+  "language": "en",
+  "members": [
+    { "id": "https://example.com/conformance/diamond-left", "version": "1.0.0", "digest": "sha256:9217f0e3bc1b6e9c85526789b8e67cdda404db8310f424e79025f9c4d5e3bbe9" },
+    { "id": "https://example.com/conformance/diamond-right", "version": "1.0.0", "digest": "sha256:e07b1c54e1f330197f832e90724d4a397bbe26250c9d857dfc1d9ef1b2a85b6e" }
+  ]
+}

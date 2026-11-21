@@ -1,0 +1,13 @@
+{
+  "id": "https://example.com/conformance/translation-locale-case",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "locales": [
+    "pt-BR"
+  ],
+  "translations": {
+    "PT-br": {
+      "title": "Fixture PT"
+    }
+  }
+}

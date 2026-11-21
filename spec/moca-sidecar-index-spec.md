@@ -1,6 +1,6 @@
 # MOCA Sidecar Index Specification
 
-Specification version: `0.6.0`
+Specification version: `0.7.0`
 Status: Before `1.0.0`. A minor version may still change the format; each change is in [MIGRATIONS.md](../MIGRATIONS.md).
 License: [Apache License 2.0](../LICENSE)
 
@@ -23,15 +23,22 @@ and only when, they appear in capitals. Terms are as defined in
 
 ## 2. Layout
 
-A sidecar is a directory, or a Zip archive of one, kept **outside** the
-package it indexes:
+A sidecar is a directory, or a Zip archive of one with `index.json` at its
+root, kept **outside** the package it indexes. The archive is conventionally
+named `<name>.mocai` and has the media type
+`application/vnd.openmoca.index+zip`
+([package spec §12.1](moca-package-spec.md#121-media-types)):
 
 ```text
-support-kb.moca.idx/
+support-kb/
 ├── index.json
 └── payload/
     └── items.jsonl
 ```
+
+For an encrypted package, a Producer SHOULD put the sidecar inside the
+envelope instead, in its Zip form, as `index.age`
+([encrypted packages §6](moca-encrypted-package.md#6-derived-data)).
 
 ## 3. `index.json`
 
@@ -106,13 +113,29 @@ A Reader MUST NOT use a sidecar unless all of these hold:
 
 1. `index.json` is valid (`S001`);
 2. `target.id` and `target.version` match the package (`S002`);
-3. `target.digest` equals the package's computed digest (`S003`);
+3. `target.digest` equals the package's computed digest, or, for an issued
+   copy, the `issuedCopy.originalDigest` it verified with
+   ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes))
+   (`S003`);
 4. the payload format is one it supports (`S005`);
 5. every item is valid and points at an existing node representation (`S004`).
 
 If any check fails, the Reader ignores the sidecar and searches the package
 directly. Any change to a package changes its digest, so a sidecar is stale as
 soon as its package changes.
+
+**Issued copies.** A sidecar built from the publisher's package binds to an
+issued copy of it, so a licensee's copy can be searched on a device without
+building a sidecar for each copy. The issuer changed some node files
+(`changedFiles`), so their chunks' offsets and text may no longer hold. Before
+check 5, the Reader drops every item whose node file is a changed file, and
+uses each changed node representation's whole body as one chunk, without a
+vector. It reports `S009_SIDECAR_ITEMS_REPLACED` (info) with the number of
+files. Lexical search covers the whole copy; dense search does not reach a
+changed node, and hybrid search reaches it through its lexical side. So
+publishers SHOULD let issuers mark only files that need not be found by
+meaning: an `issuedCopies.paths` entry for a notice page, or for `media/`
+([package spec §4.11](moca-package-spec.md#411-issued-copies)).
 
 Before a dense or hybrid search, a Reader compares the host's embedder with
 `model` as [Reader contract §9.3](moca-reader-contract.md#93-dense-backends)
@@ -131,6 +154,10 @@ and MUST NOT apply a prefix a sidecar gives.
   only sidecars it built or trusts, or search the package directly.
 - **A sidecar archive is untrusted input.** It follows the same archive rules
   and limits as a package ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)).
+- **A sidecar reveals content.** Its chunk text and vectors are derived from
+  the package. For an encrypted package, a plain sidecar undoes the
+  encryption; it belongs inside the envelope as `index.age`
+  ([encrypted packages §6](moca-encrypted-package.md#6-derived-data)).
 - **Chunk text reaches models** like any package text, and follows
   [Reader contract §12](moca-reader-contract.md#12-handing-content-to-a-model).
 

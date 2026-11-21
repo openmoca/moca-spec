@@ -1,0 +1,10 @@
+{
+  "id": "https://example.com/conformance/apps-duplicate",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "apps": [
+    "legal",
+    "tutoring",
+    "legal"
+  ]
+}

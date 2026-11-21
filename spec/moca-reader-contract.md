@@ -1,6 +1,6 @@
 # MOCA Reader Contract
 
-Specification version: `0.6.0`
+Specification version: `0.7.0`
 Status: Before `1.0.0`. A minor version may still change the format; each change is in [MIGRATIONS.md](../MIGRATIONS.md).
 License: [Apache License 2.0](../LICENSE)
 
@@ -69,15 +69,52 @@ follows:
   unsupported (`P001_UNSUPPORTED_ENTRY`).
 - **Compression.** A Reader MUST read entries that are stored or deflated, and
   MUST NOT read any other method: such an entry is unreadable
-  (`P002_UNREADABLE_ENTRY`), so every Reader reaches the same conclusion.
+  (`P002_UNREADABLE_ENTRY`), so every Reader reaches the same conclusion. An
+  entry with the encryption flag (general purpose bit 0) is unreadable too
+  (`P002`).
 - **Sizes.** An entry is never inflated past its declared uncompressed size.
   Every entry, stored or deflated, MUST be exactly its declared size and
-  match its CRC-32; one that is not is unreadable (`P002`). The byte limit is checked against
+  match its CRC-32; one that yields fewer bytes, or more, or fails its
+  CRC-32, is unreadable (`P002`). The byte limit is checked against
   declared sizes before reading.
-- **Directory.** The central directory is authoritative.
+- **Directory.** One central directory is authoritative, and a Reader finds
+  it the same way every time:
+  - **One end record.** The end-of-central-directory record is the one that
+    ends exactly at the end of the file: its signature, its 22 bytes, and a
+    comment of the length it declares, with nothing after. A Reader searches
+    back from the end of the file through the longest comment a record can
+    declare (65,535 bytes). If no position qualifies, or more than one does,
+    the archive is rejected (`T003`).
+  - **One file, no Zip64.** A multi-disk archive (a disk number that is not
+    0, or two different entry counts) is rejected (`T003`). So is an archive
+    that uses Zip64 in its directory: an end record whose entry count is
+    0xFFFF or whose directory size or offset is 0xFFFFFFFF, or a Zip64
+    end-of-central-directory locator just before the end record (`T003`).
+    This version does not read Zip64; no package within the default limits
+    needs it.
+  - **The directory holds what it declares.** The central directory starts
+    at the offset the end record gives, ends at or before the end record,
+    and holds exactly the declared number of entries in exactly the declared
+    number of bytes. Otherwise: `T003`.
+  - **Local headers agree.** Each entry's local header is at the offset the
+    directory gives, before the central directory, and has the same name,
+    byte for byte, and the same compression method. Otherwise: `T003`.
+  - **Everything else comes from the directory.** Names, flags, sizes and
+    CRC-32 values are read from the central directory, never from a local
+    header or a data descriptor. The Info-ZIP Unicode path extra field is
+    ignored: the name is the directory's file name field.
 
 When an entry cannot be read, the Reader stops with `P002`: it does not go on
 with missing bytes.
+
+**Envelopes.** A Zip archive, given as a path or as bytes, with
+`moca-enc.json` at its root and no `moca.json` is an envelope: an encrypted
+package ([encrypted packages](moca-encrypted-package.md)). Every Reader recognises one. A Reader that
+implements the optional feature `encryption` opens it in the order in
+encrypted packages §5.2. One that does not checks the outer archive and its
+entries (steps 1 and 2), then reports `E001_ENCRYPTED_NO_KEY`. The archive
+rules and limits on this page apply to the envelope, and again to the
+archive inside it.
 
 **Directories.** A Reader MUST NOT follow a symbolic link in a directory
 source, including one that replaces a file after it was listed: the file is
@@ -93,20 +130,92 @@ be at least those below, which the conformance corpus assumes:
 | --- | --- | --- | --- |
 | Entries in a source | `maxEntries` | 20,000 | `T003` |
 | Uncompressed bytes in a source | `maxBytes` | 512 MiB | `T003` |
+| Decrypted bytes of an envelope's `package.age` or `index.age`, computed from the encrypted payload's length before any of it is decrypted | `maxBytes` | 512 MiB | `T003` |
+| age scrypt work factor (log2 N) in an envelope: an integer from 1 to 22. Any other value is a host error, and the Reader refuses it. The default, 20, needs about 1 GiB of memory for each encrypted entry, and a package and its index can both need it, so a server may set it lower | `maxScryptWorkFactor` | 20 | `E006`, without running scrypt |
+| Recipient stanzas in an envelope's age header | — | 256 | `E006` |
+| Bytes of one manifest image ([package spec §4.6](moca-package-spec.md#46-images)), or of an envelope's cover copy | `maxImageBytes` | 1 MiB | `M010` for that image (`E005` for a cover copy) |
 | Frontmatter block size | `maxFrontmatterBytes` | 64 KiB | `C002` for that node (`C004` for a reserved file) |
 | YAML aliases in frontmatter | — | 0 (aliases are refused) | `C002` for that node |
+| Nesting of JSON and of YAML frontmatter (below). This one is fixed, not a default, so every Reader agrees on what is malformed | — | 64 levels | The text is malformed: `M001` for `moca.json`, `C002` for a node's frontmatter (`C004` for a reserved file), `A001` for an attestation file or its statement, `E005` for `moca-enc.json`, `S001` for a sidecar's `index.json`, `S004` for a payload line |
 | Structure file size | `maxStructureBytes` | 4 MiB | `O001` |
 | Triples in a structure file | `maxTriples` | 100,000 | `O001` |
+| Collection members in a structure file: the list cells reached from every `skos:memberList` statement, added together, so a list that several collections name counts once for each | `maxTriples` | 100,000 | `O001` |
+| Attestation files in a package ([attestations §7](moca-attestations.md#7-verifying-an-attestation), step 1) | `maxAttestations` | 256 | None of them is read; `A001`, once |
+| Bytes of one attestation file | `maxAttestationBytes` | 1 MiB | `A001` for that file; it is not parsed |
+| Signature entries in one DSSE envelope, in a `.dsse.json` file or a Sigstore bundle. This one is fixed, not a default, so every Reader agrees on which envelopes are malformed | — | 16 | `A001` for that file; no entry is tried |
 | Evidence entries checked per node representation | `maxEvidencePerNode` | 256 | Further entries are not checked; `matched` is absent |
 | Source file size checked for evidence | `maxSourceBytesChecked` | 8 MiB | Not checked; `matched` is absent |
-| Evidence checks per package | `maxEvidenceChecksPerPackage` | 10,000 | Further entries are not checked; `matched` is absent |
-| Source bytes scanned for evidence per package, counted once per check | `maxEvidenceBytesPerPackage` | 256 MiB | Further entries are not checked; `matched` is absent |
+| Evidence checks in one read, by the package and all its members together (below) | `maxEvidenceChecksPerPackage` | 10,000 | Further entries are not checked; `matched` is absent |
+| Source bytes scanned for evidence in one read, by the package and all its members together, counted once per check | `maxEvidenceBytesPerPackage` | 256 MiB | Further entries are not checked; `matched` is absent |
 | Depth of members ([package spec §7.1.1](moca-package-spec.md#711-resolving-a-composition)) | `maxMemberDepth` | 8 | `R001` for that member; it is not resolved |
-| Members resolved in one read, at every depth | `maxMembers` | 256 | `R001` for each further member; it is not resolved |
+| Members resolved in one read, at every depth, each distinct member counted once (below). Each resolved member is held in memory, so a host on a small device may set it lower | `maxMembers` | 4,096 | `R001` for each further member; it is not resolved |
+| Bytes of all the members read in one read, counted once per distinct member. Checked before each new member is resolved, so one member can take the total past it | `maxMemberBytes` | 1 GiB | `R001` for each further member; it is not resolved |
 
+**Each member once per read.** Within one read, a member with a given `id`,
+`version` and pinned `digest` is resolved and read once, the first time it is
+reached, depth first in the order of each `members` list. Every later
+occurrence in the same read shares that result: it is not resolved, read,
+decrypted or verified again, and counts once toward `maxMembers` and
+`maxMemberBytes`. So a composition in which many packages share members costs
+what its distinct members cost. A member whose `id` an earlier entry of the
+same `members` list already has is a repeat (`M005_DUPLICATE_MEMBER`) and is
+not resolved at all.
+
+A Reader holds each member it reads in memory, and a read can take a small
+multiple of the members' bytes (their text, parsed structure and indexes), so
+the memory one read needs grows with `maxMemberBytes` by a factor that
+depends on the Reader. A host on a small device sets `maxMemberBytes` lower.
+The same member result can be reached from more than one composing package
+in one read: `members` is a shared graph, not a tree, and a host that walks
+or serialises it keeps track of the members it has visited.
+
+A refined quote (§7) is checked in time and memory roughly linear in the
+covered text and the quote, however many times the quote occurs.
+
+**One evidence budget per read.** The two evidence budgets cover the whole
+read: the package and every member it reads spend from the same checks and
+bytes, so members do not multiply them. The options keep their earlier names.
 A Reader MUST normalise each evidence source once per package, not once per
-check, and MUST NOT let structure traversal depend on recursion depth: a long
-chain of relations must not exhaust the call stack.
+check, and parse each WebVTT file's cues once per package too. It MUST NOT let
+structure traversal, or any other step, depend on recursion depth or on how
+many arguments one call can take: a long chain of relations, or a transcript
+of many cues, must not exhaust the call stack.
+
+**Nesting.** JSON and YAML frontmatter in a package or a sidecar are nested at
+most 64 levels deep. A value's level is the number of arrays and objects
+(in YAML, sequences and mappings) it lies inside, so the outermost object or
+mapping is level 1, and a scalar may lie inside 64 of them. A text that
+opens a 65th is malformed, with the code its kind of file already has for
+text that does not parse (the limits table, above), and a Reader refuses it
+without parsing deeper: the check MUST NOT itself depend on recursion depth.
+This covers `moca.json`, every node's and reserved file's frontmatter, each
+attestation file and the statement decoded from its payload, `moca-enc.json`,
+and a sidecar's `index.json` and payload lines. The host's own input, such as
+a trust root, is not package content, and a Reader may refuse it as it sees
+fit.
+
+**Numbers too large.** A frontmatter number too large for a finite double,
+however it is written (`1e400`, or a decimal, octal or hex integer of any
+length), is read as `.inf` is ([package spec §5.1](moca-package-spec.md#51-an-okf-bundle)),
+and reading it never fails. A number that is not finite may be a mapping key;
+the node is still read.
+
+**Structure work stays roughly linear.** Resolving a reading order
+([package spec §4.10](moca-package-spec.md#410-reading-order)) and binding
+members by composition ([package spec §5.6](moca-package-spec.md#56-structure))
+MUST take work and memory roughly in proportion to the structure's triples
+plus the members and nodes involved, not to their product. For example, a
+Reader walks the ordered collection once, and finds a concept's ancestors
+once, not once per node bound to it or per member of the list. A member
+list that several collections name is walked once and shared, and what the
+collections hold together is bounded (the limits table, above): the subjects
+and the list members of a structure file never multiply into more work than
+its triple limit allows.
+
+**Text work stays roughly linear.** Finding the links in a node's body, and
+normalising an evidence source (§7), MUST take work roughly in proportion to
+the size of the text, whatever it holds: a line of unclosed brackets or
+unclosed tags costs no more than any other line of its length.
 
 A Reader MUST NOT request a path from a host source that the source did not
 list.
@@ -125,8 +234,13 @@ These apply to both classes.
   source, a member resolver, online signature checks, and search backends.
   Nothing in a package can cause a Reader to contact anything. A Reader MUST
   NOT use an address, a model name or a credential that a package supplies.
+  It MUST NOT fetch, resolve or open a URI in `apps`
+  ([package spec §4.9](moca-package-spec.md#49-apps)): an app URI is a name.
 - **No access outside the package.** A Reader MUST NOT read or write outside
   the package while resolving package-relative paths.
+- **No age plugins.** A Reader MUST NOT run an age plugin, or any other
+  program, to open an envelope ([encrypted packages](moca-encrypted-package.md) §4). Key
+  routes come only from the host's key provider.
 - **No required infrastructure.** A Reader MUST NOT require a model, a vector
   database or an agent framework to read a package.
 
@@ -152,7 +266,10 @@ stay strings.
 
 A Reader MUST report every problem in a package as a diagnostic, never as an
 exception or a crash. Malformed content is a finding; exceptions are only for
-programming errors, such as a missing argument.
+programming errors, such as a missing argument. A `moca.json` that is valid
+JSON but not an object fails its schema (`M002`), and nothing more of the
+package is read. A member of the manifest with the wrong type is `M002` too,
+and a Reader that reads on does so as if that member were absent.
 
 ## 6. Attestations
 
@@ -163,6 +280,11 @@ rules. In summary:
 - with no trust root, every attestation is **unverifiable**
   (`A003`), never valid;
 - a key or identity is trusted only for the roles the trust root gives it;
+- a key or identity with `ids` signs only the packages those ids cover: a
+  valid signature from one that does not cover the package's `id` is reported
+  (`A010`) and does not make the package `signed`;
+- a Sigstore identity matches only when its issuer and its subject each equal
+  the certificate's, character for character; never as a pattern;
 - offline verification is the default; online checks are opt-in, and an
   online check that cannot complete is **indeterminate** (`A004`) unless the
   host allowed an offline fallback;
@@ -214,7 +336,10 @@ and `profiles`, are left out, as they are in a real record):
   `node.id` with `package.digest` is the key that cannot be forged. A library
   MUST NOT hold two packages with the same `id` and `version` but different
   digests: it keeps the first and refuses the second
-  (`L001_IDENTITY_CONFLICT`).
+  (`L001_IDENTITY_CONFLICT`). When both are issued copies of the same
+  original (both results have `issuedCopy` with the same `originalDigest`),
+  it reports `L002_ISSUED_COPY_DUPLICATE` (info) instead, and still keeps
+  only the first.
   Two representations of a node share `node.ref`; when an application
   records a citation it SHOULD keep `node.locale` with it, and any
   de-duplication is by `node.ref`, `node.locale` and `span` together.
@@ -228,11 +353,19 @@ and `profiles`, are left out, as they are in a real record):
   | `node.digest` | `sha256:` and the SHA-256 of the representation file's bytes. |
   | `text` | When included, the representation file's UTF-8 text after the closing frontmatter delimiter, or the text at `span` for a chunk. |
   | `trust.status` | OKF `status` when it is `draft`, `stable` or `deprecated`; otherwise `stable`. |
-  | `trust.generated`, `trust.declaredVerified` | OKF `generated` and `verified`; an entry with no `by` is left out. |
+  | `trust.generated`, `trust.declaredVerified` | OKF `generated` and `verified`; an entry with no `by` is left out. `generated.model` is kept when it is a string. |
+  | `terms` | Only in records from a search with a terms request (§15.4): `{ authority, ai, rating, rights }` for the record's node, where each `ai` field and `rights.export` is `{ value, decidedBy }` (§15.3) and `rating` is the node's effective rating. Absent otherwise. |
   | `trust.validFrom`, `trust.validUntil` | The node's effective window ([package spec §4.4](moca-package-spec.md#44-validity-window)), as written. |
   | `trust.contestedBy` | The node's `moca.contested_by`, as written, then `<id>@<version>` of each loaded package it conflicts with. |
   | `audience` | As in [§8](#8-default-retrieval-policy); `audienceInvalid` is `true` when the label is malformed. |
   | `profiles` | The manifest's profile URIs, in manifest order; absent when there are none. |
+  | `package.datePublished` | The manifest's `datePublished`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)). |
+  | `node.datePublished` | The node's `moca.date_published`, as written, when it parses; absent otherwise. The package's date is never copied to it. |
+  | `package.datePackaged` | The manifest's `datePackaged`, as written, when the manifest passes its schema; absent otherwise ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)). |
+  | `node.license` | The node's licence: the `rights.license` of the node's `terms.nodes` entry ([package spec §4.14](moca-package-spec.md#414-terms)), else the manifest's `license`; a value with a terms problem at its path is skipped. Absent when neither gives one. |
+  | `node.copyright` | The node's copyright statement, as written: the `rights.copyright` of its `terms.nodes` entry, else `terms.rights.copyright`; a value with a terms problem at or under its path is skipped. Absent when neither gives one. |
+  | `node.contributors` | The node's `moca.contributors`, as written, less any image that failed its check, when they match the node schema; absent otherwise ([package spec §4.13](moca-package-spec.md#413-credits)). The package's contributors are never copied to it. |
+  | `node.media` | The node's valid media descriptions ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ source, resource, type, duration?, digest?, transcript?, alternateOf?, sync? }`, where `resource` is the source's `resource` as written. A valid alternate carries `alternateOf` and its `sync`, which is `[{ "at": 0, "offset": 0 }]` when the node gave none. Absent when there are none. |
 
   A consumer of citation records (a store, an application) SHOULD ignore
   properties it does not know: later versions add fields. An AG-UI client
@@ -240,21 +373,33 @@ and `profiles`, are left out, as they are in a real record):
 - `declaredVerified` copies OKF `verified`; `attestedReviews` lists only reviews
   that verified against the trust root and match the current file, the latest
   from each signer, each with `packageVerified` (whether the package is
-  signed). `reviewStatus` is `approved`, `disputed`, `unverified` or `none`
+  signed). In an issued copy, it also lists reviews of the publisher's bytes
+  of a changed file, with `fileChanged: true`; they never count toward
+  `reviewStatus`
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)). `reviewStatus` is `approved`, `disputed`, `unverified` or `none`
   ([attestations §4](moca-attestations.md#4-review-attestations)). An
   application SHOULD NOT present a declared verification as an attested one,
   or an `unverified` or `disputed` review as an approval.
 - `stale` is true when now ≥ `stale_after`. `inForce` is false outside the
   validity window ([package spec §4.4](moca-package-spec.md#44-validity-window)).
   The host supplies the clock.
+- **Issued copies.** `package.issuedCopy` is the result's `issuedCopy`
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes)),
+  absent for any other package. `node.issuedChange` is `true` when the
+  representation file is in the issued copy's `changedFiles`, and absent
+  otherwise. `package.digest` stays the copy's own digest. A host that shares
+  citations outside the licensee's own use SHOULD use
+  `issuedCopy.originalDigest`, which is the same for every copy and
+  identifies no one.
 - `superseded` and `contested` reflect the relations among the packages the
   Reader has loaded, and the node's `moca.contested_by`
   ([package spec §7.2](moca-package-spec.md#72-relations)).
 - `evidence[].matched` is `true` when the Reader checked the selector against
   the cited file inside the package and it matched, and `false` when it checked
   and it did not match (`C011`). It is absent when the Reader did not check:
-  the source is outside the package, its file type is not in the table below,
-  or the Reader does not check that kind of selector. It says the quote is in the
+  the source is outside the package (and is not media with a `transcript`,
+  for a time range), its file type is not in the table below, or the Reader
+  does not check that kind of selector. It says the quote is in the
   file; it does not say the node's claim is true.
 - **Text is normalised before matching**, as W3C Web Annotation requires
   ("the text MUST be normalized"). By source type, from the file name's extension, compared case-insensitively in ASCII:
@@ -279,10 +424,56 @@ and `profiles`, are left out, as they are in a real record):
 - **Media time ranges.** A `FragmentSelector` that `conformsTo`
   `http://www.w3.org/TR/media-frags/` with a temporal value `t=start[,end]`
   (seconds, or `hh:mm:ss` with an optional `npt:` prefix; an empty start
-  means 0, as Media Fragments 1.0 allows) matches a WebVTT
-  source when the range overlaps at least one cue. Against other media it is
-  not checked. Carry the captions or transcript of a video in the package to
+  means 0, as Media Fragments 1.0 allows) is checked against a WebVTT file in
+  the package: the cited source, when it is one, or else the `transcript` of
+  the cited source's media description
+  ([package spec §5.7](moca-package-spec.md#57-media)), or, for an alternate
+  with no `transcript` of its own, the range mapped to its reference and
+  checked against the reference's `transcript` (a range that does not map
+  does not match). It matches when both hold:
+  1. the range overlaps at least one cue; and
+  2. the range lies within the media: its end is at or before the bound. The
+     bound is the latest end time of any cue, or the declared `duration` when
+     that is later. The duration is that of the media description being
+     checked, or, when the evidence cites the WebVTT file itself, of the
+     node's first media description whose `transcript` names that source. A range with
+     no end runs to the end of the media, so it lies within it.
+
+  Any other time range is not checked. Carry the captions or transcript of
+  audio or video in the package, and name it as the media's `transcript`, to
   make its citations checkable.
+- **A time range refined by a quote.** A media time range MAY carry a
+  `TextQuoteSelector` as its `refinedBy` (W3C Web Annotation): the words
+  spoken in that range. The Reader checks the range as above, against the
+  same WebVTT file and through an alternate's reference in the same way. It
+  then checks the quote against the range's **covered text**: the payloads of
+  the cues the range overlaps, in file order, normalised as for any WebVTT
+  source and joined with LF. Before comparing, every run of white space (here
+  only tab, line feed, form feed, carriage return and space, U+0009, U+000A,
+  U+000C, U+000D and U+0020) becomes one space, in the covered text and in the quote's
+  `exact`, `prefix` and `suffix`; this applies to refined quotes only, and
+  every other quote keeps exact matching. No case folding is applied.
+  - Both match: `matched` is `true`, and the entry's `located` is
+    `{ start, end }`, in seconds on the cited source's timeline: from the
+    earliest start to the latest end of the cues the quote touches. A cue
+    is touched when a character of `exact` other than white space comes
+    from it. If the
+    quote occurs more than once in the covered text, the shortest such span
+    is used, and the earliest if two are equally short. On an alternate,
+    `located` is moved back to the alternate's timeline by the offset of the
+    stretch the range maps through.
+  - The range does not match: `matched` is `false` (`C011`), the quote is
+    not checked, and `located` is absent.
+  - The range matches but the quote is not in its covered text: `matched` is
+    `false` (`C011`), even if the words occur elsewhere in the transcript,
+    and `located` is absent.
+  - The range is not checked (hosted media with no transcript): neither is
+    the quote, and `matched` and `located` are absent.
+
+  A `refinedBy` of any other type is not checked: the range is checked
+  alone, and `located` is absent. A `TextQuoteSelector` with an empty or
+  missing `exact` does not match, as for any quote, and neither does a
+  refined one whose `exact` is only white space.
 - `concepts` lists the absolute concept IRIs the node is bound to by its
   `moca.concepts` ([package spec §5.6](moca-package-spec.md#56-structure)).
 
@@ -319,7 +510,7 @@ for a translation with none of its own, the default representation's
 ([package spec §5.4](moca-package-spec.md#54-locales)).
 
 Audience is a label a host filters on, not access control
-([package spec §13.3](moca-package-spec.md#133-audience-is-a-label-not-access-control)):
+([package spec §13.3](moca-package-spec.md#133-labels-not-locks)):
 fail-closed filtering protects against a forgotten label, not against someone
 who has the package file.
 
@@ -332,13 +523,60 @@ A Reader offers one search operation. It has the same signature in every
 language, and the default retrieval policy is applied inside it:
 
 ```text
-search(query, { limit, includeAll, locale, concepts, scope }) -> citation records, each with a score
+search(query, { limit, includeAll, locale, concepts, scope, upTo }) -> citation records, each with a score
 ```
 
-`concepts` keeps records bound to at least one of the given concept IRIs;
+`concepts` keeps records bound to at least one of the given concept IRIs, by
+the node's own `moca.concepts` or by composition
+([package spec §5.6](moca-package-spec.md#56-structure));
 `scope` keeps records bound to the concept or any of its descendants by
 hierarchy or parts (§10). Both refer to the package structure
 ([package spec §5.6](moca-package-spec.md#56-structure)).
+
+`upTo` is the IRI of a concept on a package's reading order
+([package spec §4.10](moca-package-spec.md#410-reading-order)): a member, or
+a descendant of a member by `skos:narrower` or `dcterms:hasPart`. It leaves
+out material that comes after that point:
+
+- **Where the point is.** `upTo` takes its position as any concept does: the
+  first member that is it or contains it. So a descendant limits exactly as
+  that member would.
+- **Which packages.** `upTo` limits the packages whose reading order places
+  it, and their resolved members at any depth
+  ([package spec §7.1](moca-package-spec.md#71-members)). Records from other
+  loaded packages, such as reference packages searched beside a course, are
+  not limited by it.
+- **Members.** A record from a member of a limited package takes its
+  positions on the composing package's reading order from every concept it is
+  bound to there: its node's own `moca.concepts`, and the concepts it is bound
+  to by composition, such as the member's package `id` listed in the order
+  ([package spec §5.6](moca-package-spec.md#56-structure)). A member's own
+  reading order limits only for points that it places itself. A record that
+  more than one limit applies to must pass each of them.
+- **Who may limit a member.** A composing package's reading order limits a
+  member's records only when the composing package's signers speak for that
+  member: when the `ids` of its valid package attestations' signers cover the
+  member's `id`, as for relations
+  ([package spec §7.2](moca-package-spec.md#72-relations), `R004`). A host
+  that loads only its own packages MAY allow unsigned composing packages to
+  limit their members, with the same option that allows unsigned relations.
+  So a package loaded beside a member can never hide the member's records
+  from an `upTo` search unless it speaks for that member.
+- **Unresolved.** If no loaded package's reading order places `upTo`, it
+  limits nothing, and the Reader reports `S008_UPTO_UNRESOLVED` (warning)
+  for that search, so it never fails silently.
+- **What passes.** In a limited package, a record passes when every
+  position it has is at or before the position of `upTo`. The point itself is
+  included.
+- **Records off the reading order.** A record with no position is not
+  limited: a glossary, an introduction or reference
+  pages are useful at every point and are not ahead of anything. A caller
+  that wants them out narrows the search with `scope` or `concepts`.
+- `upTo` combines with `concepts` and `scope`: a record must pass each one
+  the caller named. It applies to search only; the structure operations
+  (§10) report the whole structure.
+- `upTo` is a convenience, not access control. A person with the package
+  file can read all of it.
 
 ### 9.1 Backends
 
@@ -395,21 +633,57 @@ Each search runs these steps, in order
       not in the host's allowlist);
    2. apply the default retrieval policy (§8), unless the host opted in to
       including excluded content;
-   3. remove records outside the host's audience set;
+   3. remove records outside the host's audience set, and, when the host
+      made a terms request, the records the terms gate removes (§15.4);
    4. when the caller named a locale, keep only the representation §5 of the
       package spec selects for it;
    5. when the caller named concepts or a scope, keep only records bound to
-      them. Concepts and scope set by an ingress hook narrow the backend's
-      search but never bind the gate: the gate follows the caller;
-   6. keep one record per node representation and span: two candidates with
+      them. Concepts and scope set by an ingress hook narrow the search
+      ("Ingress narrowing", below) but never bind the gate: the gate follows
+      the caller;
+   6. when the caller named `upTo`, keep only records that pass it (§9). An
+      ingress hook can never set, change or remove `upTo`;
+   7. keep one record per node representation and span: two candidates with
       the same `node.ref`, `node.locale` and `span.start` are one result, the
       first;
-   7. return at most `limit` records. `limit` defaults to 5.
+   8. return at most `limit` records. `limit` defaults to 5.
 
 Hooks are host code, supplied when the host creates the search. A package can
-never supply or select one. A backend without `filterPushdown` can return hits
-the gate removes; a Reader SHOULD ask such a backend for more hits than the
-caller's limit.
+never supply or select one.
+
+**Filters come before the limit.** Steps 5.1 to 5.7 decide which records can
+be results; step 5.8 only counts them. A search MUST return the best-scored
+records among all the records that match the query and pass the gate: the same
+records, in the same order, as ranking every matching record, applying the
+gate, and keeping the first `limit`. So when at least `limit` matching records
+pass the gate, the search returns `limit` records, however far down the
+unfiltered ranking they are. A Reader MUST NOT apply the gate to a fixed number
+of top candidates and return what is left.
+
+A Reader meets this in either of two ways, or both: it passes the filters to a
+backend that applies them before it ranks (`filterPushdown`, §9.5), or it asks
+the backend again, for more hits each time, until `limit` records pass the
+gate or the backend has no more. Filters remove records; they never change a
+record's score, which is the backend's score for the query over all the loaded
+packages. When an egress hook is set, it runs again on the whole candidate list
+each time the Reader fetches more.
+
+**Ingress narrowing.** When an ingress hook sets concepts or a scope, the
+search returns only records bound to them (by the node's own concepts or by
+composition, [package spec §5.6](moca-package-spec.md#56-structure)), as well
+as passing the gate. A Reader passes them to a backend with `filterPushdown`
+when it can (§9.5). When it can't (the backend has no pushdown, or a loaded
+package binds members by composition) it applies them itself to the
+resolved hits: after the backend, before the egress hook and the gate, on every
+round of asking again, within any bound the host set. Records an egress hook
+adds are not narrowed by them. "Filters come before the limit" holds for them
+too: the search returns the best records that pass both.
+
+A host MAY bound the work one search does, for example the number of
+candidates it examines. When a bound stops a search before `limit` records
+pass the gate, the Reader MUST report `S010_SEARCH_TRUNCATED` (warning) for
+that search, so a short result is never silent. The reference Readers set no
+bound by default.
 
 ### 9.3 Dense backends
 
@@ -456,18 +730,41 @@ the trust root may have changed since ingest.
 
 So a store search takes the host's **package states**: for each loaded
 package, its digest, `id`, `version`, default language, relations, relation
-scopes (§7.2 of the package spec), signers, current reviews and node-level
-`moca.contested_by`. A Reader produces a package's state from the package
-result (`packageState`); it is small, plain JSON that a host keeps beside its
-store. At query time the Reader resolves store hits from their records and
+scopes (§7.2 of the package spec), signers, current reviews, node-level
+`moca.contested_by`, its `issuedCopy`, and, when `readingOrder` resolves,
+its members in order and the position of each concept on it, so a store
+search applies `upTo` as a library search does. For a package with members,
+the state also carries every member that resolved, matched its pin and is
+valid, at any depth and once each: its digest and `id`, whether the package's
+structure declares that `id` as a concept, the paths of its nodes whose
+identifiers the structure declares, and the members that compose it. With
+them come, for each concept on the way up from those declared identifiers,
+its broader concepts and the concepts it is a part of in the package's
+structure ([package spec §5.6](moca-package-spec.md#56-structure)). So a
+store search applies `concepts`, `scope` and `upTo` to members' records as a
+library search does, and the state grows with the structure and the members,
+not with their product (§3). A Reader produces a package's state from the package
+result (`packageState`); it is small, plain JSON that a host keeps beside
+its store. At query time the Reader resolves store hits from their records and
 MUST recompute from the states and the clock: `stale` and `inForce`;
 `superseded`, `supersededBy`, `contested` and `contestedBy` from the relations
-among the loaded packages; `package.signed` and `signers`; and
-`attestedReviews` and `reviewStatus`. It keeps only records whose package is
+among the loaded packages; `package.signed`, `signers` and `issuedCopy`; and
+`attestedReviews` and `reviewStatus`; and, for a terms request, each node's
+resolved terms and the package's authority (§15), from the `terms` the state
+carries. It keeps only records whose package is
 among the states. The host therefore never needs every package in memory to
 search its store, and a package superseded, or a key removed from the trust
 root, after ingest is reflected at once. Records left behind by an older
 version of a package are never returned, because its state is not supplied.
+
+**Structure in a store search.** A package state carries composition, not the
+concept graph or its labels. A host MAY give a store search a **structure
+source**: packages it has read itself (for a show, its show and season
+packages), whose merged structure the hooks see (`ctx.structure`) and through
+which `scope` reaches descendants. A structure source adds no records and is
+not loaded for the gate: records still come only from the packages whose
+states the host supplied. Without one, hooks in a store search see no
+structure.
 
 The store itself is trusted: the Reader cannot check a stored record's text or
 audience against the package without loading it. A host whose store others can
@@ -487,6 +784,17 @@ to it:
 | `concepts` | The concepts to search: the caller's, a scope and its descendants, or those an ingress hook chose. |
 
 Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.
+Whether or not a backend applies the filters, the result is the same (§9.2,
+"Filters come before the limit").
+A record bound to a concept by composition
+([package spec §5.6](moca-package-spec.md#56-structure)) does not carry that
+concept itself, so when any loaded package binds members by composition, the
+Reader passes no `concepts` filter and applies the concepts itself (§9.2,
+"Ingress narrowing") and in the gate.
+`upTo` adds no filter, because records off the reading order and from other
+packages still pass it; the gate applies it.
+A terms request (§15.4) adds the nodes it removes to `exclude`, worked out
+from the loaded packages or their states.
 
 ### 9.6 Hybrid backends
 
@@ -506,8 +814,10 @@ reference Readers use Reciprocal Rank Fusion (informative):
 score(hit) = Σ over the two backends of  weight_b / (k + rank_b(hit))
 ```
 
-`rank_b` is the hit's 1-based position in backend b's results; a hit a backend
-did not return adds nothing from it. `k` defaults to 60 and each weight to 1.
+`rank_b` is the hit's 1-based position in backend b's ranking of the loaded
+packages before any filter, so that filters never change a score (§9.2); a hit
+a backend did not return adds nothing from it. Filters pushed down to the two
+backends only decide which fused hits pass. `k` defaults to 60 and each weight to 1.
 Weights are at least 0, and at least one is above 0; a Reader MUST refuse other
 settings as a host error, before any search.
 A hit whose fused score is 0 is dropped, so a backend with weight 0
@@ -527,14 +837,14 @@ Terms and meanings are in
 
 | Operation | Returns |
 | --- | --- |
-| `concept(iri)` | The concept's preferred label (no language tag, then `en`, then the first language tag in order, §2 of the package spec), labels, definition, `deprecated`, what it replaces and what replaces it, and its layer; or nothing when no layer declares it. |
+| `concept(iri)` | The concept's preferred label (no language tag, then `en`, then the first language tag in order, §2 of the package spec), labels, alternative labels (`altLabels`: by language tag, each a list in the order read, with duplicates dropped; empty when there are none), definition, `deprecated`, what it replaces and what replaces it, and its layer; or nothing when no layer declares it. |
 | `requires(iri, { transitive })` | The concepts `iri` requires. Direct: ordered by IRI. Transitive: every concept reachable through `requires`, each after the concepts it requires (depth first, ties by IRI). |
 | `requiredBy(iri)` | The concepts that require `iri`, ordered by IRI. |
 | `parts(iri)` | The direct parts of `iri`, ordered by IRI. |
 | `narrower(iri, { transitive })` | Narrower concepts; transitively, breadth first, each level ordered by IRI. |
 | `broader(iri)`, `related(iri)` | Direct broader concepts; related concepts in either direction. Ordered by IRI. |
 | `sequence(iri)` | The members of the ordered collection `iri`, in list order; nothing if `iri` is not an ordered collection. |
-| `nodes(iri, { include })` | Citation records of the nodes bound to `iri`, and, with `include` of `narrower`, `parts` or `both`, to its descendants, with the default retrieval policy applied, ordered by `node.ref`. |
+| `nodes(iri, { include })` | Citation records of the nodes bound to `iri`, by their own `moca.concepts` or by composition ([package spec §5.6](moca-package-spec.md#56-structure)), and, with `include` of `narrower`, `parts` or `both`, to its descendants, with the default retrieval policy applied, ordered by `node.ref`. |
 
 Every concept item carries its `iri`, its preferred `label` (absent when the
 concept has none) and the `layer` that stated the fact: `package`,
@@ -589,10 +899,10 @@ A Reader MUST report findings as structured values with `code`, `severity`
 (package-relative) and `line` (1-based). Codes are the contract; message text
 is not, and hosts MUST NOT match on it. A Reader MUST offer a strict mode that
 promotes warnings to errors without changing codes. Validity then follows
-the promoted severities: a `T`, `P`, `M` or `C` warning makes the package
+the promoted severities: a `T`, `P`, `M`, `C` or `E` warning makes the package
 invalid, and a promoted warning in another family affects only its feature.
 
-A package is **valid** when it has no error in the `T`, `P`, `M` or `C`
+A package is **valid** when it has no error in the `T`, `P`, `M`, `C` or `E`
 families. Errors in other families affect only the feature concerned: an
 invalid attestation does not count, a
 mismatched member is not used, an unusable sidecar is ignored. `O` diagnostics
@@ -606,7 +916,7 @@ withhold only the `structured` capability.
 | `P001_UNSUPPORTED_ENTRY` | error | The package contains a symbolic link or other non-regular file. |
 | `P002_UNREADABLE_ENTRY` | error | A package entry could not be read. |
 | `P003_PATH_COLLISION` | error | Two package paths are equal after Unicode NFC normalisation, or after normalisation and simple lowercase mapping ([package spec §6.3](moca-package-spec.md#63-entries-that-make-a-package-invalid)). |
-| `M001_MANIFEST_INVALID_JSON` | error | moca.json is not valid UTF-8 JSON. |
+| `M001_MANIFEST_INVALID_JSON` | error | moca.json is not valid UTF-8 JSON, or is nested more than 64 levels deep (§3). |
 | `M002_MANIFEST_SCHEMA` | error | moca.json does not validate against the manifest schema. |
 | `M003_NO_CONTENT` | error | The package has neither a content node nor a member. |
 | `M004_UNKNOWN_KEY` | info | A top-level manifest key is neither defined by the spec nor a vendor x-<vendor>-<key> key. |
@@ -615,18 +925,29 @@ withhold only the `structured` capability.
 | `M007_UNREGISTERED_URN` | info | The package id uses a URN namespace that is not registered with IANA. |
 | `M008_DIGEST_V1_PACKAGE` | info | The package was written for a `mocaVersion` before 0.4; digests, pins and attestations made then will not match `moca-digest-v2` ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
 | `M009_MOCA_VERSION_NEWER` | warning | The package was written for a newer `mocaVersion` than this Reader implements; it is read under the newest rules this Reader implements ([package spec §14](moca-package-spec.md#14-versioning-of-this-specification)). |
+| `M010_IMAGE_INVALID` | warning | A manifest image, or the image of a credit ([package spec §4.13](moca-package-spec.md#413-credits)), is missing, over `maxImageBytes`, or does not start with the signature of its `type`. It is left out of the result ([package spec §4.6](moca-package-spec.md#46-images)). |
+| `M011_TRANSLATION_LOCALE_UNDECLARED` | error | A key of `translations` is not a tag in `locales` ([package spec §4.7](moca-package-spec.md#47-translations)). |
+| `M012_TAG_DUPLICATE` | warning | Two tags in one list are equal, compared case-insensitively. The repeat is dropped ([package spec §4.8](moca-package-spec.md#48-tags)). |
+| `M013_ALT_IMAGE_UNKNOWN` | warning | A translated `alt` text names no image in `images`. It is dropped. |
+| `M014_READING_ORDER_UNRESOLVED` | warning | `readingOrder` does not name a `skos:OrderedCollection` with a `skos:memberList` in the package's own `structure.ttl`. It is ignored ([package spec §4.10](moca-package-spec.md#410-reading-order)). |
 | `C001_FRONTMATTER_MISSING` | error | A concept document has no YAML frontmatter (OKF MUST). |
-| `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML or is not a mapping. |
+| `C002_FRONTMATTER_INVALID` | error | Frontmatter is not parseable YAML, is not a mapping, repeats a key, uses an alias, is nested more than 64 levels deep (§3), or lists two sources with one `id`. |
 | `C003_TYPE_MISSING` | error | Frontmatter has no non-empty type (OKF MUST). |
 | `C004_RESERVED_FILE_INVALID` | error | index.md or log.md breaks the OKF reserved-file rules. |
 | `C005_FIELD_INVALID` | warning | A frontmatter field does not match the node schema. |
-| `C006_EVIDENCE_SOURCE_UNKNOWN` | warning | moca.evidence names a source id that sources[] does not declare. |
+| `C006_EVIDENCE_SOURCE_UNKNOWN` | warning | moca.evidence or moca.media names a source id that sources[] does not declare. |
 | `C007_LINK_UNRESOLVED` | warning | An internal Markdown link does not resolve. |
 | `C008_UNSAFE_PATH` | error | A package-relative path is absolute or escapes the package root. |
 | `C009_LOCALE_ORPHAN` | warning | A locale representation has no default-language file. |
 | `C010_VALIDITY_WINDOW_INVALID` | warning | moca.valid_until is not later than moca.valid_from. |
 | `C011_EVIDENCE_SELECTOR_UNMATCHED` | warning | An evidence selector does not match the text source file it cites inside the package. |
-| `A001_ATTESTATION_MALFORMED` | error | An attestation file is not a parseable envelope and statement. |
+| `E001_ENCRYPTED_NO_KEY` | error | An envelope was not opened: there is no key provider, it returned no key or a kind of key no stanza uses, or the Reader does not implement `encryption` ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). |
+| `E002_DECRYPTION_FAILED` | error | A key was supplied for an envelope, but it is not a valid key of its kind, unwrapping failed, or the header MAC failed. |
+| `E003_PAYLOAD_CORRUPT` | error | An envelope's encrypted payload failed authentication or was truncated. |
+| `E004_OUTLINE_MISMATCH` | error | An envelope's outline differs from the decrypted manifest, structure or cover. |
+| `E005_ENVELOPE_INVALID` | error | An envelope has a missing, repeated or unexpected entry, an encrypted entry that is not stored, a cover copy over `maxImageBytes`, or an invalid `moca-enc.json`, or a Zip has both `moca.json` and `moca-enc.json` at its root. |
+| `E006_AGE_HEADER_INVALID` | error | An envelope's age header is malformed or unsupported, over 64 KiB, breaks the scrypt rules or the work-factor limit, has no full payload nonce, or has a low-order X25519 share. |
+| `A001_ATTESTATION_MALFORMED` | error | An attestation file is not a parseable envelope and statement, is over a limit (its size, or its signature entries), or the package has more attestation files than the limit (§3). |
 | `A002_ATTESTATION_INVALID` | error | An attestation failed verification or does not match the package. |
 | `A003_ATTESTATION_UNVERIFIABLE` | warning | An attestation could not be checked ([attestations §7](moca-attestations.md#7-verifying-an-attestation) says when). |
 | `A004_ATTESTATION_INDETERMINATE` | warning | Online verification was requested but could not complete. |
@@ -634,11 +955,14 @@ withhold only the `structured` capability.
 | `A007_REVIEW_DATE_FUTURE` | warning | A review is dated later than the host clock, so it does not count ([attestations §4](moca-attestations.md#4-review-attestations)). |
 | `A008_PACKAGE_DIGEST_MISMATCH` | error | A package attestation names this package's `id` and `version` with a different digest: the content changed after it was signed ([attestations §3](moca-attestations.md#3-package-attestations)). |
 | `A009_SIGNATURE_REQUIRED` | error | The host requires a valid package attestation (`requireSignature`) and the package has none. This one makes the package invalid. |
+| `A010_SIGNER_NOT_FOR_PACKAGE` | error | A package attestation's signature verifies and its statement matches, but the signer's `ids` in the trust root do not cover this package's `id` ([attestations §6](moca-attestations.md#6-trust-roots)). The attestation does not count, so it does not make the package `signed`. |
 | `R001_MEMBER_UNRESOLVED` | warning | A member could not be resolved by the host resolver. |
-| `R002_MEMBER_DIGEST_MISMATCH` | error | A resolved member does not match its pinned digest. |
+| `R002_MEMBER_DIGEST_MISMATCH` | error | A resolved member does not match its pinned digest, or, for an issued copy that verified, its original digest ([package spec §7.1](moca-package-spec.md#71-members)). |
 | `R003_MEMBER_CYCLE` | error | Members form a cycle. |
 | `R004_RELATION_UNAUTHORISED` | info | A `supersedes` or `conflictsWith` relation is not authorised by a signer of the package, so it has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
+| `R005_RELATION_TYPE_UNKNOWN` | info | A relation's type is not a core type, and no profile the package declares defines it. It is preserved and has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
 | `L001_IDENTITY_CONFLICT` | error | A library was given a second package with the same `id` and `version` but a different digest; the second is refused (§7). Reported by the library, not the package. |
+| `L002_ISSUED_COPY_DUPLICATE` | info | A library was given a second issued copy of the same original (§7): the same `id` and `version`, another digest, and the same `issuedCopy.originalDigest`. The second is not loaded. Reported by the library. |
 | `F001_PROFILE_UNRECOGNISED` | info | A declared profile is not recognised by this Reader. |
 | `O001_ONTOLOGY_UNPARSEABLE` | warning | `structure.ttl` or a host overlay is over the size or triple limit (§3), or is not parseable Turtle. |
 | `O002_CONCEPT_UNDECLARED` | warning | A relation, ordered collection or node binding uses a concept that is not declared as a `skos:Concept`. |
@@ -651,6 +975,13 @@ withhold only the `structured` capability.
 | `S005_SIDECAR_FORMAT_UNKNOWN` | info | The payload format is not recognised; the sidecar is ignored. |
 | `S006_MODEL_MISMATCH` | warning | The host's embedder does not match the index's model; dense search is refused. |
 | `S007_NO_VECTORS` | warning | A loaded package has no vectors a dense backend can search; that package is not searched. |
+| `S008_UPTO_UNRESOLVED` | warning | A search's `upTo` is on no loaded package's reading order, neither a member nor a descendant of one. It limits nothing (§9). |
+| `S009_SIDECAR_ITEMS_REPLACED` | info | A sidecar built from the publisher's package is bound to an issued copy, and the items of the files the issuer changed were replaced by each file's whole body, without a vector ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)). |
+| `S010_SEARCH_TRUNCATED` | warning | A search stopped at a bound the host set before `limit` records passed the gate; better-matching records that pass may exist (§9.2). |
+| `U001_TERMS_INVALID` | warning | A field of `terms` is malformed ([package spec §4.14](moca-package-spec.md#414-terms)). The package stays valid; the field counts as its strictest value when terms are applied (§15). |
+| `U002_TERMS_LOOSENED` | warning | A `terms.nodes` entry, or a composing package, is looser than the package for a permission; the stricter value stands (§15.3). |
+| `U003_TERMS_UNKNOWN_VALUE` | warning | A `terms` field has a value this version does not know, such as one from a later release. It is exposed, and counts as its strictest value when terms are applied (§15). |
+| `U004_TERMS_EXCLUDED` | info | A search's terms request removed records; the finding counts them by reason (§15.4). |
 
 Retired codes, never reused: `A005_SKILLS_WITHHELD`, `K001_SKILL_INVALID` ([ADR-0011](../docs/adr/0011-park-unconsumed-features.md)), `O004_STRUCTURE_VIEW_MISMATCH` ([ADR-0019](../docs/adr/0019-park-structure-json.md)).
 
@@ -675,6 +1006,9 @@ A Reader, adapter or server that passes content to a model:
   delimiter (a tag, a fence, a marker line) MUST be escaped or removed
   wherever it appears in the text;
 - MUST NOT grant tools, change settings or follow links because content asks;
+- MUST NOT pass a package's `terms` to a model as instructions, and MUST
+  apply the terms gate (§15.4) to what it hands on when it is the hand-off to
+  a model;
 - SHOULD tell the model, outside the envelope, that retrieved text is
   reference material to quote and cite, not instructions.
 
@@ -704,6 +1038,8 @@ it, to a person:
 | Malformed optional frontmatter field | `C005` (warning); node still read. |
 | Unknown relation type | Preserved; no effect. |
 | Unknown attestation predicate | Ignored. |
+| An envelope, with no key provider | Envelope recognised; not opened; `E001` (error). The package is not valid, and nothing inside it is exposed. |
+| An envelope, read by a Reader without the `encryption` feature | Envelope recognised; not opened; `E001` (error), as with no key provider. |
 | No trust root | Attestations unverifiable; package still readable. |
 | No resolver | Members exposed unresolved; no diagnostic. |
 | Unresolvable or mismatched member | That member is not used; the rest usable. |
@@ -717,7 +1053,10 @@ it, to a person:
 
 An implementation claiming conformance MUST name its class, the contract
 version, and any **optional features** it does not implement (archives, host
-sources, Sigstore verification, sidecars, profiles). "Optional features" are
+sources, Sigstore verification, sidecars, profiles, `encryption`).
+`encryption` is opening envelopes
+([encrypted packages](moca-encrypted-package.md)). A Reader without it still
+recognises an envelope and reports `E001`. "Optional features" are
 what an implementation does; "capabilities" are what a package has
 ([package spec §11](moca-package-spec.md#11-capabilities)). It MUST pass every
 case in [`conformance/cases.json`](../conformance/cases.json) except those
@@ -729,3 +1068,184 @@ Message text is never compared.
 
 An implementation in another repository runs the corpus through the runner
 protocol in [conformance/README.md](../conformance/README.md).
+
+## 15. Creators' terms
+
+A package's `terms` ([package spec §4.14](moca-package-spec.md#414-terms))
+are labels, not locks. A Reader exposes them exactly, works out who stated
+them, and resolves them only when the host asks. It never fetches anything
+because of them, and never lets them change how it reads a package.
+
+### 15.1 Exposing terms
+
+A Reader MUST expose, in the package result
+([Reader interface §4](moca-reader-interface.md#4-reading)):
+
+- `terms.declared`: the manifest's `terms`, exactly as written, when the
+  manifest passes its schema; absent when the manifest has none;
+- `terms.problems`: the `U001` and `U003` findings for it, each with the path
+  of the field (for example `ai.allowed.provider`);
+- `terms.authority`: `packager` or `unverified` (§15.2).
+
+It MUST NOT fill in defaults: absent fields stay absent.
+
+### 15.2 Authority
+
+The authority is worked out from the package's signatures, never from fields
+the signer writes:
+
+| Authority | When |
+| --- | --- |
+| `packager` | A package attestation verifies under the host's trust root. |
+| `unverified` | No package attestation verifies. |
+
+A signature shows who signed the package, not who owns the work: a package
+whose `rights.rightsHolder` names a channel has the authority `packager`
+like any other signed package. Neither authority lets a package loosen the
+platform defaults (§15.3): in this version no package can, so
+`ai.allowed.training: true` has no effect.
+
+### 15.3 Resolving terms
+
+When the host asks, a Reader resolves the terms that apply to a node: the
+package's own, the host's limits, and composing packages. For each
+permission:
+
+1. **Package.** Start from the platform default (below). The package's own
+   value applies only if it is stricter, whatever its authority and whatever
+   `rights` says. A field that is not set never changes anything.
+2. **Node.** A node's value applies only if it is stricter. A looser node
+   value is reported as `U002_TERMS_LOOSENED` (warning), and the package's
+   value stands. Both values are in the manifest, so a Reader reports this
+   when it reads the package, compared with the package's own value.
+3. **Composition.** A composing package's terms apply to a member's node only
+   when they are stricter and the composing package's signers speak for the
+   member, as for `upTo` (§9).
+4. **Host.** The host's limits apply only if they are stricter. A limit is a
+   floor, never a value.
+
+"Stricter" is defined per field: `false` is stricter than `true`; a
+destination not allowed anywhere is not allowed; more `providerRequires` conditions are
+stricter; `work` is stricter than `model`. A malformed or unknown value counts
+as the strictest value.
+
+**A malformed container fails closed.** A container is a value that holds
+permissions: `ai`, `ai.allowed`, `rights`, `rights.export`, `nodes`, and an
+entry of `nodes`. One that is present and has the wrong type (`"allowed":
+false`, `"ai": "none"`, `"nodes": {}`) sets every permission under it to its
+strictest value, exactly as if each had been written wrongly one by one: no
+destination is allowed, nor training, nor machine translation; the
+`providerRequires` conditions cannot be met; `answerSources` is `work`; and
+under `rights` or `rights.export`, export is not allowed. Only an absent
+container sets nothing. For `nodes`:
+
+- a `nodes` that is not a list, an entry that is not an object, and an entry
+  whose `paths` is missing or is not a list of strings do not say which nodes
+  they mean. Each counts for **every** node of the package, with every
+  permission at its strictest and a malformed rating (§15.4);
+- inside a well-formed entry, a malformed `ai` or `ai.allowed` sets the
+  permissions under it to their strictest for that entry's nodes only.
+
+The Reader still reports each of these once, at the container, as `U001`
+([package spec §4.14](moca-package-spec.md#414-terms)).
+
+**Platform defaults**, used only when no level sets a field:
+`allowed.device`, `allowed.host` and `allowed.provider` `true`,
+`allowed.machineTranslation` `true`, `allowed.training` `false`, no
+`providerRequires` conditions, `answerSources` `model`, and
+`rights.export.allowed` `true`.
+
+Each resolved field says which level decided it: `platform`, `package`,
+`node`, `composite` or `host`.
+
+**Export** (`rights.export.allowed`) resolves the same way, with two levels:
+the package, and a composing package whose signers speak for the member.
+Nodes have no export value, and the host needs none: a host that does not
+export text simply never does. Its platform default is `true`. It removes
+nothing from a search: a host that lets people copy, save or export text
+outside the app checks it first.
+
+**Ratings are not resolved.** A node's effective rating is its own `nodes`
+entry, if any, else the package's. A Reader also gives the package's
+strictest rating: `explicit` true if any node or the package says true, and
+each scheme's entries, from all nodes.
+
+### 15.4 The terms gate
+
+A host that is about to hand records to a model, or to show or play them
+under a rating filter, MAY ask the search to apply terms with a `terms`
+request ([Reader interface §5.1](moca-reader-interface.md#51-the-search-operation)).
+Without one, terms remove nothing. With one, the gate (§9.2, step 5.3) also
+removes:
+
+- for `ai` (`{ destination, conditions, use }`): records whose resolved
+  terms do not allow the destination (`allowed.device`, `allowed.host` or
+  `allowed.provider` is not `true`), whose `providerRequires` conditions are
+  not all among the host's `conditions` (`noTraining`, `noRetention`) for a
+  `provider`, whose `allowed.training` is not `true` for the use `train`, or
+  whose `allowed.machineTranslation` is not `true` for the use `translate`. The
+  other uses are `answer`, `embed` and `summarise`;
+- for `rating` (`{ explicit, schemes, allowUnrated, acceptFeedRatings }`):
+  records rated `explicit: true` when `explicit` is `false`; records with a
+  `contentRating` value outside the host's allowed set for that scheme;
+  unrated records unless `allowUnrated`. `typicalAgeRange` never removes
+  anything. The rules below say exactly what "rated" means.
+
+**Rated, for this host's filter.** A record's rating is its node's effective
+rating (§15.3). For one rating request, the record is **rated** when at least
+one of these holds:
+
+- its rating has an `explicit` value that counts. A rating with
+  `declaredBy: feed` that says `explicit: false` counts only when the request
+  has `acceptFeedRatings: true`; every other boolean counts;
+- its rating has a `contentRating` entry under a scheme the request lists in
+  `schemes`.
+
+Otherwise it is **unrated**, and the gate removes it unless the request has
+`allowUnrated: true`. So a record rated only under a scheme the host did not
+list is unrated for that host: a rating the host cannot compare says nothing
+to its filter, and never lets a record through on its own.
+
+A rated record is then checked. It is removed when the request has
+`explicit: false` and the record's `explicit` counts and is `true`; and, for
+each scheme the request lists under which the record has an entry, when the
+entry's `value` is not in the request's list for that scheme. A scheme the
+request lists and the record has no entry under removes nothing.
+
+**A malformed rating fails closed.** A rating that is present and is not an
+object counts as `explicit: true` and as a value outside the allowed set of
+every scheme the request lists. Inside a rating object, an `explicit` that
+is not a boolean counts as `true`; a `contentRating` that is not a list, or
+that has an entry that is not an object with a string `scheme`, counts as a
+value outside the allowed set of every scheme the request lists. A citation
+record shows a rating that is not an object as `{ "explicit": true }`.
+
+**A request the Reader cannot honour removes everything.** This version
+defines the four members above and no others; a `mode` member drafted
+earlier, with the value `strict-path`, is not part of it. A `rating` request
+that is not an object, that has a member this version does not define, or
+whose `schemes` is not an object, is never run as a weaker filter: the gate
+removes every record. A scheme whose allowed set is not a list allows no
+value.
+
+A request a caller or a hook sets can never widen what the host asked for.
+Records the terms gate removes are counted by reason in
+`U004_TERMS_EXCLUDED` (info) on the search.
+
+**Destinations.** `device` is a model that runs on the person's own device.
+`host` is a model the host runs itself, including on a cloud provider's
+hardware that the host controls, under its own terms; a host that counts
+that as `host` says so publicly. `provider` is any other party's model,
+including a host relaying content to it. Answering, embedding or indexing,
+translating and summarising are all uses that send content to a model.
+
+**A Reader that hands content to a model**, such as an MCP server, applies
+the terms gate to everything it hands on. Its destination comes from its
+host's configuration; with none, it uses `provider` with no conditions.
+
+### 15.5 Never
+
+A Reader MUST NOT fetch anything named in `terms`, use it to configure
+itself, or pass it to a model as an instruction. Terms never change what
+`readPackage`, `Library.citations`, `Library.get` or a search without a
+`terms` request returns.

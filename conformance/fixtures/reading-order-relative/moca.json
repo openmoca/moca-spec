@@ -1,0 +1,7 @@
+{
+  "id": "https://example.com/conformance/reading-order-relative",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "language": "en",
+  "readingOrder": "#Path"
+}

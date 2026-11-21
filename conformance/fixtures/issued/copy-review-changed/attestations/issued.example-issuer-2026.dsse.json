@@ -1,0 +1,10 @@
+{
+  "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJzdWJqZWN0IjpbeyJuYW1lIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9jb25mb3JtYW5jZS9pc3N1ZWQtb3JpZ2luYWxAMS4wLjAiLCJkaWdlc3QiOnsic2hhMjU2IjoiNjYyYmRjYTNiYjQ2OWUzZGM1MmQzYTJkY2NlZTg5NzNiOTg3MTE2Nzg2OTdkYjBjNGIyNjE4NTA3MGRkMGY2ZiJ9fV0sInByZWRpY2F0ZVR5cGUiOiJodHRwczovL3czaWQub3JnL21vY2EvYXR0ZXN0YXRpb24vaXNzdWVkLWNvcHkvdjEiLCJwcmVkaWNhdGUiOnsib3JpZ2luYWwiOnsic2hhMjU2IjoiZDQ3OGNmNGViZjZkZTI5OGU3MGExMTUzNzgyYjJhNDlhYjU4YTQzNTQ5NWUxYWJiNWVkMjUzOWQ3MDcyNWQyMyJ9LCJjaGFuZ2VkRmlsZXMiOnsiY29udGVudC9sZXNzb25zL3R3by5tZCI6eyJvcmlnaW5hbCI6IjJiMTVhN2M1YWJjNzAyNjMwMTdmNDZlZDFmODRkZTQ0NTQ1NmRjYTUwODdjMTU2MjI3Zjg1NTYwZWIyNzg1MmMifX19fQ==",
+  "payloadType": "application/vnd.in-toto+json",
+  "signatures": [
+    {
+      "keyid": "example-issuer-2026",
+      "sig": "43XTSByLpXG26jCyoVGk2Y1FcQX3zbewFXYubM/M+r1Xc5TDAkJwHf9dIVs5HwzzzyCdxTYWrX63wrn01q5FCg=="
+    }
+  ]
+}

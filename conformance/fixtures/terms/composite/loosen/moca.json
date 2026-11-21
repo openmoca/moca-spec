@@ -1,0 +1,26 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-composite-loosen",
+  "version": "1.0.0",
+  "title": "A signed course that tries to loosen a lesson",
+  "language": "en",
+  "members": [
+    {
+      "id": "https://example.com/conformance/terms-composite-strict-member",
+      "version": "1.0.0",
+      "digest": "sha256:dc0c6bc48f2079ea62bd0e85391aa2afd64644383065b57d9e127cad7f82939f"
+    }
+  ],
+  "terms": {
+    "ai": {
+      "allowed": {
+        "host": true
+      }
+    },
+    "rights": {
+      "export": {
+        "allowed": true
+      }
+    }
+  }
+}

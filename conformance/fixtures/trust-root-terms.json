@@ -1,0 +1,28 @@
+{
+  "keys": [
+    {
+      "keyid": "example-publisher-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAV7oSvpgKWeRJP+wg5aoP04bxrq2ZzOiT+NPhHsW1W4g=\n-----END PUBLIC KEY-----\n",
+      "identity": "MOCA examples publisher (INSECURE)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "package"
+      ],
+      "ids": [
+        "https://example.com/conformance/"
+      ]
+    },
+    {
+      "keyid": "example-issuer-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA94AzjuVWnBMriLi4RO8vfqW1BfpuIicNw20TTunypjs=\n-----END PUBLIC KEY-----\n",
+      "identity": "MOCA conformance packager (INSECURE, published private key)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "package"
+      ],
+      "ids": [
+        "https://example.com/conformance/"
+      ]
+    }
+  ]
+}

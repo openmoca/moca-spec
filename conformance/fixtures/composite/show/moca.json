@@ -1,0 +1,21 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/series-show",
+  "version": "1.1.0",
+  "title": "A show",
+  "language": "en",
+  "datePublished": "2026-01-05",
+  "readingOrder": "https://example.com/conformance/series-show#by-release",
+  "members": [
+    {
+      "id": "https://example.com/conformance/series-season-1",
+      "version": "1.0.0",
+      "digest": "sha256:38c7249a6852fe20a13d103bdadf420fd9ce9fe477c193c1b21317f3d4a3acb3"
+    },
+    {
+      "id": "https://example.com/conformance/series-episode-3",
+      "version": "1.0.0",
+      "digest": "sha256:e997ce33d92fbec2743d2244f7d76555c1ea5882effd5d7e5c26d450f6286821"
+    }
+  ]
+}

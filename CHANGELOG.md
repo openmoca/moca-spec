@@ -4,6 +4,423 @@ All notable changes to the MOCA specification, schemas, profiles and
 conformance corpus. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
 [the versioning policy](docs/versioning-and-release.md).
 
+## [0.7.0] - 2026-11-15
+
+The 0.7.0 Spec Change Proposal:
+[distribution tiers, encrypted packages and issued copies](https://github.com/openmoca/moca-spec/issues/5).
+Also [package images, translated titles and tags](https://github.com/openmoca/moca-spec/issues/7),
+[an apps hint](https://github.com/openmoca/moca-spec/issues/8),
+[a reading order, and search up to a point](https://github.com/openmoca/moca-spec/issues/9), and
+[podcast and video series content](https://github.com/openmoca/moca-spec/issues/10).
+
+### Added
+
+- A new document, [encrypted packages](spec/moca-encrypted-package.md): a
+  `.moca` archive encrypted with age v1 inside an envelope.
+- Package spec §2: the terms envelope, encrypted package, outline, key
+  provider, issued copy and issuer. §12: an envelope is a transport, not a
+  fourth form.
+- Reader contract §14: the optional feature `encryption`. §13: what a Reader
+  does with an envelope it cannot open.
+- Conformance runner: the `encryption` feature and the adapter's `envelope`
+  output.
+- ADR-0023 (age envelope), ADR-0024 (`distribution`), ADR-0025 (images,
+  translations, tags), ADR-0026 (`apps`), ADR-0027 (reading order) and
+  ADR-0028 (issued copies).
+- Package spec §4.1: `distribution` (`open`, `encrypted-only`,
+  `service-only`), the publisher's signed intent; a label only. The manifest
+  schema gains the closed enum, and the Reader interface's package result
+  gains `distribution`. Cases `distribution-encrypted-only` and
+  `distribution-unknown`; the runner compares `expect.distribution`.
+
+- [Encrypted packages](spec/moca-encrypted-package.md) in full: the
+  envelope layout, the `moca-enc.json` marker and the unverified outline,
+  age v1 with X25519 and scrypt recipients and no plugins, the key provider,
+  the opening order, the result, derived data (`index.age`) and security
+  considerations. Schema `moca-enc.schema.json`.
+- Reader contract: envelopes in §3, with the limit `maxScryptWorkFactor`
+  (20) and decrypted bytes counted against `maxBytes`; §4 no age plugins;
+  §11 the `E` family, `E001`–`E006`.
+- Reader interface: the key provider (§3), `keyProvider` and the `envelope`
+  result (§4).
+- Package spec §13.2, §13.3 and §13.6, and sidecar spec §2 and §5.2:
+  envelopes, and indexes inside them.
+- 23 `envelope-*` cases, with fixtures made by the reference age tool
+  (`scripts/envelope-fixtures.py`). The runner protocol gains
+  `options.identities`, `options.passphrase` and `options.fileKey`, and
+  compares `expect.envelope`.
+
+- Encrypted packages §5.1–§5.2 and Reader contract §11: a missing or short
+  payload nonce, and a low-order X25519 share, are `E006`; an identity
+  string that is not a valid key is `E002`. This matches the C2SP age test
+  kit and all three Readers.
+- Cases `envelope-index`, `envelope-index-corrupt` and
+  `envelope-index-deflated` for `index.age`, and the runner option
+  `options.envelopeSidecar`. Their fixtures come from
+  `scripts/envelope-fixtures.py --only index`, which leaves the other
+  envelopes untouched.
+- The reference adapter passes the reference Reader's age decryptor
+  (`@openmoca/moca-core/age`), so the corpus runs the `encryption` cases
+  against it.
+
+- Package spec §4.6–4.8 ([#7](https://github.com/openmoca/moca-spec/issues/7)):
+  the manifest properties `images` (an icon or a cover under `media/`, PNG,
+  JPEG or WebP, with optional `sizes` and `alt` text), `translations` (the
+  manifest's title, description, tags and alt text per declared locale) and
+  `tags`. Shapes are recommended for covers (16:9, at least 960×540) and
+  icons (square, at least 256×256). The manifest schema gains all three.
+- Reader contract: the limit `maxImageBytes` (1 MiB), and the codes
+  `M010_IMAGE_INVALID`, `M011_TRANSLATION_LOCALE_UNDECLARED`,
+  `M012_TAG_DUPLICATE` and `M013_ALT_IMAGE_UNKNOWN`. The Reader interface's
+  package result gains `images`, `translations` and `tags`.
+- Encrypted packages §2–3: an opt-in plain cover copy
+  (`outline/cover.png`, `.jpg` or `.webp`), checked against the inner cover;
+  `translations` and `tags` as opt-in outline properties.
+- 17 cases for images, translations and tags, and 8 `envelope-*` cases for
+  the cover copy and the outline. The runner compares `expect.images`,
+  `expect.translations` and `expect.tags`. The envelope fixtures come from
+  `scripts/envelope-fixtures.py --only cover`.
+
+- Package spec §4.9 ([#8](https://github.com/openmoca/moca-spec/issues/8)):
+  `apps`, an ordered list of `https:` URIs naming apps and app-type tokens,
+  where the publisher suggests the package is opened beyond conversation.
+  Advice only: Reader contract §4 forbids fetching, resolving or opening an
+  app URI. The Reader interface's result gains `apps`; the envelope outline
+  may carry it. §9 and §13.2 say how `apps` differs from profiles and
+  configuration. 5 `apps-*` cases and 2 `envelope-outline-apps*` cases; the
+  runner compares `expect.apps`.
+- Issued copies ([#5](https://github.com/openmoca/moca-spec/issues/5), part
+  C). Attestations §3a: the issued-copy predicate
+  (`https://w3id.org/moca/attestation/issued-copy/v1`). §6: the trust-root
+  role `issued-copy`, which requires `ids`. §7.1: two-pass verification; the
+  publisher's attestations are checked against the digest rebuilt from the
+  copy and the original hashes of the changed files; reviews of changed
+  files are listed with `fileChanged` and never count. §8: what an issued
+  copy proves. Package spec §4.11: `issuedCopies`, the publisher's consent
+  (issuers by key or Sigstore identity, and the paths they may mark). Reader
+  contract §7: `package.issuedCopy` and `node.issuedChange` in citation
+  records, and `L002_ISSUED_COPY_DUPLICATE` (info). The package result gains
+  `issuedCopy`. Schemas: `issuedCopies` in the manifest, `issued-copy` in the
+  trust root, and the citation-record fields. 17 `issued-*` cases and 3
+  `search-issued-copy-*` cases; `refresh:derived` builds the copies from
+  `scripts/derived.config.json`; two more insecure test keys (issuers).
+- Package spec §4.10 ([#9](https://github.com/openmoca/moca-spec/issues/9)):
+  `readingOrder`, the IRI of the ordered collection in the package's own
+  `structure.ttl` that orders the whole package; `M014` (warning) when it
+  does not resolve. Reader contract §9: the search option `upTo`, applied in
+  the gate (§9.2, step 5.6), limiting only packages whose reading order places
+  it (a member, or a descendant placed at its first member) and never
+  records off the reading order; `S008` (warning) when no loaded reading
+  order places it. §9.4: package states carry the reading order. The Reader
+  interface's result gains `readingOrder`, and a search gains `diagnostics`.
+  4 `reading-order-*` cases and 10 `search-upto-*` cases; the runner
+  compares `expect.readingOrder` and passes `search.upTo`.
+- Encrypted packages, hardening: `maxScryptWorkFactor` is an integer from 1
+  to 22 (a host error otherwise), and its memory cost is stated; at most 256
+  recipient stanzas (`E006`); "over 64 KiB" is defined to the byte; the
+  plaintext length is computed from the payload's length before decrypting
+  (`T003`, `E003`); a key provider's result may hold several kinds, tried
+  identities, passphrase, file key; bindings may use idiomatic member names;
+  a provider's error text never reaches a diagnostic, and nothing else is
+  thrown to the caller. Cases `envelope-header-64k` and
+  `envelope-header-over-64k`.
+- MIGRATIONS.md: from 0.6.0 to 0.7.0, for packages, Producers, Readers and
+  hosts, and what 0.6 Readers do with 0.7 packages.
+- SECURITY.md: encrypted packages (envelope parsing, limits, the outline
+  check), issued copies and manifest images are in scope; the security model
+  says what encryption and issued copies do not do.
+- Guides: "Encrypt a package" (new), catalogue fields in "Authoring
+  packages", and "Search up to a point" in "Search and sidecar indexes".
+
+- Podcast and video series content
+  ([issue #10](https://github.com/openmoca/moca-spec/issues/10), ADR-0029 to
+  ADR-0035):
+  - Package spec §5.7 (new): `moca.media` describes a node's audio and video,
+    hosted outside the package or not: media type, duration, an optional
+    SHA-256 and the transcript in the package. A Reader exposes it as
+    `node.media` and never fetches the media. Media played through a web
+    page is described with the page's type, `text/html`.
+  - Package spec §5.7, Alternates: media descriptions of one node may be
+    alternates of a reference (`alternateOf`), lined up by a `sync` list of
+    stretches with an offset in seconds, or `null` for a stretch the
+    alternate does not hold. A time range on an alternate with no transcript
+    is checked through the reference's. Reader interface §4: `mapTime`.
+    Records carry `alternateOf` and `sync`.
+  - Reader contract §7: a media time range may carry a `TextQuoteSelector`
+    as its `refinedBy`. It matches when the range does and the quote is in
+    the cues the range covers (white space collapsed for refined quotes
+    only); `evidence[].located` gives the cue-precise span, also through
+    alternates. Guidance on transcript text in
+    the node body.
+  - Package spec §4.12 (new): `datePublished`, following the W3C Publication
+    Manifest, and `moca.date_published` on nodes. Informative. The package
+    result and citation records carry them.
+  - Package spec §5.6: binding by composition. A composing package's
+    structure may use a member's package `id` or node identifier as a
+    concept; members' records are bound to it for `concepts`, `scope`,
+    `upTo` and the structure operation `nodes()`. Package states carry the bindings (Reader contract §9.4).
+  - Reader contract §9: `upTo` also limits the members of a package whose
+    reading order places it.
+  - Package spec §7.2: the core relation type `isPartOf`, and
+    `R005_RELATION_TYPE_UNKNOWN` (info) for a type that is neither core nor
+    defined by a declared profile. §7.3 (new): composite packages, whose
+    members are packages, such as a podcast of seasons and episodes, a book
+    series or a course of sections and lessons: worked examples, when to use
+    one package instead, large composites, and free and members-only parts.
+    §2 defines the term.
+  - Package spec §7.1 and sidecar spec §5: an issued copy matches a member pin,
+    and binds the publisher's sidecar, through its verified
+    `issuedCopy.originalDigest`. `S009_SIDECAR_ITEMS_REPLACED` (info) when the
+    items of changed files are replaced.
+  - Package spec §5.1: suggested node types are an informative list on
+    openmoca.org.
+  - 60 cases (352 in all), a `map-time` case kind and
+    `expect.evidenceLocated`; the runner compares `expect.datePublished` and
+    record fields (`expect.fields`).
+
+- Package spec §12.1 (new): media types for the three file forms,
+  `application/vnd.openmoca.package+zip` (`.moca`),
+  `application/vnd.openmoca.envelope+zip` (`.mocae`) and
+  `application/vnd.openmoca.index+zip` (`.mocai`), each with a single file
+  extension: `.mocae` replaces `.moca.enc` and `.mocai` replaces
+  `.moca.idx.zip`. Files with the old names still read, because Readers go
+  by content. Readers do not depend on the types either. IANA registration templates in `docs/iana/`, to be
+  submitted after the release.
+- **Credits ([ADR-0038](docs/adr/0038-credits-in-fixed-shapes.md)).**
+  Package spec §4.13: a package-level `url`; `contributors` in the manifest
+  and in node frontmatter (`moca.contributors`), each with a name, MARC
+  relator `roles`, and an optional `url`, `image` and `sameAs` (ISNI, ORCID,
+  Wikidata); informative mappings to schema.org, Dublin Core, ONIX and
+  Podcasting 2.0 `podcast:person` roles. Credits are labels, not proof.
+  Reader interface §4: the package result carries `publisher`, `url` and
+  `contributors`; contract §7: citation records carry `node.contributors`.
+  A credit's image is checked as a manifest image (`M010`). Eight corpus
+  cases (`credits-*`, `search-credits-node`) and the runner fields
+  `expect.publisher`, `expect.url` and `expect.contributors`.
+- **A showcase example, [`rock-pools`](examples/rock-pools/README.md).** A
+  short original guide that carries what 0.7.0 adds: credits, dates, signed
+  terms with a stricter term on one part, a machine-made page, a machine-made
+  page a person checked, and quotes checked against a dated copy of a real
+  public-domain source, with a link to the source itself. It is checked by
+  `validate:examples` and released as `rock-pools.moca`. No new corpus cases:
+  every rule it uses already has one.
+
+### Changed
+
+- **Breaking: `publisher` is an object** (package spec §4.1, §4.13): `name`,
+  and optionally `url`, `description`, `image` and `sameAs`. The string form
+  fails the schema (`M002`). The examples `support-kb` and `acme-support`
+  use the object and declare `mocaVersion` `0.7`.
+
+- Package spec §1 and the README: the opening says what MOCA adds to OKF.
+  OKF shapes knowledge for AI; MOCA is for the people who make and own it.
+  The signed manifest says who made the work, who owns it and on what terms,
+  and a signature shows who said so, and no more. Informative wording; no
+  rule changes.
+- Package spec §5.6: `skos:altLabel`, a concept's other names (synonyms,
+  abbreviations, short names, plurals), any number per language. Reader
+  contract §10: `concept()` gives `altLabels` by language. Reader interface
+  §5.4: the default `ontologyGuided` ingress matches a preferred or an
+  alternative label; Readers make no plurals or other forms of their own.
+- Reader interface §5.4, informative: narrowing suits a concept the person
+  chose, and content with complete structure; for a concept guessed from a
+  question's words, a host can add its labels to the query instead. The
+  default strategy is unchanged.
+- Package spec §4.10, informative: a member that contains later steps hides
+  them, so list the steps themselves and keep an overview that contains them
+  off the reading order.
+- **Machine-made content.** Guidance in package spec §4.14: checked by a person (`generated` with `verified`), mixed
+  authorship (one node per part; for a conversation, one node per turn), the original never changed, and how the mark
+  relates to IPTC's digital source types and C2PA (informative). Three corpus cases check that `trust.generated` keeps
+  its actor, time and model, and that `trust.declaredVerified` is kept beside it. 411 cases.
+- **OpenMOCA Conformant and the OpenMOCA Commitment** (ADR-0039). Conformant software is listed by kind
+  (Reader, Producer, linter) and standing (Official, Verified, Self-tested). The Commitment is a company's signed
+  promise that a named product and version honours creators' and people's rules ([COMMITMENT.md](COMMITMENT.md)),
+  listed but not tested; it replaces ADR-0037's host claim. TRADEMARKS.md updated to match.
+
+### Changed (limits, exact rules and signer binding)
+
+A hardening pass before release: places where two careful Readers could reach different answers, now stated exactly,
+each with corpus cases. 445 cases.
+
+- **`ids` bind a signer to package ids** (ADR-0040). Attestations §6: a trust-root key or identity with the `package`
+  role and `ids` signs only packages whose `id` its `ids` cover. A valid signature from an entry that does not cover
+  the package is reported as the new `A010_SIGNER_NOT_FOR_PACKAGE` (error) and does not make the package `signed` or
+  meet `requireSignature`. An entry without `ids` signs any id, as before. **A trust root that already had `ids` for
+  relations now also limits what that entry signs** (MIGRATIONS.md). Cases `signer-binding-*`,
+  `require-signature-signer-not-covered`, `sigstore-signer-not-covered`.
+- **Terms: a malformed container fails closed.** Package spec §4.14 and contract §15.3: an `ai`, `ai.allowed`,
+  `rights`, `rights.export`, `nodes`, or an entry of `nodes`, that is present with the wrong type sets every permission under
+  it to its strictest value; a `nodes` value or entry that does not say which nodes it means counts for every node.
+  Cases `terms-container-malformed`, `search-terms-*-fails-closed`.
+- **Ratings: what "rated" means.** Contract §15.4: a record is rated, for one host's filter, only by an `explicit`
+  value that counts or an entry under a scheme the host listed; a record rated only under another scheme is unrated,
+  and removed unless `allowUnrated`. A malformed rating counts as the strictest. Cases
+  `search-terms-rating-unlisted-scheme*`, `search-terms-rating-listed-scheme`,
+  `search-terms-rating-not-object-fails-closed`, `search-terms-rating-explicit-malformed-fails-closed`.
+- **Removed: rating `mode: "strict-path"`.** It was drafted in contract §15.4 and never specified precisely enough to
+  implement the same way twice, so it is not part of 0.7.0. A rating request with a member this version does not
+  define removes every record, so a host never gets a weaker filter than it asked for. Case
+  `search-terms-rating-request-unknown-member`.
+- **Archives: one central directory.** Contract §3 says which end-of-central-directory record is the one, and what is
+  rejected (`T003`): no such record or more than one, multi-disk archives, Zip64, a directory that does not hold what
+  it declares, and a local header whose name or method differs from the directory's. An entry that yields fewer bytes
+  than it declares is unreadable (`P002`), as one that yields more already was. Cases `archive-two-end-records`,
+  `archive-zip64`, `archive-local-name-mismatch`, `archive-entry-short`.
+- **Sigstore's rules, in MOCA's words.** Attestations §7: the bundle versions read, what the transparency-log entry,
+  the time and the certificate must each show, and that the Reader compares the certificate's issuer and subject with
+  the trust root's itself, as whole strings. §6: offline means no request of any kind. Cases
+  `sigstore-subject-shorter`, `sigstore-subject-other-character`, `sigstore-issuer-shorter`.
+- **New limits.** Contract §3: attestation files in a package (`maxAttestations`, 256), bytes of one attestation file
+  (`maxAttestationBytes`, 1 MiB), signature entries in one DSSE envelope (16, fixed), and collection members in a
+  structure file, counted for every collection that names a list (`maxTriples`). Work on a node's links and on an
+  evidence source stays roughly linear in the text. Cases `attestation-signatures-at-limit`,
+  `attestation-signatures-over-limit`, `limit-attestation-files`, `limit-attestation-bytes`, `structure-shared-list*`,
+  `limit-structure-members`.
+- **Manifests of the wrong shape.** Contract §5: a `moca.json` that is JSON but not an object is `M002`, and a member
+  of the wrong type never stops the read. Cases `manifest-not-object`, `manifest-locales-wrong-type`.
+- `scripts/limit-fixtures.mjs` builds the fixtures for these cases.
+- **A nesting limit.** Contract §3: JSON (`moca.json`, attestation files and their statements, `moca-enc.json`, a
+  sidecar's `index.json` and payload lines) and YAML frontmatter are nested at most 64 levels deep, counting the
+  outermost object or mapping. Deeper text is malformed, with the code its file already has for text that does not
+  parse: `M001`, `C002` (`C004`), `A001`, `E005`, `S001`, `S004`. The limit is fixed. Cases
+  `manifest-nesting-at-limit`, `manifest-nesting-over-limit`, `frontmatter-nesting-at-limit`,
+  `frontmatter-nesting-over-limit`, `attestation-nesting-over-limit`. 450 cases.
+### Changed (before the hardening pass)
+
+- **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
+  a composing package whose signer's ids cover the member makes the member's
+  `ai` and export terms stricter (`decidedBy: composite`) and its gate removes
+  the member's record; an unsigned composer changes nothing; a composer cannot
+  loosen a member. Found by an independent review: the cases were missing, so
+  a Reader could skip the step and still pass.
+- **Guidance from review.** Package spec §4.12: `datePackaged` is not a
+  trusted time. §7.1.1: encrypted members are opened through the host's key
+  provider, and access to a composing package never grants access to a
+  member. §13.3: hosts showing terms keep the declaration, the signer, the
+  host's enforcement and the host's own claims apart. Attestations §3a: the
+  privacy of issued-copy marks.
+- **Rights and dates.** Package spec §4.14: the permission
+  `rights.export.allowed` (whether an app may let people copy, save or export
+  the work's text; platform default `true`; package and composing package only),
+  `rights.copyright` (`year`, `holder`, `notice`, as schema.org), the creator's
+  own message `rights.notice` (display only), and `rights` in `terms.nodes`
+  entries (`license` and `copyright` for a part). §4.12: `datePackaged`, when
+  this version was made (an RFC 3339 date-time with an offset; informative).
+  Reader contract §7: record fields `package.datePackaged`, `node.license` and
+  `node.copyright`, and `terms.rights.export` in records from a search with a
+  terms request; §15.3: how export resolves. Encrypted packages §5.1
+  (short-lived keys), §6 (what derived data covers) and §7 (delivery routes).
+  New guide: [protected sources](docs/guides/protected-sources.md), sealed or
+  as reference nodes. Schemas: manifest, terms and citation record.
+- **The creator's terms (ADR-0036, Accepted; ADR-0037, Accepted, its host claim since superseded by ADR-0039).**
+  Package spec §4.14 `terms` (`ai`, `rating`,
+  `rights`, node values in the manifest), with permissions as booleans
+  under `ai.allowed` (`device`, `host`, `provider`, `training`,
+  `machineTranslation`) and `rights.repackage.allowed`, and provider
+  conditions `noTraining` and `noRetention`; §2 "Values", the rule every
+  field this version adds follows (not set is an absent field; `null` only
+  where a schema allows it and the specification says what it means, as for
+  `sync[].offset`; anywhere else it is malformed, cases `null-undeclared`
+  and `terms-null-undeclared`); §4.3 (a terms change is at least
+  minor), §13.3 widened to "Labels, not locks", §13.5, §13.6 and a new §13.7.
+  Reader contract §15 (exposing, authority, resolution, the terms gate),
+  §9.2 step 5.3, §9.4, §9.5, §12, and the codes `U001`–`U004`. Reader
+  interface §3, §4 and §5.1. Encrypted packages §3: the outline may carry
+  `terms`. New schema `terms.schema.json`; `terms` in the manifest, citation
+  record and envelope schemas; `generated.model` in the node and citation
+  record schemas. The authority is `packager` or `unverified`, from the
+  package's signatures only, and a package's permissions only make the
+  platform defaults stricter: in 0.7.0 no package can loosen them, so
+  `ai.allowed.training: true` has no effect. Discovering a rights holder's keys,
+  channel-scoped keys and publisher terms statements, which would let an
+  owner loosen them, come in a later version.
+  Package spec §4.14: the line between `U001` and `U003` is mechanical.
+  Contract §15.3: `U002` for a node entry is reported when the package is
+  read. The citation record's resolved `terms.ai` has the shape of
+  `terms.ai`. 26 corpus cases (`terms-*`, `search-terms-*`) from the worked
+  conflict table, with fixtures under `conformance/fixtures/terms/`, the
+  trust root `trust-root-terms.json`, and the runner fields `expect.terms`,
+  `options.termsLimits` and `search.terms`. Two of them check that a signed
+  package cannot loosen the platform defaults, with or without a
+  `rightsHolder`.
+- Reader contract §9.2, "Ingress narrowing": concepts or a scope an ingress
+  hook sets narrow the search even when they can't be pushed down (no
+  pushdown, or members bound by composition): the Reader applies them to the
+  resolved hits after the backend, before the egress hook and the gate, on
+  every round. §9.4: a store search may take a structure source (packages the
+  host has read, such as a show and its seasons) whose structure the hooks
+  see; it adds no records. The fixture `ranked-filter` gains alternative
+  labels; new cases `structure-alt-labels`,
+  `search-ontology-guided-alt-label`, `search-ingress-narrows-composition`,
+  `search-ingress-narrows-without-pushdown` and
+  `search-store-structure-source`; the runner option `options.structure`.
+- Reader contract §9.2: **filters come before the limit.** A search returns the
+  best-scored records among all that match and pass the gate (`upTo`,
+  `concepts`, `scope`, policy, audience, locale), however far down the
+  unfiltered ranking they are; a Reader no longer applies the gate to a fixed
+  number of top candidates. It pushes the filters down or asks the backend
+  again until `limit` records pass. Filters never change a score. A host may
+  bound the work (`maxCandidates`, Reader interface §5.1); a search the bound
+  stops reports the new warning `S010_SEARCH_TRUNCATED` (§11). §9.5: the
+  result is the same with or without pushdown; §9.6: hybrid ranks are taken
+  before any filter. New fixture `ranked-filter` and the cases
+  `search-upto-below-top-200`, `search-concepts-below-top-200`,
+  `search-scope-below-top-200` and `search-filtered-limit-full`.
+- Reader contract §11 and package spec §11 (`core`): the `E` family counts
+  for validity.
+- Package spec §4.3: "metadata-only changes" now name the real properties
+  `tags`, `images` and `translations`.
+- Reader contract §7: a media time range matches only when it overlaps a cue
+  and ends at or before the latest cue end, or the declared duration when
+  later. A range that ran past the end of its captions now gives `C011`.
+- Package spec §5.1: frontmatter whose `sources` has two entries with the same
+  `id` is invalid (`C002_FRONTMATTER_INVALID`), so the node is not read.
+  Readers had disagreed on which entry applied.
+- Reader contract §3: `maxMembers` defaults to 4,096 (was 256).
+- Reader contract §3: within one read, a member met more than once (same
+  `id`, `version` and pinned `digest`) is read once and shared, and counts
+  once toward the limits. New limit `maxMemberBytes` (1 GiB) on the bytes of
+  all the members one read reads. Resolving a reading order and binding
+  members by composition must take roughly linear work.
+- Reader contract §9.4: package states carry every valid member, its direct
+  bindings by composition and the structure links above them, instead of
+  each member's full list of concepts. `upTo` limits a member's records by
+  their own concepts on every composer's reading order, bound or not, but
+  only when the composer's signers' `ids` cover the member's `id` (as for
+  relations, `R004`), or the host allows unsigned packages to
+  (the option that allows unsigned relations; `allowUnsignedRelations` in the
+  reference Readers).
+- Reader contract §3: a repeat of a member id (`M005`) is not resolved; a
+  refined quote is checked in linear time; `members` is a shared graph, and
+  the memory a read needs grows with `maxMemberBytes` by a factor that
+  depends on the Reader.
+- Package spec §5.7: a range with no end on an alternate runs to the end of
+  its stretch on the reference, and a range on an alternate must end within
+  the alternate's own `duration`. Reader contract §7: `located` runs from the
+  earliest start to the latest end of the touched cues, and white space in
+  refined quotes means the five ASCII white-space characters.
+- Package spec §5.1: `.inf` and `.nan` are not strings either, and a number
+  too large to be finite (`1e400`, or a decimal, octal or hex integer too
+  large for a finite double) is read as `.inf` is, never failing the read. A
+  number that is not finite may be a mapping key. A corpus case checks
+  that an integer beyond 64 bits is rounded once to the nearest double. An implicit mapping key longer
+  than 1,024 characters is `C002`, as YAML 1.2 says.
+- Reader contract §3: the two evidence budgets (`maxEvidenceChecksPerPackage`
+  and `maxEvidenceBytesPerPackage`) now cover the whole read, so members share
+  them with the package that composes them; the options keep their names.
+  Each WebVTT file's cues are parsed once per package, and no step may depend
+  on how many arguments one call can take.
+- Package spec §5.1: a source whose `id` is not a string has no `id`
+  (`C005`); YAML's `.inf` and `.nan` fail the node schema where it wants a
+  number.
+- Reader contract §9.5: when a loaded package binds members by composition,
+  the Reader passes no `concepts` filter to the backend; the gate applies it.
+- Examples: each YouTube example node describes its video in `moca.media`
+  (`text/html`, its length and its captions), and its last time range ends no
+  later than the video or its last caption. They are what moca-convert 0.7.0
+  writes from the same capture.
+
 ## [0.6.0] - 2026-11-11
 
 Hardening from the 10 November 2026 specification review. 0.5.0 was a soft

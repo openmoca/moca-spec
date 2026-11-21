@@ -1,0 +1,16 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/relation-type-unknown-profile",
+  "version": "1.0.0",
+  "title": "An unknown relation type and an unrecognised profile",
+  "language": "en",
+  "relations": [
+    {
+      "type": "commentsOn",
+      "target": "https://example.com/conformance/series-show"
+    }
+  ],
+  "profiles": {
+    "https://example.com/profiles/unrecognised/v1": {}
+  }
+}

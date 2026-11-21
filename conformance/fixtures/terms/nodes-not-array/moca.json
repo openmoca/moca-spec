@@ -1,0 +1,13 @@
+{
+  "id": "https://example.com/conformance/terms-nodes-not-array",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "nodes": {
+      "paths": [
+        "content/a.md"
+      ]
+    }
+  }
+}

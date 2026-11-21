@@ -24,28 +24,48 @@ You may, without asking:
 - **Name a library or tool descriptively**, as long as your own name comes first or the name makes it clear it is not ours: "acme-moca-reader", "OpenMOCA plugin for Obsidian by Acme". Don't use a name that looks official, such as "OpenMOCA Reader" alone.
 - **Share the project unchanged.** Copies of the spec, code or packages, unchanged, under the OpenMOCA name.
 - **Run community groups and events** about OpenMOCA, such as meetups or online groups, as long as you make it clear they are not run by the project.
-- **Use the logo** to link to openmoca.org or to show that your software works with OpenMOCA, unchanged, and no larger or more prominent than your own name.
+- **Use the logo** to link to openmoca.org or to show that your software works with OpenMOCA, unchanged, and no larger or more prominent than your own name. The Commitment mark is only for listed products (below).
 
-## Claiming conformance
+## OpenMOCA Conformant and the OpenMOCA Commitment
 
-The standard is only useful if every Reader reads a package the same way. So conformance claims have one rule.
+There are two public listings on openmoca.org, one for software and one for apps people use
+([ADR-0039](docs/adr/0039-a-conformance-programme-and-an-implementations-registry.md)). Neither is a registered trade
+mark; this policy covers how the OpenMOCA name is used with them.
 
-You may say your software is **"OpenMOCA conformant"**, or that it "passes the OpenMOCA conformance corpus", only if:
+### OpenMOCA Conformant: for software
 
-1. It passes the full conformance corpus for the spec version you name, and
-2. Your claim names that version, for example "OpenMOCA 0.4 conformant", and
-3. You keep the claim true: if a later release of your software fails the corpus for that version, update or remove the claim.
+The standard is only useful if every Reader reads a package the same way. You may say your software is **"OpenMOCA
+Conformant"** only if:
 
-You check this yourself. There is no fee and no application. We may ask you to show a passing run, and we may ask you to remove a claim that is not true.
+1. It passes the OpenMOCA test suite for what it is (a Reader, a Producer, a linter, or another kind with its own
+   suite), for the spec version you name, and
+2. Your claim names the kind and the version, for example "OpenMOCA 0.7 Conformant Reader", and
+3. You keep the claim true: if a later release of your software fails that suite, update or remove the claim.
 
-We may start a formal certification programme later. If we do, it will use a separate name and will not take away the right to make the claim above.
+You run the suite yourself. There is no fee and no application. For 0.7.0, publish your public test run and ask us to
+list it; once the signing tool ships, a signed result is required. Your software is then listed as **Self-tested**. The project's own software is listed as **Official**, and software whose
+result we have re-run ourselves as **Verified**. We may ask you to show a passing run, and we remove a listing or ask
+you to remove a claim that is not true.
+
+### The OpenMOCA Commitment: for apps
+
+A company may say a product makes **"the OpenMOCA Commitment"**, and show the Commitment mark in it, only if:
+
+1. It has published a signed statement that the named product and version honours creators' and people's rules, as
+   [COMMITMENT.md](COMMITMENT.md) sets out, and
+2. That statement is listed on openmoca.org, and
+3. The statement covers the version people are using; a new version needs a new statement.
+
+We do not test the Commitment. It is the company's own signed promise, and people and creators can hold the company to
+it. We remove a listing that is withdrawn or shown to be untrue, and the mark may then no longer be shown.
 
 ## Uses that need permission
 
 Ask us first if you want to:
 
 - Use OpenMOCA in the name of a company, product, service or domain name (for example "OpenMOCA Cloud" or "openmoca-hosting.com").
-- Suggest that we endorse, certify or partner with you, beyond the conformance claim above.
+- Suggest that we endorse, certify or partner with you, beyond the two listings above. Neither listing is an
+  endorsement or a certification.
 - Change the logo, or combine it with your own logo.
 - Sell goods carrying the name or logo, such as merchandise.
 
@@ -54,7 +74,8 @@ Ask at [hello@openmoca.org](mailto:hello@openmoca.org). We aim to reply within t
 ## Uses that are not allowed
 
 - **Changed versions under our name.** If you fork or change the spec or code, you may do so under the licence, but give it a different name. You may say it is "based on OpenMOCA".
-- **Conformance claims that are not true**, or that leave out the spec version.
+- **Conformance claims or Commitments that are not true**, that leave out the spec version or the kind of software,
+  or that are shown without a listing.
 - **Confusing or misleading use**, including any use that suggests your software, service or content comes from the OpenMOCA project when it does not.
 - **Use with unlawful or harmful content.**
 

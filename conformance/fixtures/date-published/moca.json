@@ -1,0 +1,8 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/date-published",
+  "version": "1.0.0",
+  "title": "Publication dates",
+  "language": "en",
+  "datePublished": "2026-03-01T09:00:00+01:00"
+}

@@ -6,7 +6,8 @@ OpenMOCA is an open standard for portable grounding for AI. A MOCA package
 carries the knowledge an AI system answers from, how it is organised, and the
 original sources it came from, sealed by one digest and optionally signed.
 Open Readers in TypeScript, .NET and Python read, verify, search and cite it
-the same way, on a server or offline.
+the same way, on a server or offline. A package keeps a creator's credits,
+sources and terms with their work, wherever it goes.
 
 ## What does MOCA stand for?
 
@@ -99,6 +100,25 @@ signed reviews. A Reader verifies both against a trust root you control, and
 every search result says who signed it and who reviewed it
 ([trust and provenance](trust-and-provenance.md)).
 
+## Can a creator say how their work may be used?
+
+Yes. A package can carry the creator's terms: whether AI may use the work on
+the person's device, in the app's own service or with a third party's model,
+machine translation, export, a rating, and who holds the rights. In 0.7.0 a
+package can only make the platform defaults stricter, and training is never
+allowed by default. Terms are labels, not locks: a Reader applies them when
+the app asks ([the creator's terms](guides/creators-terms.md)).
+
+## What are OpenMOCA Conformant and the OpenMOCA Commitment?
+
+Two public listings on openmoca.org. **OpenMOCA Conformant** is for software:
+a Reader, a Producer or a linter that passes the OpenMOCA test suite for what
+it is, for a named version. **The OpenMOCA Commitment** is for apps: a
+company's signed, public promise that a named product and version honours
+creators' and people's rules ([COMMITMENT.md](../COMMITMENT.md)). OpenMOCA
+lists the Commitment but does not test it
+([TRADEMARKS.md](../TRADEMARKS.md)).
+
 ## Which languages are supported?
 
 TypeScript (the reference Reader), .NET and Python. All three pass the same
@@ -113,13 +133,14 @@ trade mark on behalf of the project ([governance](../GOVERNANCE.md)).
 
 ## Is it ready to use?
 
-It is at 0.6.0, before 1.0. The format is tested end to end and the three
+It is at 0.7.0, before 1.0. The format is tested end to end and the three
 Readers agree on every case, but it may still change before 1.0
 ([versioning](versioning-and-release.md)).
 
 ## Where do I start?
 
-[Try OpenMOCA](https://try.openmoca.org) in the browser, follow the
+Try [the OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org) in the
+browser, follow the
 [walkthrough](walkthrough.md), make a package with the
 [quickstart](quickstart.md), or read one with the Reader for
 [TypeScript](https://github.com/openmoca/moca-reader-typescript/blob/main/docs/getting-started.md),

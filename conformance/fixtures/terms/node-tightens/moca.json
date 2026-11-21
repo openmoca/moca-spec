@@ -1,0 +1,25 @@
+{
+  "id": "https://example.com/conformance/terms-node-tightens",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "provider": true
+      }
+    },
+    "nodes": [
+      {
+        "paths": [
+          "content/private.md"
+        ],
+        "ai": {
+          "allowed": {
+            "provider": false
+          }
+        }
+      }
+    ]
+  }
+}

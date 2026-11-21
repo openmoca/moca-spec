@@ -1,0 +1,7 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/source-id-not-string",
+  "version": "1.0.0",
+  "title": "Source ids that are not strings",
+  "language": "en"
+}

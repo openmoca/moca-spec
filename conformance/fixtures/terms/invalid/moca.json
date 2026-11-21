@@ -1,0 +1,26 @@
+{
+  "id": "https://example.com/conformance/terms-invalid",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "provider": "allow"
+      }
+    },
+    "rating": {
+      "typicalAgeRange": "12-8",
+      "contentRating": [
+        {
+          "scheme": "example-scheme",
+          "value": "PG"
+        },
+        {
+          "scheme": "example-scheme",
+          "value": "12"
+        }
+      ]
+    }
+  }
+}

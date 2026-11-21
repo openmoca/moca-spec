@@ -109,7 +109,7 @@ npx @openmoca/moca-sign verify my-package --trust-root trust-root.json
 ## Index
 
 ```sh
-npx @openmoca/moca-index build my-package -o my-package.moca.idx --chunk headings
+npx @openmoca/moca-index build my-package -o my-package.mocai --chunk headings
 ```
 
 For search by meaning, build with a standard model: install it once with `moca-mcp models add bge-small-en-v1.5`
@@ -154,7 +154,7 @@ moca-mcp my-package.moca --trust-root trust-root.json --audience public
 
 Register the downloaded file's full path as `"command"` in the MCP client, with the package and options as `"args"`.
 For several packages, serve a folder: `moca-mcp --library ~/moca --trust-root trust-root.json` finds every packed
-and unpacked package in it (indexes named `<name>.moca.idx` beside each), loads each on first use, and `--watch`
+and unpacked package in it (indexes named `<name>.mocai` beside each), loads each on first use, and `--watch`
 follows changes. With a standard model installed (`moca-mcp models add <model>`), packages whose index was built
 with it are searched by words and meaning together. Tools: `moca_list_packages` (every package, loaded or not),
 `moca_search` (with `packages` to ask about some, and `mode`: lexical, semantic or hybrid), `moca_structure`,

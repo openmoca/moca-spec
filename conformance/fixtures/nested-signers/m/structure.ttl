@@ -1,0 +1,4 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://example.com/conformance/nested-a#w1> a skos:Concept ; skos:prefLabel "Week 1"@en .
+<https://example.com/conformance/nested-a#w2> a skos:Concept ; skos:prefLabel "Week 2"@en .

@@ -1,0 +1,11 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/upto-composer",
+  "version": "1.0.0",
+  "title": "A course that orders its member's lessons",
+  "language": "en",
+  "readingOrder": "https://example.com/conformance/upto-composer#weeks",
+  "members": [
+    { "id": "https://example.com/conformance/upto-member", "version": "1.0.0", "digest": "sha256:e59990c28f232573e637b575f5f1d5397579a2730a9c26b5bb8853e48eb3cd89" }
+  ]
+}

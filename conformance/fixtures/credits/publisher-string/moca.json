@@ -1,0 +1,8 @@
+{
+  "id": "https://example.com/conformance/credits-publisher-string",
+  "version": "1.0.0",
+  "title": "Credits fixture",
+  "language": "en",
+  "mocaVersion": "0.7",
+  "publisher": "Example Podcast Ltd"
+}

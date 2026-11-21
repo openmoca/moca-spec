@@ -1,6 +1,6 @@
 # MOCA Reader Interface
 
-Specification version: `0.6.0`
+Specification version: `0.7.0`
 Status: Before `1.0.0`. A minor version may still change the format; each change is in [MIGRATIONS.md](../MIGRATIONS.md).
 License: [Apache License 2.0](../LICENSE)
 
@@ -59,6 +59,8 @@ Everything a Reader touches outside a package's bytes comes from the host
 | Embedder | §5.3. | Dense search. |
 | Retrieval hooks | `ingress` and `egress` (§5.4). | Ontology-guided retrieval strategies. |
 | Audience set | A list of audience labels. | Removing records outside it. |
+| Terms limits | The host's own `ai` values, with the shape of `terms.ai` ([package spec §4.14](moca-package-spec.md#414-terms)). | Tightening a creator's terms, never loosening them. |
+| Key provider | Given an envelope's age stanzas, its unverified outline and which file is being opened, returns X25519 identities, a passphrase or a file key (one or more of them), or nothing; MAY be asynchronous where the language's read is ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). | Opening encrypted packages, for a Reader that implements `encryption`. |
 
 A package never supplies any of these.
 
@@ -66,20 +68,63 @@ A package never supplies any of these.
 
 | Operation | Takes | Returns |
 | --- | --- | --- |
-| `readPackage` | A target (a directory, archive path, archive bytes or package source) and options: trust root, member resolver, limits, strict, clock, require signature. | A package result. Never throws for a malformed package. |
-| `bindSidecar` | A sidecar target and a package result. | `{ usable, index, chunks, diagnostics }`. |
+| `readPackage` | A target (a directory, archive path, archive bytes or package source) and options: trust root, member resolver, limits, strict, clock, require signature, key provider (`keyProvider`). | A package result. Never throws for a malformed package. |
+| `bindSidecar` | A sidecar target and a package result; for an envelope's `index.age`, the envelope and the key provider. | `{ usable, index, chunks, diagnostics }`. |
 | `Library(options)` | Clock, overlays, limits. | An empty library. |
 | `Library.add` | A valid package result, and optionally its sidecar chunks and index. | The library, with the package and its resolved members loaded. |
 | `Library.citations` | Options: locale, include text. | Every node's citation record. |
 | `Library.get` | A node id or a versioned node reference, and options: locale. | One citation record, or nothing. |
+| `mapTime` | A citation record, the `source` of the description a moment is on, the `source` of the description to map it to, and the moment in seconds. | The same moment on the other description, in seconds, or nothing when it is not there ([package spec §5.7](moca-package-spec.md#57-media)): the two are not in one group of alternates, or the moment falls in no stretch or outside a duration. A description maps a moment on its own timeline to itself. |
 
 A **package result** has at least these fields, with the meanings in the
 contract:
 
 - `manifest`, `digest` and `payloadManifest`;
-- `nodes`, `members` and `profiles`;
+- `nodes`, `members` and `profiles`. `members` is a shared graph: a member met
+  more than once in one read is one result, reached from each place it is
+  composed ([Reader contract §3](moca-reader-contract.md#3-opening-a-package));
 - `structure`;
-- `diagnostics`, `valid` and `capabilities`.
+- `diagnostics`, `valid` and `capabilities`;
+- `distribution`: the manifest's `distribution`, or `open` when the manifest
+  has none. It is absent when the manifest is missing or fails its schema
+  ([package spec §4.1](moca-package-spec.md#41-properties));
+- `images`, `translations` and `tags`, when the package is valid and the
+  manifest has them ([package spec §4.6–4.8](moca-package-spec.md#46-images)):
+  - `images`: the entries that passed their checks, as declared
+    (`src`, `role`, `type`, and `sizes` and `alt` when present). No bytes: a
+    host reads an image from the package as it reads any file.
+  - `translations`: as declared, without `alt` text that was dropped and
+    without repeated tags.
+  - `tags`: as declared, without repeats;
+- `apps`: the manifest's `apps`, as declared, when the manifest passes its
+  schema; absent otherwise ([package spec §4.9](moca-package-spec.md#49-apps)).
+  Advice only: the Reader does nothing else with it;
+- `issuedCopy`: `{ originalDigest, issuers }` for an issued copy that passed
+  verification, absent otherwise
+  ([attestations §7.1](moca-attestations.md#71-issued-copies-two-passes));
+- `readingOrder`: the manifest's `readingOrder`, when the manifest passes its
+  schema and the IRI resolves; absent otherwise
+  ([package spec §4.10](moca-package-spec.md#410-reading-order));
+- `terms`: `{ declared, problems, authority }`, when the manifest passes its
+  schema ([Reader contract §15.1](moca-reader-contract.md#151-exposing-terms));
+  absent when the manifest fails it. Exposed exactly; never acted on unless a
+  search has a terms request;
+- `datePublished`: the manifest's `datePublished`, as written, when the
+  manifest passes its schema; absent otherwise
+  ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)).
+  Informative only;
+- `datePackaged`: the manifest's `datePackaged`, as written, when the
+  manifest passes its schema; absent otherwise
+  ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)).
+  Informative only;
+- `publisher`, `url` and `contributors`: the manifest's credits, as written,
+  less any image that failed its check, when the manifest passes its schema;
+  each absent otherwise
+  ([package spec §4.13](moca-package-spec.md#413-credits)). Labels, not
+  proof: the signer's claim;
+- `envelope`, for an envelope only: `{ format, opened }`, plus the
+  unverified `outline` when it was not opened
+  ([encrypted packages §5.3](moca-encrypted-package.md#53-the-result)).
 
 A **diagnostic** has `code`, `severity` and `message`, and optionally `file`
 and `line`.
@@ -91,12 +136,28 @@ and `line`.
 | Operation | Takes | Returns |
 | --- | --- | --- |
 | `Search(source, options)` | A library, or, for a store backend, the loaded packages' states (`packageState`) and a clock; then a backend, an audience set and optional hooks. | A search. |
-| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`, `upTo`, `terms`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.diagnostics` | Nothing. | The findings of the latest `search` call on this search, such as `S008_UPTO_UNRESOLVED`. Empty when it found none. |
 
 Every call follows
-[Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate).
+[Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate):
+the filters come before the limit, so a search returns the best `limit`
+records that pass them, however far down the unfiltered ranking they are.
+
+For a store backend, `source` may also carry `structure`: a library of
+packages the host has read (for a show, its show and season packages), the
+structure source of [Reader contract §9.4](moca-reader-contract.md#94-store-backends).
+It adds no records.
+
+`Search(source, options)` also takes `maxCandidates` (optional, a host
+setting): the bound in contract §9.2, the most candidates one `search` call
+examines. Unset by default. When it stops a call before `limit` records pass
+the gate, `diagnostics` holds `S010_SEARCH_TRUNCATED`.
 `includeAll` is the host's opt-in from contract §8; a host that lets a caller
 set it has chosen to.
+`terms` is the host's terms request, `{ ai?, rating? }`
+([Reader contract §15.4](moca-reader-contract.md#154-the-terms-gate)); like
+the audience set, it is the host's, and a hook never changes it.
 
 ### 5.2 Backends
 
@@ -146,18 +207,34 @@ Ontology-guided retrieval is a strategy, not a fact, so it is pluggable
   tagged `retrieval: { via, from }`.
 
 `ctx` holds the request, the library, its structure operations, the audience
-set and the clock, all read-only. The gate runs after both hooks, so no hook
+set and the clock, all read-only. In a store search, the structure operations
+are those of the search's structure source, if the host gave one; otherwise
+there are none. The gate runs after both hooks, so no hook
 can return what the retrieval policy excludes. Each Reader ships a default
 strategy, `ontologyGuided`, which the conformance corpus tests, and which
 behaves the same in every Reader:
 
-- **ingress:** every declared concept whose preferred label's words (letters
-  and digits, lower-cased) all occur among the query's words is matched; the
-  search is then narrowed to those concepts and their descendants;
+- **ingress:** every declared concept with a preferred or alternative label
+  whose words (letters and digits, lower-cased) all occur among the query's
+  words is matched; the search is then narrowed to those concepts and their
+  descendants ([Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate),
+  "Ingress narrowing"). A Reader matches the labels as written: it never makes
+  plurals or other forms of its own; a producer that wants them writes them as
+  `skos:altLabel`;
 - **egress:** after each candidate, for each concept it is bound to, the nodes
   bound to every concept that concept transitively requires are added, in
   dependency order, each once, in the request's locale and tagged
   `retrieval: { via: "requires", from: <concept> }`.
+
+**Choosing a strategy (informative).** Narrowing to matched concepts suits a
+concept the person chose, for example a topic they picked from a list, and
+content whose structure is complete, such as a course or a handbook. A
+concept matched from the words of a question is a guess, and a concept layer
+can miss content that is about it: narrowing then hides the answer. A host
+can keep narrowing for concepts the person chose, show what the narrowing
+covers and let the person remove it, and for guessed concepts only add their
+labels to the query (`ingress` returning `query` without `concepts`). The
+default strategy's behaviour is unchanged.
 
 **Domain extensions.** A domain extension, such as a legal, procedures or
 course extension, is a set of hooks plus a vocabulary overlay. It is built on

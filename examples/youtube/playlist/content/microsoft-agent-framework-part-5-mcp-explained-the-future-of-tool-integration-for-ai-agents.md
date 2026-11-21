@@ -27,6 +27,11 @@ moca:
         type: FragmentSelector
         conformsTo: http://www.w3.org/TR/media-frags/
         value: t=0,1202
+  media:
+    - source: video
+      type: text/html
+      duration: 1202
+      transcript: captions
 ---
 # Microsoft Agent Framework - Part#5: MCP Explained: The Future of Tool Integration for AI Agents
 

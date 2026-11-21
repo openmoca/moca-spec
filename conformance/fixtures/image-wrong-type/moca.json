@@ -1,0 +1,14 @@
+{
+  "id": "https://example.com/conformance/image-wrong-type",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "images": [
+    {
+      "src": "media/icon.png",
+      "role": "icon",
+      "type": "image/jpeg",
+      "sizes": "256x256",
+      "alt": "A blue square"
+    }
+  ]
+}

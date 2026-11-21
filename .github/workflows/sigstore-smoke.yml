@@ -10,34 +10,37 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   sign:
     if: github.repository == 'openmoca/moca-spec' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # The signing identity. This job installs without install scripts: nothing it runs needs them.
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           path: moca-spec
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: openmoca/moca-reader-typescript
-          ref: v0.6.0
+          ref: b2e196d0d948cf8a412a4e058cccf623251387f2  # release-0.7.0 (0.7.0 release candidate); v0.7.0 once tagged
           path: moca-reader-typescript
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: openmoca/moca-tools
-          ref: v0.6.0
+          ref: 7e40fa802e0fb974e8745d5ae0eb75284a78182b  # release-0.7.0 (0.7.0 release candidate); v0.7.0 once tagged
           path: moca-tools
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
-      - run: npm ci
+      - run: npm ci --ignore-scripts
         working-directory: moca-reader-typescript
-      - run: npm ci
+      - run: npm ci --ignore-scripts
         working-directory: moca-tools
-      - run: npm ci
+      - run: npm ci --ignore-scripts
         working-directory: moca-spec
       - name: Sign keyless
         run: node ../moca-tools/packages/moca-sign/bin/moca-sign.js sign sigstore-smoke/package --sigstore
@@ -45,7 +48,7 @@ jobs:
       - name: Verify against public Sigstore
         run: node scripts/sigstore-smoke.mjs --online
         working-directory: moca-spec
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: sigstore-smoke-bundle
           path: moca-spec/sigstore-smoke/package/attestations/package.sigstore.json

@@ -40,8 +40,9 @@ or retire ([ADR-0002](docs/adr/0002-package-layer-over-okf.md)).
 
 ## Trade marks
 
-The name OpenMOCA and its logo are held by PI & Mash Solutions Ltd on behalf
-of the project, under the [trade mark policy](TRADEMARKS.md). The policy
+On behalf of the project, PI & Mash Solutions Ltd has applied to register the
+name OpenMOCA as a trade mark (UK application UK00004468246), and holds its
+logo, under the [trade mark policy](TRADEMARKS.md). The policy
 applies to everyone in the same way, including the maintainer's own products.
 It exists so that "OpenMOCA" and "OpenMOCA conformant" can be trusted. If
 adoption grows, the project will consider moving the marks to a neutral

@@ -1,0 +1,19 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-composite-strict-member",
+  "version": "1.0.0",
+  "title": "A lesson that allows no host and no export",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "host": false
+      }
+    },
+    "rights": {
+      "export": {
+        "allowed": false
+      }
+    }
+  }
+}

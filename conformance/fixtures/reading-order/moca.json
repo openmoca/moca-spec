@@ -1,0 +1,7 @@
+{
+  "id": "https://example.com/conformance/reading-order",
+  "version": "1.0.0",
+  "title": "A short course",
+  "language": "en",
+  "readingOrder": "https://example.org/course#Path"
+}

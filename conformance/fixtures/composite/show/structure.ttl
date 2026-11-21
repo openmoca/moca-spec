@@ -1,0 +1,23 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://example.com/conformance/series-show#by-release> a skos:OrderedCollection ;
+  skos:prefLabel "By release"@en ;
+  skos:memberList ( <https://example.com/conformance/series-episode-1> <https://example.com/conformance/series-episode-2> <https://example.com/conformance/series-episode-3> ) .
+
+<https://example.com/conformance/series-season-1> a skos:Concept ;
+  skos:prefLabel "Season 1"@en ;
+  dcterms:hasPart <https://example.com/conformance/series-episode-1>, <https://example.com/conformance/series-episode-2> .
+
+<https://example.com/conformance/series-episode-1> a skos:Concept ; skos:prefLabel "Episode 1"@en .
+<https://example.com/conformance/series-episode-2> a skos:Concept ; skos:prefLabel "Episode 2"@en .
+<https://example.com/conformance/series-episode-3> a skos:Concept ; skos:prefLabel "Episode 3"@en .
+<https://example.com/conformance/series-episode-2#notes.md> a skos:Concept ; skos:prefLabel "Notes for episode 2"@en .
+
+<https://example.com/conformance/series-show#sea> a skos:Concept ;
+  skos:prefLabel "The sea"@en ;
+  dcterms:hasPart <https://example.com/conformance/series-episode-1>, <https://example.com/conformance/series-episode-3> .
+
+<https://example.com/conformance/series-show#weather> a skos:Concept ;
+  skos:prefLabel "Weather"@en ;
+  dcterms:hasPart <https://example.com/conformance/series-episode-2#notes.md> .

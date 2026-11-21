@@ -1,0 +1,14 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://example.com/conformance/ranked-filter#path> a skos:OrderedCollection ;
+  skos:prefLabel "Path"@en ;
+  skos:memberList ( <https://example.com/conformance/ranked-filter-step-1> <https://example.com/conformance/ranked-filter-step-2> ) .
+
+<https://example.com/conformance/ranked-filter-step-1> a skos:Concept ; skos:prefLabel "Step 1"@en .
+<https://example.com/conformance/ranked-filter-step-2> a skos:Concept ; skos:prefLabel "Step 2"@en .
+
+<https://example.com/conformance/ranked-filter#topic> a skos:Concept ;
+  skos:prefLabel "A topic"@en ;
+  skos:altLabel "Lantern lore"@en, "Early steps"@en, "Lantern lore"@en ;
+  dcterms:hasPart <https://example.com/conformance/ranked-filter-step-1> .

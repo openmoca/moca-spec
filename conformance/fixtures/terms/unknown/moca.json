@@ -1,0 +1,14 @@
+{
+  "id": "https://example.com/conformance/terms-unknown",
+  "version": "1.0.0",
+  "title": "Terms fixture",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "edge": true
+      },
+      "answerSources": "web"
+    }
+  }
+}

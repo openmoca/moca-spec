@@ -1,0 +1,8 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/nested-b",
+  "version": "1.0.0",
+  "title": "An unsigned course over the lessons",
+  "language": "en",
+  "members": [{ "id": "https://example.com/third-party/nested-m", "version": "1.0.0", "digest": "sha256:7ee5847e99148ef29c4d28a2dcfc8ccc9e703fe6b58892fb533ecef591caca3b" }]
+}

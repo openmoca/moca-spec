@@ -1,0 +1,7 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/frontmatter-long-key",
+  "version": "1.0.0",
+  "title": "Implicit keys of more than 1,024 characters",
+  "language": "en"
+}

@@ -1,0 +1,7 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/diamond-leaf",
+  "version": "1.0.0",
+  "title": "A member two packages share",
+  "language": "en"
+}

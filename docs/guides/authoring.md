@@ -4,7 +4,7 @@ This guide builds one package step by step, the way you would for real
 content, and checks it with `moca-lint` after every step. By the end it has
 evidence quoted from its source document, a page that is not in force yet,
 an internal page, a French translation, and it is packed into one file.
-Every command and output below was run with the 0.6.0 tools.
+Every command and output below was run with the 0.7.0 tools.
 
 You need Node.js 22 or later; `npx` fetches each tool. If you have not made a
 package before, the [quickstart](../quickstart.md) takes five minutes. If
@@ -39,7 +39,7 @@ mkdir -p acme-policies/content
   "version": "1.0.0",
   "title": "Acme customer policies",
   "language": "en",
-  "publisher": "Acme Ltd",
+  "publisher": { "name": "Acme Ltd" },
   "license": "CC-BY-4.0"
 }
 ```
@@ -49,6 +49,9 @@ mkdir -p acme-policies/content
 - **`version`** changes whenever the content does ([versions](#versions)).
 - **`title`** is shown to people. `language`, `publisher` and `license` (an
   SPDX expression) are optional, and worth setting.
+- **`publisher`** must be an object with at least a `name`; a plain string
+  fails the schema (`M002`). It can also carry a `url`, a `description`, an
+  `image` and `sameAs` links ([credits and dates](credits-and-dates.md)).
 
 `acme-policies/content/refund-window.md`:
 
@@ -97,7 +100,7 @@ npx @openmoca/moca-lint lint acme-policies
 ```text
 No findings.
 
-sha256:8af8c7e923063d9f591f5841a1df0efc5ca836f1a3000a1b504f665d30433fa4
+sha256:3b82681036a14761618d240ec7384dcbe8858cb991c73f5c859da72427945f74
 capabilities: core
 ```
 
@@ -121,7 +124,8 @@ Acme Customer Terms
 7.2 Items marked as final sale are not eligible for a refund.
 ```
 
-Add the source and the evidence to the page's frontmatter:
+Add the source and the evidence at the end of the page's frontmatter, after
+`stale_after`:
 
 ```yaml
 sources:
@@ -149,7 +153,7 @@ npx @openmoca/moca-lint lint acme-policies
 ```text
 No findings.
 
-sha256:6f05df9779b1bb967cf8bc4affda6f9e9cb5f46f4c04e94100c1da28704d3c83
+sha256:8680c025d31a9ec3d19708e927c7eeb2f8828f485733b0ec9dd8343242055b83
 capabilities: core, located-evidence, self-contained-evidence
 ```
 
@@ -254,19 +258,27 @@ npx @openmoca/moca-lint lint acme-policies
 ```text
 No findings.
 
-sha256:4accf82ca9510801e51584d4f7962b894ceca8be282955cecd98a0047b5cb205
+sha256:69892a79d8afaaca91544ad6f10270df09e1c34f208a66f1900b4080e5017be5
 capabilities: core, located-evidence, self-contained-evidence
 ```
 
 ## 5. A translation
 
-Add `fr` to the manifest's `locales`:
+Add `fr` to the manifest's `locales`. `acme-policies/moca.json` is now:
 
 ```json
-"locales": ["fr"]
+{
+  "id": "https://example.com/moca/acme-policies",
+  "version": "1.0.0",
+  "title": "Acme customer policies",
+  "language": "en",
+  "locales": ["fr"],
+  "publisher": { "name": "Acme Ltd" },
+  "license": "CC-BY-4.0"
+}
 ```
 
-and write the French version beside the English one, named `<page>.<language>.md`:
+Then write the French version beside the English one, named `<page>.<language>.md`:
 
 `acme-policies/content/refund-window.fr.md`:
 
@@ -299,11 +311,18 @@ npx @openmoca/moca-lint lint acme-policies
 ```
 
 ```text
-No findings.
+moca.json
+  INFO LINT_TRANSLATION_MISSING  locale fr has no translation of the manifest's title and description
 
-sha256:e58a7cfca2bb0c8178e74d3f9408e4238809135d646a628685c60d78bf0c34ac
+0 error(s), 0 warning(s), 1 info
+
+sha256:1be1efa0ea5230cd4270adcc94ce19e2cb05a8c7f3c96a40e1acaddc825570df
 capabilities: core, localized, located-evidence, self-contained-evidence
 ```
+
+The info is a suggestion, not a problem: a French reader sees the English
+title until the manifest's `translations` gives a French one
+([catalogue](#how-the-package-appears-in-a-catalogue)).
 
 ## 6. Check and pack
 
@@ -324,9 +343,10 @@ npx @openmoca/moca-lint info acme-policies
 {
   "id": "https://example.com/moca/acme-policies",
   "version": "1.0.0",
-  "digest": "sha256:e58a7cfca2bb0c8178e74d3f9408e4238809135d646a628685c60d78bf0c34ac",
+  "digest": "sha256:1be1efa0ea5230cd4270adcc94ce19e2cb05a8c7f3c96a40e1acaddc825570df",
   "valid": true,
   "capabilities": ["core", "localized", "located-evidence", "self-contained-evidence"],
+  "distribution": "open",
   "nodes": [
     { "path": "handling-refunds.md", "type": "Procedure", "locales": ["default"] },
     { "path": "refund-window-2027.md", "type": "Policy", "locales": ["default"] },
@@ -346,6 +366,7 @@ npx @openmoca/moca-lint pack acme-policies -o acme-policies.moca
 
 ```text
 Wrote acme-policies.moca
+sha256:1be1efa0ea5230cd4270adcc94ce19e2cb05a8c7f3c96a40e1acaddc825570df
 ```
 
 The `.moca` file has the same digest as the folder. Next,
@@ -397,6 +418,47 @@ it contains:
 `npx @openmoca/moca-lint digest <member>` prints the digest to pin. A package
 with members is `composed`; see
 [`examples/handbook`](../../examples/handbook).
+
+## How the package appears in a catalogue
+
+Libraries and catalogues list packages by their manifest. A few optional
+fields help them show yours well (package spec §4.6–4.10):
+
+```json
+"images": [
+  { "src": "media/cover.png", "role": "cover", "type": "image/png", "sizes": "1920x1080",
+    "alt": "A support agent at a desk" },
+  { "src": "media/icon.png", "role": "icon", "type": "image/png", "sizes": "512x512", "alt": "Acme logo" }
+],
+"tags": ["refunds", "returns"],
+"translations": {
+  "fr": { "title": "Base de connaissances du support Acme",
+          "description": "Les réponses du support Acme aux questions des clients.",
+          "tags": ["remboursements"] }
+},
+"apps": ["support-desk"],
+"readingOrder": "https://example.com/moca/support-kb#path"
+```
+
+- **`images`**: PNG, JPEG or WebP files under `media/`, at most 1 MiB each.
+  A cover is 16:9; an icon is square. Give every image `alt` text.
+  `moca-lint lint` checks the shapes and sizes from the file headers.
+- **`tags`**: a few plain labels for the whole package. The firm link to a
+  vocabulary is still the concept binding in `structure.ttl`; `moca-lint lint
+  --vocabulary <file>` shows how your tags line up with one.
+- **`translations`**: the title, description, tags and alt text in each
+  language in `locales`.
+- **`apps`**: where you suggest the package is opened, beyond conversation: a
+  specific app as an `https:` address, or a kind of app. A host may offer
+  "Open with"; it never has to. Well-known kinds are listed on
+  [openmoca.org](https://openmoca.org/spec/app-types/).
+- **`readingOrder`**: the ordered collection in your `structure.ttl` that the
+  package is meant to be read in ([structure](structure.md)). It lets a search
+  stay within what a reader has reached
+  ([search up to a point](search-and-indexes.md#search-up-to-a-point)).
+
+Every field is signed with the rest of the manifest. None of them changes how
+a Reader treats the content.
 
 ## Next
 

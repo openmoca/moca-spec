@@ -26,7 +26,12 @@ moca:
       selector:
         type: FragmentSelector
         conformsTo: http://www.w3.org/TR/media-frags/
-        value: t=0,1071
+        value: t=0,1070.08
+  media:
+    - source: video
+      type: text/html
+      duration: 1069
+      transcript: captions
 ---
 # Microsoft Agent Framework - Part#1: In-Memory, Temporary & Permanent Agents
 

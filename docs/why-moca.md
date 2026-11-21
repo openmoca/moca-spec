@@ -10,7 +10,14 @@ vector store or agent framework you use.
 **MOCA stands for Modular Ontology, Content & Attestation**: knowledge in
 modular packages that can be assembled into larger ones, organised by an
 optional ontology, its content kept with the original sources, and
-attestations, signatures that prove who published it and who checked it.
+attestations, signatures that show who signed it and who checked it.
+
+**For the people who make the work.** A package keeps a creator's credits,
+sources and terms with their work, wherever it is copied: who made it, where
+it came from, and what AI use the creator rules out
+([the creator's terms](guides/creators-terms.md)). Terms are labels, not locks;
+apps that honour them can say so with the
+[OpenMOCA Commitment](../COMMITMENT.md).
 
 It fits wherever an AI answers from your knowledge: [RAG](moca-and-rag.md)
 with citations you can check, [trust and provenance](trust-and-provenance.md),
@@ -146,7 +153,7 @@ reviewed node or a superseded policy.
 
 ## Honest status
 
-MOCA is at 0.6.0, before 1.0. The specification, three Readers, the tools and
+MOCA is at 0.7.0, before 1.0. The specification, three Readers, the tools and
 the conformance corpus are complete and tested together, but nobody has yet
 measured how much MOCA metadata improves answers. That
 [evaluation](plans/01-outcome-evaluation.md) comes next, and fields that do not

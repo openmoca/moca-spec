@@ -1,0 +1,19 @@
+{
+  "id": "https://example.com/conformance/issued-original",
+  "version": "1.0.0",
+  "title": "A course with issued copies",
+  "language": "en",
+  "issuedCopies": {
+    "issuers": [
+      {
+        "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA94AzjuVWnBMriLi4RO8vfqW1BfpuIicNw20TTunypjs=\n-----END PUBLIC KEY-----\n"
+      },
+      {
+        "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAJmO3OyMe1Y7pdIZx2LQqoDtUeYtDQFOrgXHN616GPtM=\n-----END PUBLIC KEY-----\n"
+      }
+    ],
+    "paths": [
+      "content/lessons/"
+    ]
+  }
+}

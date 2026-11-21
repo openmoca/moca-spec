@@ -1,0 +1,51 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.7",
+  "id": "https://example.com/moca/rock-pools",
+  "version": "1.0.0",
+  "title": "A small guide to rock pools",
+  "description": "A short guide for anyone looking in rock pools for the first time: when to go, what to take, the words you will meet, and one morning's field notes.",
+  "language": "en",
+  "license": "CC-BY-4.0",
+  "datePublished": "2026-11-21",
+  "datePackaged": "2026-11-21T12:00:00Z",
+  "url": "https://example.com/tideline/rock-pools",
+  "publisher": {
+    "name": "Tideline Example Press",
+    "url": "https://example.com/tideline",
+    "description": "A small, made-up press that publishes guides to the seashore. It exists only in this example."
+  },
+  "contributors": [
+    { "name": "Rowan Example", "roles": ["aut"], "url": "https://example.com/tideline/rowan" }
+  ],
+  "terms": {
+    "ai": {
+      "allowed": {
+        "device": true,
+        "host": true,
+        "provider": true,
+        "training": false,
+        "machineTranslation": true
+      },
+      "providerRequires": ["noTraining", "noRetention"],
+      "answerSources": "work"
+    },
+    "rating": { "explicit": false, "typicalAgeRange": "7-" },
+    "rights": {
+      "rightsHolder": { "id": "https://example.com", "name": "Tideline Example Press" },
+      "basis": "own",
+      "contact": "https://example.com/tideline/contact",
+      "repackage": { "allowed": false },
+      "export": { "allowed": true },
+      "copyright": { "year": "2026", "holder": { "name": "Rowan Example" }, "notice": "© 2026 Rowan Example" },
+      "notice": "Ask about rock pools as much as you like. When you quote the guide, please name Rowan Example."
+    },
+    "nodes": [
+      {
+        "paths": ["content/field-notes.md"],
+        "ai": { "allowed": { "provider": false, "machineTranslation": false } },
+        "rating": { "explicit": false, "typicalAgeRange": "7-" }
+      }
+    ]
+  }
+}

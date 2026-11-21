@@ -3,17 +3,21 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status: before 1.0](https://img.shields.io/badge/status-before%201.0-blue.svg)](#status)
 
-**Portable grounding for AI.** A MOCA package holds the knowledge an AI system
-uses, how that knowledge is organised, and the original sources it came from.
-Any system can read it the same way, on a server or on a device with no
-network, whatever model, vector database or agent framework it runs.
+**Knowledge that says who made it.** The
+[Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+(OKF) shapes knowledge for AI. MOCA is for the people who make and own it: a
+MOCA package wraps an OKF bundle in a signed manifest that says who made the
+work, who owns it and on what terms it may be used, and the signature shows
+who said so. The package also holds how the knowledge is organised and the
+original sources it came from. Any system can read it the same way, on a
+server or on a device with no network, whatever model, vector database or
+agent framework it runs.
 
 MOCA stands for **Modular Ontology, Content & Attestation**. Read more at
 [openmoca.org](https://openmoca.org).
 
-A MOCA package wraps an
-[Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
-(OKF) bundle, a folder of Markdown with YAML frontmatter, in three layers:
+Around the OKF bundle, a folder of Markdown with YAML frontmatter, a package
+has three layers:
 
 | Layer | Holds | Built on |
 | --- | --- | --- |
@@ -22,8 +26,9 @@ A MOCA package wraps an
 | **Evidence** | The original sources, and selectors that point into them | W3C Web Annotation, Media Fragments, WebVTT |
 
 **Trust runs across all three.** The package's digest covers every file, so
-the originals travel with the knowledge and arrive unchanged. A signed package
-proves who published it, and signed reviews prove who checked which node.
+the originals travel with the knowledge and arrive unchanged. A signature
+shows who signed the package, and a signed review shows who checked which
+node: each shows who said so, and no more.
 MOCA ships knowledge with its evidence, sealed when signed.
 
 ## The problem
@@ -145,12 +150,12 @@ teaches it to make, check, sign, index, read and serve packages.
 | [Citations over AG-UI](spec/moca-ag-ui-citations.md) | The `moca.citations` event: how a service sends the citation records an answer cites to any AG-UI client |
 | [Profiles](profiles/README.md) | Optional extensions; today the ontology profile (extra vocabulary files) |
 | [Schemas](schemas/v1) | Manifest, node, structure, citation record, search hit, sidecar, review predicate, trust root, AG-UI citations event |
-| [Conformance corpus](conformance/README.md) | 196 cases, with pinned digests, that any Reader must pass, in any language |
+| [Conformance corpus](conformance/README.md) | 450 cases, with pinned digests, that any Reader must pass, in any language |
 
 Identifiers use `https://w3id.org/moca/...`, permanent names that redirect to
 openmoca.org: each schema resolves to itself and each profile to its
-document. The w3id.org redirect is registered at the 0.6.0 release; until
-then these URIs are stable names, not live links.
+document. The w3id.org redirect is not registered yet; until it is, these
+URIs are stable names, not live links.
 
 ## Readers
 
@@ -177,7 +182,7 @@ line and a chat for each, side by side.
 
 ## Status
 
-**`0.6.0`, before `1.0.0`.** A minor version may still change the format, and each change is in [MIGRATIONS.md](MIGRATIONS.md). `1.0.0` comes when the format has settled and is used beyond its maintainer ([GOVERNANCE.md](GOVERNANCE.md#path-to-a-standard)). The
+**`0.7.0`, before `1.0.0`.** A minor version may still change the format, and each change is in [MIGRATIONS.md](MIGRATIONS.md). `1.0.0` comes when the format has settled and is used beyond its maintainer ([GOVERNANCE.md](GOVERNANCE.md#path-to-a-standard)). The
 specification, schemas, examples and conformance corpus are tested together
 (`npm test`), and every Reader runs the corpus in its own CI. What is not proven yet is value in use: the
 [outcome evaluation](docs/plans/01-outcome-evaluation.md) is the next
@@ -189,6 +194,30 @@ Start at [docs/](docs/README.md): [why MOCA](docs/why-moca.md),
 [use cases](docs/use-cases.md), [architecture](docs/architecture.md), the
 guides, and the [decision records](docs/adr/README.md).
 
+## Standards
+
+MOCA builds on existing standards rather than inventing its own. The full
+list, with where each applies, is in
+[package specification §3](spec/moca-package-spec.md#3-standards-used).
+
+| Standard | Where | How strongly |
+| --- | --- | --- |
+| [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format) (OKF) v0.2 | content and node trust fields | follow |
+| [JSON Schema](https://json-schema.org/draft/2020-12) 2020-12 | the schemas in `schemas/v1` | follow |
+| [I-JSON](https://www.rfc-editor.org/rfc/rfc7493) (RFC 7493) | `moca.json` | follow |
+| SHA-256, in the [BagIt](https://www.rfc-editor.org/rfc/rfc8493) (RFC 8493) manifest line format | the package digest | follow |
+| [in-toto Statement](https://github.com/in-toto/attestation) v1, in [DSSE](https://github.com/secure-systems-lab/dsse) or a [Sigstore](https://www.sigstore.dev/) bundle; [Ed25519](https://www.rfc-editor.org/rfc/rfc8032) (RFC 8032) | attestations | follow |
+| [W3C Web Annotation](https://www.w3.org/TR/annotation-model/) selectors, [RFC 3778](https://www.rfc-editor.org/rfc/rfc3778) PDF pages, [W3C Media Fragments](https://www.w3.org/TR/media-frags/) | evidence | follow |
+| [WebVTT](https://www.w3.org/TR/webvtt1/) | captions and transcripts | follow |
+| [W3C SKOS](https://www.w3.org/TR/skos-reference/), [DCMI Metadata Terms](https://www.dublincore.org/specifications/dublin-core/dcmi-terms/), in [Turtle](https://www.w3.org/TR/turtle/) | structure | follow |
+| [BCP 47](https://www.rfc-editor.org/info/bcp47) | languages | follow |
+| [SPDX license expressions](https://spdx.github.io/spdx-spec/v2.3/SPDX-license-expressions/) | licences | follow |
+| [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339) | dates and times | follow |
+| [age](https://c2sp.org/age) v1 | encrypted packages | follow |
+| [AG-UI](https://docs.ag-ui.com/) | the `moca.citations` event | follow |
+| [W3C Publication Manifest](https://www.w3.org/TR/pub-manifest/) | `datePublished` | informative |
+| IETF `draft-ietf-aipref-vocab-08`, RSL 1.0, [W3C TDMRep](https://www.w3.org/community/tdmrep/) | publishing `terms` where crawlers look (§4.14) | informative mapping |
+
 ## Contributing and licence
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [GOVERNANCE.md](GOVERNANCE.md).
@@ -198,3 +227,5 @@ risk. See [NOTICE](NOTICE).
 
 OpenMOCA™ is a trade mark of PI & Mash Solutions Ltd. The licence covers the
 code and text, not the name: see the [trade mark policy](TRADEMARKS.md).
+
+Built with the help of AI assistants; every change is reviewed and accepted by the maintainer.

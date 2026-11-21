@@ -1,0 +1,26 @@
+{
+  "id": "https://example.com/conformance/credits-node",
+  "version": "1.0.0",
+  "title": "Credits fixture",
+  "language": "en",
+  "mocaVersion": "0.7",
+  "contributors": [
+    {
+      "name": "Ada Example",
+      "roles": [
+        "hst",
+        "aut"
+      ],
+      "sameAs": [
+        "https://orcid.org/0000-0002-1825-0097"
+      ]
+    },
+    {
+      "name": "LibriVox volunteers",
+      "roles": [
+        "nrt"
+      ],
+      "url": "https://librivox.org"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-composite-member",
+  "version": "1.0.0",
+  "title": "A lesson that allows a host",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "host": true
+      }
+    }
+  }
+}

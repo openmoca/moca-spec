@@ -24,7 +24,7 @@ search runs on.
 
 This guide builds both kinds of index for the FAA's *Airplane Flying
 Handbook* (251 pages, from [`examples/pdf`](../../examples/pdf)), then
-searches it three ways. Every command and output below was run with the 0.6.0
+searches it three ways. Every command and output below was run with the 0.7.0
 tools, and the code was run in all three Readers, which print the same
 results.
 
@@ -37,11 +37,11 @@ curl -fsSLO https://github.com/openmoca/moca-spec/releases/latest/download/airpl
 ## 1. Build a lexical index
 
 ```sh
-npx @openmoca/moca-index build airplane-flying-handbook.moca -o afh.moca.idx --chunk headings
+npx @openmoca/moca-index build airplane-flying-handbook.moca -o afh.mocai --chunk headings
 ```
 
 ```text
-Wrote afh.moca.idx (540 item(s)) bound to sha256:4dd2efa4ff7d047a4f52a6553fe29605d0591aaf6f18d1ed9d9a2328afe49be2
+Wrote afh.mocai (540 item(s)) bound to sha256:4dd2efa4ff7d047a4f52a6553fe29605d0591aaf6f18d1ed9d9a2328afe49be2
 ```
 
 - **`--chunk headings`** cuts each page at its headings, so a result is the
@@ -76,21 +76,21 @@ SHA-256. `all-MiniLM-L6-v2` reads at most 256 tokens of each text, about 1,000
 characters, so keep passages that short with `--max-chars`:
 
 ```sh
-npx @openmoca/moca-index build airplane-flying-handbook.moca -o afh-minilm.moca.idx \
+npx @openmoca/moca-index build airplane-flying-handbook.moca -o afh-minilm.mocai \
   --chunk headings --max-chars 1000 --model all-MiniLM-L6-v2
-npx @openmoca/moca-index check afh-minilm.moca.idx --package airplane-flying-handbook.moca
+npx @openmoca/moca-index check afh-minilm.mocai --package airplane-flying-handbook.moca
 ```
 
 ```text
-Wrote afh-minilm.moca.idx (1651 item(s)) bound to sha256:4dd2efa4ff7d047a4f52a6553fe29605d0591aaf6f18d1ed9d9a2328afe49be2
+Wrote afh-minilm.mocai (1651 item(s)) bound to sha256:4dd2efa4ff7d047a4f52a6553fe29605d0591aaf6f18d1ed9d9a2328afe49be2
 No findings.
 
 Usable: 1651 chunk(s)
 ```
 
-It took about ten seconds. The index is a folder: `index.json` says what it
-is, and `payload/` holds the passages and a binary file of vectors (2.4 MB
-here). `index.json` records the model, so a Reader can refuse a question
+It took about ten seconds. The index is one file, `afh-minilm.mocai` (2.7 MB
+here): a Zip that holds `index.json`, which says what the index is, and
+`payload/`, the passages and a binary file of vectors. `index.json` records the model, so a Reader can refuse a question
 embedded with a different one:
 
 ```json
@@ -143,7 +143,7 @@ import { standardEmbedder } from '@openmoca/moca-embed';
 const embedder = await standardEmbedder('all-MiniLM-L6-v2');
 
 const pkg = await readPackage('airplane-flying-handbook.moca');
-const sidecar = bindSidecar('afh-minilm.moca.idx', pkg);
+const sidecar = bindSidecar('afh-minilm.mocai', pkg);
 if (!sidecar.usable) throw new Error(sidecar.diagnostics.map((d) => d.message).join('; '));
 const library = new Library().add(pkg, { chunks: sidecar.chunks, index: sidecar.index });
 
@@ -173,7 +173,7 @@ var store = new ModelStore(ModelStore.DefaultFolder);
 using var embedder = store.Load(StandardModel.Find("all-MiniLM-L6-v2")!);
 
 var pkg = await MocaReader.ReadPackageAsync("airplane-flying-handbook.moca");
-var sidecar = SidecarBinder.Bind("afh-minilm.moca.idx", pkg);
+var sidecar = SidecarBinder.Bind("afh-minilm.mocai", pkg);
 if (!sidecar.Usable) throw new InvalidOperationException(string.Join("; ", sidecar.Diagnostics.Select(d => d.Message)));
 var library = new Library().Add(pkg, sidecar);
 
@@ -207,7 +207,7 @@ from moca_reader.embedders import standard_embedder
 embedder = standard_embedder("all-MiniLM-L6-v2")
 
 pkg = read_package("airplane-flying-handbook.moca")
-sidecar = bind_sidecar("afh-minilm.moca.idx", pkg)
+sidecar = bind_sidecar("afh-minilm.mocai", pkg)
 if not sidecar.usable:
     raise SystemExit("; ".join(d.message for d in sidecar.diagnostics))
 library = Library().add(pkg, chunks=sidecar.chunks, index=sidecar.index)
@@ -240,9 +240,9 @@ semantic:
   0.505  Rejected Takeoff/Engine Failure
   0.494  Low Altitude Engine Failure Scenarios
 hybrid:
-  0.016  Engine Failure During Flight
-  0.016  Before-Takeoff Check
-  0.016  Door Opening In-Flight
+  0.032  Before-Takeoff Check
+  0.029  Rejected Takeoff/Engine Failure
+  0.029  Engine Failure After Takeoff (Single-Engine)
 ```
 
 - **Lexical** search misses: the question says "quits" and "leave the
@@ -250,7 +250,10 @@ hybrid:
 - **Semantic** search finds the right sections by meaning.
 - **Hybrid** merges the two ranked lists (reciprocal rank fusion), so a
   passage either search ranks well comes back. Its scores are small because
-  they come from ranks, not from similarity.
+  they come from ranks, not from similarity. Each search ranks every passage
+  before any filter or limit (Reader contract §9.2), so a passage near the
+  top of both lists, such as the takeoff sections here, rises above one that
+  only one search found.
 
 The question is embedded on your machine; the Reader never sends anything
 anywhere. The results are citation records, exactly as in
@@ -290,7 +293,7 @@ model is installed. Name the index after the package and put it beside it:
 
 ```sh
 moca-mcp models add all-MiniLM-L6-v2
-mv afh-minilm.moca.idx airplane-flying-handbook.moca.idx
+mv afh-minilm.mocai airplane-flying-handbook.mocai
 moca-mcp --library .
 ```
 
@@ -305,6 +308,27 @@ add what each result requires. Both work with every backend. Your application
 can also plug in its own retrieval hooks, before and after the backend
 ([write your own hooks](structure.md#7-write-your-own-hooks)).
 
+## Search up to a point
+
+When a package names a `readingOrder` (package spec §4.10), a search can
+leave out what comes after a point in it: `upTo`. A learner on module 2 gets
+answers from the introduction, module 1 and module 2, and not from the
+module 5 exercises. Pages that are not on the reading order, such as a
+glossary, still answer, and so do other packages loaded beside the course.
+
+```js
+await search.search('which form do I use', { upTo: 'https://example.com/moca/course#module-2' });
+```
+
+`upTo` can be a member of the reading order or anything under one. If no
+loaded package's reading order has it, it limits nothing and the search
+reports `S008_UPTO_UNRESOLVED` in `search.diagnostics`. A composite
+package's reading order limits its member packages too, when it is signed by a key
+whose `ids` cover them; for a library of your own unsigned packages, set
+`allowUnsignedRelations`. It is a convenience,
+not access control: anyone with the file can read all of it
+([Reader contract §9](../../spec/moca-reader-contract.md#9-search)).
+
 ## Next
 
 - [Structure](structure.md): search within a topic, and what each topic
@@ -313,6 +337,6 @@ can also plug in its own retrieval hooks, before and after the backend
   own vector store.
 - [Sidecar index specification](../../spec/moca-sidecar-index-spec.md): the
   index format.
-- Try [Try OpenMOCA](https://try.openmoca.org): lexical, semantic and hybrid
+- Try [the OpenMOCA demo (try.openmoca.org)](https://try.openmoca.org): lexical, semantic and hybrid
   search over eight packages, with two models, and where each result ranked in
   each list.

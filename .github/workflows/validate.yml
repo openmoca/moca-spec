@@ -11,16 +11,16 @@ permissions:
 # The released reference Reader and tools this corpus is checked against. Pins are release
 # tags, or commits while a Spec Change Proposal is in flight; never a branch (CONTRIBUTING.md).
 env:
-  MOCA_READER_TYPESCRIPT_REF: v0.6.0
-  MOCA_TOOLS_REF: v0.6.0
+  MOCA_READER_TYPESCRIPT_REF: b2e196d0d948cf8a412a4e058cccf623251387f2  # release-0.7.0 (0.7.0 release candidate); v0.7.0 once tagged
+  MOCA_TOOLS_REF: 7e40fa802e0fb974e8745d5ae0eb75284a78182b  # release-0.7.0 (0.7.0 release candidate); v0.7.0 once tagged
 
 jobs:
   deps:
     name: Public dependencies only
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
       - run: node scripts/check-deps.mjs
@@ -28,24 +28,24 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           path: moca-spec
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: ${{ github.repository_owner }}/moca-reader-typescript
           ref: ${{ env.MOCA_READER_TYPESCRIPT_REF }}
           path: moca-reader-typescript
           # Read access to the other MOCA repos while they are private.
           token: ${{ secrets.MOCA_REPOS_TOKEN || github.token }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: ${{ github.repository_owner }}/moca-tools
           ref: ${{ env.MOCA_TOOLS_REF }}
           path: moca-tools
           # Read access to the other MOCA repos while they are private.
           token: ${{ secrets.MOCA_REPOS_TOKEN || github.token }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: npm

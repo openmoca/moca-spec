@@ -26,7 +26,12 @@ moca:
       selector:
         type: FragmentSelector
         conformsTo: http://www.w3.org/TR/media-frags/
-        value: t=0,1725
+        value: t=0,1724.84
+  media:
+    - source: video
+      type: text/html
+      duration: 1723
+      transcript: captions
 ---
 # Azure AI Search Explained \| Keyword vs Vector vs Hybrid Search + RAG Architecture
 

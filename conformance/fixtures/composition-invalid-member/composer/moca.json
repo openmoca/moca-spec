@@ -1,0 +1,11 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/composition-invalid-member",
+  "version": "1.0.0",
+  "title": "A composition with an invalid member",
+  "language": "en",
+  "members": [
+    { "id": "https://example.com/conformance/source-id-duplicate", "version": "1.0.0", "digest": "sha256:86e8e804361a8a7ee2f287c1758888d21f4f1bd638281dd3f3042648d6756dee" },
+    { "id": "https://example.com/conformance/media-alternates", "version": "1.0.0", "digest": "sha256:2afa622da0350ff5334ade00c1a7e611cc408a1d369ae468dbe76acabbf1a64d" }
+  ]
+}

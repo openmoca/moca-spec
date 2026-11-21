@@ -1,6 +1,6 @@
 # MOCA Attestations
 
-Specification version: `0.6.0`
+Specification version: `0.7.0`
 Status: Before `1.0.0`. A minor version may still change the format; each change is in [MIGRATIONS.md](../MIGRATIONS.md).
 License: [Apache License 2.0](../LICENSE)
 
@@ -29,9 +29,10 @@ which the digest excludes. Each file holds one envelope:
 
 The envelope's `payloadType` MUST be `application/vnd.in-toto+json` and its
 payload an in-toto v1 Statement. Conventional names are
-`attestations/package.<signer>.dsse.json`, `attestations/package.sigstore.json`
-and `attestations/reviews/<reviewer>-<date>.<dsse|sigstore>.json`; Readers
-MUST NOT depend on names beyond the suffix.
+`attestations/package.<signer>.dsse.json`, `attestations/package.sigstore.json`,
+`attestations/reviews/<reviewer>-<date>.<dsse|sigstore>.json` and
+`attestations/issued.<issuer>.dsse.json`; Readers MUST NOT depend on names
+beyond the suffix.
 
 A Reader MUST ignore statements with a predicate type it does not know.
 
@@ -69,6 +70,70 @@ content changed after it was signed, and is reported as
 
 Several package attestations MAY be present, for example a publisher and a
 distributor. Each valid one names a signer.
+
+## 3a. Issued-copy attestations
+
+Predicate type: `https://w3id.org/moca/attestation/issued-copy/v1`
+
+An issuer may **mark** a licensee's copy: it changes the body text of some
+files under `content/` or `media/`, so that it can recognise the copy later
+([ADR-0028](../docs/adr/0028-issued-copies.md)). Any change alters the file
+hashes and the package digest, so the publisher's package attestation would
+no longer match. An issued-copy attestation binds the copy to the publisher's
+package, and the Reader checks the binding itself.
+
+```json
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    { "name": "https://example.com/moca/course@2.1.0",
+      "digest": { "sha256": "<digest of this issued copy>" } }
+  ],
+  "predicateType": "https://w3id.org/moca/attestation/issued-copy/v1",
+  "predicate": {
+    "original": { "sha256": "<digest of the publisher's package>" },
+    "changedFiles": {
+      "content/lesson-3.md": { "original": "<sha256 of the publisher's bytes>" }
+    }
+  }
+}
+```
+
+**The statement.**
+
+- It has exactly one subject. Its `name` is `<id>@<version>` from `moca.json`,
+  and its `sha256` is the copy's computed digest, without the `sha256:`
+  prefix. `original.sha256` is the publisher's package digest, in the same
+  form. The two MUST differ.
+- `changedFiles` MUST be non-empty. Each key is a package path in NFC, under
+  `content/` or `media/`, of a file in the copy. It MUST NOT be a hidden
+  entry (a segment starting with `.`) or a file a profile the Reader
+  recognises defines (package spec §9). Each value's `original` is the
+  SHA-256 of the publisher's bytes, as 64 lower-case hex digits, and MUST
+  differ from the file's hash in the copy.
+- The copy has the same set of paths as the original: no file is added,
+  removed or renamed. `moca.json`, `structure.ttl`, `sources/` and every file
+  not in `changedFiles` are the publisher's bytes.
+- An issuer MUST NOT change a node's frontmatter, which carries the audience,
+  status, validity and evidence the default policy reads. A Reader cannot
+  check this, so trusting an issuer means trusting it on this (§8).
+- The statement names no licensee. The issuer keeps its own record of which
+  copy, by subject digest, went to whom.
+
+**Publisher consent.** An issued copy counts only when the publisher allowed
+it in `issuedCopies` (package spec §4.11), and the host trusts the issuer for
+the role `issued-copy` (§6). Neither alone is enough.
+
+**Verification** has two passes (§7.1). An issued copy that passes them is
+`signed` by its publisher, and the result says which files the issuer changed
+and who the issuer is.
+
+**Privacy (informative).** A mark exists so that the issuer can recognise a
+copy, not so that anyone else can recognise a person. An issuer SHOULD make
+each mark unique to one copy and meaningless outside its own records, SHOULD
+NOT reuse one identifier for a person across packages or publishers, and
+SHOULD keep the link from a mark to a person private, for no longer than it
+needs. A mark says which copy was shared; it does not prove who shared it.
 
 ## 4. Review attestations
 
@@ -207,12 +272,36 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
   against the schema: that is a host error, not a package diagnostic.
 - `publicKey` is an Ed25519 public key (§5).
 - `roles` is REQUIRED on every key and identity, and lists what it may
-  attest: `package`, `review` or both. An empty list trusts it for nothing,
-  which is how a host disables an entry without removing it.
-- `ids` is OPTIONAL: the package ids a key or identity may speak for when a
-  package it signed supersedes or contests another
-  ([package spec §7.2](moca-package-spec.md#72-relations)). Without `ids`, a
-  package it signs can make no relation take effect.
+  attest: `package`, `review`, `issued-copy`, or several. An empty list
+  trusts it for nothing, which is how a host disables an entry without
+  removing it.
+- **`issued-copy`** lets an entry sign issued-copy attestations (§3a). For an
+  entry with this role, `ids` is REQUIRED (the schema refuses an entry
+  without it), and it covers the packages whose copies the entry may issue.
+  For `package`, `ids` is optional (below). An issued-copy attestation lets its signer put another
+  publisher's name on changed bytes, so the role is granted separately from
+  `package`.
+- `ids` is OPTIONAL: the package ids a key or identity may speak for. Each
+  entry is an exact id, or a prefix ending in `/`, `:` or `#`
+  ([package spec §7.2](moca-package-spec.md#72-relations)). It does two
+  things for the `package` role
+  ([ADR-0040](../docs/adr/0040-ids-bind-a-signer-to-package-ids.md)):
+  - **Which packages it signs.** An entry with `ids` is a signer only of
+    packages whose `id` its `ids` cover. Its signature on any other package
+    still verifies, but it does not count: the Reader reports
+    `A010_SIGNER_NOT_FOR_PACKAGE`, and that attestation does not make the
+    package `signed` or meet `requireSignature`. An empty `ids` list covers
+    nothing. An entry **without** `ids` signs a package with any `id`, as in
+    earlier versions.
+  - **Which relations take effect.** A package it signed can supersede or
+    contest only the ids its `ids` cover. Without `ids`, a package it signs
+    can make no relation take effect.
+
+  So `signed` means "signed by someone in my trust root" for an entry
+  without `ids`, and "signed by someone my trust root lets speak for this
+  id" for an entry with them. A host that trusts more than one publisher
+  gives each entry the `ids` of its own packages. `ids` does not narrow the
+  `review` role: a reviewer's reach is set by `reviewers` (§4).
 - A key is not trusted from the instant the host's clock reaches `expires`
   (now ≥ `expires`, compared as in
   [package spec §4.4](moca-package-spec.md#44-validity-window)); a key whose
@@ -226,7 +315,11 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
   certificate's OIDC issuer (the Fulcio extension OID 1.3.6.1.4.1.57264.1.8,
   or the older 1.3.6.1.4.1.57264.1.1) and `subject` equals its subject
   alternative name (an email address or a URI), both exactly and
-  case-sensitively. There are no patterns.
+  case-sensitively. There are no patterns: each is compared as a whole
+  string, character for character, and a `subject` or `issuer` is never read
+  as a regular expression, a glob, a prefix or a part of the certificate's
+  value. A Reader that uses a Sigstore library MUST make this comparison
+  itself unless the library's own match is exact.
 - **Sigstore trust material.** `sigstore.trustedRoot` MAY hold a Sigstore
   trusted root: the `trusted_root.json` document of
   [sigstore/protobuf-specs](https://github.com/sigstore/protobuf-specs), with
@@ -234,8 +327,11 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
   keys and timestamp authorities to verify against. When it is present, a
   Reader MUST verify Sigstore bundles against it and nothing else, offline.
   When it is absent, a Reader MAY use trust material it already has, such as
-  a cached copy of the public-good instance's, and MUST NOT fetch any unless
-  the host enabled online checks. A host that runs a private Sigstore
+  a copy of the public-good instance's that ships with its Sigstore library,
+  and MUST NOT fetch any unless the host enabled online checks. Offline
+  means no request of any kind: a Reader MUST NOT start a client that would
+  contact an update server when its cache is empty or out of date, and
+  writes nothing to disk. A host that runs a private Sigstore
   instance, or reads packages offline, supplies `trustedRoot`. A Reader MAY
   verify offline only and use no trust material but `trustedRoot`; without
   it, such a Reader reports Sigstore attestations as unverifiable. To follow
@@ -251,10 +347,19 @@ that fails ends the verification of that file with the outcome named.
 
 1. **Select.** Only regular files under `attestations/` whose names end in
    `.dsse.json` or `.sigstore.json` are attestations. Other files there are
-   ignored.
-2. **Parse.** The file is JSON. For DSSE it is the envelope; for Sigstore the
-   envelope is the bundle's `dsseEnvelope`. The envelope has a string
-   `payload` and a string `payloadType`. Otherwise: **malformed**.
+   ignored. A package with more attestation files than the host's limit
+   (`maxAttestations`, 256 by default) has none of them read: one `A001`
+   for the package, and it has no attestations
+   ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)).
+2. **Parse.** The file is no larger than the host's limit
+   (`maxAttestationBytes`, 1 MiB by default), and it is JSON. For DSSE it is
+   the envelope; for Sigstore the envelope is the bundle's `dsseEnvelope`.
+   The envelope has a string `payload` and a string `payloadType`, and if it
+   has a `signatures` array, that array has no more than 16 entries.
+   Otherwise: **malformed**. The 16 is fixed, so every Reader agrees. A
+   file nested more than 64 levels deep is **malformed** too, as is a
+   statement that deep (step 4)
+   ([Reader contract §3](moca-reader-contract.md#3-opening-a-package)).
 3. **Payload type.** `payloadType` is `application/vnd.in-toto+json`.
    Otherwise: **malformed**.
 4. **Decode.** `payload` is base64 (RFC 4648 §4) or base64url (§5), with or
@@ -262,10 +367,10 @@ that fails ends the verification of that file with the outcome named.
    produce, makes it **malformed**. The decoded bytes are a JSON object with
    `_type` equal to `https://in-toto.io/Statement/v1`, an array `subject`,
    and a string `predicateType`. Otherwise: **malformed**.
-5. **Predicate type.** A statement whose `predicateType` is neither the
-   package (§3) nor the review (§4) predicate is ignored: no diagnostic, and
-   it attests nothing. Otherwise the predicate type sets the **role**:
-   `package` or `review`.
+5. **Predicate type.** A statement whose `predicateType` is not the package
+   (§3), review (§4) or issued-copy (§3a) predicate is ignored: no
+   diagnostic, and it attests nothing. Otherwise the predicate type sets the
+   **role**: `package`, `review` or `issued-copy`.
 6. **Trust root.** With no trust root: **unverifiable**. For Sigstore, with no
    Sigstore identities in the trust root, with no trust material to verify
    against (§6), or in a Reader that does not implement Sigstore
@@ -284,13 +389,49 @@ that fails ends the verification of that file with the outcome named.
      group order. The first entry that verifies makes the signature valid;
      one is enough. If none verifies, including when no key matches, a key
      has the wrong role, or a key is not Ed25519: **invalid**.
-   - **Sigstore.** The bundle verifies under Sigstore's rules for an identity
-     the trust root lists for the role (§6). If identities are listed but
-     none for the role, or none matches: **invalid**.
+   - **Sigstore.** The bundle verifies under Sigstore's rules (below) for an
+     identity the trust root lists for the role (§6). If identities are
+     listed but none for the role, or none matches: **invalid**.
 8. **Statement.** A package attestation's statement MUST match the package
    (§3); a review's predicate MUST be valid, MUST name the package's `id`, and
    every subject MUST have a string `name` and a string `sha256` digest (§4).
-   Otherwise: **invalid**.
+   An issued-copy attestation MUST pass pass 1 (§7.1). Otherwise:
+   **invalid**.
+9. **Signer.** For a package attestation, a signer with `ids` in the trust
+   root MUST cover the package's `id` (§6). Otherwise: **invalid**, reported
+   as `A010` rather than `A002`.
+
+**Sigstore's rules.** "Verifies under Sigstore's rules" means all of the
+following, against the trust material of step 6 and nothing else. A bundle
+that fails any of them is **invalid**.
+
+- **Bundle version.** The bundle's `mediaType` is one of
+  `application/vnd.dev.sigstore.bundle+json;version=0.1`, `…;version=0.2`,
+  `…;version=0.3`, or `application/vnd.dev.sigstore.bundle.v0.3+json`. Any
+  other version is not read.
+- **Content.** The bundle holds a DSSE envelope with exactly one signature,
+  and the signing certificate (not a public-key hint). A bundle that signs a
+  bare message is not an attestation (step 2).
+- **Transparency log.** The bundle has at least one transparency-log entry
+  from a log in the trust material, and every entry it has verifies: by its
+  signed entry timestamp (an inclusion promise), or by an inclusion proof to
+  a checkpoint the log signed. A version 0.1 bundle carries the promise; a
+  version 0.2 or 0.3 bundle carries the proof. The entry's body records this
+  envelope's signature and this certificate.
+- **Time.** At least one verified time exists: the integrated time of an
+  entry verified by its inclusion promise, or an RFC 3161 timestamp over the
+  signature from an authority in the trust material. A bundle with no
+  verified time is invalid, whatever else it holds.
+- **Certificate.** The signing certificate chains to a certificate authority
+  in the trust material, was valid at every verified time, and carries at
+  least one signed certificate timestamp from a certificate-transparency log
+  in the trust material.
+- **Signature.** The envelope's signature verifies with the certificate's
+  key over the DSSE pre-authentication encoding (the DSSE rule above).
+- **Identity.** The certificate's OIDC issuer and its subject alternative
+  name equal the `issuer` and `subject` of one identity the trust root lists
+  for the role, each compared exactly (§6). The Reader takes both values
+  from the certificate it verified, and compares them itself.
 
 An attestation that passes every step is **valid**. Its **signer** is the
 trust-root key's `identity`, or its `keyid` when it has no `identity`; for
@@ -302,7 +443,7 @@ file-name order.
 | --- | --- |
 | Valid | none |
 | Malformed | `A001` (error) |
-| Invalid | `A002` (error) |
+| Invalid | `A002` (error); `A008` for a package attestation whose digest does not match (§3); `A010` for a signer whose `ids` do not cover the package (step 9) |
 | Unverifiable | `A003` (warning) |
 | Indeterminate: online verification was requested and could not complete, and offline fallback was not allowed | `A004` (warning) |
 
@@ -317,6 +458,55 @@ Only **valid** attestations count. Every other outcome is reported and
 otherwise treated as if the attestation were absent. None of them makes the
 rest of the package invalid.
 
+### 7.1 Issued copies: two passes
+
+A Reader verifies issued-copy attestations first, then the others.
+
+**Pass 1: the issued-copy attestations.** Each is verified with role
+`issued-copy` (steps 1–7), then:
+
+1. its statement has the form in §3a, and its subject matches the copy's
+   `id@version` and computed digest;
+2. the trust-root entry that verified it has `ids` that cover the package's
+   `id`, as `ids` covers a relation target
+   ([package spec §7.2](moca-package-spec.md#72-relations));
+3. the manifest has `issuedCopies`, and its `issuers` list the signer: a DSSE
+   key matches a `publicKey` entry when the two decode to the same Ed25519
+   key (the bytes are compared, not the PEM text); a Sigstore identity
+   matches a `sigstore` entry when `issuer` and `subject` are equal, exactly
+   and case-sensitively;
+4. every key of `changedFiles` follows §3a and is allowed by
+   `issuedCopies.paths`: it equals a file entry, or starts with a directory
+   entry (one ending in `/`), compared exactly on NFC paths;
+5. the Reader rebuilds the digest manifest (package spec §6.4), using each
+   changed file's `original` hash in place of its hash in the copy. The
+   digest of the rebuilt manifest MUST equal `original`.
+
+A failure makes that attestation invalid (`A002`). When several issued-copy
+attestations pass but disagree on `original` or `changedFiles`, each is
+`A002` and none is used.
+
+**Pass 2: the other attestations.** With at least one issued-copy attestation
+that passed, and none that disagree:
+
+- package attestations are compared with the rebuilt **original** digest,
+  not the copy's. `A008` applies only to a mismatch with it. `signed` holds
+  when a package attestation verifies against it, and `signers` names the
+  publisher. `requireSignature` (§8) is met the same way;
+- a review subject for a changed file whose `sha256` equals that file's
+  `original` hash never counts. It is not outdated (`A006`): it is listed in
+  `attestedReviews` with `fileChanged: true`, and the file's review status
+  ignores it. A copy with such a review is not `reviewed`
+  (package spec §11);
+- the result has `issuedCopy: { originalDigest, issuers }`: the rebuilt
+  digest, and the signers of the issued-copy attestations that passed, in
+  file-name order. Citation records carry it in `package`, and a record from
+  a changed file has `node.issuedChange: true`
+  ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
+
+Without an issued-copy attestation that passed, the other attestations are
+verified against the copy's own digest, as for any package.
+
 ## 8. What attestations do not prove
 
 A valid package attestation proves who published the bytes. A valid review
@@ -324,9 +514,40 @@ proves who signed a statement about them. Neither proves the content is true or
 safe to follow. Content remains untrusted input to a model
 ([package spec §13.1](moca-package-spec.md#131-content-is-untrusted-input-to-a-model)).
 
+**A signature is not ownership of an id.** A valid package attestation says
+that a signer the host trusts published these bytes. Whether that signer may
+publish under this package's `id` is the host's to say, with `ids` (§6): an
+entry without `ids` signs any `id`, so a host that trusts more than one
+publisher SHOULD give each entry the `ids` of its own packages. An
+application can also compare a package's `signers` with the publisher it
+expected.
+
 A missing or invalid attestation leaves the rest of the package valid (§7),
 because many hosts read unsigned packages. A host that serves only signed
 content reads with `requireSignature`: a package with no valid package
 attestation is then invalid (`A009_SIGNATURE_REQUIRED`), so a tampered or
 unsigned package is refused rather than served unsigned. See also
 [package spec §13.5](moca-package-spec.md#135-old-versions-frozen-copies-and-forged-copies).
+
+**Issued copies** (§3a). The Reader proves that the copy differs from the
+publisher's package only in the listed files, all under `content/` or
+`media/`, and that the publisher allowed the issuer and the paths. It cannot
+prove that those files changed only by marks in the body, or that the marked
+text means the same as the original. That is the issuer's assertion alone:
+every record from a changed file has `issuedChange` and the copy names its
+issuers, so an application can tell "the publisher's bytes" from "the
+publisher's bytes as changed by the issuer".
+
+- Marks may let an issuer recognise a copy that leaks unaltered. They do not
+  survive deliberate removal, especially by someone who compares two copies,
+  and they are lost in paraphrase or extracted text. They identify a copy,
+  not a person.
+- The `original` hashes let the holder of a copy confirm a guess at the
+  original bytes. Hiding them would stop the Reader rebuilding the digest.
+  The trade-off is accepted.
+- How marks are made is out of scope. This document defines only the
+  binding.
+- Issuers SHOULD sign with a DSSE key: keyless Sigstore signing would put
+  each issue in a public log. When an issuer's key expires, every copy it
+  issued stops being bound to the publisher, so issuers re-issue before keys
+  expire, as publishers re-sign.

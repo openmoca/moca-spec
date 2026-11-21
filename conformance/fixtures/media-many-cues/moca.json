@@ -1,0 +1,7 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/media-many-cues",
+  "version": "1.0.0",
+  "title": "A transcript of 200,000 cues",
+  "language": "en"
+}

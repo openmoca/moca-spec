@@ -26,7 +26,12 @@ moca:
       selector:
         type: FragmentSelector
         conformsTo: http://www.w3.org/TR/media-frags/
-        value: t=0,1136
+        value: t=0,1135.6
+  media:
+    - source: video
+      type: text/html
+      duration: 1134
+      transcript: captions
 ---
 # Microsoft Agent Framework - Part#6: Build Intelligent Workflows with Azure AI Agent Framework
 

@@ -1,0 +1,7 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/frontmatter-long-key-read",
+  "version": "1.0.0",
+  "title": "A key of 1,024 characters, and a longer explicit key",
+  "language": "en"
+}

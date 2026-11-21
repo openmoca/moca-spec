@@ -1,0 +1,6 @@
+{
+  "id": "https://example.com/conformance/distribution-encrypted-only",
+  "version": "1.0.0",
+  "title": "Fixture",
+  "distribution": "encrypted-only"
+}

@@ -2,14 +2,23 @@
 
 A language-neutral test suite for anything that reads MOCA packages. An
 implementation conforms to the [Reader contract](../spec/moca-reader-contract.md)
-when it reaches the same conclusions as these cases: package, `search` and
-`structure` cases all apply to every Reader.
+when it reaches the same conclusions as these cases: package, `search`,
+`structure` and `map-time` cases all apply to every Reader.
+
+## OpenMOCA Conformant
+
+Software that passes the suite for what it is, for a named specification
+version, may say so: "OpenMOCA 0.7 Conformant Reader". You run the suite
+yourself; there is no fee and no application. Publish the signed result and
+ask for it to be listed on openmoca.org as **Self-tested**. The project's own
+software is listed as **Official**, and software whose result the project has
+re-run itself as **Verified** ([TRADEMARKS.md](../TRADEMARKS.md)).
 
 ## Layout
 
 ```text
 conformance/
-├── cases.json          196 cases: target, options, expected conclusions
+├── cases.json          every case: target, options, expected conclusions
 ├── fixtures/           the packages, sidecars and .zip archives they read
 └── fixtures/trust-root.json
 ```
@@ -39,14 +48,23 @@ conformance/
 | `options.limits` | Reader limits to use instead of the defaults, for example `{ "maxTriples": 3 }` ([contract §3](../spec/moca-reader-contract.md#3-opening-a-package)). |
 | `options.now` | The host clock. Trust-root keys expire against it ([attestations §6](../spec/moca-attestations.md#6-trust-roots)). Every case with a trust root sets it, so the corpus never depends on the day it is run. |
 | `options.requireSignature` | `true`: the host requires a valid package attestation ([attestations §8](../spec/moca-attestations.md#8-what-attestations-do-not-prove)). |
-| `requires` | Optional features the case needs, such as `["sigstore"]` (see "Running it against another Reader"). |
+| `requires` | Optional features the case needs, such as `["sigstore"]` or `["encryption"]` (see "Running it against another Reader"). |
+| `options.identities` | Identity files, relative to `conformance/`. The host's key provider returns every `AGE-SECRET-KEY-1…` line in them ([encrypted packages §5.1](../spec/moca-encrypted-package.md#51-the-key-provider)). |
+| `options.passphrase` | The key provider returns this passphrase. |
+| `options.fileKey` | The key provider returns this file key, given as 32 hex digits. With no `identities`, `passphrase` or `fileKey`, the Reader has no key provider. |
+| `options.envelopeSidecar` | `true`: after reading the target envelope, bind its `index.age` through the same key provider ([encrypted packages §6](../spec/moca-encrypted-package.md#6-derived-data)). Its codes join `expect.codes`, and `expect.sidecarUsable` applies to it. |
 | `options.strict` | `true`: strict mode, which promotes warnings to errors ([contract §11](../spec/moca-reader-contract.md#11-diagnostics)). |
-| `expect.valid` | Whether the package is valid (no `T`/`P`/`M`/`C` error). |
+| `expect.valid` | Whether the package is valid (no `T`/`P`/`M`/`C`/`E` error). |
 | `expect.codes` | The **set** of diagnostic codes, from the package and the sidecar. Exactly these; extra codes fail. |
 | `expect.capabilities` | The exact set of derived capabilities. |
 | `expect.digest` | The package digest, or `SAME:<case id>` for "equal to that case's digest". |
+| `expect.distribution` | The result's `distribution` ([package spec §4.1](../spec/moca-package-spec.md#41-properties)): `open`, `encrypted-only`, `service-only`, or `null` when the result has none. |
+| `expect.images`, `expect.translations`, `expect.tags`, `expect.apps`, `expect.readingOrder`, `expect.datePublished`, `expect.datePackaged`, `expect.publisher`, `expect.url`, `expect.contributors`, `expect.issuedCopy` | The result's `images`, `translations`, `tags`, `apps`, `readingOrder`, `datePublished`, `publisher`, `url`, `contributors` ([package spec §4.6–4.13](../spec/moca-package-spec.md#46-images)) and `issuedCopy` (`{ originalDigest, issuers, changedFiles }`, [attestations §7.1](../spec/moca-attestations.md#71-issued-copies-two-passes)), compared as JSON values (object members in any order, arrays in order); `null` when the result has none. |
 | `expect.sidecarUsable` | Whether the sidecar may be used. |
+| `expect.envelope` | For an envelope: the fields of the result's `envelope` that are given (`format`, `opened`), compared exactly ([encrypted packages](../spec/moca-encrypted-package.md)). |
 | `expect.evidenceMatched` | For each node path, the `matched` value of each `evidence` entry of its default-language citation record, in order; `null` means absent. |
+| `expect.evidenceLocated` | For each node path, the `located` value (`{ start, end }`) of each `evidence` entry, in order; `null` means absent ([contract §7](../spec/moca-reader-contract.md#7-citation-records)). |
+| `expect.terms` | The result's `terms` ([contract §15.1](../spec/moca-reader-contract.md#151-exposing-terms)): `authority` compared exactly, `problems` as a set of `code` and `path`, and `declared` as a JSON value (`null`: absent), each only when given. `expect.terms: null` means the result has none. |
 
 Order, counts and message text are not compared.
 
@@ -72,7 +90,8 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | Field | Meaning |
 | --- | --- |
 | `options.now` | The host clock. |
-| `options.hooks` | `ontology-guided`: the Reader's default ontology-guided hooks. `hostile`: an egress hook that returns every node of every loaded package plus a record whose digest is not loaded; the gate must remove all that policy and audience exclude. `hostile-ingress`: an ingress hook that asks for the opt-in to excluded content, a limit of 1000 and the locale `fr`, as far as the language's hook type lets it; the gate must still follow the caller. |
+| `options.hooks` | `ontology-guided`: the Reader's default ontology-guided hooks. `hostile`: an egress hook that returns every node of every loaded package plus a record whose digest is not loaded; the gate must remove all that policy and audience exclude. `hostile-ingress`: an ingress hook that asks for the opt-in to excluded content, a limit of 1000, the locale `fr` and no `upTo`, as far as the language's hook type lets it; the gate must still follow the caller. |
+| `options.structure` | With `backend: store`: packages read (with `options.members`) into a small library that is the search's structure source ([contract §9.4](../spec/moca-reader-contract.md#94-store-backends)): the hooks see its structure; it adds no records. |
 | `options.allow` | With `backend: store`: the packages the host has loaded. The search gets their package states ([contract §9.4](../spec/moca-reader-contract.md#94-store-backends)). |
 | `options.ingestSeparately` | With `backend: store`: each package is ingested on its own, so its stored records know nothing of the other packages. |
 | `options.backend` | `store`: every listed package is ingested into a store that keeps whole citation records; the search resolves hits from those records, with only `options.allow` loaded. `lexical`: the Reader's own lexical search. `all`: a test backend that ignores every filter, declares no features, and returns one hit with score 1 for every representation of every loaded package, plus one hit from the digest `sha256:000…0`, which is not loaded. `dense`: dense search over `options.sidecar` with the conformance embedder. `hybrid`: the Reader's hybrid backend over its lexical backend and that dense backend. |
@@ -82,14 +101,19 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `options.allowUnsignedRelations` | `true`: the library applies relations from unsigned or unscoped packages ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). Absent means false. |
 | `options.sidecar` | A sidecar offered to every loaded package. A package it does not match reports the binding code (for example `S002`) and is searched without it. |
 | `options.embedder` | The conformance embedder's identity: `name`, optional `version`, `dimensions`, and optional `queryPrefix` and `documentPrefix` it declares. It returns `[1, 0, …, 0]` of that length for every text, whatever the role. |
-| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to). |
-| `expect.codes` | The set of diagnostic codes from sidecars, the backend and the library (`L` codes). |
+| `options.termsLimits` | The host's terms limits, an `ai` object ([contract §15.3](../spec/moca-reader-contract.md#153-resolving-terms)): floors that only tighten. |
+| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale`, `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a concept on a reading order, contract §9), `terms` (the host's terms request, [contract §15.4](../spec/moca-reader-contract.md#154-the-terms-gate)). |
+| `expect.codes` | The set of diagnostic codes from sidecars, the backend, the library (`L` codes) and the search itself (`Search.diagnostics`, such as `S008`). |
 | `expect.include` | Results that must be returned. |
 | `expect.exclude` | Results that must never be returned. |
 | `expect.count` | The exact number of results, when given. |
 | `expect.reviewStatus` | For each listed result, its `trust.reviewStatus` ([contract §7](../spec/moca-reader-contract.md#7-citation-records)). |
+| `expect.issuedChange` | For each listed result, whether `node.issuedChange` is `true` ([contract §7](../spec/moca-reader-contract.md#7-citation-records)). |
+| `expect.fileChanged` | For each listed result, whether one of its `trust.attestedReviews` has `fileChanged: true`. |
+| `expect.issuedCopy` | Every result's `package.issuedCopy` (`{ originalDigest, issuers }`), or `null` for none. |
 | `expect.contested` | For each listed result, whether `trust.contested` is true ([package spec §7.2](../spec/moca-package-spec.md#72-relations)). |
 | `expect.locales` | The `node.locale` a result must have. |
+| `expect.fields` | For each listed result, fields named by a dotted path (`node.media`, `package.datePublished`), compared as JSON values; `null` means absent ([package spec §4.12, §5.7](../spec/moca-package-spec.md#57-media)). |
 
 Every result must be a valid citation record with a `score`. Ranking is never
 compared, so lexical and dense implementations can differ.
@@ -117,6 +141,26 @@ Concept items are compared as `{ iri, label, layer }`; `nodes` as the list of
 `node.ref`; `concept` as the whole object. Structure answers are facts, so
 they are compared **exactly**, order included.
 
+## A map-time case
+
+```json
+{
+  "id": "map-time-alternates",
+  "kind": "map-time",
+  "target": "fixtures/media-alternates",
+  "node": "episode.md",
+  "calls": [{ "from": "audio", "to": "video", "t": 39.5 }, { "from": "audio", "to": "video", "t": 45 }],
+  "expect": { "codes": ["C011_EVIDENCE_SELECTOR_UNMATCHED"], "result": [49.5, null] }
+}
+```
+
+The target is read, and its citation record for the node at `node` in the
+default language is passed to `mapTime` once for each call
+([Reader interface §4](../spec/moca-reader-interface.md#4-reading),
+[package spec §5.7](../spec/moca-package-spec.md#57-media)). `codes` are the
+package's diagnostics. `result` lists the answers in order, `null` for
+nothing, and is compared **exactly**.
+
 ## What the corpus covers
 
 - **Digest agreement**: literal digests for every valid package, and equality
@@ -130,9 +174,17 @@ they are compared **exactly**, order included.
 - Structure: a valid procedure, each `O` diagnostic, every structure
   operation, overlays and their layers.
 - Resource limits, and packages written for an earlier digest.
+- Encrypted packages: X25519 and passphrase envelopes, with and without an
+  outline and the structure copy; each `E` code; the limits inside an
+  envelope.
 - Search: the default retrieval policy, the host's opt-in, audience
   sets, the re-check of every hit whatever the backend returns, locale,
   concepts, and the dense model check.
+- Podcast and video series content: media descriptions and time ranges bounded
+  by a transcript or a duration; `datePublished`; binding by composition and
+  `upTo` across members, in a library and in a store; `isPartOf` and unknown
+  relation types; issued copies matching member pins and a publisher's
+  sidecar; alternate media, its evidence checks and `mapTime`.
 
 Some rules cannot be expressed as portable directory fixtures, because Git and
 some file systems cannot store them: unreadable folders, and symbolic links in
@@ -156,9 +208,16 @@ expected by at least one case or is listed below as untestable.
 | --- | --- | --- |
 | Targets: not found, no manifest, archives | Contract §3 | `target-*`, `valid-archive`, `archive-*`, `limit-archive-*` |
 | Entry names, collisions, unsafe paths | Contract §3, package spec §6.3 | `path-collision-*`, `unsafe-path*`, `valid-noncharacter-path`, `valid-dotted-i`, `valid-hidden-entries` |
-| Resource limits | Contract §3 | `limit-*`, `structure-deep-chain` |
+| Resource limits | Contract §3 | `limit-*`, `structure-deep-chain`, `structure-shared-list*`, `attestation-signatures-*` |
+| Nesting of JSON and frontmatter | Contract §3 | `manifest-nesting-*`, `frontmatter-nesting-*`, `attestation-nesting-over-limit` |
+| Archive records: the end record, Zip64, local headers, short entries | Contract §3 | `archive-two-end-records`, `archive-zip64`, `archive-local-name-mismatch`, `archive-entry-short` |
 | The digest | Package spec §6.4 | every valid package case (`expect.digest`), `digest-v1-package`, `attestations-as-file` |
-| Manifest | Package spec §4 | `manifest-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
+| Manifest | Package spec §4 | `manifest-*`, `distribution-*`, `unknown-key`, `unregistered-urn`, `profile-unrecognised`, `no-content`, `field-invalid` |
+| Images, translations, tags and apps | Package spec §4.6–4.9 | `catalogue-valid`, `image-*`, `translation-*`, `tags-*`, `apps-*` |
+| Reading order and `upTo` | Package spec §4.10, contract §9 | `reading-order-*`, `search-upto-*` |
+| Filters come before the limit | Contract §9.2 | `search-upto-below-top-200`, `search-concepts-below-top-200`, `search-scope-below-top-200`, `search-filtered-limit-full` |
+| Alternative labels, ingress narrowing, a store's structure source | Package spec §5.6, contract §9.2, §9.4, Reader interface §5.4 | `structure-alt-labels`, `search-ontology-guided-alt-label`, `search-ingress-narrows-composition`, `search-ingress-narrows-without-pushdown`, `search-store-structure-source` |
+| Issued copies: consent, the two passes, records and libraries | Package spec §4.11, attestations §3a and §7.1, contract §7 | `issued-*`, `search-issued-copy-*` |
 | Versioning | Package spec §14 | `moca-version-*`, `digest-v1-package` |
 | Content and frontmatter | Package spec §5 | `frontmatter-*`, `type-missing`, `reserved-file-invalid`, `log-heading-in-fence`, `link-unresolved`, `resource-bad-escape`, `valid-minimal` |
 | Locales | Package spec §5.4 | `locale-orphan`, `valid-locales`, `search-locale*` |
@@ -168,15 +227,20 @@ expected by at least one case or is listed below as untestable.
 | Members | Package spec §7.1 | `composed-*`, `member-*`, `duplicate-member` |
 | Relations | Package spec §7.2 | `relation-*`, `search-relation-*` |
 | Attestations and trust roots | Attestations §5–§7 | `attestation-*`, `signature-*`, `signed-*`, `key-*`, `trust-root-empty-roles`, `require-signature-*` |
+| A signer's `ids` cover the package | Attestations §6, ADR-0040 | `signer-binding-*`, `require-signature-signer-not-covered`, `sigstore-signer-not-covered` |
 | Sigstore, offline against the host's trusted root (optional feature) | Attestations §6–§7 | `sigstore-*` |
+| Sigstore identities are compared exactly | Attestations §6 | `sigstore-identity-not-listed`, `sigstore-subject-shorter`, `sigstore-subject-other-character`, `sigstore-issuer-shorter` |
+| Terms and ratings fail closed | Package spec §4.14, contract §15.3–15.4 | `terms-container-malformed`, `search-terms-*-fails-closed`, `search-terms-rating-unlisted-scheme*`, `search-terms-rating-listed-scheme`, `search-terms-rating-request-unknown-member` |
 | Reviews and `reviewed` | Package spec §11, attestations §4 | `review-*`, `search-review-*`, `signed-reviewed` |
 | Strict mode | Contract §11 | `strict-*` |
+| Encrypted packages: recognition, the layout and marker, keys, decryption, the outline check, limits | Encrypted packages §2–§5, contract §3 | `envelope-*` |
 | Library identity | Contract §7 | `search-identity-conflict` |
 | Default retrieval policy | Contract §8 | `search-default-policy`, `search-include-all`, `search-recheck`, `search-gate-representations` |
 | Audience | Contract §8 | `audience-rules`, `search-audience*` |
-| The search pipeline, hooks and backends | Contract §9 | `search-concepts`, `search-scope`, `search-ontology-guided`, `search-hostile-*`, `search-store-*`, `search-hybrid*` |
+| The search pipeline, hooks and backends | Contract §9 | `search-concepts`, `search-scope`, `search-upto-*`, `search-ontology-guided`, `search-hostile-*`, `search-store-*`, `search-hybrid*` |
 | Dense search and the model check | Contract §9.3, sidecar spec | `search-dense*` |
 | Sidecars | Sidecar spec | `sidecar-*`, `search-sidecar-no-text` |
+| Media descriptions and alternates | Package spec §5.7, contract §7, interface §4 | `media-*`, `search-media-*`, `map-time-*` |
 
 **Not testable by the corpus.** These rules need a live service, a file system
 feature or a model, so each implementation tests them itself:
@@ -187,6 +251,8 @@ feature or a model, so each implementation tests them itself:
 | Online Sigstore verification; `A004_ATTESTATION_INDETERMINATE` | Attestations §7 | Needs the network. Offline verification is tested (`sigstore-*`). |
 | Symbolic links and unreadable entries in a directory | Contract §3 | Git cannot store them portably; each Reader's own tests. |
 | Handing content to a model, and rendering it | Contract §12 | Needs a model or a client; the bindings' own tests (for example the .NET envelope test). |
+| A Reader never writes decrypted bytes to a file | Encrypted packages §5.4 | A fixture cannot show an absence. Each Reader reads an envelope with a temporary directory it cannot write to, in its own tests. |
+| A host's bound on a search; `S010_SEARCH_TRUNCATED` | Contract §9.2 | Whether a bound stops a search depends on how a Reader's backends check candidates, which conformance leaves open. Each reference Reader's own tests set `maxCandidates` with a backend that applies no filter. |
 | Ranking | Contract §9.6 | Informative ([ADR-0018](../docs/adr/0018-ranking-is-informative.md)); the reference Readers' parity tests. |
 
 ## Running it
@@ -204,16 +270,22 @@ standard output.
 
 - Input: `{ "root": "<absolute path of conformance/>", "case": { … } }`.
 - Output for a package case: `{ "valid", "codes", "capabilities", "digest",
-  "sidecarUsable", "evidenceMatched" }`, as defined above.
+  "distribution", "images", "translations", "tags", "apps", "readingOrder",
+  "datePublished", "publisher", "url", "contributors", "issuedCopy", "sidecarUsable", "evidenceMatched", "evidenceLocated",
+  "envelope" }`, as defined above.
+  `envelope` is the package result's `envelope` field for an envelope, and
+  absent otherwise.
 - Output for a search case: `{ "codes", "records" }`, where `records` are the
   citation records the search returned.
 - Output for a structure case: `{ "codes", "result" }`, shaped as above.
+- Output for a map-time case: `{ "codes", "result" }`: the package's codes and
+  the answer to each call, `null` for nothing.
 
 Run the corpus through it from a clone of this repository at a release tag,
 so you test against a fixed corpus. You need Node.js 22 or later:
 
 ```sh
-git clone --branch v0.6.0 https://github.com/openmoca/moca-spec.git
+git clone --branch v0.7.0 https://github.com/openmoca/moca-spec.git
 cd moca-spec && npm ci
 node scripts/run-conformance.mjs --reader "dotnet run --project ../my-reader/tests/Conformance"
 ```
@@ -221,8 +293,10 @@ node scripts/run-conformance.mjs --reader "dotnet run --project ../my-reader/tes
 A case with `requires` needs an optional feature
 ([Reader contract §14](../spec/moca-reader-contract.md#14-demonstrating-conformance)).
 A Reader that names a feature as not implemented skips those cases with
-`--without <feature>`, for example `--without sigstore`. Today the only such
-feature in the corpus is `sigstore`.
+`--without <feature>`, for example `--without sigstore`. The features in the
+corpus are `sigstore` and `encryption`. A Reader run `--without encryption`
+still runs the cases that only recognise an envelope: they expect `E001`
+without opening it.
 
 The runner prints each case that fails and why, and exits non-zero if any do.
 [moca-reader-dotnet](https://github.com/openmoca/moca-reader-dotnet) runs it
@@ -249,3 +323,14 @@ with the trusted root inside each fixture trust root. They are checked with
 both sigstore-js and sigstore-python. Regenerate them with
 `uv run --with cryptography==50.0.2 python scripts/sigstore-fixtures.py`; the
 signatures are deterministic, so an unchanged run gives the same bytes.
+
+**Envelope fixtures** (`fixtures/envelopes/`) are encrypted packages made
+once with the reference age tool (age 1.3, with `age-plugin-batchpass` for
+passphrases), by `python3 scripts/envelope-fixtures.py`. The `index.age`
+fixtures were added later with `--only index`, which leaves the other
+envelopes untouched. The failure fixtures
+are byte or text edits of its output, and the script checks every fixture with
+`age --decrypt`. age encryption is randomised, so the bytes are committed and
+never regenerated by `refresh:derived`; a new run gives new bytes. The keys in
+`fixtures/envelopes/keys/` and the passphrases in the script are INSECURE test
+values. Each Reader also runs the C2SP age test kit in its own CI.
