@@ -27,6 +27,7 @@ const trustRoot = join(root, 'fixtures', 'signing-keys', 'trust-root.json');
 // `reviewed`) capabilities are named here and checked.
 const EXAMPLES = [
   ['minimal', 'minimal.moca'],
+  ['rock-pools', 'rock-pools.moca', ['signed']],
   ['support-kb', 'support-kb.moca', ['signed', 'reviewed']],
   ['acme-support', 'acme-support.moca', ['signed', 'reviewed']],
   ['policy-corpus/retention-2025', 'policy-corpus-retention-2025.moca'],

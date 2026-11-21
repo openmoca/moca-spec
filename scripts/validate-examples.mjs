@@ -15,6 +15,7 @@ const trustRoot = join(repo, 'fixtures/signing-keys/trust-root.json');
 
 const EXAMPLES = [
   { dir: 'examples/minimal', capabilities: ['core'] },
+  { dir: 'examples/rock-pools', capabilities: ['core', 'located-evidence', 'signed'] },
   { dir: 'examples/acme-support', capabilities: ['core', 'localized', 'located-evidence', 'reviewed', 'self-contained-evidence', 'signed', 'structured'] },
   { dir: 'examples/support-kb', capabilities: ['core', 'located-evidence', 'localized', 'reviewed', 'self-contained-evidence', 'signed'], sidecar: 'examples/sidecars/support-kb.moca.idx' },
   { dir: 'examples/policy-corpus/retention-2025', capabilities: ['core'] },

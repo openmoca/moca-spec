@@ -197,6 +197,13 @@ Also [package images, translated titles and tags](https://github.com/openmoca/mo
   A credit's image is checked as a manifest image (`M010`). Eight corpus
   cases (`credits-*`, `search-credits-node`) and the runner fields
   `expect.publisher`, `expect.url` and `expect.contributors`.
+- **A showcase example, [`rock-pools`](examples/rock-pools/README.md).** A
+  short original guide that carries what 0.7.0 adds: credits, dates, signed
+  terms with a stricter term on one part, a machine-made page, a machine-made
+  page a person checked, and quotes checked against a dated copy of a real
+  public-domain source, with a link to the source itself. It is checked by
+  `validate:examples` and released as `rock-pools.moca`. No new corpus cases:
+  every rule it uses already has one.
 
 ### Changed
 
