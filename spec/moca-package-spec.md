@@ -786,10 +786,11 @@ permission. *Labels* (`rating`, and the rest of `rights`) describe the work.
 
 | Field | Type | Limits | Absent |
 | --- | --- | --- | --- |
-| `ai.allowed` | Object with any of the booleans below. | 5 members | Each permission not set |
+| `ai.allowed` | Object with any of the booleans below. | 6 members | Each permission not set |
 | `ai.allowed.device`, `.host`, `.provider` | Booleans: whether answers and other AI use may run on the person's own device, in the host's own service, or with a third party's model (Reader contract §15.4). | — | Not set |
 | `ai.allowed.training` | Boolean: whether the work may be used to train a model. | — | Not set |
 | `ai.allowed.machineTranslation` | Boolean: whether the work may be translated by a machine. The package's own representations (§5.4) are not machine translation. | — | Not set |
+| `ai.allowed.mention` | Boolean: whether a model that may not receive this work may be told the work exists (Reader contract §15.4, [ADR-0041](../docs/adr/0041-what-the-terms-gate-covers-and-hiding-a-closed-package.md)). It concerns models only, never what an app shows people, and changes nothing while the model may receive the work. Package level only: in a `nodes` entry it is a member this version does not know. | — | Not set |
 | `ai.providerRequires` | Array of `noTraining`, `noRetention`, unique. Conditions a provider must meet, as the host states them. | 2 items | No condition |
 | `ai.answerSources` | `work` (every sentence backed by the work) or `model` (the model's general knowledge allowed, and marked). | — | Not set |
 | `rating.explicit` | Boolean. | — | No statement; never `false` |
@@ -803,7 +804,7 @@ permission. *Labels* (`rating`, and the rest of `rights`) describe the work.
 | `rights.export` | `{ allowed }`. `allowed` is a boolean: whether an app may let people copy, save or export the work's text outside the app. Quoting it in an answer, playing a moment and reading it in the app are not export. | — | Not set |
 | `rights.copyright` | `{ year?, holder?, notice? }`, as schema.org `copyrightYear`, `copyrightHolder` and `copyrightNotice`. `year` is a year or a range (`2024-2026`), the first not after the last. `holder` is `{ name, url? }`; when absent, the rights holder's name applies. `notice` is the exact line to show, 1 to 300 characters. | — | No statement |
 | `rights.notice` | A short message from the creator, in their own words, for an app to show beside the work: 1 to 500 characters. Display only: it grants and restricts nothing. | 500 characters | No message |
-| `nodes` | Array of `{ paths, ai?, rating?, rights? }`: values for some nodes (below). `rights` here holds only `license` (an SPDX expression) and `copyright`, for a part under a different licence or copyright, such as a licensed photo or a guest's segment. | 256 entries; 64 paths each | No node values |
+| `nodes` | Array of `{ paths, ai?, rating?, rights? }`: values for some nodes (below). `ai` here holds what the package's `ai` holds, except `allowed.mention`. `rights` here holds only `license` (an SPDX expression) and `copyright`, for a part under a different licence or copyright, such as a licensed photo or a guest's segment. | 256 entries; 64 paths each | No node values |
 
 Enums are closed except rating schemes: a new value needs a new minor release.
 A `rights.basis` of `license` needs the manifest's `license`.
@@ -899,7 +900,7 @@ When they disagree, the package is the source for a Reader and its host.
 | `allowed.training: true` | `train-ai=y` | permits `ai-train` | no statement |
 | any of `allowed.device`, `.host`, `.provider` `false` | `ai-use=n` | prohibits `ai-input ai-index` | — |
 | `allowed.device`, `.host` and `.provider` all `true` | `ai-use=y` | permits `ai-input ai-index` | — |
-| `providerRequires`, `answerSources`, `allowed.machineTranslation`, `rights.export.allowed` | not expressible | not expressible | — |
+| `providerRequires`, `answerSources`, `allowed.machineTranslation`, `allowed.mention`, `rights.export.allowed` | not expressible | not expressible | — |
 
 TDMRep is the TDM Reservation Protocol of a W3C Community Group (not a W3C
 Standard). Its `tdm-reservation: 1` reserves all text and data mining, so a

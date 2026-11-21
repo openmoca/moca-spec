@@ -1,0 +1,14 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-malformed",
+  "version": "1.0.0",
+  "title": "A show with a malformed mention",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "mention": "no"
+      }
+    }
+  }
+}

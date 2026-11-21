@@ -1,0 +1,17 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-mention-explicit",
+  "version": "1.0.0",
+  "title": "An explicit show closed to providers",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "provider": false
+      }
+    },
+    "rating": {
+      "explicit": true
+    }
+  }
+}

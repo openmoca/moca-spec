@@ -1,0 +1,14 @@
+{
+  "mocaVersion": "0.7",
+  "id": "https://example.com/conformance/terms-structure-closed",
+  "version": "1.0.0",
+  "title": "Closed topics",
+  "language": "en",
+  "terms": {
+    "ai": {
+      "allowed": {
+        "provider": false
+      }
+    }
+  }
+}
