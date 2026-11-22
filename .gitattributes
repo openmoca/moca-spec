@@ -3,3 +3,5 @@
 * text=auto eol=lf
 *.zip binary
 *.enc binary
+# A fixture whose bytes include a bare carriage return, kept exactly.
+conformance/fixtures/log-heading-cr/content/log.md -text

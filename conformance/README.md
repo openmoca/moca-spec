@@ -254,7 +254,7 @@ expected by at least one case or is listed below as untestable.
 | Alternative labels, ingress narrowing, a store's structure source | Package spec §5.6, contract §9.2, §9.4, Reader interface §5.4 | `structure-alt-labels`, `search-ontology-guided-alt-label`, `search-ingress-narrows-composition`, `search-ingress-narrows-without-pushdown`, `search-store-structure-source` |
 | Issued copies: consent, the two passes, records and libraries | Package spec §4.11, attestations §3a and §7.1, contract §7 | `issued-*`, `search-issued-copy-*` |
 | Versioning | Package spec §14 | `moca-version-*`, `digest-v1-package` |
-| Content and frontmatter | Package spec §5 | `frontmatter-*`, `type-missing`, `reserved-file-invalid`, `log-heading-in-fence`, `link-unresolved`, `resource-bad-escape`, `valid-minimal` |
+| Content and frontmatter | Package spec §5 | `frontmatter-*`, `type-missing`, `reserved-file-invalid`, `log-heading-in-fence`, `log-heading-cr`, `log-heading-line-separator`, `link-unresolved`, `resource-bad-escape`, `valid-minimal` |
 | Locales | Package spec §5.4 | `locale-orphan`, `valid-locales`, `search-locale*` |
 | Validity windows and dates | Package spec §4.4 | `validity-*`, `node-validity-window`, `search-validity-*` |
 | Evidence | Package spec §5.5, contract §5 | `evidence-*`, `valid-evidence`, `self-contained-evidence`, `limit-evidence-*` |
