@@ -42,6 +42,30 @@
       }
     },
     {
+      "id": "log-heading-cr",
+      "description": "A log.md level-two heading that holds a carriage return (U+000D) and no date is C004: the heading has no date whichever way the line is read.",
+      "target": "fixtures/log-heading-cr",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C004_RESERVED_FILE_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "id": "log-heading-line-separator",
+      "description": "A log.md level-two heading that holds a line separator (U+2028) and no date is C004: the heading has no date whichever way the line is read.",
+      "target": "fixtures/log-heading-line-separator",
+      "expect": {
+        "valid": false,
+        "codes": [
+          "C004_RESERVED_FILE_INVALID"
+        ],
+        "capabilities": []
+      }
+    },
+    {
       "id": "manifest-invalid-utf8",
       "description": "moca.json with a byte that is not valid UTF-8 is M001; it is not read with a replacement character.",
       "target": "fixtures/manifest-invalid-utf8",

@@ -324,6 +324,9 @@ each with corpus cases. 445 cases.
   `structure-nesting-at-limit`, `structure-nesting-over-limit` (built by `scripts/limit-fixtures.mjs`). 485 cases.
 - **Every YAML error is `C002`.** Frontmatter the YAML library cannot read is `C002`, whatever the error. Case
   `frontmatter-escape-past-unicode`: a double-quoted escape for a code point past U+10FFFF. 486 cases.
+- **A `log.md` heading holding a line-break character.** Package spec §5.1: a level-two heading in `log.md` that holds
+  a carriage return (U+000D) or a line separator (U+2028), and no date, is `C004`, as any heading without a date is.
+  Cases `log-heading-cr` and `log-heading-line-separator`. 488 cases.
 ### Changed (before the hardening pass)
 
 - **Corpus: composition terms.** Four cases for Reader contract §15.3 step 3:
