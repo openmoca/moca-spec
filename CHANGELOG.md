@@ -4,7 +4,7 @@ All notable changes to the MOCA specification, schemas, profiles and
 conformance corpus. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
 [the versioning policy](docs/versioning-and-release.md).
 
-## [0.7.0] - 2026-11-15
+## [0.7.0] - 2026-11-22
 
 The 0.7.0 Spec Change Proposal:
 [distribution tiers, encrypted packages and issued copies](https://github.com/openmoca/moca-spec/issues/5).
