@@ -154,7 +154,8 @@ release workflow to finish, and check the registry, before the next step.
    "Specification release" above.
 6. **Every other open repository.** Move each `MOCA_*_REF`, in `test.yml` and
    in `release.yml`, to the new tags, and fast-forward main again.
-   openmoca.org goes last: merging its main publishes the site.
+   openmoca.org goes last. Merging its main does not publish the site: the
+   maintainer deploys it by hand with `npm run deploy` after the merge.
 7. **GitHub releases** for the libraries, with the changelog section as
    notes, as for earlier versions.
 8. **Afterwards:** submit the media type templates in [docs/iana](iana/)
