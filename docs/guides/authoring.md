@@ -75,7 +75,7 @@ stale_after: 2027-03-14T00:00:00Z
 Customers may ask for a full refund within 30 days of delivery.
 ```
 
-Each page is an [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+Each page is an [Open Knowledge Format](https://github.com/open-knowledge-format/open-knowledge-format)
 document: Markdown with frontmatter. Use OKF's fields for what they are for:
 
 | Field | Use it for |

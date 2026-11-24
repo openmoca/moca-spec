@@ -11,7 +11,7 @@ What has shipped is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Where it stands
 
-- A package format over [OKF](https://github.com/GoogleCloudPlatform/open-knowledge-format):
+- A package format over [OKF](https://github.com/open-knowledge-format/open-knowledge-format):
   content, an optional structure layer and the original sources, sealed by one
   digest and optionally signed.
 - Three Readers, in TypeScript, .NET and Python, that read, verify, search and
@@ -45,6 +45,7 @@ What has shipped is in [CHANGELOG.md](CHANGELOG.md).
 - Package signing with established tooling, such as OpenSSF Model Signing.
 - Work with early adopters who share knowledge across a boundary: a vendor's
   documentation, a regulator's guidance, a platform team's runbooks.
+- Move to OKF 0.3 in 0.8.0. 0.7.0 reads OKF 0.2; see [MOCA, OKF and MCP](docs/moca-okf-mcp.md#okf-03).
 - Talk to the OKF maintainers about packaging as a companion specification.
 
 ## Later

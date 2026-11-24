@@ -6,7 +6,7 @@
 
 ## Context
 
-The [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+The [Open Knowledge Format](https://github.com/open-knowledge-format/open-knowledge-format)
 (OKF), published by Google Cloud, defines knowledge as a directory of Markdown
 files with YAML frontmatter and one required field, `type`. Version 0.2 (July
 2026) added trust signals: `generated`, `verified` (a list of who checked and
@@ -58,3 +58,10 @@ The claims graph is not part of MOCA. It has no consumer
 
 OKF adding its own package manifest, digest and signing. MOCA would then
 become a profile of that, or be retired.
+
+## Note, 24 November 2026
+
+OKF now lives at `https://github.com/open-knowledge-format/open-knowledge-format`,
+and its 0.3 text was published on 18 November 2026. The links above point
+there. This decision is unchanged: OpenMOCA 0.7.0 reads OKF 0.2, and moves to
+0.3 in 0.8.0 ([MOCA, OKF and MCP](../moca-okf-mcp.md#okf-03)).

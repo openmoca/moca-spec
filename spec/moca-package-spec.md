@@ -7,7 +7,7 @@ License: [Apache License 2.0](../LICENSE)
 ## 1. Scope
 
 The
-[Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md)
+[Open Knowledge Format](https://github.com/open-knowledge-format/open-knowledge-format/blob/ad30107c31c06aec8a7d5636e0d1058118604e6f/SPEC.md)
 (OKF) shapes knowledge for AI. MOCA (Modular Ontology, Content & Attestation)
 is for the people who make and own it. A MOCA package wraps an OKF v0.2
 bundle (OKF v0.2 as published at commit `ad30107`, 21 August 2026) in a

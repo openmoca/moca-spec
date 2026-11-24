@@ -4,7 +4,7 @@
 [![Status: before 1.0](https://img.shields.io/badge/status-before%201.0-blue.svg)](#status)
 
 **Knowledge that says who made it.** The
-[Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+[Open Knowledge Format](https://github.com/open-knowledge-format/open-knowledge-format)
 (OKF) shapes knowledge for AI. MOCA is for the people who make and own it: a
 MOCA package wraps an OKF bundle in a signed manifest that says who made the
 work, who owns it and on what terms it may be used, and the signature shows
@@ -202,7 +202,7 @@ list, with where each applies, is in
 
 | Standard | Where | How strongly |
 | --- | --- | --- |
-| [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format) (OKF) v0.2 | content and node trust fields | follow |
+| [Open Knowledge Format](https://github.com/open-knowledge-format/open-knowledge-format) (OKF) v0.2 | content and node trust fields | follow |
 | [JSON Schema](https://json-schema.org/draft/2020-12) 2020-12 | the schemas in `schemas/v1` | follow |
 | [I-JSON](https://www.rfc-editor.org/rfc/rfc7493) (RFC 7493) | `moca.json` | follow |
 | SHA-256, in the [BagIt](https://www.rfc-editor.org/rfc/rfc8493) (RFC 8493) manifest line format | the package digest | follow |
