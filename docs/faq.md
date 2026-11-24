@@ -80,7 +80,7 @@ and courses. A package without it is complete
 
 ## How does MOCA relate to OKF and MCP?
 
-MOCA builds on the [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+MOCA builds on the [Open Knowledge Format](https://github.com/open-knowledge-format/open-knowledge-format)
 (OKF): the pages in a package are OKF documents, and MOCA adds the package
 around them. The Model Context Protocol (MCP) is how an agent calls tools; the
 MOCA MCP server lets any MCP client search and cite packages

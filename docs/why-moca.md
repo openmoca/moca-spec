@@ -51,7 +51,7 @@ outside calls. The checks above have to run there too.
 
 ## What already exists
 
-The [Open Knowledge Format](https://github.com/GoogleCloudPlatform/open-knowledge-format)
+The [Open Knowledge Format](https://github.com/open-knowledge-format/open-knowledge-format)
 (OKF) gives knowledge a common file format: Markdown with YAML frontmatter, a
 required `type`, and, since v0.2, trust fields such as `generated`,
 `verified`, `status` and `stale_after`. It is the right content format, and
