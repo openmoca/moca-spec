@@ -7,6 +7,8 @@ recipe card:
 [`course-editions-french.moca`](https://github.com/openmoca/moca-spec/releases/latest/download/course-editions-french.moca) and
 [`course-editions-handout.moca`](https://github.com/openmoca/moca-spec/releases/latest/download/course-editions-handout.moca),
 from the [latest release](https://github.com/openmoca/moca-spec/releases/latest).
+If a release does not carry them yet, pack them from this repository:
+`node scripts/pack-examples.mjs` writes every example to `dist/examples/`.
 
 "Bread at home" is a short, original course written for this repository. The
 school and both presenters are made up. It shows both ways to reach people in
