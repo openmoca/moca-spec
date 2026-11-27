@@ -1,0 +1,48 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.7",
+  "id": "https://example.com/moca/bread-course/en",
+  "version": "1.0.0",
+  "title": "Bread at home",
+  "description": "A three-lesson course on a first loaf of bread: the ingredients, kneading and rising, shaping and baking.",
+  "language": "en",
+  "locales": [
+    "fr"
+  ],
+  "translations": {
+    "fr": {
+      "title": "Bread at home (édition anglaise)",
+      "description": "Un cours en trois leçons, en anglais. La première leçon est aussi traduite en français."
+    }
+  },
+  "license": "CC-BY-4.0",
+  "datePublished": "2026-11-27",
+  "publisher": {
+    "name": "Crumb Example School",
+    "url": "https://example.com/crumb",
+    "description": "A small, made-up baking school. It exists only in this example."
+  },
+  "contributors": [
+    {
+      "name": "Alex Example",
+      "roles": [
+        "aut",
+        "pre"
+      ]
+    }
+  ],
+  "readingOrder": "https://example.com/moca/bread-course/en#lessons",
+  "members": [
+    {
+      "id": "https://example.com/moca/bread-course/handout",
+      "version": "1.0.0",
+      "digest": "sha256:2089e8eb9dd4d3a65cad361357756394aeb4c07aa19165ff1bc6f86e2600ce28"
+    }
+  ],
+  "relations": [
+    {
+      "type": "isPartOf",
+      "target": "https://example.com/moca/bread-course"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://example.com/moca/bread-course/en#lessons> a skos:OrderedCollection ;
+  skos:prefLabel "Lessons"@en ;
+  skos:memberList ( <https://example.com/moca/bread-course/en#lesson-1>
+                    <https://example.com/moca/bread-course/en#lesson-2>
+                    <https://example.com/moca/bread-course/en#lesson-3> ) .
+
+<https://example.com/moca/bread-course/en#lesson-1> a skos:Concept ;
+  skos:prefLabel "Lesson 1: flour, water, salt and yeast"@en ,
+                 "Leçon 1 : farine, eau, sel et levure"@fr .
+<https://example.com/moca/bread-course/en#lesson-2> a skos:Concept ;
+  skos:prefLabel "Lesson 2: kneading and rising"@en .
+<https://example.com/moca/bread-course/en#lesson-3> a skos:Concept ;
+  skos:prefLabel "Lesson 3: shaping and baking"@en .
