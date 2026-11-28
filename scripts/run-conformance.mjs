@@ -58,7 +58,7 @@ function checkPackage(e, actual) {
     problems.push(`distribution: expected ${e.distribution}, got ${actual.distribution ?? null}`);
   }
   // Package spec §4.6–4.12, attestations §7.1: result fields compared as JSON values; null means absent.
-  for (const field of ['images', 'translations', 'tags', 'apps', 'readingOrder', 'issuedCopy', 'datePublished', 'datePackaged', 'publisher', 'url', 'contributors']) {
+  for (const field of ['images', 'translations', 'tags', 'apps', 'readingOrder', 'issuedCopy', 'datePublished', 'datePackaged', 'publisher', 'url', 'contributors', 'localeCoverage']) {
     if (e[field] === undefined) continue;
     const got = actual[field] ?? null;
     if (JSON.stringify(canonical(got)) !== JSON.stringify(canonical(e[field]))) problems.push(`${field}: expected ${JSON.stringify(e[field])}, got ${JSON.stringify(got)}`);
