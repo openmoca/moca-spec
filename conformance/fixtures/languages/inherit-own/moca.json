@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/languages/inherit-own",
+  "version": "1.0.0",
+  "title": "A translation that writes its own keys",
+  "language": "en",
+  "locales": [
+    "fr"
+  ]
+}
