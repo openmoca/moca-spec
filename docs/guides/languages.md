@@ -549,13 +549,12 @@ captions. Time ranges cited from the French file are checked against them.
 a caption menu reads every translation of the node; one record never lists
 all the tracks.
 
-**Fixed in 0.8.0:** a media description lists its tracks in `captions`, each
-with its `language` and its HTML track `kind` (`subtitles`, `captions`,
-`descriptions`, `chapters`), and one record carries them all
-([package spec §5.7](../../spec/moca-package-spec.md#57-media)). **If a
-package must work in 0.7 Readers, don't add `captions` yet:** a 0.7 Reader
-reports the newer `mocaVersion` (`M009`) and drops the whole description
-(`C005`), with its transcript and its time-range checks.
+**Fixed in 0.8.0:** the node lists its tracks in `moca.tracks`, beside the
+media, each with the media it belongs to, its `language`, its HTML track
+`kind` (`subtitles`, `captions`, `descriptions`, `chapters`) and a `label`,
+and one record carries them all in `node.tracks`
+([package spec §5.7](../../spec/moca-package-spec.md#57-media)). A 0.7
+Reader ignores `moca.tracks` and keeps the media.
 
 ### Transcript and translated captions
 
@@ -591,8 +590,8 @@ descriptions, add a WebVTT file as a source of the node.
 descriptions rather than captions. Say it in the text and the source's
 `title`.
 
-**Fixed in 0.8.0, in part:** a text description track is a `captions` entry
-with `kind: descriptions`. An alternate still has no field that marks it as
+**Fixed in 0.8.0, in part:** a text description track is a `moca.tracks`
+entry with `kind: descriptions`. An alternate still has no field that marks it as
 described.
 
 ## Scripts and regions

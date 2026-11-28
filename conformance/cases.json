@@ -11848,16 +11848,16 @@
       }
     },
     {
-      "id": "languages-media-captions",
-      "description": "Package spec §5.7: a media description with a caption track is valid; in 0.7.0 it failed the node schema and was ignored (C005).",
-      "target": "fixtures/languages/media-captions",
+      "id": "languages-media-tracks",
+      "description": "Package spec §5.7: moca.tracks beside the media list, each naming its media description; the package is valid. In 0.7.0 moca.tracks is an unknown key, ignored, and the media description stands.",
+      "target": "fixtures/languages/media-tracks",
       "expect": {
         "valid": true,
         "codes": [],
         "capabilities": [
           "core"
         ],
-        "digest": "sha256:725d0927c0f5f07865524ba6fd4ba61801d9ef7489f8c90a4d612c50bbe6c467"
+        "digest": "sha256:8f4fb51bf642cb559ae535e640b001a15020f9bfe34a4ddcbb365dd77ba36869"
       }
     },
     {
@@ -13234,11 +13234,11 @@
       }
     },
     {
-      "id": "languages-media-captions-record",
+      "id": "languages-media-tracks-record",
       "kind": "search",
-      "description": "Package spec §5.7: records carry the caption track in node.media, with its kind.",
+      "description": "Package spec §5.7: records carry the tracks that stand in node.tracks, each with its kind and label, and the media description in node.media with no tracks inside it.",
       "packages": [
-        "fixtures/languages/media-captions"
+        "fixtures/languages/media-tracks"
       ],
       "options": {
         "now": "2026-11-28T00:00:00Z",
@@ -13250,21 +13250,23 @@
       "expect": {
         "count": 1,
         "fields": {
-          "https://example.com/conformance/languages/media-captions@1.0.0#talk.md": {
+          "https://example.com/conformance/languages/media-tracks@1.0.0#talk.md": {
             "node.media": [
               {
                 "source": "video",
                 "resource": "https://media.example.com/talk.mp4",
                 "type": "video/mp4",
                 "duration": 5,
-                "transcript": "transcript",
-                "captions": [
-                  {
-                    "source": "captions-fr",
-                    "language": "fr",
-                    "kind": "subtitles"
-                  }
-                ]
+                "transcript": "transcript"
+              }
+            ],
+            "node.tracks": [
+              {
+                "media": "video",
+                "source": "subtitles-fr",
+                "language": "fr",
+                "kind": "subtitles",
+                "label": "Français"
               }
             ]
           }
@@ -13272,9 +13274,9 @@
       }
     },
     {
-      "id": "languages-media-captions-invalid",
-      "description": "Package spec §5.7: a repeated source, an unknown source (C006), a source that is not a WebVTT file in the package, an invalid tag and an unknown kind are each dropped and reported; the description and its good track stand. A quote found only in a caption track does not match: evidence is checked against the transcript (C011).",
-      "target": "fixtures/languages/media-captions-invalid",
+      "id": "languages-media-tracks-invalid",
+      "description": "Package spec §5.7: a repeated media and source pair, a track for media no description describes, an unknown source (C006), a source that is not a WebVTT file in the package, an invalid tag, an unknown kind and an empty label are each dropped and reported; the media description and the good track stand. A quote found only in a track does not match: evidence is checked against the transcript (C011).",
+      "target": "fixtures/languages/media-tracks-invalid",
       "expect": {
         "valid": true,
         "codes": [
@@ -13287,7 +13289,7 @@
           "located-evidence",
           "self-contained-evidence"
         ],
-        "digest": "sha256:e8c052d17f3584a5c76fa0406733be7f412242db82ed624ee2adfc6991f0d5a7",
+        "digest": "sha256:a6fed3c9c13023beb7a62f2cde96a2031890aac616894c0eb0e00df0f7c211bc",
         "evidenceMatched": {
           "talk.md": [
             false
@@ -13296,11 +13298,11 @@
       }
     },
     {
-      "id": "languages-media-captions-invalid-record",
+      "id": "languages-media-tracks-invalid-record",
       "kind": "search",
       "description": "Package spec §5.7: only the good track stands.",
       "packages": [
-        "fixtures/languages/media-captions-invalid"
+        "fixtures/languages/media-tracks-invalid"
       ],
       "options": {
         "now": "2026-11-28T00:00:00Z",
@@ -13312,21 +13314,22 @@
       "expect": {
         "count": 1,
         "fields": {
-          "https://example.com/conformance/languages/media-captions-invalid@1.0.0#talk.md": {
+          "https://example.com/conformance/languages/media-tracks-invalid@1.0.0#talk.md": {
             "node.media": [
               {
                 "source": "video",
                 "resource": "https://media.example.com/talk.mp4",
                 "type": "video/mp4",
                 "duration": 5,
-                "transcript": "transcript",
-                "captions": [
-                  {
-                    "source": "captions-fr",
-                    "language": "fr",
-                    "kind": "subtitles"
-                  }
-                ]
+                "transcript": "transcript"
+              }
+            ],
+            "node.tracks": [
+              {
+                "media": "video",
+                "source": "subtitles-fr",
+                "language": "fr",
+                "kind": "subtitles"
               }
             ]
           }

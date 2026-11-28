@@ -40,9 +40,10 @@ Content in more than one language. Each change is a Spec Change Proposal.
 - Reader contract §9: the search option `localeMode` (`choose`, `first`,
   `only`): "this language first" and "only this language".
 - Conformance: `expect.order` for search cases.
-- Package spec §5.7: `captions` on a media description, caption and subtitle
-  tracks with their language and HTML track kind. The node and
-  citation-record schemas gain it.
+- Package spec §5.7: `moca.tracks`, timed text tracks beside the media list,
+  each with the media it belongs to, its language, HTML track kind and label.
+  The node schema gains `moca.tracks` and the citation-record schema
+  `node.tracks`.
 - Package spec §5.3 and §5.4: `moca.language`, a node's own language in its
   default file. Reader interface §4: `localeCoverage` in the package result.
 
