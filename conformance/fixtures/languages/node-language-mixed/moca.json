@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/languages/node-language-mixed",
+  "version": "1.0.0",
+  "title": "A glossary in several languages",
+  "language": "en",
+  "locales": [
+    "fr"
+  ]
+}

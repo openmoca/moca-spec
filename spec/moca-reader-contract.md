@@ -360,7 +360,7 @@ and `profiles`, are left out, as they are in a real record):
 
   | Field | Value |
   | --- | --- |
-  | `node.locale` | The representation's tag; for the default representation, the manifest's `language`, or absent when it has none. |
+  | `node.locale` | The representation's tag; for the default representation, the node's `moca.language`, else the manifest's `language`, or absent when there is neither ([package spec §5.4](moca-package-spec.md#54-locales)). |
   | `node.digest` | `sha256:` and the SHA-256 of the representation file's bytes. |
   | `text` | When included, the representation file's UTF-8 text after the closing frontmatter delimiter, or the text at `span` for a chunk. |
   | `trust.status` | OKF `status` when it is `draft`, `stable` or `deprecated`; otherwise `stable`. A translation with no `status` key has its default representation's ([package spec §5.4](moca-package-spec.md#54-locales)). |
@@ -830,7 +830,10 @@ that pass steps 5.1 to 5.3, with the same fallbacks, exactly as a library
 search does (§9.2 step 5.4): a stored record whose file the lookup does not
 select is not returned, a node with no file in the requested languages is
 returned in its default language, and a retired translation falls back as a
-missing one does. For a package with members,
+missing one does.
+It also carries the nodes whose default file sets
+`moca.language`, each with that language, so a stored record is matched to
+the right file (package spec §5.3). For a package with members,
 the state also carries every member that resolved, matched its pin and is
 valid, at any depth and once each: its digest and `id`, whether the package's
 structure declares that `id` as a concept, the paths of its nodes whose

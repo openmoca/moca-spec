@@ -11863,7 +11863,7 @@
     {
       "id": "languages-node-language",
       "kind": "search",
-      "description": "In 0.7.0 moca.language is an unknown key, ignored: the Welsh page's record is in the package's language.",
+      "description": "Package spec §5.3: moca.language gives the Welsh page its own language, so its record's node.locale is cy. In 0.7.0 it was the package's (en).",
       "packages": [
         "fixtures/languages/node-language"
       ],
@@ -11877,7 +11877,8 @@
       "expect": {
         "count": 2,
         "locales": {
-          "https://example.com/conformance/languages/node-language@1.0.0#welsh.md": "en"
+          "https://example.com/conformance/languages/node-language@1.0.0#welsh.md": "cy",
+          "https://example.com/conformance/languages/node-language@1.0.0#english.md": "en"
         }
       }
     },
@@ -13325,6 +13326,165 @@
                 ]
               }
             ]
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-node-language-only",
+      "kind": "search",
+      "description": "Package spec §5.4: with moca.language, the default file is tagged cy in the lookup, so localeMode only keeps the Welsh page in a cy search.",
+      "packages": [
+        "fixtures/languages/node-language"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "cy",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/node-language@1.0.0#welsh.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-node-language-coverage",
+      "description": "A page in Welsh in an English package. Reader interface §4: localeCoverage counts each node under its default file's language.",
+      "target": "fixtures/languages/node-language",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:410d9c7ccea86368ffe3b5b9ef37327d36e2e1f6e4d879d662fb03742a4bfcd2",
+        "localeCoverage": {
+          "cy": {
+            "nodes": 1,
+            "of": 2
+          },
+          "en": {
+            "nodes": 1,
+            "of": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-node-language-mixed",
+      "description": "Package spec §5.3: a glossary in several languages (mul), and moca.language in a translation, which is ignored with C005.",
+      "target": "fixtures/languages/node-language-mixed",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "sha256:e219661aae0380b24333283b8718fedccc6fe06f871d98ac9202ff2a98ad39ba",
+        "localeCoverage": {
+          "en": {
+            "nodes": 1,
+            "of": 2
+          },
+          "fr": {
+            "nodes": 1,
+            "of": 2
+          },
+          "mul": {
+            "nodes": 1,
+            "of": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-node-language-mixed-search",
+      "kind": "search",
+      "description": "Package spec §5.3: the glossary's record is mul; the French page stays fr, its moca.language ignored.",
+      "packages": [
+        "fixtures/languages/node-language-mixed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 2,
+        "locales": {
+          "https://example.com/conformance/languages/node-language-mixed@1.0.0#glossary.md": "mul",
+          "https://example.com/conformance/languages/node-language-mixed@1.0.0#page.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-coverage-lookup",
+      "description": "Reader interface §4: localeCoverage for one node in four languages.",
+      "target": "fixtures/languages/lookup",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "SAME:languages-lookup",
+        "localeCoverage": {
+          "en": {
+            "nodes": 1,
+            "of": 1
+          },
+          "en-GB": {
+            "nodes": 1,
+            "of": 1
+          },
+          "pt-BR": {
+            "nodes": 1,
+            "of": 1
+          },
+          "pt-PT": {
+            "nodes": 1,
+            "of": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-coverage-partial",
+      "description": "Reader interface §4: localeCoverage for a package partly in French and Brazilian Portuguese: of its two nodes, each has one translation.",
+      "target": "fixtures/valid-locales",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "SAME:valid-locales",
+        "localeCoverage": {
+          "en": {
+            "nodes": 2,
+            "of": 2
+          },
+          "fr": {
+            "nodes": 1,
+            "of": 2
+          },
+          "pt-BR": {
+            "nodes": 1,
+            "of": 2
           }
         }
       }

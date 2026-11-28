@@ -43,6 +43,8 @@ Content in more than one language. Each change is a Spec Change Proposal.
 - Package spec §5.7: `captions` on a media description, caption and subtitle
   tracks with their language and HTML track kind. The node and
   citation-record schemas gain it.
+- Package spec §5.3 and §5.4: `moca.language`, a node's own language in its
+  default file. Reader interface §4: `localeCoverage` in the package result.
 
 ### Changed
 
