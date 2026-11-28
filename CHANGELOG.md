@@ -4,17 +4,22 @@ All notable changes to the MOCA specification, schemas, profiles and
 conformance corpus. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
 [the versioning policy](docs/versioning-and-release.md).
 
-## [Unreleased]
+## Unreleased: 0.8.0
 
-For 0.8.0. The Spec Change Proposal: [a store search that cannot get a package state](https://github.com/openmoca/moca-spec/issues/65).
+Content in more than one language. Each change is a Spec Change Proposal.
 
-### Changed
+### Changed (store states: [a store search that cannot get a package state](https://github.com/openmoca/moca-spec/issues/65))
 
 - Reader contract §9.4: a store search that cannot get the state of a package a record depends on (its own, a
   composing package's, or one whose relations act on it) withholds the record and reports `S011_STATE_MISSING`,
   never returning it as if that package did not limit it. Relation effects come from the same states as
   `package.signed`; a cached index of them is checked against the states, never used silently.
 - Reader contract §11: the code `S011_STATE_MISSING` (warning).
+
+### Added
+
+- Conformance: cases that pin 0.7.0's behaviour in more than one language
+  (`languages-*`), so each 0.8.0 change below shows as a corpus diff.
 
 ## [0.7.0] - 2026-11-22
 

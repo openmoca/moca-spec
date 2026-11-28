@@ -11653,6 +11653,229 @@
           "core"
         ]
       }
+    },
+    {
+      "id": "languages-lookup",
+      "description": "Four representations of one node: the default (en), en-GB, pt-BR and pt-PT.",
+      "target": "fixtures/languages/lookup",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "sha256:eafb61e0345989963cda31a08c5561ea18eda0ae1f6a808104d879cd7885eb60"
+      }
+    },
+    {
+      "id": "languages-lookup-region-sibling",
+      "kind": "search",
+      "description": "Package spec §5.4, as 0.7.0 reads it: pt-AO truncates to pt, no file is tagged pt, and no tag starts with pt-AO-, so the default (en) is returned although pt-BR and pt-PT exist.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "pt-AO"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-default-tag",
+      "kind": "search",
+      "description": "Package spec §5.4, as 0.7.0 reads it: the default file is not tagged, so a request for en, the package's own language, finds en-GB by step 3.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "en"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en-GB"
+        }
+      }
+    },
+    {
+      "id": "languages-inherit",
+      "description": "Translations that repeat none of their default file's concepts, status or validity window.",
+      "target": "fixtures/languages/inherit",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "localized",
+          "structured"
+        ],
+        "digest": "sha256:1c7acbeaa46442c4a21a6f823bb6761a365b0ba93ad48587581100523bbc7164"
+      }
+    },
+    {
+      "id": "languages-inherit-concepts",
+      "kind": "search",
+      "description": "In 0.7.0 a translation is bound only by its own moca.concepts: a French search with scope keeps no French file, and so falls back to nothing.",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "scope": "https://example.com/conformance/languages/inherit#topic"
+      },
+      "expect": {
+        "count": 0
+      }
+    },
+    {
+      "id": "languages-inherit-status",
+      "kind": "search",
+      "description": "In 0.7.0 a translation has its own status and validity window: with the English page deprecated and another ended, both French files are still returned.",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 5,
+        "include": [
+          "https://example.com/conformance/languages/inherit@1.0.0#retired.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#ended.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/inherit@1.0.0#retired.md": "fr",
+          "https://example.com/conformance/languages/inherit@1.0.0#ended.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-up-to",
+      "kind": "search",
+      "description": "In 0.7.0 a translation has no place on the reading order: at lesson 2, the French lesson 3 is returned, the English one is not.",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.com/conformance/languages/inherit#lesson-2"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-retired-translation",
+      "kind": "search",
+      "description": "Contract §9.2 in 0.7.0: the default retrieval policy (step 2) removes the deprecated French file before the language is chosen (step 4), which then picks it and drops the English one: a French reader gets nothing.",
+      "packages": [
+        "fixtures/languages/retired-translation"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 0
+      }
+    },
+    {
+      "id": "languages-editions-search",
+      "kind": "search",
+      "description": "In 0.7.0 locale chooses within each package and never leaves a package out: a French search over an English and a French edition returns both.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 2,
+        "locales": {
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md": "en",
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-media-captions",
+      "description": "In 0.7.0 a media description has no captions key: one that has it fails the node schema and is ignored (C005).",
+      "target": "fixtures/languages/media-captions",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:725d0927c0f5f07865524ba6fd4ba61801d9ef7489f8c90a4d612c50bbe6c467"
+      }
+    },
+    {
+      "id": "languages-node-language",
+      "kind": "search",
+      "description": "In 0.7.0 moca.language is an unknown key, ignored: the Welsh page's record is in the package's language.",
+      "packages": [
+        "fixtures/languages/node-language"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 2,
+        "locales": {
+          "https://example.com/conformance/languages/node-language@1.0.0#welsh.md": "en"
+        }
+      }
     }
   ]
 }
