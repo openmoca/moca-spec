@@ -363,7 +363,7 @@ and `profiles`, are left out, as they are in a real record):
   | `node.locale` | The representation's tag; for the default representation, the manifest's `language`, or absent when it has none. |
   | `node.digest` | `sha256:` and the SHA-256 of the representation file's bytes. |
   | `text` | When included, the representation file's UTF-8 text after the closing frontmatter delimiter, or the text at `span` for a chunk. |
-  | `trust.status` | OKF `status` when it is `draft`, `stable` or `deprecated`; otherwise `stable`. |
+  | `trust.status` | OKF `status` when it is `draft`, `stable` or `deprecated`; otherwise `stable`. A translation with no `status` key has its default representation's ([package spec §5.4](moca-package-spec.md#54-locales)). |
   | `trust.generated`, `trust.declaredVerified` | OKF `generated` and `verified`; an entry with no `by` is left out. `generated.model` is kept when it is a string. |
   | `terms` | Only in records from a search with a terms request (§15.4): `{ authority, ai, rating, rights }` for the record's node, where each `ai` field and `rights.export` is `{ value, decidedBy }` (§15.3) and `rating` is the node's effective rating. Absent otherwise. |
   | `trust.validFrom`, `trust.validUntil` | The node's effective window ([package spec §4.4](moca-package-spec.md#44-validity-window)), as written. |
@@ -518,7 +518,9 @@ Labels are compared exactly. A caller of the search MUST NOT be able to widen
 the host's audience set, allow unlabelled content, or opt in to excluded
 content. A record's `audience` is its representation's `moca.audience`, or,
 for a translation with none of its own, the default representation's
-([package spec §5.4](moca-package-spec.md#54-locales)).
+([package spec §5.4](moca-package-spec.md#54-locales)). A translation's
+`status`, validity window and `concepts` are taken the same way, so the
+policy above retires a translation with its original.
 
 Audience is a label a host filters on, not access control
 ([package spec §13.3](moca-package-spec.md#133-labels-not-locks)):

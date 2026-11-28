@@ -1040,8 +1040,26 @@ A node MAY have representations in several languages. The file
 representation. A dotted name whose suffix is not a declared locale (for
 example `v1.2.md`) is an ordinary node.
 
-A translation with no `moca.audience` of its own has its default-language
-representation's audience; every other field is its own.
+**What a translation takes from its default file.** A translation that does
+not write one of these keys has its default-language representation's value
+for it, so it is found by topic, placed on the reading order and retired with
+the original:
+
+| Key | Taken from the default file when the translation has no |
+| --- | --- |
+| `moca.audience` | `moca.audience` key |
+| `moca.concepts` | `moca.concepts` key |
+| OKF `status` | `status` key |
+| `moca.valid_from` | `moca.valid_from` key |
+| `moca.valid_until` | `moca.valid_until` key |
+
+Each key is taken on its own: a translation published later MAY set its own
+`moca.valid_from` and still end with the original. A key the translation
+writes is its own, even when its value is invalid (it is then reported and
+read as the default file's invalid value would be). `C010` applies to the
+window the translation ends up with, and is reported on the translation's
+file. Every other field is the translation's own: its sources, media,
+evidence, `generated`, `verified`, `stale_after` and `moca.contested_by`.
 
 **Choosing a representation.** A request for a locale is a language tag or a
 priority list of them, most preferred first (`["fr-CA", "en"]`), as RFC 4647
@@ -1166,7 +1184,7 @@ structure operation `nodes()`
 can file its parts under its own topics without a new version of each part
 (§7.3). Binding by composition never changes the member: its bytes, digest,
 trust and the record's `concepts`, which lists only the node's own
-`moca.concepts`. Only a member that resolved and matched its pin (§7.1) is
+`moca.concepts` (a translation's own, or its default file's, §5.4). Only a member that resolved and matched its pin (§7.1) is
 bound this way.
 
 **In RDF and SKOS terms**, such an IRI then names both a package (or a node)

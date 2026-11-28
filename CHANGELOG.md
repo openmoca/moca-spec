@@ -32,6 +32,9 @@ Content in more than one language. Each change is a Spec Change Proposal.
 - Reader contract §9.4: a store search keeps one representation per node by
   the same lookup, with the default file as the fallback, as a library search
   does. A package state lists the files of each node that has more than one.
+- Package spec §5.4: a translation inherits its default file's
+  `moca.concepts`, `status` and validity window when it writes none, as it
+  already did `moca.audience`.
 
 ## [0.7.0] - 2026-11-22
 
