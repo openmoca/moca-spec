@@ -1,0 +1,10 @@
+{
+  "payload": "eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJzdWJqZWN0IjpbeyJuYW1lIjoiaHR0cHM6Ly90cmFuc2xhdGlvbnMuZXhhbXBsZS5vcmcvcTEvYnJlYWQtZnJAMS4wLjAiLCJkaWdlc3QiOnsic2hhMjU2IjoiNjliOTEwNmU1ODkwNDFmNmI5MmVkOTQ4Mjc4MjAwNTJhYmUwNDY2OWUyODIzZTFiMjMwNmU1ZGM3M2ZjMGJiYSJ9fV0sInByZWRpY2F0ZVR5cGUiOiJodHRwczovL3czaWQub3JnL21vY2EvYXR0ZXN0YXRpb24vcGFja2FnZS92MSIsInByZWRpY2F0ZSI6e319",
+  "payloadType": "application/vnd.in-toto+json",
+  "signatures": [
+    {
+      "keyid": "example-rogue-2026",
+      "sig": "bXCD5kC3eGu/6AqP5kN4cOjUD8Q6DAychI+KpbvEpaBRG35e0FsLU57RuciEP/0RReJYcWb14Yt8gh69VpHXDQ=="
+    }
+  ]
+}

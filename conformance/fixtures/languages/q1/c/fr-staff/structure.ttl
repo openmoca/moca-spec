@@ -1,0 +1,14 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema: <https://schema.org/> .
+@prefix moca: <https://w3id.org/moca/ns#> .
+
+<https://example.com/conformance/languages/q1/course-fr-staff#bread> a skos:Concept ;
+  skos:prefLabel "The bread course"@en ;
+  schema:workExample <https://example.com/conformance/languages/q1/bread-en-public> , <https://example.com/conformance/languages/q1/bread-fr-staff> ;
+  moca:defaultEdition <https://example.com/conformance/languages/q1/bread-en-public> .
+
+<https://example.com/conformance/languages/q1/course-fr-staff#order> a skos:OrderedCollection ;
+  skos:memberList ( <https://example.com/conformance/languages/q1/course-fr-staff#bread> ) .
+
+<https://example.com/conformance/languages/q1/bread-en-public> a skos:Concept .
+<https://example.com/conformance/languages/q1/bread-fr-staff> a skos:Concept .

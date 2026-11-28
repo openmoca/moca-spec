@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/languages/q1/bread-en-multi",
+  "version": "1.0.0",
+  "title": "Bread (en)",
+  "language": "en",
+  "locales": [
+    "fr"
+  ]
+}

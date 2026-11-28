@@ -1,0 +1,19 @@
+{
+  "id": "https://translations.example.org/q1/broad",
+  "version": "1.0.0",
+  "title": "The bread course",
+  "language": "en",
+  "readingOrder": "https://translations.example.org/q1/broad#order",
+  "members": [
+    {
+      "id": "https://example.com/conformance/languages/q1/bread-en",
+      "version": "1.0.0",
+      "digest": "sha256:27a43690fe3cd2ae3ccefee5c1c54321f46b377ace90d552163a85c1e1ea6f03"
+    },
+    {
+      "id": "https://translations.example.org/q1/bread-fr",
+      "version": "1.0.0",
+      "digest": "sha256:69b9106e589041f6b92ed94827820052abe04669e2823e1b2306e5dc73fc0bba"
+    }
+  ]
+}

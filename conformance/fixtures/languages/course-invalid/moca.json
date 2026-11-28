@@ -1,0 +1,18 @@
+{
+  "id": "https://example.com/conformance/languages/course-invalid",
+  "version": "1.0.0",
+  "title": "Edition groups with problems",
+  "language": "en",
+  "members": [
+    {
+      "id": "https://example.com/conformance/languages/editions/en",
+      "version": "1.0.0",
+      "digest": "sha256:c059b7387e62dde7a8ba1c20eb878bf03686256c9877102766c280463790daee"
+    },
+    {
+      "id": "https://example.com/conformance/languages/editions/fr",
+      "version": "1.0.0",
+      "digest": "sha256:d2509a7eb3b26a92c62927b3727bf6104509156b010bb8fe69888b7c724aec4c"
+    }
+  ]
+}

@@ -99,6 +99,118 @@
       "search": [
         "conformance/fixtures/terms/composite/member"
       ]
+    },
+    {
+      "package": "conformance/fixtures/languages/course-signed",
+      "search": [
+        "conformance/fixtures/languages/editions",
+        "conformance/fixtures/languages/relations"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/course-unsigned",
+      "search": [
+        "conformance/fixtures/languages/editions",
+        "conformance/fixtures/languages/relations"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/course-invalid",
+      "search": [
+        "conformance/fixtures/languages/editions",
+        "conformance/fixtures/languages/relations"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/course-v1",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/course-v2",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/course-b",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/third-party",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/third-party-shadow",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/fr-ended",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/fr-deprecated",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/fr-staff",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/third-party-broad",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/third-party-unsigned",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/key-no-ids",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/multilingual",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/composite-ended",
+      "search": [
+        "conformance/fixtures/languages/q1/p",
+        "conformance/fixtures/languages/q1/t"
+      ]
     }
   ],
   "sign": [
@@ -196,6 +308,110 @@
     },
     {
       "package": "conformance/fixtures/terms/composite/hides",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/course-signed",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/en",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/fr",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/fr-ended",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/fr-deprecated",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/fr-staff",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/en-public",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/en-multi",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/de",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/ar",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/p/zh",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/t/fr",
+      "key": "rogue"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/course-v1",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/course-v2",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/course-b",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/third-party",
+      "key": "rogue"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/third-party-shadow",
+      "key": "rogue"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/fr-ended",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/fr-deprecated",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/fr-staff",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/third-party-broad",
+      "key": "rogue"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/key-no-ids",
+      "key": "issuer"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/fr-bad-pin",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/multilingual",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/default-bad-pin",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/q1/c/composite-ended",
       "key": "publisher"
     }
   ],

@@ -1,0 +1,24 @@
+{
+  "id": "https://example.com/conformance/languages/q1/course-default-bad-pin",
+  "version": "1.0.0",
+  "title": "The bread course",
+  "language": "en",
+  "readingOrder": "https://example.com/conformance/languages/q1/course-default-bad-pin#order",
+  "members": [
+    {
+      "id": "https://example.com/conformance/languages/q1/bread-ar",
+      "version": "1.0.0",
+      "digest": "sha256:be02567ebe925e0f351ba10f273f33cbdd6d3ab096781d6acf23226fc6e940a0"
+    },
+    {
+      "id": "https://example.com/conformance/languages/q1/bread-en",
+      "version": "1.0.0",
+      "digest": "sha256:27a43690fe3cd2ae3ccefee5c1c54321f46b377ace90d552163a85c1e1ea6f03"
+    },
+    {
+      "id": "https://example.com/conformance/languages/q1/bread-zh",
+      "version": "1.0.0",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  ]
+}

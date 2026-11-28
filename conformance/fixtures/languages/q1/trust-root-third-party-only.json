@@ -1,0 +1,16 @@
+{
+  "keys": [
+    {
+      "keyid": "example-rogue-2026",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAJmO3OyMe1Y7pdIZx2LQqoDtUeYtDQFOrgXHN616GPtM=\n-----END PUBLIC KEY-----\n",
+      "identity": "A third-party translator (INSECURE, published private key)",
+      "expires": "2031-01-01T00:00:00Z",
+      "roles": [
+        "package"
+      ],
+      "ids": [
+        "https://translations.example.org/"
+      ]
+    }
+  ]
+}

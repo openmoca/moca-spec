@@ -1,0 +1,39 @@
+{
+  "id": "https://example.com/conformance/languages/course-signed",
+  "version": "1.0.0",
+  "title": "A course in four editions, signed",
+  "language": "en",
+  "readingOrder": "https://example.com/conformance/languages/course-signed#order",
+  "members": [
+    {
+      "id": "https://example.com/conformance/languages/editions/en",
+      "version": "1.0.0",
+      "digest": "sha256:c059b7387e62dde7a8ba1c20eb878bf03686256c9877102766c280463790daee"
+    },
+    {
+      "id": "https://example.com/conformance/languages/editions/fr",
+      "version": "1.0.0",
+      "digest": "sha256:d2509a7eb3b26a92c62927b3727bf6104509156b010bb8fe69888b7c724aec4c"
+    },
+    {
+      "id": "https://example.com/conformance/languages/editions/pt-BR",
+      "version": "1.0.0",
+      "digest": "sha256:69a271c0c803e6ccc4f33af01ae27f3c481daaaf096d75ead13229ab51413dfe"
+    },
+    {
+      "id": "https://example.com/conformance/languages/editions/pt-PT",
+      "version": "1.0.0",
+      "digest": "sha256:b4b8694e598230a7369efb4fad7729cabff432357aac211c4204b68c9c94a8ec"
+    },
+    {
+      "id": "https://example.com/conformance/languages/editions/de",
+      "version": "1.0.0",
+      "digest": "sha256:b610c5b362b79a4a11fbd15a222726f642e7ef8677b74d137e42b9dae7724173"
+    },
+    {
+      "id": "https://translations.example.org/course-fr",
+      "version": "1.0.0",
+      "digest": "sha256:cf6fa322950bea316241d7b185d1567d5d7fc7b38be53ad3cad6c219b2d0bf3a"
+    }
+  ]
+}

@@ -163,7 +163,8 @@ function checkSearch(e, actual) {
 function checkStructure(e, actual) {
   const problems = [];
   if (!same(e.codes ?? [], actual.codes ?? [])) problems.push(`codes: expected [${uniqueSorted(e.codes ?? [])}], got [${uniqueSorted(actual.codes ?? [])}]`);
-  if (JSON.stringify(e.result) !== JSON.stringify(actual.result)) problems.push(`result: expected ${JSON.stringify(e.result)}, got ${JSON.stringify(actual.result)}`);
+  // Arrays keep their order; members of an object (an edition, a concept) are compared in any order.
+  if (JSON.stringify(canonical(e.result)) !== JSON.stringify(canonical(actual.result))) problems.push(`result: expected ${JSON.stringify(e.result)}, got ${JSON.stringify(actual.result)}`);
   return problems;
 }
 

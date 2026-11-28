@@ -123,6 +123,9 @@ export async function actualFor(root, c) {
       related: () => s.related(c.iri).map(conceptItem),
       sequence: () => s.sequence(c.iri)?.map(conceptItem) ?? null,
       nodes: () => s.nodes(c.iri, a).map((r) => r.node.ref),
+      // Package spec §7.4, contract §10: a slot's editions, and the one a locale chooses.
+      editions: () => s.editions(c.iri),
+      chooseEdition: () => s.chooseEdition(c.iri, a.locale) ?? null,
     };
     return { codes: library.diagnostics.items.map((d) => d.code), result: ops[c.op]() };
   }
@@ -155,7 +158,7 @@ export async function actualFor(root, c) {
       : o.hooks === 'hostile-ingress' ? hostileIngressHooks()
         : o.hooks === 'ontology-guided' ? ontologyGuided() : undefined;
     const s = c.search;
-    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, concepts: s.concepts, scope: s.scope, upTo: s.upTo, terms: s.terms };
+    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, editions: s.editions, concepts: s.concepts, scope: s.scope, upTo: s.upTo, terms: s.terms };
     if (o.backend === 'store') {
       // Everything listed is ingested (each package on its own with
       // `ingestSeparately`); only the packages in `allow` are "loaded", and the
