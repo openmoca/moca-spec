@@ -536,12 +536,31 @@ A Reader offers one search operation. It has the same signature in every
 language, and the default retrieval policy is applied inside it:
 
 ```text
-search(query, { limit, includeAll, locale, editions, concepts, scope, upTo }) -> citation records, each with a score
+search(query, { limit, includeAll, locale, localeMode, editions, concepts, scope, upTo }) -> citation records, each with a score
 ```
 
 `locale` is a language tag or a priority list of them, most preferred first
 ([package spec §5.4](moca-package-spec.md#54-locales)); an empty list is no
 locale.
+
+`localeMode` says what the locale does, and has no effect without one:
+
+- `"choose"` (the default): for each node, the representation the locale
+  selects (§9.2 step 5.4). Nothing is left out for its language, and nothing
+  is reordered: a node with no file in the language passes in its default
+  language.
+- `"only"`: as `"choose"`, then only records whose language matches an entry
+  of the locale list pass, so a node with no file in the language drops out.
+- `"first"`: as `"choose"`, then records are ordered by the first entry of the
+  locale list their language matches, then the next entry, then records that
+  match none; within each group they keep the order they would otherwise have
+  (by score, or as an egress hook ordered them). This is the one place a filter
+  changes the order of results.
+
+A record's language is its `node.locale`; it **matches** a locale entry when
+package spec §5.4's lookup for that entry, over that one tag, selects it (so
+`fr` matches `fr-CA`, and `pt-BR` matches `pt-AO`). With no locale, every
+representation and every edition is searched, in score order.
 
 `editions` is `"choose"` (the default) or `"all"`. With a locale and
 `"choose"`, a composite package's edition groups keep one edition per slot
@@ -677,7 +696,9 @@ Each search runs these steps, in order
       editions, or their members at any depth, passes only when the edition
       the slot chooses for the locale, among the editions this search can
       return, is one of them, or when another such slot leaves out the chosen
-      edition (`S013`). Records from no slot's editions are not affected;
+      edition (`S013`). Records from no slot's editions are not affected.
+      Then, with `localeMode: "only"`, keep only records whose language
+      matches an entry of the locale list (§9);
    5. when the caller named concepts or a scope, keep only records bound to
       them. Concepts and scope set by an ingress hook narrow the search
       ("Ingress narrowing", below) but never bind the gate: the gate follows
@@ -691,6 +712,11 @@ Each search runs these steps, in order
 
 Hooks are host code, supplied when the host creates the search. A package can
 never supply or select one.
+
+**Language first.** With `localeMode: "first"`, the search returns the first
+`limit` records, in the order §9 gives, among all the records that pass the
+gate. So a Reader asks the backend again until `limit` records of the first
+group pass, or the backend has no more.
 
 **Filters come before the limit.** Steps 5.1 to 5.7 decide which records can
 be results; step 5.8 only counts them. A search MUST return the best-scored
