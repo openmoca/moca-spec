@@ -13048,6 +13048,1093 @@
       }
     },
     {
+      "id": "languages-edition-group-q1-baseline",
+      "kind": "search",
+      "description": "Package spec §7.4: the publisher's signed composite keeps the French edition for a French reader.",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-third-party",
+      "kind": "search",
+      "description": "Package spec §7.4, \"Authority\": a third party's signed composite (the original en and its own fr, its own the default) never hides the original.",
+      "packages": [
+        "fixtures/languages/q1/c/third-party"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://translations.example.org/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-third-party-unmatched",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-third-party, for a locale no edition has.",
+      "packages": [
+        "fixtures/languages/q1/c/third-party"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "de"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://translations.example.org/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-third-party-beside",
+      "kind": "search",
+      "description": "The third party's composite and the publisher's, both loaded: the publisher's slot keeps its French edition and leaves out its English one.",
+      "packages": [
+        "fixtures/languages/q1/c/third-party",
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md",
+          "https://translations.example.org/q1/bread-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-shadow-editions",
+      "kind": "structure",
+      "description": "Package spec §7.4, \"A slot\": a third party declares the publisher's slot IRI in its own composite, loaded first. The IRI is not in its namespace, so its slot is not read, and editions() answers from the publisher's composite.",
+      "packages": [
+        "fixtures/languages/q1/c/third-party-shadow",
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "op": "editions",
+      "iri": "https://example.com/conformance/languages/q1/course#bread",
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "expect": {
+        "result": [
+          {
+            "id": "https://example.com/conformance/languages/q1/bread-en",
+            "version": "1.0.0",
+            "language": "en",
+            "title": "Bread (en)",
+            "default": true
+          },
+          {
+            "id": "https://example.com/conformance/languages/q1/bread-fr",
+            "version": "1.0.0",
+            "language": "fr",
+            "title": "Bread (fr)",
+            "default": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-shadow-choose",
+      "kind": "structure",
+      "description": "As languages-edition-group-q1-shadow-editions: chooseEdition(slot, fr) is the publisher's French edition.",
+      "packages": [
+        "fixtures/languages/q1/c/third-party-shadow",
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "op": "chooseEdition",
+      "iri": "https://example.com/conformance/languages/q1/course#bread",
+      "args": {
+        "locale": "fr"
+      },
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "expect": {
+        "result": "https://example.com/conformance/languages/q1/bread-fr"
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-shadow-choose-unmatched",
+      "kind": "structure",
+      "description": "As languages-edition-group-q1-shadow-editions: chooseEdition(slot, de) is the publisher's default, not the third party's.",
+      "packages": [
+        "fixtures/languages/q1/c/third-party-shadow",
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "op": "chooseEdition",
+      "iri": "https://example.com/conformance/languages/q1/course#bread",
+      "args": {
+        "locale": "de"
+      },
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "expect": {
+        "result": "https://example.com/conformance/languages/q1/bread-en"
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-shadow-scope",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-shadow-editions: scope on the publisher's slot does not return the third party's translation.",
+      "packages": [
+        "fixtures/languages/q1/c/third-party-shadow",
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "scope": "https://example.com/conformance/languages/q1/course#bread"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://translations.example.org/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-shadow-search",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-shadow-editions: a French search keeps the publisher's French edition.",
+      "packages": [
+        "fixtures/languages/q1/c/third-party-shadow",
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-two-versions",
+      "kind": "search",
+      "description": "Package spec §7.4, \"Only a composite in force\": version 2 supersedes version 1 and changes the default to fr. Version 1 folds nothing, so a locale no edition has gets version 2's default.",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1",
+        "fixtures/languages/q1/c/course-v2"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "es"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-two-composites",
+      "kind": "search",
+      "description": "Package spec §7.4, \"Slots that disagree\": two composites by the publisher over the same editions, with different defaults. Neither slot hides the other's choice, so a locale no edition has gets both, and S013.",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1",
+        "fixtures/languages/q1/c/course-b"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "es"
+      },
+      "expect": {
+        "codes": [
+          "S013_EDITION_SLOTS_DISAGREE"
+        ],
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-ended",
+      "kind": "search",
+      "description": "Package spec §7.4, \"Choosing\": the French edition's window has ended, so it cannot be chosen, and a French reader gets the English edition.",
+      "packages": [
+        "fixtures/languages/q1/c/fr-ended"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-deprecated",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-chosen-ended: the French edition's only node is deprecated.",
+      "packages": [
+        "fixtures/languages/q1/c/fr-deprecated"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-out-of-audience",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-chosen-ended: the French edition is for staff, and the host's audience set is public.",
+      "packages": [
+        "fixtures/languages/q1/c/fr-staff"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en-public@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-store-not-allowed",
+      "kind": "search",
+      "description": "Package spec §7.4, \"Choosing\", through a store: the composite and the English edition are loaded, the French edition's state is not supplied, so it cannot be chosen.",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allow": [
+          "fixtures/languages/q1/c/course-v1",
+          "fixtures/languages/q1/p/en"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-broad-ids",
+      "kind": "search",
+      "description": "The host's trust root gives the third party's key ids of \"https://\", so its composite speaks for the original and folds it (package spec §7.4 threat model: the host decides).",
+      "packages": [
+        "fixtures/languages/q1/c/third-party-broad"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root-broad.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://translations.example.org/q1/bread-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-unsigned-opt-in",
+      "kind": "search",
+      "description": "With the host's option that allows unsigned relations, an unsigned third-party composite folds the original (safe only for a library of the host's own packages).",
+      "packages": [
+        "fixtures/languages/q1/c/third-party-unsigned"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allowUnsignedRelations": true
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "include": [
+          "https://translations.example.org/q1/bread-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-key-without-ids",
+      "kind": "search",
+      "description": "The publisher's composite signed by a trusted key with no ids: signed, but it covers no package, so the slot groups and hides nothing.",
+      "packages": [
+        "fixtures/languages/q1/c/key-no-ids"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root-no-ids.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-pin-fails",
+      "kind": "search",
+      "description": "The French edition fails its pin, so it is not an edition, and a French reader gets the English one.",
+      "packages": [
+        "fixtures/languages/q1/c/fr-bad-pin"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-pin-fails-loaded",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-pin-fails, with the French package also loaded on its own: it is in no slot, so it is not left out.",
+      "packages": [
+        "fixtures/languages/q1/c/fr-bad-pin",
+        "fixtures/languages/q1/p/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-publisher-key-not-trusted",
+      "kind": "search",
+      "description": "The publisher's key is not in the trust root: its composite groups and hides nothing.",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root-third-party-only.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 2
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-multilingual-edition",
+      "kind": "search",
+      "description": "An English edition that carries its own French file, beside a German edition, the default. In 0.8.0 so far an edition's language is its manifest language only, so a French reader gets the German edition.",
+      "packages": [
+        "fixtures/languages/q1/c/multilingual"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-de@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-default-unavailable",
+      "kind": "search",
+      "description": "The default edition (zh) fails its pin, and no edition matches de: the edition with the lowest id (ar).",
+      "packages": [
+        "fixtures/languages/q1/c/default-bad-pin"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "de"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-ar@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-composite-ended",
+      "kind": "search",
+      "description": "Package spec §7.4, \"Only a composite in force\": the composite's own window has ended, so it hides nothing.",
+      "packages": [
+        "fixtures/languages/q1/c/composite-ended"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-ended-lexical",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-chosen-ended, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/q1/c/fr-ended"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-deprecated-lexical",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-chosen-deprecated, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/q1/c/fr-deprecated"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-out-of-audience-lexical",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-chosen-out-of-audience, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/q1/c/fr-staff"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en-public@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-two-versions-lexical",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-two-versions, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1",
+        "fixtures/languages/q1/c/course-v2"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "bread",
+        "locale": "es"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-two-composites-lexical",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-two-composites, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1",
+        "fixtures/languages/q1/c/course-b"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "bread",
+        "locale": "es"
+      },
+      "expect": {
+        "codes": [
+          "S013_EDITION_SLOTS_DISAGREE"
+        ],
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-composite-ended-lexical",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-composite-ended, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/q1/c/composite-ended"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-ended-store",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-chosen-ended, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/q1/c/fr-ended"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allow": [
+          "fixtures/languages/q1/c/fr-ended",
+          "fixtures/languages/q1/p/en",
+          "fixtures/languages/q1/p/fr-ended"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-deprecated-store",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-chosen-deprecated, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/q1/c/fr-deprecated"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allow": [
+          "fixtures/languages/q1/c/fr-deprecated",
+          "fixtures/languages/q1/p/en",
+          "fixtures/languages/q1/p/fr-deprecated"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-chosen-out-of-audience-store",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-chosen-out-of-audience, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/q1/c/fr-staff"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "audiences": [
+          "public"
+        ],
+        "allow": [
+          "fixtures/languages/q1/c/fr-staff",
+          "fixtures/languages/q1/p/en-public",
+          "fixtures/languages/q1/p/fr-staff"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en-public@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-two-versions-store",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-two-versions, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1",
+        "fixtures/languages/q1/c/course-v2"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allow": [
+          "fixtures/languages/q1/c/course-v1",
+          "fixtures/languages/q1/c/course-v2",
+          "fixtures/languages/q1/p/en",
+          "fixtures/languages/q1/p/fr"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "es"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-two-composites-store",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-two-composites, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1",
+        "fixtures/languages/q1/c/course-b"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allow": [
+          "fixtures/languages/q1/c/course-v1",
+          "fixtures/languages/q1/c/course-b",
+          "fixtures/languages/q1/p/en",
+          "fixtures/languages/q1/p/fr"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "es"
+      },
+      "expect": {
+        "codes": [
+          "S013_EDITION_SLOTS_DISAGREE"
+        ],
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-composite-ended-store",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-composite-ended, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/q1/c/composite-ended"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allow": [
+          "fixtures/languages/q1/c/composite-ended",
+          "fixtures/languages/q1/p/en",
+          "fixtures/languages/q1/p/fr"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/q1/bread-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
       "id": "languages-inherit-concepts-lexical",
       "kind": "search",
       "description": "As languages-inherit-concepts, with the Reader's lexical backend.",

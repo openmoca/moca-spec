@@ -1,0 +1,19 @@
+{
+  "id": "https://example.com/conformance/languages/q1/course-fr-staff",
+  "version": "1.0.0",
+  "title": "The bread course",
+  "language": "en",
+  "readingOrder": "https://example.com/conformance/languages/q1/course-fr-staff#order",
+  "members": [
+    {
+      "id": "https://example.com/conformance/languages/q1/bread-en-public",
+      "version": "1.0.0",
+      "digest": "sha256:db7e7f5b84fbda4835c399ba73659079e09bdb8a64054055123a6397418de506"
+    },
+    {
+      "id": "https://example.com/conformance/languages/q1/bread-fr-staff",
+      "version": "1.0.0",
+      "digest": "sha256:4b7d699f679b852f7b5b87f85664906417ad59814687bbe282a6132293028efc"
+    }
+  ]
+}
