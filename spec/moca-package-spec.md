@@ -1075,7 +1075,11 @@ turn, for the entry and then the entry truncated one subtag at a time (RFC 4647
 2. the representations whose tag starts with it and `-`, the lowest in
    code-point order of the lower-cased tags.
 
-When no entry finds one, it takes the default representation. So `fr-CA` finds
+When no entry finds one, it takes the default representation. A search
+chooses only among the representations it may return, so a retired
+translation falls back as a missing one does
+([Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate),
+step 5.4). So `fr-CA` finds
 `fr` before `fr-BE`; `pt` and `pt-AO` find `pt-BR` when the files are `pt-BR`
 and `pt-PT`; and a request for `en`, in a package whose `language` is `en`,
 finds the default representation before an `en-GB` file.

@@ -653,7 +653,14 @@ Each search runs these steps, in order
    3. remove records outside the host's audience set, and, when the host
       made a terms request, the records the terms gate removes (§15.4);
    4. when the caller named a locale, keep only the representation that
-      package spec §5.4's lookup selects for it, for each node;
+      package spec §5.4's lookup selects for it, for each node, **among the
+      node's representations that pass steps 5.1 to 5.3**. So a retired or
+      out-of-audience translation is treated as a missing one: a reader in
+      that language gets the next match, or the default representation. When
+      the default representation is not a candidate either, the fallback is
+      the candidate with the lowest tag (compared case-insensitively, by code
+      point). With the host's opt-in to excluded content, the representations
+      the default retrieval policy excludes are candidates too;
    5. when the caller named concepts or a scope, keep only records bound to
       them. Concepts and scope set by an ingress hook narrow the search
       ("Ingress narrowing", below) but never bind the gate: the gate follows
@@ -771,13 +778,16 @@ scopes (§7.2 of the package spec), signers, current reviews, node-level
 `moca.contested_by`, its `issuedCopy`, and, when `readingOrder` resolves,
 its members in order and the position of each concept on it, so a store
 search applies `upTo` as a library search does. For each node with more than
-one file, it carries the tag of each file, the default file marked, so a store
-search keeps one representation per node by
-[package spec §5.4](moca-package-spec.md#54-locales)'s lookup, with the
-default file as the fallback, exactly as a library search does (§9.2 step
-5.4): a stored record whose file the lookup does not select is not returned,
-and a node with no file in the requested languages is returned in its default
-language. For a package with members,
+one file, it carries the tag of each file, the default file marked, and what
+steps 5.2 and 5.3 of the gate read for each: its `status`, the validity window
+it ends up with, and its audience label. So a store search keeps one
+representation per node by
+[package spec §5.4](moca-package-spec.md#54-locales)'s lookup among the files
+that pass steps 5.1 to 5.3, with the same fallbacks, exactly as a library
+search does (§9.2 step 5.4): a stored record whose file the lookup does not
+select is not returned, a node with no file in the requested languages is
+returned in its default language, and a retired translation falls back as a
+missing one does. For a package with members,
 the state also carries every member that resolved, matched its pin and is
 valid, at any depth and once each: its digest and `id`, whether the package's
 structure declares that `id` as a concept, the paths of its nodes whose
@@ -841,11 +851,21 @@ to it:
 | `exclude` | Pairs of package digest and node id that §8 excludes, unless the host opted in to including them. A node id alone is not enough: two versions of a package share node ids. |
 | `audiences` | The host's audience set, if any. |
 | `locale` | The caller's locales, if any, as a priority list. |
+| `everyRepresentation` | `true` when the caller named a locale and the Reader applies it in the gate instead of passing `locale` (below). |
 | `concepts` | The concepts to search: the caller's, a scope and its descendants, or those an ingress hook chose. |
 
 Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.
 Whether or not a backend applies the filters, the result is the same (§9.2,
 "Filters come before the limit").
+A backend that applies `locale` cannot see which representations the gate's
+steps 5.1 to 5.3 remove, so when a loaded node has a representation they
+remove and another they keep, the Reader passes no `locale` filter and applies
+the locale itself in the gate (§9.2 step 5.4). It passes `everyRepresentation`
+instead: a backend MUST then return every representation of a node that
+matches the query and passes the other filters, not only its best-scoring
+one, which may be the file the gate removes. A backend keeps one
+representation per node only when it applied `locale` itself, or when the
+caller named no locale.
 A record bound to a concept by composition
 ([package spec §5.6](moca-package-spec.md#56-structure)) does not carry that
 concept itself, so when any loaded package binds members by composition, the
