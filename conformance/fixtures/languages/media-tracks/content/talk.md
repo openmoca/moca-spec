@@ -6,7 +6,7 @@ sources:
     resource: https://media.example.com/talk.mp4
   - id: transcript
     resource: ../media/talk.en.vtt
-  - id: captions-fr
+  - id: subtitles-fr
     resource: ../media/talk.fr.vtt
 moca:
   media:
@@ -14,10 +14,12 @@ moca:
       type: video/mp4
       duration: 5
       transcript: transcript
-      captions:
-        - source: captions-fr
-          language: fr
-          kind: subtitles
+  tracks:
+    - media: video
+      source: subtitles-fr
+      language: fr
+      kind: subtitles
+      label: Français
 ---
 
 # Talk
