@@ -1053,7 +1053,7 @@ withhold only the `structured` capability.
 | `R002_MEMBER_DIGEST_MISMATCH` | error | A resolved member does not match its pinned digest, or, for an issued copy that verified, its original digest ([package spec §7.1](moca-package-spec.md#71-members)). |
 | `R003_MEMBER_CYCLE` | error | Members form a cycle. |
 | `R004_RELATION_UNAUTHORISED` | info | A `supersedes` or `conflictsWith` relation is not authorised by a signer of the package, so it has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
-| `R005_RELATION_TYPE_UNKNOWN` | info | A relation's type is not a core type, and no profile the package declares defines it. It is preserved and has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
+| `R005_RELATION_TYPE_UNKNOWN` | info | A relation's type is not a core type (`supersedes`, `amends`, `conflictsWith`, `crossReferences`, `isPartOf`, `translationOf`, `editionOf`), and no profile the package declares defines it. It is preserved and has no effect ([package spec §7.2](moca-package-spec.md#72-relations)). |
 | `L001_IDENTITY_CONFLICT` | error | A library was given a second package with the same `id` and `version` but a different digest; the second is refused (§7). Reported by the library, not the package. |
 | `L002_ISSUED_COPY_DUPLICATE` | info | A library was given a second issued copy of the same original (§7): the same `id` and `version`, another digest, and the same `issuedCopy.originalDigest`. The second is not loaded. Reported by the library. |
 | `F001_PROFILE_UNRECOGNISED` | info | A declared profile is not recognised by this Reader. |

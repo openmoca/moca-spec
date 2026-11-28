@@ -22,6 +22,8 @@ Content in more than one language. Each change is a Spec Change Proposal.
   (`languages-*`), so each 0.8.0 change below shows as a corpus diff.
 - Package spec §5.4, Reader contract §9, Reader interface §4 and §5: `locale`
   may be a priority list of language tags, most preferred first.
+- Package spec §7.2: the relation types `translationOf` and `editionOf`,
+  which only report and need no signer.
 
 ### Changed
 

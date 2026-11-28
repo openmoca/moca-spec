@@ -1,0 +1,12 @@
+{
+  "id": "https://example.com/conformance/languages/relations/edition",
+  "version": "1.0.0",
+  "title": "Course, the French edition",
+  "language": "fr",
+  "relations": [
+    {
+      "type": "editionOf",
+      "target": "https://example.com/conformance/languages/editions/en"
+    }
+  ]
+}

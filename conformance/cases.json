@@ -12422,6 +12422,62 @@
       }
     },
     {
+      "id": "languages-relation-translation",
+      "description": "Package spec §7.2: translationOf is a core relation type, so it is not R005, and it needs no signer.",
+      "target": "fixtures/languages/relations/translation",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:cf6fa322950bea316241d7b185d1567d5d7fc7b38be53ad3cad6c219b2d0bf3a"
+      }
+    },
+    {
+      "id": "languages-relation-edition",
+      "description": "Package spec §7.2: editionOf is a core relation type, so it is not R005.",
+      "target": "fixtures/languages/relations/edition",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ],
+        "digest": "sha256:0659af7e28c87bf5c19e75c88a824708ebc876e4289387c5b92a48cc790918b9"
+      }
+    },
+    {
+      "id": "languages-relation-changes-nothing",
+      "kind": "search",
+      "description": "Package spec §7.2: a third party's translationOf only reports: a French search over the original and the translation returns both, the original unchanged.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/relations/translation"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://translations.example.org/course-fr@1.0.0#lesson.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md": {
+            "trust.superseded": false,
+            "trust.contested": false
+          }
+        }
+      }
+    },
+    {
       "id": "languages-inherit-concepts-lexical",
       "kind": "search",
       "description": "As languages-inherit-concepts, with the Reader's lexical backend.",
