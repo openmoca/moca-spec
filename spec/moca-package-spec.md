@@ -1043,12 +1043,26 @@ example `v1.2.md`) is an ordinary node.
 A translation with no `moca.audience` of its own has its default-language
 representation's audience; every other field is its own.
 
-A Reader resolving a node for a locale compares language tags
-case-insensitively and takes the first of: the representation whose tag
-equals the request; the request truncated, one subtag at a time, as RFC 4647
-§3.4 Lookup does (`fr-CA` finds `fr`); the representation whose tag starts with
-the request and `-`, the lowest in code-point order (`pt` finds `pt-BR`); the
-default representation. A locale representation without a
+**Choosing a representation.** A request for a locale is a language tag or a
+priority list of them, most preferred first (`["fr-CA", "en"]`), as RFC 4647
+§3.4 Lookup takes a priority list; one tag is the list of that one tag, and an
+empty list is no request. Each representation has a tag: a translation its
+`<tag>`, and the default representation the manifest's `language`, when it has
+one (a default representation with no tag is matched only by the last step).
+A Reader compares tags case-insensitively and, for each entry of the list in
+turn, for the entry and then the entry truncated one subtag at a time (RFC 4647
+§3.4: `fr-CA`, then `fr`), takes the first of:
+
+1. the representation whose tag equals it;
+2. the representations whose tag starts with it and `-`, the lowest in
+   code-point order of the lower-cased tags.
+
+When no entry finds one, it takes the default representation. So `fr-CA` finds
+`fr` before `fr-BE`; `pt` and `pt-AO` find `pt-BR` when the files are `pt-BR`
+and `pt-PT`; and a request for `en`, in a package whose `language` is `en`,
+finds the default representation before an `en-GB` file.
+
+A locale representation without a
 default-language file is reported as `C009_LOCALE_ORPHAN` (warning).
 
 The manifest's own text (title, description, tags and image `alt` text) is

@@ -537,6 +537,10 @@ language, and the default retrieval policy is applied inside it:
 search(query, { limit, includeAll, locale, concepts, scope, upTo }) -> citation records, each with a score
 ```
 
+`locale` is a language tag or a priority list of them, most preferred first
+([package spec §5.4](moca-package-spec.md#54-locales)); an empty list is no
+locale.
+
 `concepts` keeps records bound to at least one of the given concept IRIs, by
 the node's own `moca.concepts` or by composition
 ([package spec §5.6](moca-package-spec.md#56-structure));
@@ -646,8 +650,8 @@ Each search runs these steps, in order
       including excluded content;
    3. remove records outside the host's audience set, and, when the host
       made a terms request, the records the terms gate removes (§15.4);
-   4. when the caller named a locale, keep only the representation §5 of the
-      package spec selects for it;
+   4. when the caller named a locale, keep only the representation that
+      package spec §5.4's lookup selects for it, for each node;
    5. when the caller named concepts or a scope, keep only records bound to
       them. Concepts and scope set by an ingress hook narrow the search
       ("Ingress narrowing", below) but never bind the gate: the gate follows
@@ -764,7 +768,14 @@ package, its digest, `id`, `version`, default language, relations, relation
 scopes (§7.2 of the package spec), signers, current reviews, node-level
 `moca.contested_by`, its `issuedCopy`, and, when `readingOrder` resolves,
 its members in order and the position of each concept on it, so a store
-search applies `upTo` as a library search does. For a package with members,
+search applies `upTo` as a library search does. For each node with more than
+one file, it carries the tag of each file, the default file marked, so a store
+search keeps one representation per node by
+[package spec §5.4](moca-package-spec.md#54-locales)'s lookup, with the
+default file as the fallback, exactly as a library search does (§9.2 step
+5.4): a stored record whose file the lookup does not select is not returned,
+and a node with no file in the requested languages is returned in its default
+language. For a package with members,
 the state also carries every member that resolved, matched its pin and is
 valid, at any depth and once each: its digest and `id`, whether the package's
 structure declares that `id` as a concept, the paths of its nodes whose
@@ -827,7 +838,7 @@ to it:
 | `digests` | The digests of the loaded packages. |
 | `exclude` | Pairs of package digest and node id that §8 excludes, unless the host opted in to including them. A node id alone is not enough: two versions of a package share node ids. |
 | `audiences` | The host's audience set, if any. |
-| `locale` | The caller's locale, if any. |
+| `locale` | The caller's locales, if any, as a priority list. |
 | `concepts` | The concepts to search: the caller's, a scope and its descendants, or those an ingress hook chose. |
 
 Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.

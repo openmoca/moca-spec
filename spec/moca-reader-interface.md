@@ -72,8 +72,8 @@ A package never supplies any of these.
 | `bindSidecar` | A sidecar target and a package result; for an envelope's `index.age`, the envelope and the key provider. | `{ usable, index, chunks, diagnostics }`. |
 | `Library(options)` | Clock, overlays, limits. | An empty library. |
 | `Library.add` | A valid package result, and optionally its sidecar chunks and index. | The library, with the package and its resolved members loaded. |
-| `Library.citations` | Options: locale, include text. | Every node's citation record. |
-| `Library.get` | A node id or a versioned node reference, and options: locale. | One citation record, or nothing. |
+| `Library.citations` | Options: locale (a language tag or a priority list, [package spec §5.4](moca-package-spec.md#54-locales)), include text. | Every node's citation record. |
+| `Library.get` | A node id or a versioned node reference, and options: locale (a tag or a priority list). | One citation record, or nothing. |
 | `Library.catalogue` | Options: a terms request (`terms`), and the host's audience set, `allowUnlabelled`, `includeAll` and terms limits, as for a search. | Catalogue entries, ordered by `id` then `version`: what a model may be told about the loaded packages ([Reader contract §15.4](moca-reader-contract.md#154-the-terms-gate), "The catalogue rule"). With no terms request, every package that passes the audience set and the default retrieval policy, each with an open entry. |
 | `mapTime` | A citation record, the `source` of the description a moment is on, the `source` of the description to map it to, and the moment in seconds. | The same moment on the other description, in seconds, or nothing when it is not there ([package spec §5.7](moca-package-spec.md#57-media)): the two are not in one group of alternates, or the moment falls in no stretch or outside a duration. A description maps a moment on its own timeline to itself. |
 
@@ -137,7 +137,7 @@ and `line`.
 | Operation | Takes | Returns |
 | --- | --- | --- |
 | `Search(source, options)` | A library, or, for a store backend, the loaded packages' states (`packageState`) and a clock; then a backend, an audience set and optional hooks. | A search. |
-| `Search.search` | A query and options: `limit`, `includeAll`, `locale`, `concepts`, `scope`, `upTo`, `terms`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.search` | A query and options: `limit`, `includeAll`, `locale` (a tag or a priority list), `concepts`, `scope`, `upTo`, `terms`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
 | `Search.diagnostics` | Nothing. | The findings of the latest `search` call on this search, such as `S008_UPTO_UNRESOLVED`. Empty when it found none. |
 
 Every call follows
