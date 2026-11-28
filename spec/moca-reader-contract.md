@@ -788,6 +788,22 @@ search its store, and a package superseded, or a key removed from the trust
 root, after ingest is reflected at once. Records left behind by an older
 version of a package are never returned, because its state is not supplied.
 
+**A state the search cannot get.** A host MAY supply states on demand: the
+search asks only for the states its records depend on. A record depends on
+its own package's state, the states of the loaded packages that compose it,
+and the states of the loaded packages whose relations act on it. A store
+search that cannot get one of those states, for a package the host has
+loaded, MUST NOT return the record as if that package did not limit it
+(`upTo`, composition, composite terms, relations): it withholds the record
+and reports `S011_STATE_MISSING` (warning). A Reader that cannot tell which
+records a missing state affects withholds every record. Relation effects
+(`superseded`, `supersededBy`, `contested` and `contestedBy`) MUST come from
+the same states as `package.signed` and `signers`: a Reader or host that
+caches them (an index of the store) checks the cache against the states it
+loads, and corrects or rebuilds it where they differ, never using it
+silently. When the trust root changes, the host MUST recompute each package's
+state, and what it derived from them, before the next search.
+
 **Structure in a store search.** A package state carries composition, not the
 concept graph or its labels. A host MAY give a store search a **structure
 source**: packages it has read itself (for a show, its show and season
@@ -1022,6 +1038,7 @@ withhold only the `structured` capability.
 | `S008_UPTO_UNRESOLVED` | warning | A search's `upTo` is on no loaded package's reading order, neither a member nor a descendant of one. It limits nothing (§9). |
 | `S009_SIDECAR_ITEMS_REPLACED` | info | A sidecar built from the publisher's package is bound to an issued copy, and the items of the files the issuer changed were replaced by each file's whole body, without a vector ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)). |
 | `S010_SEARCH_TRUNCATED` | warning | A search stopped at a bound the host set before `limit` records passed the gate; better-matching records that pass may exist (§9.2). |
+| `S011_STATE_MISSING` | warning | A store search withheld records because a package state each depends on (its own package's, a composing package's, or one whose relations act on it) was asked for and not given (§9.4). |
 | `U001_TERMS_INVALID` | warning | A field of `terms` is malformed ([package spec §4.14](moca-package-spec.md#414-terms)). The package stays valid; the field counts as its strictest value when terms are applied (§15). |
 | `U002_TERMS_LOOSENED` | warning | A `terms.nodes` entry, or a composing package, is looser than the package for a permission; the stricter value stands (§15.3). |
 | `U003_TERMS_UNKNOWN_VALUE` | warning | A `terms` field has a value this version does not know, such as one from a later release. It is exposed, and counts as its strictest value when terms are applied (§15). |
