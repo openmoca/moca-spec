@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: openmoca/moca-reader-typescript
-          ref: a5f8dfb6de8e054495151656c2afa7c0839d04be  # moca-reader-typescript release-0.8.0: #45
+          ref: d0d4b9704a95d37cd8ced93cb97b91b7bb54a203  # moca-reader-typescript release-0.8.0: #45
           path: moca-reader-typescript
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:

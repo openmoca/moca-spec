@@ -12015,6 +12015,208 @@
       "expect": {
         "count": 4
       }
+    },
+    {
+      "id": "languages-lookup-region-sibling-lexical",
+      "kind": "search",
+      "description": "Package spec §5.4 with the Reader's lexical backend, which applies locale itself (contract §9.5): a sibling region: pt-AO finds pt-BR.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "introduction",
+        "locale": "pt-AO"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-BR"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-default-tag-lexical",
+      "kind": "search",
+      "description": "Package spec §5.4 with the Reader's lexical backend, which applies locale itself (contract §9.5): the default file is tagged en, so en finds it before en-GB.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "introduction",
+        "locale": "en"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-list-lexical",
+      "kind": "search",
+      "description": "Package spec §5.4 with the Reader's lexical backend, which applies locale itself (contract §9.5): a priority list: de has no file, so pt-PT is tried in full before en.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "introduction",
+        "locale": [
+          "de",
+          "pt-PT",
+          "en"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-PT"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-list-none-lexical",
+      "kind": "search",
+      "description": "Package spec §5.4 with the Reader's lexical backend, which applies locale itself (contract §9.5): no entry matches, so the default file.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "introduction",
+        "locale": [
+          "de",
+          "it"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-region-sibling-store",
+      "kind": "search",
+      "description": "Contract §9.4: a store search keeps one representation per node by the same lookup, from the files the package state lists: a sibling region: pt-AO finds pt-BR. In 0.7.0 a stored record passed when its own tag matched.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/lookup"
+        ]
+      },
+      "search": {
+        "query": "introduction",
+        "locale": "pt-AO"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-BR"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-default-tag-store",
+      "kind": "search",
+      "description": "Contract §9.4: a store search keeps one representation per node by the same lookup, from the files the package state lists: the default file is tagged en, so en finds it before en-GB. In 0.7.0 a stored record passed when its own tag matched.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/lookup"
+        ]
+      },
+      "search": {
+        "query": "introduction",
+        "locale": "en"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-list-store",
+      "kind": "search",
+      "description": "Contract §9.4: a store search keeps one representation per node by the same lookup, from the files the package state lists: a priority list: de has no file, so pt-PT is tried in full before en. In 0.7.0 a stored record passed when its own tag matched, so the node came back once per matching entry.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/lookup"
+        ]
+      },
+      "search": {
+        "query": "introduction",
+        "locale": [
+          "de",
+          "pt-PT",
+          "en"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-PT"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-list-none-store",
+      "kind": "search",
+      "description": "Contract §9.4: a store search keeps one representation per node by the same lookup, from the files the package state lists: no entry matches, so the default file. In 0.7.0 a stored record passed when its own tag matched, so a node with no file in the language was not returned.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/lookup"
+        ]
+      },
+      "search": {
+        "query": "introduction",
+        "locale": [
+          "de",
+          "it"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+        }
+      }
     }
   ]
 }
