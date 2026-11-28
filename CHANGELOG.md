@@ -37,6 +37,9 @@ Content in more than one language. Each change is a Spec Change Proposal.
   (info) and `S013_EDITION_SLOTS_DISAGREE` (warning).
 - [The moca: vocabulary](vocabulary/README.md) (`https://w3id.org/moca/ns#`), as
   a page and as Turtle (`vocabulary/ns.ttl`): `moca:defaultEdition`.
+- Reader contract §9: the search option `localeMode` (`choose`, `first`,
+  `only`): "this language first" and "only this language".
+- Conformance: `expect.order` for search cases.
 
 ### Changed
 

@@ -137,7 +137,7 @@ and `line`.
 | Operation | Takes | Returns |
 | --- | --- | --- |
 | `Search(source, options)` | A library, or, for a store backend, the loaded packages' states (`packageState`) and a clock; then a backend, an audience set and optional hooks. | A search. |
-| `Search.search` | A query and options: `limit`, `includeAll`, `locale` (a tag or a priority list), `editions` (`choose` or `all`), `concepts`, `scope`, `upTo`, `terms`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
+| `Search.search` | A query and options: `limit`, `includeAll`, `locale` (a tag or a priority list), `localeMode` (`choose`, `first` or `only`), `editions` (`choose` or `all`), `concepts`, `scope`, `upTo`, `terms`. | Citation records, each with a `score`. Best first, unless an egress hook ordered them. |
 | `Search.diagnostics` | Nothing. | The findings of the latest `search` call on this search, such as `S008_UPTO_UNRESOLVED`. Empty when it found none. |
 
 Every call follows
