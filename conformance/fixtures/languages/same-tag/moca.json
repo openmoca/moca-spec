@@ -1,0 +1,10 @@
+{
+  "id": "https://example.com/conformance/languages/same-tag",
+  "version": "1.0.0",
+  "title": "Same tag",
+  "language": "en",
+  "locales": [
+    "en",
+    "fr"
+  ]
+}
