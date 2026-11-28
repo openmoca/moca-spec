@@ -11804,7 +11804,7 @@
     {
       "id": "languages-retired-translation",
       "kind": "search",
-      "description": "Contract §9.2 in 0.7.0: the default retrieval policy (step 2) removes the deprecated French file before the language is chosen (step 4), which then picks it and drops the English one: a French reader gets nothing.",
+      "description": "Contract §9.2 step 5.4: the locale chooses among the representations that pass the default retrieval policy, so a deprecated French file falls back to the default (en). In 0.7.0 a French reader got nothing.",
       "packages": [
         "fixtures/languages/retired-translation"
       ],
@@ -11817,7 +11817,10 @@
         "locale": "fr"
       },
       "expect": {
-        "count": 0
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/retired-translation@1.0.0#page.md": "en"
+        }
       }
     },
     {
@@ -12118,6 +12121,96 @@
             "trust.validUntil": "2026-06-01T00:00:00Z",
             "trust.inForce": false
           }
+        }
+      }
+    },
+    {
+      "id": "languages-retired-translation-lexical",
+      "kind": "search",
+      "description": "Contract §9.5: with the Reader's lexical backend, which pushes filters down, the fallback still holds: locale is applied in the gate when a node's representations differ in the policy.",
+      "packages": [
+        "fixtures/languages/retired-translation"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "page",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/retired-translation@1.0.0#page.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-retired-translation-included",
+      "kind": "search",
+      "description": "Contract §9.2 step 5.4: with the host's opt-in to excluded content every representation is a candidate, so the deprecated French file is chosen and returned, flagged.",
+      "packages": [
+        "fixtures/languages/retired-translation"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "includeAll": true
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/retired-translation@1.0.0#page.md": "fr"
+        },
+        "fields": {
+          "https://example.com/conformance/languages/retired-translation@1.0.0#page.md": {
+            "trust.status": "deprecated"
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-retired-region",
+      "description": "A deprecated fr-CA file beside an fr file, and a French file outside the public audience.",
+      "target": "fixtures/languages/retired-region",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "sha256:702e30f146c3ba42b448cf4e15d3c5829faf59b43a14935d717302c66ba2bf85"
+      }
+    },
+    {
+      "id": "languages-retired-region-search",
+      "kind": "search",
+      "description": "Contract §9.2 step 5.4: fr-CA is deprecated, so an fr-CA reader gets the next match, fr; and the internal French staff page is outside the audience set, so the French reader gets the English one.",
+      "packages": [
+        "fixtures/languages/retired-region"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "audiences": [
+          "public"
+        ]
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr-CA"
+      },
+      "expect": {
+        "count": 2,
+        "locales": {
+          "https://example.com/conformance/languages/retired-region@1.0.0#page.md": "fr",
+          "https://example.com/conformance/languages/retired-region@1.0.0#staff.md": "en"
         }
       }
     },
