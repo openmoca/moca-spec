@@ -3,12 +3,28 @@
 How to move packages and Readers between versions of the specification.
 
 ## Unreleased: towards 0.8.0
+## From 0.7.0 to 0.8.0
+
+Unreleased: this section grows as 0.8.0's proposals land. Packages written for
+`mocaVersion` `0.7` read as before, with the same digests; a few read
+differently in more than one language, as the tables say.
+
+### Packages and Producers
+
+| Change | Codes | What to do |
+| --- | --- | --- |
 
 ### Readers and hosts
 
 | Change | Codes | What to do |
 | --- | --- | --- |
 | A store search that cannot get the state of a package a record depends on (its own, a composing package's, or one whose relations act on it) withholds the record; relation effects come from the same states as `signed` (Reader contract §9.4) | `S011_STATE_MISSING` (warning) | Readers with states on demand: withhold such records and report it; check any cached index against the states you load. Readers with every state in memory: follow the host's allowlist, and withhold when a loaded package has no state. Hosts: treat `S011` as a short result and a fault in your state store; after a trust-root change, recompute states and what you derived from them. Corpus adapters: support `options.withhold`. |
+| Locale lookup (package spec §5.4): the default representation is tagged with the manifest's `language`, and at each truncation of the request a Reader also tries tags that start with it and `-`. So `pt-AO` finds `pt-BR` or `pt-PT` (the lowest) instead of the default, and a request for `en` in a package whose `language` is `en` gets the default file instead of an `en-GB` file | — | Readers: implement the new lookup, for representations in `Library.citations`, `Library.get` and search. Hosts that asked for a full tag to avoid a regional file (`en-US` to get the default) can ask for the language itself. Authors who added a plain `pt` file only to catch `pt-AO` may keep it: it is still found first. |
+| `locale` may be a priority list, most preferred first (`["fr-CA", "en"]`), in `Library.citations`, `Library.get` and search; each entry is tried in full before the next. The pushdown filter `locale` is a list (contract §9.5) | — | Readers: accept a list; treat one tag as a list of one and an empty list as no locale. Store backends with pushdown: read `locale` as a list. Hosts: pass the person's languages in order (from `Accept-Language`, for example). |
+
+### What 0.7 Readers do with 0.8 packages
+
+- **`mocaVersion` `0.8`** is newer than the Reader (`M009`, warning); the package is read under the newest rules the Reader implements.
 
 ## From 0.6.0 to 0.7.0
 

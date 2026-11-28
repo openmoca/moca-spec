@@ -20,6 +20,15 @@ Content in more than one language. Each change is a Spec Change Proposal.
 
 - Conformance: cases that pin 0.7.0's behaviour in more than one language
   (`languages-*`), so each 0.8.0 change below shows as a corpus diff.
+- Package spec §5.4, Reader contract §9, Reader interface §4 and §5: `locale`
+  may be a priority list of language tags, most preferred first.
+
+### Changed
+
+- Package spec §5.4: the locale lookup. The default representation is tagged
+  with the manifest's `language`, and each truncation of the request also
+  finds tags that start with it (`pt-AO` finds `pt-BR`). See
+  [MIGRATIONS.md](MIGRATIONS.md).
 
 ## [0.7.0] - 2026-11-22
 
