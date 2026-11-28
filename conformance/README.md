@@ -104,7 +104,7 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `options.embedder` | The conformance embedder's identity: `name`, optional `version`, `dimensions`, and optional `queryPrefix` and `documentPrefix` it declares. It returns `[1, 0, …, 0]` of that length for every text, whatever the role. |
 | `options.termsLimits` | The host's terms limits, an `ai` object ([contract §15.3](../spec/moca-reader-contract.md#153-resolving-terms)): floors that only tighten. They apply to the search and, with `options.ingestTerms`, to the ingest. |
 | `options.ingestTerms` | With `backend: store`: the host's terms request for the ingest, `{ destination, conditions }`, with the use `embed` ([contract §9.4](../spec/moca-reader-contract.md#94-store-backends)). Units it removes are never stored; the ingest's codes (`U004`) join `expect.codes`. Absent means an ingest with no request. |
-| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale` (a tag or a priority list), `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a concept on a reading order, contract §9), `terms` (the host's terms request, [contract §15.4](../spec/moca-reader-contract.md#154-the-terms-gate)). |
+| `search` | `query`, and optionally `limit` (default 50), `includeAll`, `locale` (a tag or a priority list), `editions` (`choose` or `all`), `concepts`, `scope` (a concept IRI the search is limited to), `upTo` (a concept on a reading order, contract §9), `terms` (the host's terms request, [contract §15.4](../spec/moca-reader-contract.md#154-the-terms-gate)). |
 | `expect.codes` | The set of diagnostic codes from sidecars, the backend, the library (`L` codes) and the search itself (`Search.diagnostics`, such as `S008`). |
 | `expect.include` | Results that must be returned. |
 | `expect.exclude` | Results that must never be returned. |
@@ -145,7 +145,9 @@ closed for it, and the overlays (contract §10, "Under a terms request";
 `options.now`, `options.trustRoot` and `options.members` are as for a package
 case.
 `op` is `concept`, `requires`, `requiredBy`, `parts`, `narrower`, `broader`,
-`related`, `sequence` or `nodes`; `args` holds `transitive` or `include`.
+`related`, `sequence`, `nodes`, `editions` or `chooseEdition`; `args` holds
+`transitive`, `include` or `locale`. `editions` is compared as the whole list,
+`chooseEdition` as the `id` or `null`.
 Concept items are compared as `{ iri, label, layer }`; `nodes` as the list of
 `node.ref`; `concept` as the whole object. Structure answers are facts, so
 they are compared **exactly**, order included.

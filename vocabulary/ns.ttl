@@ -1,0 +1,26 @@
+# The moca: vocabulary, https://w3id.org/moca/ns#
+#
+# The few RDF terms of the MOCA specification that no existing vocabulary has.
+# Readers never fetch this file: a term's IRI is a name, and this file
+# describes it for people and tools (package spec §13.4).
+
+@prefix moca: <https://w3id.org/moca/ns#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema: <https://schema.org/> .
+
+<https://w3id.org/moca/ns> a owl:Ontology ;
+  dcterms:title "The moca: vocabulary"@en ;
+  dcterms:description "RDF terms of the MOCA specification that no existing vocabulary has."@en ;
+  dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+  rdfs:seeAlso <https://openmoca.org/spec/package/> .
+
+moca:defaultEdition a rdf:Property , owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:label "default edition"@en ;
+  rdfs:comment "The edition a slot shows when no edition is in the reader's language. The value is one of the slot's schema:workExample values, a member package's id. At most one per slot."@en ;
+  rdfs:domain skos:Concept ;
+  rdfs:isDefinedBy <https://w3id.org/moca/ns> ;
+  rdfs:seeAlso <https://openmoca.org/spec/package/#74-edition-groups> .

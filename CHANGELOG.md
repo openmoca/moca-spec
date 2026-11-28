@@ -24,6 +24,14 @@ Content in more than one language. Each change is a Spec Change Proposal.
   may be a priority list of language tags, most preferred first.
 - Package spec §7.2: the relation types `translationOf` and `editionOf`,
   which only report and need no signer.
+- Package spec §7.4: edition groups. A composite package's slot
+  (`schema:workExample`, `moca:defaultEdition` in the new `moca:` vocabulary)
+  holds editions of one work; a Reader chooses one per slot by language, and a
+  search with a locale keeps only that edition where the composite's signers
+  cover it. Reader contract §9.2, §9.4, §10 (`editions`, `chooseEdition`) and
+  §11 (`O006_EDITION_GROUP_INVALID`).
+- [The moca: vocabulary](vocabulary/README.md) (`https://w3id.org/moca/ns#`), as
+  a page and as Turtle (`vocabulary/ns.ttl`): `moca:defaultEdition`.
 
 ### Changed
 

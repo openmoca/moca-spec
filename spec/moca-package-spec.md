@@ -1152,9 +1152,13 @@ understand exactly these terms, and ignore any others:
 | Requires | `dcterms:requires`, `dcterms:isRequiredBy` | A requires B "to support its function, delivery, or coherence": a check before a step, a test before a treatment, a foundation before an advanced topic. |
 | Replaces | `dcterms:replaces`, `dcterms:isReplacedBy` | A supersedes B: an amended clause, a revised procedure. |
 | Deprecated | `owl:deprecated true` | The concept should no longer be used. |
+| Editions | `schema:workExample`, `moca:defaultEdition` | In a composite package, a slot whose editions are alternatives: the same work, chosen by language. Only as §7.4 says. |
 
 `skos:` is `http://www.w3.org/2004/02/skos/core#`, `dcterms:` is
-`http://purl.org/dc/terms/`, and `owl:` is `http://www.w3.org/2002/07/owl#`.
+`http://purl.org/dc/terms/`, `owl:` is `http://www.w3.org/2002/07/owl#`,
+`schema:` is `https://schema.org/`, and `moca:` is `https://w3id.org/moca/ns#`,
+the vocabulary of this specification (§13.4), which holds only terms no
+existing vocabulary has ([the moca: vocabulary](../vocabulary/README.md)).
 Inverse pairs mean the same thing: `B skos:narrower A` is `A skos:broader B`.
 
 Every concept used in a relation, an ordered collection or a node binding
@@ -1733,6 +1737,81 @@ composite when the parts have lives of their own:
 A composite costs a little more to publish: each new or corrected part
 needs a new version of every composite above it. One package costs a new
 version of the whole for any change.
+
+### 7.4 Edition groups
+
+A work can have **editions**: the same course made for French speakers, with
+its own presenter, slides or order, is one package, and the English course
+another. A composite package that holds both groups them in a **slot**, so a
+Reader shows one edition per slot, chosen by language, and offers the others.
+
+```turtle
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema: <https://schema.org/> .
+@prefix moca: <https://w3id.org/moca/ns#> .
+
+<https://example.com/course#bread> a skos:Concept ;
+  skos:prefLabel "The bread course"@en , "Le cours de pain"@fr ;
+  schema:workExample <https://example.com/bread-en> , <https://example.com/bread-fr> ;
+  moca:defaultEdition <https://example.com/bread-en> .
+
+<https://example.com/bread-en> a skos:Concept .
+<https://example.com/bread-fr> a skos:Concept .
+```
+
+- **A slot** is a concept in the composite's own `structure.ttl` with one or
+  more `schema:workExample` values. schema.org defines `workExample` as "an
+  example/instance/realization/derivation of the concept of this creative
+  work"; it is the link from a work to its expressions in IFLA LRM. Each value
+  MUST be the `id` of one of the composite's own `members`, declared as a
+  `skos:Concept` (§5.6): that member is one of the slot's **editions**, even
+  when another member composes it too.
+- **Its default edition** is the one edition the slot names with
+  `moca:defaultEdition`. Every slot SHOULD name one.
+- **Languages** come from each edition's own manifest `language`; they are
+  never repeated in Turtle.
+- **Binding.** An edition is bound by composition to its slot as a part is
+  (§5.6): `scope` on the slot and `nodes()` find it, and it takes the slot's
+  place on the reading order, so `upTo` limits it. Put the slot on the
+  ordered collection that `readingOrder` names, in place of its editions.
+- **Choosing.** For a locale (a tag or a priority list, §5.4), a Reader
+  chooses one edition per slot: the one §5.4's lookup selects among the
+  editions, each tagged with its `language`; with no match, the default
+  edition; when the slot names none, or it cannot be chosen, the edition with
+  the lowest `id` in code-point order. Only an edition that resolved, matched
+  its pin and is valid (§7.1) can be chosen.
+- **Search.** When the caller names a locale, a search keeps, of the records
+  from a slot's editions and their members at any depth, only those from the
+  chosen edition and its members (a member shared by two editions is the chosen
+  one's too)
+  ([Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate),
+  step 5.4); with no locale, every edition is searched. The caller MAY keep
+  every edition with a locale (`editions: "all"`).
+- **Authority.** Leaving an edition out hides content, so a slot leaves out a
+  record only when the composite's signers speak for the record's package:
+  when the `ids` of its valid package attestations' signers cover the record's
+  package `id`, the rule `upTo` follows for members (§7.2,
+  [Reader contract §9](moca-reader-contract.md#9-search)), or when the host
+  allows unsigned relations. Otherwise the slot still groups its editions for
+  display, and hides nothing.
+- **Never changes the editions.** Grouping changes no edition's bytes,
+  digest, trust or relations, and no edition is signed again.
+- **Problems.** Each of these is `O006_EDITION_GROUP_INVALID` (warning), and
+  the statement it names is ignored: a `schema:workExample` value that is not
+  the `id` of one of the composite's own members; a `moca:defaultEdition` on a
+  concept that has no editions, or that names something other than one of
+  them; a second `moca:defaultEdition` on one slot (both are ignored).
+
+**Who could hide or swap an edition, and what stops them.**
+
+| Who | Tries to | What stops it |
+| --- | --- | --- |
+| A third party | Publish a composite that lists the original and its own translation in a slot, with its own as the default, so the original is left out of searches | Its signers' `ids` do not cover the original's `id`, so its slot hides none of the original's records. It can show its own translation in its own composite, and nothing more. |
+| Anyone | Swap an edition's bytes for others under the same `id` | Members are pinned by digest: a different package fails its pin (`R002`) and is never chosen. |
+| The composite's own signer | Choose which of its editions is shown | Allowed: it speaks for those packages, as it does when its reading order limits them. |
+| A host | Give a key `ids` that cover other publishers' packages | That key can then fold their packages, as it can retire them with `supersedes`: the host's trust root decides ([attestations §6](moca-attestations.md#6-trust-roots)). |
+| Anyone | Fold with an unsigned composite | Nothing is hidden unless the host allows unsigned relations, which is safe only for a library of its own packages. |
+| Two composites | Group one edition differently | Each leaves out only records it speaks for; a record passes when, for every slot that may leave it out and lists its edition, that edition is the one chosen. |
 
 ## 8. No agent material
 

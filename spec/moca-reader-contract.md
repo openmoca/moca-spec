@@ -536,12 +536,17 @@ A Reader offers one search operation. It has the same signature in every
 language, and the default retrieval policy is applied inside it:
 
 ```text
-search(query, { limit, includeAll, locale, concepts, scope, upTo }) -> citation records, each with a score
+search(query, { limit, includeAll, locale, editions, concepts, scope, upTo }) -> citation records, each with a score
 ```
 
 `locale` is a language tag or a priority list of them, most preferred first
 ([package spec §5.4](moca-package-spec.md#54-locales)); an empty list is no
 locale.
+
+`editions` is `"choose"` (the default) or `"all"`. With a locale and
+`"choose"`, a composite package's edition groups keep one edition per slot
+([package spec §7.4](moca-package-spec.md#74-edition-groups)); `"all"` keeps
+every edition. Without a locale it has no effect.
 
 `concepts` keeps records bound to at least one of the given concept IRIs, by
 the node's own `moca.concepts` or by composition
@@ -660,7 +665,14 @@ Each search runs these steps, in order
       the default representation is not a candidate either, the fallback is
       the candidate with the lowest tag (compared case-insensitively, by code
       point). With the host's opt-in to excluded content, the representations
-      the default retrieval policy excludes are candidates too;
+      the default retrieval policy excludes are candidates too. Then, unless
+      the caller asked for `editions: "all"`, apply each loaded composite package's
+      edition groups ([package spec §7.4](moca-package-spec.md#74-edition-groups)):
+      for each slot whose composite's signers cover the record's package `id`
+      (or with the host's option that allows unsigned relations), a record from
+      one or more of the slot's editions, or their members at any depth,
+      passes only when the edition the slot chooses for the locale is one of
+      them. Records from no slot's editions are not affected;
    5. when the caller named concepts or a scope, keep only records bound to
       them. Concepts and scope set by an ingress hook narrow the search
       ("Ingress narrowing", below) but never bind the gate: the gate follows
@@ -794,9 +806,12 @@ structure declares that `id` as a concept, the paths of its nodes whose
 identifiers the structure declares, and the members that compose it. With
 them come, for each concept on the way up from those declared identifiers,
 its broader concepts and the concepts it is a part of in the package's
-structure ([package spec §5.6](moca-package-spec.md#56-structure)). So a
-store search applies `concepts`, `scope` and `upTo` to members' records as a
-library search does, and the state grows with the structure and the members,
+structure ([package spec §5.6](moca-package-spec.md#56-structure)); each
+member's `language`; and the composing package's edition groups: for each
+slot, its IRI, its editions' ids and its default edition, when it names one
+([package spec §7.4](moca-package-spec.md#74-edition-groups)). So a
+store search applies `concepts`, `scope`, `upTo` and edition groups to
+members' records as a library search does, and the state grows with the structure and the members,
 not with their product (§3). A Reader produces a package's state from the package
 result (`packageState`); it is small, plain JSON that a host keeps beside
 its store. At query time the Reader resolves store hits from their records and
@@ -873,6 +888,7 @@ Reader passes no `concepts` filter and applies the concepts itself (§9.2,
 "Ingress narrowing") and in the gate.
 `upTo` adds no filter, because records off the reading order and from other
 packages still pass it; the gate applies it.
+Edition groups add no filter either; the gate applies them (§9.2 step 5.4).
 A terms request (§15.4) adds the nodes it removes to `exclude`, worked out
 from the loaded packages or their states.
 
@@ -924,6 +940,8 @@ Terms and meanings are in
 | `narrower(iri, { transitive })` | Narrower concepts; transitively, breadth first, each level ordered by IRI. |
 | `broader(iri)`, `related(iri)` | Direct broader concepts; related concepts in either direction. Ordered by IRI. |
 | `sequence(iri)` | The members of the ordered collection `iri`, in list order; nothing if `iri` is not an ordered collection. |
+| `editions(iri)` | The editions of the slot `iri` ([package spec §7.4](moca-package-spec.md#74-edition-groups)), each `{ id, version, language, title, default }` (`language` and `title` absent when the edition's manifest has none; `default` true only for the slot's default edition), ordered by `id`: only editions that resolved, matched their pin and are valid. Empty when `iri` is no slot of a loaded package. When several loaded composite packages declare the same slot, the first loaded one answers. |
+| `chooseEdition(iri, locale)` | The `id` of the edition of the slot `iri` that a search with that locale keeps (package spec §7.4, "Choosing"), or nothing when `iri` is no slot or has no edition that can be chosen. |
 | `nodes(iri, { include })` | Citation records of the nodes bound to `iri`, by their own `moca.concepts` or by composition ([package spec §5.6](moca-package-spec.md#56-structure)), and, with `include` of `narrower`, `parts` or `both`, to its descendants, with the default retrieval policy applied, ordered by `node.ref`. |
 
 Every concept item carries its `iri`, its preferred `label` (absent when the
@@ -1061,6 +1079,7 @@ withhold only the `structured` capability.
 | `O002_CONCEPT_UNDECLARED` | warning | A relation, ordered collection or node binding uses a concept that is not declared as a `skos:Concept`. |
 | `O003_REMOTE_REFERENCE` | warning | `structure.ttl` or a node binding relies on something a Reader would have to fetch or resolve: `owl:imports`, or an IRI that is not absolute. |
 | `O005_STRUCTURE_CYCLE` | warning | `requires`, `broader` or `hasPart` forms a cycle ([package spec §5.6](moca-package-spec.md#56-structure)). |
+| `O006_EDITION_GROUP_INVALID` | warning | A `schema:workExample` names no member of the composite package, or a `moca:defaultEdition` names no edition of its slot, or a slot names two default editions; the statement is ignored ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
 | `S001_SIDECAR_INVALID` | error | index.json does not validate against the sidecar schema. |
 | `S002_SIDECAR_TARGET_MISMATCH` | error | The sidecar is bound to a different package id or version. |
 | `S003_SIDECAR_STALE` | warning | The sidecar digest does not match the package; the sidecar is ignored. |
