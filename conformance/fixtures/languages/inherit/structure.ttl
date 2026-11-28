@@ -1,0 +1,12 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://example.com/conformance/languages/inherit#topic> a skos:Concept ;
+  skos:prefLabel "Topic"@en .
+<https://example.com/conformance/languages/inherit#lesson-1> a skos:Concept ;
+  skos:prefLabel "Lesson 1"@en .
+<https://example.com/conformance/languages/inherit#lesson-2> a skos:Concept ;
+  skos:prefLabel "Lesson 2"@en .
+<https://example.com/conformance/languages/inherit#lesson-3> a skos:Concept ;
+  skos:prefLabel "Lesson 3"@en .
+<https://example.com/conformance/languages/inherit#order> a skos:OrderedCollection ;
+  skos:memberList ( <https://example.com/conformance/languages/inherit#lesson-1> <https://example.com/conformance/languages/inherit#lesson-2> <https://example.com/conformance/languages/inherit#lesson-3> ) .

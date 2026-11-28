@@ -15,6 +15,14 @@ For 0.8.0. The Spec Change Proposal: [a store search that cannot get a package s
   never returning it as if that package did not limit it. Relation effects come from the same states as
   `package.signed`; a cached index of them is checked against the states, never used silently.
 - Reader contract §11: the code `S011_STATE_MISSING` (warning).
+## Unreleased: 0.8.0
+
+Content in more than one language. Each change is a Spec Change Proposal.
+
+### Added
+
+- Conformance: cases that pin 0.7.0's behaviour in more than one language
+  (`languages-*`), so each 0.8.0 change below shows as a corpus diff.
 
 ## [0.7.0] - 2026-11-22
 

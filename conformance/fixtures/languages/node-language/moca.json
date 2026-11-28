@@ -1,0 +1,6 @@
+{
+  "id": "https://example.com/conformance/languages/node-language",
+  "version": "1.0.0",
+  "title": "A node in another language",
+  "language": "en"
+}

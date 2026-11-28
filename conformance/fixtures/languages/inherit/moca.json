@@ -1,0 +1,10 @@
+{
+  "id": "https://example.com/conformance/languages/inherit",
+  "version": "1.0.0",
+  "title": "What a translation takes from its default file",
+  "language": "en",
+  "locales": [
+    "fr"
+  ],
+  "readingOrder": "https://example.com/conformance/languages/inherit#order"
+}

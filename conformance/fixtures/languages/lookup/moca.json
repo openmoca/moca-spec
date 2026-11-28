@@ -1,0 +1,11 @@
+{
+  "id": "https://example.com/conformance/languages/lookup",
+  "version": "1.0.0",
+  "title": "Lookup edge cases",
+  "language": "en",
+  "locales": [
+    "en-GB",
+    "pt-BR",
+    "pt-PT"
+  ]
+}
