@@ -5374,6 +5374,77 @@
       }
     },
     {
+      "id": "search-store-state-missing-composer",
+      "kind": "search",
+      "description": "Contract §9.4: a store search that cannot get the state of a loaded package composing a hit does not return the hit as if nothing limited it. The composer's reading order would hold late.md back; its state is not given, so the member's records are withheld, with S011_STATE_MISSING.",
+      "packages": [
+        "fixtures/upto-member-signed/composer"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/upto-member-own/member"
+        ],
+        "trustRoot": "fixtures/trust-root.json",
+        "allow": [
+          "fixtures/upto-member-signed/composer",
+          "fixtures/upto-member-own/member"
+        ],
+        "withhold": [
+          "fixtures/upto-member-signed/composer"
+        ]
+      },
+      "search": {
+        "query": "lesson"
+      },
+      "expect": {
+        "count": 0,
+        "codes": [
+          "S011_STATE_MISSING"
+        ],
+        "exclude": [
+          "https://example.com/conformance/upto-member@1.0.0#early.md",
+          "https://example.com/conformance/upto-member@1.0.0#late.md"
+        ]
+      }
+    },
+    {
+      "id": "search-store-state-missing-relation",
+      "kind": "search",
+      "description": "Contract §9.4: relation effects come from the same states as signed. Version 2.0.0, which supersedes 1.0.0, is loaded and its state is not given; 1.0.0 is not returned as if nothing superseded it, even with includeAll.",
+      "packages": [
+        "fixtures/search-policy/v1",
+        "fixtures/search-policy/v2"
+      ],
+      "options": {
+        "now": "2026-09-27T00:00:00Z",
+        "backend": "store",
+        "ingestSeparately": true,
+        "trustRoot": "fixtures/trust-root.json",
+        "allow": [
+          "fixtures/search-policy/v1",
+          "fixtures/search-policy/v2"
+        ],
+        "withhold": [
+          "fixtures/search-policy/v2"
+        ]
+      },
+      "search": {
+        "query": "retention period",
+        "includeAll": true
+      },
+      "expect": {
+        "count": 0,
+        "codes": [
+          "S011_STATE_MISSING"
+        ],
+        "exclude": [
+          "https://example.com/conformance/search-policy@1.0.0#current.md"
+        ]
+      }
+    },
+    {
       "id": "envelope-no-provider",
       "description": "Encrypted packages §2, §5.1: an envelope is recognised by its content. With no key provider, or in a Reader without the encryption feature, it is not opened (E001), and nothing inside it is exposed.",
       "target": "fixtures/envelopes/x25519.mocae",

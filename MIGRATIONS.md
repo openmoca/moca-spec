@@ -2,6 +2,14 @@
 
 How to move packages and Readers between versions of the specification.
 
+## Unreleased: towards 0.8.0
+
+### Readers and hosts
+
+| Change | Codes | What to do |
+| --- | --- | --- |
+| A store search that cannot get the state of a package a record depends on (its own, a composing package's, or one whose relations act on it) withholds the record; relation effects come from the same states as `signed` (Reader contract §9.4) | `S011_STATE_MISSING` (warning) | Readers with states on demand: withhold such records and report it; check any cached index against the states you load. Readers with every state in memory: follow the host's allowlist, and withhold when a loaded package has no state. Hosts: treat `S011` as a short result and a fault in your state store; after a trust-root change, recompute states and what you derived from them. Corpus adapters: support `options.withhold`. |
+
 ## From 0.6.0 to 0.7.0
 
 Most packages written for `mocaVersion` `0.6` read as before, with the same digests, and need no change. A string

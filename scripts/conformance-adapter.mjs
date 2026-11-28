@@ -172,7 +172,11 @@ export async function actualFor(root, c) {
         await store.ingest(library, ingestOptions);
         codes.push(...(store.ingestDiagnostics ?? []).map((d) => d.code));
       }
-      const allowed = library.packages.filter(({ result }) => (o.allow ?? []).some((t) => join(root, t) === result.source?.location)).map(({ result }) => packageState(result));
+      const loaded = library.packages.filter(({ result }) => (o.allow ?? []).some((t) => join(root, t) === result.source?.location));
+      // Contract §9.4: `withhold` names loaded packages whose states the host cannot give when the search asks.
+      const withheld = (r) => (o.withhold ?? []).some((t) => join(root, t) === r.source?.location);
+      const allowed = loaded.filter(({ result }) => !withheld(result)).map(({ result }) => packageState(result));
+      const allow = o.withhold ? loaded.map(({ result }) => result.digest) : undefined;
       // Contract §9.4: the structure source, packages read into a small library whose structure the hooks see.
       let structure;
       if (o.structure) {
@@ -182,7 +186,7 @@ export async function actualFor(root, c) {
           if (r.valid) structure.add(r);
         }
       }
-      const search = new Search({ packages: allowed, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true, structure }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks, termsLimits: o.termsLimits });
+      const search = new Search({ packages: allowed, allow, clock: () => new Date(o.now), allowUnsignedRelations: o.allowUnsignedRelations === true, structure }, { backend: store, audiences: o.audiences, allowUnlabelled: o.allowUnlabelled === true, hooks, termsLimits: o.termsLimits });
       const records = await search.search(s.query, searchOptions);
       codes.push(...search.diagnostics.map((d) => d.code));
       return { codes, records, termsExcluded: termsExcludedOf(search.diagnostics) };
