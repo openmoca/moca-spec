@@ -67,6 +67,11 @@ Content in more than one language. Each change is a Spec Change Proposal.
   and the backend returns every matching representation of a node. §9.4: a
   package state carries each file's status, window and audience, so a store
   search chooses as a library search does.
+- Reader contract §9.2: the terms gate is step 5.7, after the locale,
+  editions, concepts, scope and `upTo` steps, as the reference Readers run it;
+  §15.4 says `U004` counts only records the search would otherwise return. The
+  steps are renumbered (one per span is 5.8, the limit 5.9). No result
+  changes.
 
 ## [0.7.0] - 2026-11-22
 
