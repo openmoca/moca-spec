@@ -1251,6 +1251,7 @@ moca:
 | `duration` | The length in seconds: a number, 0 or more. |
 | `digest` | `sha256:` and the SHA-256 of the media file's bytes, in lower-case hex. |
 | `transcript` | The `id` of another source in `sources` whose `resource` resolves to a WebVTT (`.vtt`) file under `sources/` or `media/`: the captions or transcript of this media. |
+| `captions` | Caption and subtitle tracks for this media, beside its `transcript`: a list of `{ source, language, kind? }` (below). |
 
 Rules:
 
@@ -1279,6 +1280,41 @@ Rules:
   for an unknown source; the node's other descriptions stand.
 - Citation records carry the node's descriptions as `node.media`
   ([Reader contract §7](moca-reader-contract.md#7-citation-records)).
+
+**Caption tracks.** A video with subtitles in several languages, captions for
+deaf and hard-of-hearing people, or a described-video track lists them in
+`captions`:
+
+```yaml
+moca:
+  media:
+    - source: video
+      type: video/mp4
+      transcript: transcript
+      captions:
+        - { source: subtitles-fr, language: fr }
+        - { source: captions-en, language: en, kind: captions }
+        - { source: description-en, language: en, kind: descriptions }
+```
+
+| Key | Meaning |
+| --- | --- |
+| `source` | Required. The `id` of a source in `sources` whose `resource` is a WebVTT (`.vtt`) file under `sources/` or `media/`, as for `transcript`. |
+| `language` | Required. The track's language, a BCP 47 tag. |
+| `kind` | One of HTML's track kinds ([HTML, the `track` element](https://html.spec.whatwg.org/multipage/media.html#attr-track-kind)): `subtitles` (the default), `captions`, `descriptions` or `chapters`. |
+
+- **A list, not a map by language:** one language can have both subtitles and
+  captions.
+- **The transcript stays the evidence.** `transcript` is the media's own
+  words in the spoken language; time ranges are checked against it only, never
+  against a caption track.
+- **Invalid entries** are dropped, each reported, and the description and its
+  other tracks stand: an unknown `source` is `C006`; a source that is not a
+  `.vtt` file under `sources/` or `media/`, a missing or invalid `language`, an
+  unknown `kind`, any other key, or a second entry with the same `source`, is
+  `C005`.
+- Records carry the tracks that stand in `node.media`, each with its `kind`
+  (`subtitles` when the package gives none).
 
 **Alternates.** A podcast is often published as audio and as video, with
 different intros and ad breaks. A node MAY mark two or more of its media
