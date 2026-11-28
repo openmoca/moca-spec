@@ -11671,7 +11671,7 @@
     {
       "id": "languages-lookup-region-sibling",
       "kind": "search",
-      "description": "Package spec §5.4, as 0.7.0 reads it: pt-AO truncates to pt, no file is tagged pt, and no tag starts with pt-AO-, so the default (en) is returned although pt-BR and pt-PT exist.",
+      "description": "Package spec §5.4: pt-AO truncates to pt; no file is tagged pt, so the lowest tag that starts with pt- is chosen (pt-BR), not the default. In 0.7.0 this was the default (en).",
       "packages": [
         "fixtures/languages/lookup"
       ],
@@ -11686,14 +11686,14 @@
       "expect": {
         "count": 1,
         "locales": {
-          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-BR"
         }
       }
     },
     {
       "id": "languages-lookup-default-tag",
       "kind": "search",
-      "description": "Package spec §5.4, as 0.7.0 reads it: the default file is not tagged, so a request for en, the package's own language, finds en-GB by step 3.",
+      "description": "Package spec §5.4: the default file is tagged with the manifest's language, so a request for en finds it before en-GB. In 0.7.0 this was en-GB.",
       "packages": [
         "fixtures/languages/lookup"
       ],
@@ -11708,7 +11708,7 @@
       "expect": {
         "count": 1,
         "locales": {
-          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en-GB"
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
         }
       }
     },
@@ -11875,6 +11875,145 @@
         "locales": {
           "https://example.com/conformance/languages/node-language@1.0.0#welsh.md": "en"
         }
+      }
+    },
+    {
+      "id": "languages-lookup-default-region",
+      "kind": "search",
+      "description": "Package spec §5.4: en-US has no file; truncated to en, it finds the default file, tagged en.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "en-US"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-exact-region",
+      "kind": "search",
+      "description": "Package spec §5.4: a request equal to a regional file's tag finds it.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "pt-PT"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-PT"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-list",
+      "kind": "search",
+      "description": "Package spec §5.4: a priority list. de has no file, so the next entry, pt-PT, is tried in full before en.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "de",
+          "pt-PT",
+          "en"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-PT"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-list-truncated",
+      "kind": "search",
+      "description": "Package spec §5.4: each entry is tried with its truncations before the next entry: pt-AO finds pt-BR before en-GB is tried.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "pt-AO",
+          "en-GB"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-BR"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-list-none",
+      "kind": "search",
+      "description": "Package spec §5.4: when no entry of the list matches, the default representation.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "de",
+          "it"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-list-empty",
+      "kind": "search",
+      "description": "Package spec §5.4: an empty list is no locale: every representation is returned.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": []
+      },
+      "expect": {
+        "count": 4
       }
     }
   ]
