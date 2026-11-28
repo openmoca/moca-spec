@@ -39,6 +39,11 @@ Content in more than one language. Each change is a Spec Change Proposal.
   among those that pass the default retrieval policy and the audience set, so
   a retired translation falls back as a missing one does; §9.5: `locale` is
   not pushed down when a node's representations differ in those steps.
+  When the default is not a candidate either, the candidate with the lowest
+  tag. §9.5: a Reader that holds `locale` back passes `everyRepresentation`,
+  and the backend returns every matching representation of a node. §9.4: a
+  package state carries each file's status, window and audience, so a store
+  search chooses as a library search does.
 
 ## [0.7.0] - 2026-11-22
 

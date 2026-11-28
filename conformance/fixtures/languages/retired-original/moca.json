@@ -1,0 +1,10 @@
+{
+  "id": "https://example.com/conformance/languages/retired-original",
+  "version": "1.0.0",
+  "title": "A retired original with live translations",
+  "language": "en",
+  "locales": [
+    "de",
+    "fr"
+  ]
+}
