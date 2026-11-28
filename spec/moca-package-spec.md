@@ -1560,14 +1560,29 @@ What composition means for nodes and trust:
 | `conflictsWith` | Both packages claim authority over overlapping subject matter, and the conflict is unresolved. | Nodes of both packages are `contested`, each naming the other. |
 | `crossReferences` | Informative link. | None. |
 | `isPartOf` | This package is part of the target: an episode of a show, a volume of a book series, a lesson of a course. The name follows Dublin Core's `dcterms:isPartOf` and schema.org's `isPartOf`. The target's `members`, which pins this package by digest, is what composes it (§7.1, §7.3). | None beyond reporting the relation. |
+| `translationOf` | This package's content is translated from the target. The name follows schema.org's `translationOfWork`. | None beyond reporting the relation. |
+| `editionOf` | This package is an edition of the work the target stands for, made for another language or audience, and not a translation of it: another presenter, other slides, another order. The name follows schema.org's `exampleOfWork` and Wikidata's "edition or translation of". | None beyond reporting the relation. |
 
 `version`, when present, limits the relation to that exact target version.
 Profiles MAY define further types. A Reader preserves every relation. It
-reports a relation whose type is none of these five, and is not defined by a
+reports a relation whose type is none of these seven, and is not defined by a
 profile the package declares, as `R005_RELATION_TYPE_UNKNOWN` (info). When the
 package declares a profile the Reader does not recognise (`F001`), the Reader
 cannot tell which types that profile defines, so it does not report `R005`.
 MOCA surfaces conflicts as information; it does not arbitrate them.
+
+**Translations and editions.** `translationOf` and `editionOf` say what a
+package is; they change nothing that is retrieved or how it is ordered. So
+they need no signer: a translator MAY declare `translationOf` without the
+original's publisher, and a Reader reports it whoever signed it. Choosing
+between editions, and leaving one out of a search, is done only by an edition
+group in a composite package, whose signers must speak for the editions
+(§7.4). So a third party's translation can never displace the original. The
+target is the original package, or a composite package that stands for the
+work; leave out `version` so the relation stays true as the original changes.
+A host that shows the relation says who made it (the declaring package's
+signers), and MAY say whether their `ids` cover the target's `id`: when they do
+not, the claim is not confirmed by the target's publisher.
 
 **Who may make a relation take effect.** A package `id` is a name the package
 gives itself, so a relation alone proves nothing about who may retire or
