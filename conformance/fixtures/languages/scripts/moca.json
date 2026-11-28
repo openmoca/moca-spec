@@ -1,0 +1,10 @@
+{
+  "id": "https://example.com/conformance/languages/scripts",
+  "version": "1.0.0",
+  "title": "Scripts",
+  "language": "en",
+  "locales": [
+    "sr-Cyrl",
+    "zh-Hans"
+  ]
+}

@@ -73,6 +73,15 @@ Content in more than one language. Each change is a Spec Change Proposal.
   steps are renumbered (one per span is 5.8, the limit 5.9). No result
   changes.
 
+- Package spec §5.4, after review: a translation also inherits `stale_after`
+  and `moca.contested_by`; a window made of an own bound and an inherited one
+  that is empty keeps the translation out of force; a translation tagged with
+  its node's own language is ignored (`C012_TRANSLATION_SAME_TAG`); the
+  sibling step does not cross a script the request names; a list keeps 16
+  entries of at most 35 characters (`S014_LOCALE_TRIMMED`, info). Reader
+  contract §9.2: `localeMode: "first"` is bounded at 1,000 candidates when
+  the host sets no bound.
+
 ## [0.7.0] - 2026-11-22
 
 The 0.7.0 Spec Change Proposal:

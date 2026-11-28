@@ -1,0 +1,9 @@
+{
+  "id": "https://example.com/conformance/languages/inherit-more",
+  "version": "1.0.0",
+  "title": "More that a translation inherits",
+  "language": "en",
+  "locales": [
+    "fr"
+  ]
+}

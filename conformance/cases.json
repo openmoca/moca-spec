@@ -15376,6 +15376,345 @@
           "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
         }
       }
+    },
+    {
+      "id": "languages-version-0.8",
+      "description": "Package spec §14: a package written for mocaVersion 0.8 is read by a 0.8 Reader with no M009.",
+      "target": "fixtures/languages/version-0.8",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "languages-lookup-script-guard",
+      "kind": "search",
+      "description": "Package spec §5.4: the entry names the Hant script, so the sibling step at zh does not take zh-Hans; the next entry, en, finds the default. 0.8.0 before this change gave zh-Hans.",
+      "packages": [
+        "fixtures/languages/scripts"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "zh-Hant-TW",
+          "en"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/scripts@1.0.0#intro.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-script-guard-latin",
+      "kind": "search",
+      "description": "As languages-lookup-script-guard: sr-Latn does not take sr-Cyrl.",
+      "packages": [
+        "fixtures/languages/scripts"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "sr-Latn",
+          "en"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/scripts@1.0.0#intro.md": "en"
+        }
+      }
+    },
+    {
+      "id": "languages-lookup-script-none",
+      "kind": "search",
+      "description": "Package spec §5.4: an entry that names no script still finds a sibling in any script: zh finds zh-Hans.",
+      "packages": [
+        "fixtures/languages/scripts"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "zh"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/scripts@1.0.0#intro.md": "zh-Hans"
+        }
+      }
+    },
+    {
+      "id": "languages-same-tag",
+      "description": "Package spec §5.4: page.en.md has the tag of its node's own language, en; it is reported and ignored.",
+      "target": "fixtures/languages/same-tag",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C012_TRANSLATION_SAME_TAG"
+        ],
+        "capabilities": [
+          "core",
+          "localized"
+        ]
+      }
+    },
+    {
+      "id": "languages-same-tag-search",
+      "kind": "search",
+      "description": "As languages-same-tag: a search for en gets the default file, once; fr gets the French file.",
+      "packages": [
+        "fixtures/languages/same-tag"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "en"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/same-tag@1.0.0#page.md": "en"
+        },
+        "fields": {
+          "https://example.com/conformance/languages/same-tag@1.0.0#page.md": {
+            "node.title": "Page"
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-same-tag-store",
+      "kind": "search",
+      "description": "As languages-same-tag-search, through a store.",
+      "packages": [
+        "fixtures/languages/same-tag"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/same-tag"
+        ]
+      },
+      "search": {
+        "query": "page",
+        "locale": "en"
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/same-tag@1.0.0#page.md": "en"
+        },
+        "fields": {
+          "https://example.com/conformance/languages/same-tag@1.0.0#page.md": {
+            "node.title": "Page"
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-stale-contested",
+      "kind": "search",
+      "description": "Package spec §5.4: a French translation that writes neither takes stale_after and moca.contested_by from its default file, so it is stale and contested as the original is.",
+      "packages": [
+        "fixtures/languages/inherit-more"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/languages/inherit-more@1.0.0#stale.md",
+          "https://example.com/conformance/languages/inherit-more@1.0.0#contested.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/languages/inherit-more@1.0.0#stale.md": {
+            "trust.stale": true
+          },
+          "https://example.com/conformance/languages/inherit-more@1.0.0#contested.md": {
+            "trust.contested": true
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-stale-contested-store",
+      "kind": "search",
+      "description": "As languages-inherit-stale-contested, through a store: the state carries the inherited contests.",
+      "packages": [
+        "fixtures/languages/inherit-more"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/inherit-more"
+        ]
+      },
+      "search": {
+        "query": "texte",
+        "locale": "fr"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/languages/inherit-more@1.0.0#stale.md",
+          "https://example.com/conformance/languages/inherit-more@1.0.0#contested.md"
+        ],
+        "fields": {
+          "https://example.com/conformance/languages/inherit-more@1.0.0#stale.md": {
+            "trust.stale": true
+          },
+          "https://example.com/conformance/languages/inherit-more@1.0.0#contested.md": {
+            "trust.contested": true
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-window-closed",
+      "kind": "search",
+      "description": "Package spec §5.4: the original ended in January; its translation starts in June and inherits that end, so its window is empty and it is never in force (in 0.8.0 before this change the empty window was ignored and the translation was in force).",
+      "packages": [
+        "fixtures/languages/inherit-more"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "includeAll": true
+      },
+      "expect": {
+        "fields": {
+          "https://example.com/conformance/languages/inherit-more@1.0.0#ended.md": {
+            "trust.inForce": false
+          }
+        },
+        "locales": {
+          "https://example.com/conformance/languages/inherit-more@1.0.0#ended.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-window-closed-search",
+      "kind": "search",
+      "description": "As languages-inherit-window-closed, without the opt-in: neither file of the ended node is returned.",
+      "packages": [
+        "fixtures/languages/inherit-more"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 2,
+        "exclude": [
+          "https://example.com/conformance/languages/inherit-more@1.0.0#ended.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-list-capped",
+      "kind": "search",
+      "description": "Package spec §5.4: a list keeps its first 16 entries; pt-PT is the 17th, so it is dropped and the default file is chosen, with S014.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "xa",
+          "xb",
+          "xc",
+          "xd",
+          "xe",
+          "xf",
+          "xg",
+          "xh",
+          "xi",
+          "xj",
+          "xk",
+          "xl",
+          "xm",
+          "xn",
+          "xo",
+          "xp",
+          "pt-PT"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "en"
+        },
+        "codes": [
+          "S014_LOCALE_TRIMMED"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-tag-too-long",
+      "kind": "search",
+      "description": "Package spec §5.4: an entry longer than 35 characters is dropped, with S014; the next entry, pt-PT, is used.",
+      "packages": [
+        "fixtures/languages/lookup"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "pt-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "pt-PT"
+        ]
+      },
+      "expect": {
+        "count": 1,
+        "locales": {
+          "https://example.com/conformance/languages/lookup@1.0.0#intro.md": "pt-PT"
+        },
+        "codes": [
+          "S014_LOCALE_TRIMMED"
+        ]
+      }
     }
   ]
 }
