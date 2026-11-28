@@ -13232,6 +13232,362 @@
       }
     },
     {
+      "id": "languages-locale-mode-only-lexical",
+      "kind": "search",
+      "description": "As languages-locale-mode-only, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lesson",
+        "locale": "fr",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-only-region-lexical",
+      "kind": "search",
+      "description": "As languages-locale-mode-only-region, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/pt-BR",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lesson",
+        "locale": "pt-AO",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first-lexical",
+      "kind": "search",
+      "description": "As languages-locale-mode-first, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lesson",
+        "locale": "fr",
+        "localeMode": "first"
+      },
+      "expect": {
+        "count": 2,
+        "order": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first-list-lexical",
+      "kind": "search",
+      "description": "As languages-locale-mode-first-list, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/editions/de",
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/pt-BR",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lesson",
+        "locale": [
+          "fr",
+          "pt"
+        ],
+        "localeMode": "first"
+      },
+      "expect": {
+        "count": 4,
+        "order": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md"
+        ],
+        "include": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first-limit-lexical",
+      "kind": "search",
+      "description": "As languages-locale-mode-first-limit, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "lesson",
+        "locale": "fr",
+        "localeMode": "first",
+        "limit": 1
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-only-store",
+      "kind": "search",
+      "description": "As languages-locale-mode-only, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/editions/en",
+          "fixtures/languages/editions/fr"
+        ]
+      },
+      "search": {
+        "query": "lesson",
+        "locale": "fr",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-only-region-store",
+      "kind": "search",
+      "description": "As languages-locale-mode-only-region, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/pt-BR",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/editions/en",
+          "fixtures/languages/editions/pt-BR",
+          "fixtures/languages/editions/fr"
+        ]
+      },
+      "search": {
+        "query": "lesson",
+        "locale": "pt-AO",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first-store",
+      "kind": "search",
+      "description": "As languages-locale-mode-first, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/editions/en",
+          "fixtures/languages/editions/fr"
+        ]
+      },
+      "search": {
+        "query": "lesson",
+        "locale": "fr",
+        "localeMode": "first"
+      },
+      "expect": {
+        "count": 2,
+        "order": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first-list-store",
+      "kind": "search",
+      "description": "As languages-locale-mode-first-list, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/editions/de",
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/pt-BR",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/editions/de",
+          "fixtures/languages/editions/en",
+          "fixtures/languages/editions/pt-BR",
+          "fixtures/languages/editions/fr"
+        ]
+      },
+      "search": {
+        "query": "lesson",
+        "locale": [
+          "fr",
+          "pt"
+        ],
+        "localeMode": "first"
+      },
+      "expect": {
+        "count": 4,
+        "order": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md"
+        ],
+        "include": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first-limit-store",
+      "kind": "search",
+      "description": "As languages-locale-mode-first-limit, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/editions/en",
+          "fixtures/languages/editions/fr"
+        ]
+      },
+      "search": {
+        "query": "lesson",
+        "locale": "fr",
+        "localeMode": "first",
+        "limit": 1
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-only-fallback-lexical",
+      "kind": "search",
+      "description": "As languages-locale-mode-only-fallback, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "introduction dotted introdução",
+        "locale": "fr",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/locales@1.0.0#intro.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-locale-mode-only-fallback-store",
+      "kind": "search",
+      "description": "As languages-locale-mode-only-fallback, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/valid-locales"
+        ]
+      },
+      "search": {
+        "query": "introduction dotted introdução",
+        "locale": "fr",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/locales@1.0.0#intro.md": "fr"
+        }
+      }
+    },
+    {
       "id": "languages-edition-group-q1-baseline",
       "kind": "search",
       "description": "Package spec §7.4: the publisher's signed composite keeps the French edition for a French reader.",
