@@ -677,8 +677,7 @@ Each search runs these steps, in order
       not in the host's allowlist);
    2. apply the default retrieval policy (§8), unless the host opted in to
       including excluded content;
-   3. remove records outside the host's audience set, and, when the host
-      made a terms request, the records the terms gate removes (§15.4);
+   3. remove records outside the host's audience set;
    4. when the caller named a locale, keep only the representation that
       package spec §5.4's lookup selects for it, for each node, **among the
       node's representations that pass steps 5.1 to 5.3**. So a retired or
@@ -705,10 +704,13 @@ Each search runs these steps, in order
       the caller;
    6. when the caller named `upTo`, keep only records that pass it (§9). An
       ingress hook can never set, change or remove `upTo`;
-   7. keep one record per node representation and span: two candidates with
+   7. when the host made a terms request, remove the records the terms gate
+      removes (§15.4). It runs after the steps above, so what it counts
+      (`U004`) are records that would otherwise be returned;
+   8. keep one record per node representation and span: two candidates with
       the same `node.ref`, `node.locale` and `span.start` are one result, the
       first;
-   8. return at most `limit` records. `limit` defaults to 5.
+   9. return at most `limit` records. `limit` defaults to 5.
 
 Hooks are host code, supplied when the host creates the search. A package can
 never supply or select one.
@@ -718,8 +720,8 @@ never supply or select one.
 gate. So a Reader asks the backend again until `limit` records of the first
 group pass, or the backend has no more.
 
-**Filters come before the limit.** Steps 5.1 to 5.7 decide which records can
-be results; step 5.8 only counts them. A search MUST return the best-scored
+**Filters come before the limit.** Steps 5.1 to 5.8 decide which records can
+be results; step 5.9 only counts them. A search MUST return the best-scored
 records among all the records that match the query and pass the gate: the same
 records, in the same order, as ranking every matching record, applying the
 gate, and keeping the first `limit`. So when at least `limit` matching records
@@ -1341,7 +1343,7 @@ each scheme's entries, from all nodes.
 A host that is about to hand records to a model, or to show or play them
 under a rating filter, MAY ask the search to apply terms with a `terms`
 request ([Reader interface §5.1](moca-reader-interface.md#51-the-search-operation)).
-Without one, terms remove nothing. With one, the gate (§9.2, step 5.3) also
+Without one, terms remove nothing. With one, the gate (§9.2, step 5.7) also
 removes:
 
 - for `ai` (`{ destination, conditions, use }`): records whose resolved
@@ -1396,7 +1398,9 @@ value.
 
 A request a caller or a hook sets can never widen what the host asked for.
 Records the terms gate removes are counted in `U004_TERMS_EXCLUDED` (info) on
-the search. The finding carries `excluded`, the number of records removed for
+the search. The gate runs after every other filter but the one-per-span step
+(§9.2, step 5.7), so it counts only records the search would otherwise have
+returned: a record the locale, `scope` or `upTo` leaves out is not counted. The finding carries `excluded`, the number of records removed for
 each reason (a record removed for two reasons counts under each), and
 `hidden`, how many of the removed records belong to packages hidden for the
 request (below). `U004` is for the host, and is always complete.
