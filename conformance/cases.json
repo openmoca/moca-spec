@@ -13749,6 +13749,33 @@
       }
     },
     {
+      "id": "languages-edition-group-q1-slot-empty",
+      "kind": "search",
+      "description": "Package spec §7.4, \"Search\": the slot keeps the French edition and leaves out the English one, and the query matches only the English lesson's title, so the search returns nothing, and says so (S012_EDITION_SLOT_EMPTY, info).",
+      "packages": [
+        "fixtures/languages/q1/c/course-v1"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json"
+      },
+      "search": {
+        "query": "en",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [
+          "S012_EDITION_SLOT_EMPTY"
+        ],
+        "count": 0
+      }
+    },
+    {
       "id": "languages-edition-group-q1-chosen-ended-lexical",
       "kind": "search",
       "description": "As languages-edition-group-q1-chosen-ended, with the Reader's lexical backend.",
