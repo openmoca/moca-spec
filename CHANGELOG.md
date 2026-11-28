@@ -82,6 +82,13 @@ Content in more than one language. Each change is a Spec Change Proposal.
   contract §9.2: `localeMode: "first"` is bounded at 1,000 candidates when
   the host sets no bound.
 
+- Package spec §7.4, after review: an edition's languages include its
+  `locales`; when the default edition cannot be chosen, the edition the
+  composite's own `language` finds comes before the lowest `id`; an edition no
+  signer covers is reported (`O007_EDITION_NOT_COVERED`, info); near misses of
+  the terms are reported (`O006`). Attestations §6: an `ids` entry that names
+  no host or path is reported (`A011_SIGNER_SCOPE_WIDE`, warning).
+
 ## [0.7.0] - 2026-11-22
 
 The 0.7.0 Spec Change Proposal:
