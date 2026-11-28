@@ -1051,16 +1051,27 @@ the original:
 | `moca.audience` | `moca.audience` key |
 | `moca.concepts` | `moca.concepts` key |
 | OKF `status` | `status` key |
+| OKF `stale_after` | `stale_after` key |
 | `moca.valid_from` | `moca.valid_from` key |
 | `moca.valid_until` | `moca.valid_until` key |
+| `moca.contested_by` | `moca.contested_by` key |
 
 Each key is taken on its own: a translation published later MAY set its own
 `moca.valid_from` and still end with the original. A key the translation
 writes is its own, even when its value is invalid (it is then reported and
 read as the default file's invalid value would be). `C010` applies to the
 window the translation ends up with, and is reported on the translation's
-file. Every other field is the translation's own: its sources, media,
-evidence, `generated`, `verified`, `stale_after` and `moca.contested_by`.
+file. When that window has one bound of the translation's own and one taken
+from the default file, and its end is not after its start, the translation is
+not in force: an inherited end that has passed retires the translation,
+whatever its own start (a window wholly the file's own, and so the default
+file's, is ignored, as §4.4 says). Every other field is the translation's own:
+its sources, media, evidence, `generated` and `verified`.
+
+**One file per tag.** A translation whose tag equals its node's language
+(`a.en.md` beside an `a.md` in English) would be a second file for one
+language. It is reported as `C012_TRANSLATION_SAME_TAG` (warning) and ignored:
+the default file answers for that language.
 
 **Choosing a representation.** A request for a locale is a language tag or a
 priority list of them, most preferred first (`["fr-CA", "en"]`), as RFC 4647
@@ -1075,9 +1086,16 @@ turn, for the entry and then the entry truncated one subtag at a time (RFC 4647
 
 1. the representation whose tag equals it;
 2. the representations whose tag starts with it and `-`, the lowest in
-   code-point order of the lower-cased tags.
+   code-point order of the lower-cased tags. This sibling step is MOCA's
+   addition to RFC 4647 Lookup, which never returns a tag more specific than
+   the range. When the entry names a script (`zh-Hant-TW`, `sr-Latn`), a
+   representation whose tag names another script is not taken here, so
+   `["zh-Hant-TW", "en"]` never finds `zh-Hans`.
 
-When no entry finds one, it takes the default representation. A search
+A list keeps at most its first 16 entries, and an entry longer than 35
+characters (RFC 5646 §4.4.1) is dropped; a search reports what it dropped
+([Reader contract §9](moca-reader-contract.md#9-search), `S014`). When no
+entry finds one, it takes the default representation. A search
 chooses only among the representations it may return, so a retired
 translation falls back as a missing one does
 ([Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate),

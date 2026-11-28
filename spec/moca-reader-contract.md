@@ -541,7 +541,11 @@ search(query, { limit, includeAll, locale, localeMode, editions, concepts, scope
 
 `locale` is a language tag or a priority list of them, most preferred first
 ([package spec §5.4](moca-package-spec.md#54-locales)); an empty list is no
-locale.
+locale. A search keeps at most the first 16 entries and drops an entry longer
+than 35 characters, and reports `S014_LOCALE_TRIMMED` (info) when it dropped
+any. A list of languages says something about a person, so a Reader never
+records it in a finding, a log or a trace: it records how many entries there
+were and which one matched.
 
 `localeMode` says what the locale does, and has no effect without one:
 
@@ -718,7 +722,10 @@ never supply or select one.
 **Language first.** With `localeMode: "first"`, the search returns the first
 `limit` records, in the order §9 gives, among all the records that pass the
 gate. So a Reader asks the backend again until `limit` records of the first
-group pass, or the backend has no more.
+group pass, or the backend has no more. When the host set no bound
+(below), a Reader bounds the candidates a `"first"` search examines at 1,000,
+or `limit` when that is larger, and reports `S010_SEARCH_TRUNCATED` when it
+stops there, so a request for a rare language never reads a store to its end.
 
 **Filters come before the limit.** Steps 5.1 to 5.8 decide which records can
 be results; step 5.9 only counts them. A search MUST return the best-scored
@@ -1094,6 +1101,7 @@ withhold only the `structured` capability.
 | `C009_LOCALE_ORPHAN` | warning | A locale representation has no default-language file. |
 | `C010_VALIDITY_WINDOW_INVALID` | warning | moca.valid_until is not later than moca.valid_from. |
 | `C011_EVIDENCE_SELECTOR_UNMATCHED` | warning | An evidence selector does not match the text source file it cites inside the package. |
+| `C012_TRANSLATION_SAME_TAG` | warning | A translation is tagged with its node's own language; it is ignored, and the default file answers for that language ([package spec §5.4](moca-package-spec.md#54-locales)). |
 | `E001_ENCRYPTED_NO_KEY` | error | An envelope was not opened: there is no key provider, it returned no key or a kind of key no stanza uses, or the Reader does not implement `encryption` ([encrypted packages §5.1](moca-encrypted-package.md#51-the-key-provider)). |
 | `E002_DECRYPTION_FAILED` | error | A key was supplied for an envelope, but it is not a valid key of its kind, unwrapping failed, or the header MAC failed. |
 | `E003_PAYLOAD_CORRUPT` | error | An envelope's encrypted payload failed authentication or was truncated. |
@@ -1135,6 +1143,7 @@ withhold only the `structured` capability.
 | `S011_STATE_MISSING` | warning | A store search withheld records because a package state each depends on (its own package's, a composing package's, or one whose relations act on it) was asked for and not given (§9.4). |
 | `S012_EDITION_SLOT_EMPTY` | info | An edition group left out records for its chosen edition, and the search returned nothing from that edition ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
 | `S013_EDITION_SLOTS_DISAGREE` | warning | Two edition groups that may leave out records chose different editions, so one of them left nothing out ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
+| `S014_LOCALE_TRIMMED` | info | A search's locale list had more than 16 entries, or entries longer than 35 characters; they were dropped ([package spec §5.4](moca-package-spec.md#54-locales)). The finding gives the count, never the entries. |
 | `U001_TERMS_INVALID` | warning | A field of `terms` is malformed ([package spec §4.14](moca-package-spec.md#414-terms)). The package stays valid; the field counts as its strictest value when terms are applied (§15). |
 | `U002_TERMS_LOOSENED` | warning | A `terms.nodes` entry, or a composing package, is looser than the package for a permission; the stricter value stands (§15.3). |
 | `U003_TERMS_UNKNOWN_VALUE` | warning | A `terms` field has a value this version does not know, such as one from a later release. It is exposed, and counts as its strictest value when terms are applied (§15). |
