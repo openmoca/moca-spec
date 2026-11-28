@@ -1,0 +1,12 @@
+{
+  "id": "https://translations.example.org/course-fr",
+  "version": "1.0.0",
+  "title": "Course, translated into French by someone else",
+  "language": "fr",
+  "relations": [
+    {
+      "type": "translationOf",
+      "target": "https://example.com/conformance/languages/editions/en"
+    }
+  ]
+}
