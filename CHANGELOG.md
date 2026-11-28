@@ -40,6 +40,9 @@ Content in more than one language. Each change is a Spec Change Proposal.
 - Reader contract §9: the search option `localeMode` (`choose`, `first`,
   `only`): "this language first" and "only this language".
 - Conformance: `expect.order` for search cases.
+- Package spec §5.7: `captions` on a media description, caption and subtitle
+  tracks with their language and HTML track kind. The node and
+  citation-record schemas gain it.
 
 ### Changed
 

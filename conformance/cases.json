@@ -11849,13 +11849,11 @@
     },
     {
       "id": "languages-media-captions",
-      "description": "In 0.7.0 a media description has no captions key: one that has it fails the node schema and is ignored (C005).",
+      "description": "Package spec §5.7: a media description with a caption track is valid; in 0.7.0 it failed the node schema and was ignored (C005).",
       "target": "fixtures/languages/media-captions",
       "expect": {
         "valid": true,
-        "codes": [
-          "C005_FIELD_INVALID"
-        ],
+        "codes": [],
         "capabilities": [
           "core"
         ],
@@ -13229,6 +13227,106 @@
       },
       "expect": {
         "count": 4
+      }
+    },
+    {
+      "id": "languages-media-captions-record",
+      "kind": "search",
+      "description": "Package spec §5.7: records carry the caption track in node.media, with its kind.",
+      "packages": [
+        "fixtures/languages/media-captions"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 1,
+        "fields": {
+          "https://example.com/conformance/languages/media-captions@1.0.0#talk.md": {
+            "node.media": [
+              {
+                "source": "video",
+                "resource": "https://media.example.com/talk.mp4",
+                "type": "video/mp4",
+                "duration": 5,
+                "transcript": "transcript",
+                "captions": [
+                  {
+                    "source": "captions-fr",
+                    "language": "fr",
+                    "kind": "subtitles"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-media-captions-invalid",
+      "description": "Package spec §5.7: a repeated source, an unknown source (C006), a source that is not a WebVTT file in the package, an invalid tag and an unknown kind are each dropped and reported; the description and its good track stand. A quote found only in a caption track does not match: evidence is checked against the transcript (C011).",
+      "target": "fixtures/languages/media-captions-invalid",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "C005_FIELD_INVALID",
+          "C006_EVIDENCE_SOURCE_UNKNOWN",
+          "C011_EVIDENCE_SELECTOR_UNMATCHED"
+        ],
+        "capabilities": [
+          "core",
+          "located-evidence",
+          "self-contained-evidence"
+        ],
+        "digest": "sha256:e8c052d17f3584a5c76fa0406733be7f412242db82ed624ee2adfc6991f0d5a7",
+        "evidenceMatched": {
+          "talk.md": [
+            false
+          ]
+        }
+      }
+    },
+    {
+      "id": "languages-media-captions-invalid-record",
+      "kind": "search",
+      "description": "Package spec §5.7: only the good track stands.",
+      "packages": [
+        "fixtures/languages/media-captions-invalid"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 1,
+        "fields": {
+          "https://example.com/conformance/languages/media-captions-invalid@1.0.0#talk.md": {
+            "node.media": [
+              {
+                "source": "video",
+                "resource": "https://media.example.com/talk.mp4",
+                "type": "video/mp4",
+                "duration": 5,
+                "transcript": "transcript",
+                "captions": [
+                  {
+                    "source": "captions-fr",
+                    "language": "fr",
+                    "kind": "subtitles"
+                  }
+                ]
+              }
+            ]
+          }
+        }
       }
     },
     {
