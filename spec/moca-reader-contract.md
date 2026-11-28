@@ -850,8 +850,9 @@ identifiers the structure declares, and the members that compose it. With
 them come, for each concept on the way up from those declared identifiers,
 its broader concepts and the concepts it is a part of in the package's
 structure ([package spec §5.6](moca-package-spec.md#56-structure)); each
-member's `language`; and the composing package's edition groups: for each
-slot, its IRI, its editions' ids and its default edition, when it names one
+member's `language` and `locales`; and the composing package's edition
+groups: its own `language`, and for each slot, its IRI, its editions' ids and
+its default edition, when it names one
 ([package spec §7.4](moca-package-spec.md#74-edition-groups)). Every state
 also carries the package's own `validFrom` and `validUntil`, so a store search
 knows whether a composite is in force, and a summary of what its files can
@@ -1117,6 +1118,7 @@ withhold only the `structured` capability.
 | `A008_PACKAGE_DIGEST_MISMATCH` | error | A package attestation names this package's `id` and `version` with a different digest: the content changed after it was signed ([attestations §3](moca-attestations.md#3-package-attestations)). |
 | `A009_SIGNATURE_REQUIRED` | error | The host requires a valid package attestation (`requireSignature`) and the package has none. This one makes the package invalid. |
 | `A010_SIGNER_NOT_FOR_PACKAGE` | error | A package attestation's signature verifies and its statement matches, but the signer's `ids` in the trust root do not cover this package's `id` ([attestations §6](moca-attestations.md#6-trust-roots)). The attestation does not count, so it does not make the package `signed`. |
+| `A011_SIGNER_SCOPE_WIDE` | warning | A signer of this package has an `ids` entry in the trust root that names no host or path, such as `https://`, so it covers every package under that scheme ([attestations §6](moca-attestations.md#6-trust-roots)). |
 | `R001_MEMBER_UNRESOLVED` | warning | A member could not be resolved by the host resolver. |
 | `R002_MEMBER_DIGEST_MISMATCH` | error | A resolved member does not match its pinned digest, or, for an issued copy that verified, its original digest ([package spec §7.1](moca-package-spec.md#71-members)). |
 | `R003_MEMBER_CYCLE` | error | Members form a cycle. |
@@ -1129,7 +1131,8 @@ withhold only the `structured` capability.
 | `O002_CONCEPT_UNDECLARED` | warning | A relation, ordered collection or node binding uses a concept that is not declared as a `skos:Concept`. |
 | `O003_REMOTE_REFERENCE` | warning | `structure.ttl` or a node binding relies on something a Reader would have to fetch or resolve: `owl:imports`, or an IRI that is not absolute. |
 | `O005_STRUCTURE_CYCLE` | warning | `requires`, `broader` or `hasPart` forms a cycle ([package spec §5.6](moca-package-spec.md#56-structure)). |
-| `O006_EDITION_GROUP_INVALID` | warning | A `schema:workExample` names no member of the composite package, or a slot's IRI is not in the composite's own namespace, or a `moca:defaultEdition` names no edition of its slot, or a slot names two default editions; the statement is ignored ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
+| `O006_EDITION_GROUP_INVALID` | warning | A `schema:workExample` names no member of the composite package, or a slot's IRI is not in the composite's own namespace, or a `moca:defaultEdition` names no edition of its slot, or a slot names two default editions, or a predicate is a near miss of these terms; the statement is ignored ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
+| `O007_EDITION_NOT_COVERED` | info | A slot lists an edition that no signer of its composite covers, so the slot groups it and hides none of its records ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
 | `S001_SIDECAR_INVALID` | error | index.json does not validate against the sidecar schema. |
 | `S002_SIDECAR_TARGET_MISMATCH` | error | The sidecar is bound to a different package id or version. |
 | `S003_SIDECAR_STALE` | warning | The sidecar digest does not match the package; the sidecar is ignored. |

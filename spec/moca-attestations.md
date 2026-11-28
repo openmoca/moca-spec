@@ -300,7 +300,11 @@ valid against [`trust-root.schema.json`](../schemas/v1/trust-root.schema.json):
   So `signed` means "signed by someone in my trust root" for an entry
   without `ids`, and "signed by someone my trust root lets speak for this
   id" for an entry with them. A host that trusts more than one publisher
-  gives each entry the `ids` of its own packages. `ids` does not narrow the
+  gives each entry the `ids` of its own packages, each one publisher's own
+  prefix (`https://example.com/`, not a shared host). An entry that names no
+  host or path (a scheme alone, such as `https://` or `urn:`) covers every
+  package under that scheme: a Reader reports `A011_SIGNER_SCOPE_WIDE`
+  (warning) on each package such a signer signs, and keeps the rule. `ids` does not narrow the
   `review` role: a reviewer's reach is set by `reviewers` (§4).
 - A key is not trusted from the instant the host's clock reaches `expires`
   (now ≥ `expires`, compared as in

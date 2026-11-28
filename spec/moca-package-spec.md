@@ -1832,17 +1832,19 @@ Reader shows one edition per slot, chosen by language, and offers the others.
   when another member composes it too.
 - **Its default edition** is the one edition the slot names with
   `moca:defaultEdition`. Every slot SHOULD name one.
-- **Languages** come from each edition's own manifest `language`; they are
-  never repeated in Turtle.
+- **Languages** come from each edition's own manifest: its `language` and
+  each of its `locales` (an edition may carry its own translations, §5.4);
+  they are never repeated in Turtle.
 - **Binding.** An edition is bound by composition to its slot as a part is
   (§5.6): `scope` on the slot and `nodes()` find it, and it takes the slot's
   place on the reading order, so `upTo` limits it. Put the slot on the
   ordered collection that `readingOrder` names, in place of its editions.
 - **Choosing.** For a locale (a tag or a priority list, §5.4), a Reader
   chooses one edition per slot: the one §5.4's lookup selects among the
-  editions, each tagged with its `language`; with no match, the default
-  edition; when the slot names none, or it cannot be chosen, the edition with
-  the lowest `id` in code-point order. Only an edition that resolved, matched
+  editions, each tagged with its `language` and each of its `locales`; with
+  no match, the default edition; when the slot names none, or it cannot be
+  chosen, the edition the composite's own `language` finds by the same
+  lookup; else the edition with the lowest `id` in code-point order. Only an edition that resolved, matched
   its pin and is valid (§7.1) can be chosen. In a search, only an edition the
   search can return can be chosen: it is loaded (for a store search, its
   state is supplied), and at least one record of it, or of a member under it
@@ -1883,7 +1885,10 @@ Reader shows one edition per slot, chosen by language, and offers the others.
   package `id`, the rule `upTo` follows for members (§7.2,
   [Reader contract §9](moca-reader-contract.md#9-search)), or when the host
   allows unsigned relations. Otherwise the slot still groups its editions for
-  display, and hides nothing.
+  display, and hides nothing; a Reader reports each edition a slot lists that
+  no signer of the composite covers (`O007_EDITION_NOT_COVERED`, info), as
+  `R004` does for a relation, so a composite signed by a key with no `ids`
+  never fails to fold silently.
 - **Display.** `editions(slot)` and `chooseEdition(slot, locale)`
   ([Reader contract §10](moca-reader-contract.md#10-structure)) answer from
   the composite that declares the slot. Only versions of one composite can
@@ -1898,7 +1903,10 @@ Reader shows one edition per slot, chosen by language, and offers the others.
   the composite's own namespace (the slot is not read); a
   `moca:defaultEdition` on a concept that has no editions, or that names
   something other than one of them; a second `moca:defaultEdition` on one slot
-  (both are ignored).
+  (both are ignored); a near miss of these terms: `schema:workExample`
+  written with `http://` or `www.`, or a term in the `moca:` namespace that
+  the vocabulary does not define, such as `moca:defaultedition`. Only
+  `https://schema.org/workExample` is read.
 
 **Who could hide or swap an edition, and what stops them.**
 
