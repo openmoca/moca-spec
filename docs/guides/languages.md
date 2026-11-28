@@ -645,9 +645,18 @@ write the script subtag.
 
 **What a Reader does:** `sr-Latn` gets the Latin file. A plain `sr` gets the
 lowest in code-point order, `sr-Cyrl`. Add a plain `sr` file to choose
-otherwise.
+otherwise. In 0.8.0, a request that names a script never gets a file in
+another script: `["zh-Hant-TW", "en"]` skips `zh-Hans` and gets the default
+([package spec §5.4](../../spec/moca-package-spec.md#54-locales)).
 
 **Limits:** none beyond limit 3.
+
+**Known issue in 0.8.0:** the script guard applies only when the request
+names a script. A request for `zh-HK` names a region, not a script, so it can
+get a Simplified file (`zh-CN` or `zh-Hans`) when there is no Traditional one
+tagged `zh-HK` or `zh`. Ask for `zh-Hant-HK`, or put `zh-Hant` before `zh` in
+the priority list, and tag Traditional files with `zh-Hant`. A fix that
+finds each region's likely script (CLDR likely subtags) is planned.
 
 ## Other people's translations
 
