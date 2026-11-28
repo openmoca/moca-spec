@@ -90,6 +90,16 @@ Content in more than one language. Each change is a Spec Change Proposal.
   the terms are reported (`O006`). Attestations §6: an `ids` entry that names
   no host or path is reported (`A011_SIGNER_SCOPE_WIDE`, warning).
 
+- Words, after review: "edition" is the wide word, and a translation one kind
+  of edition; `editionOf` says which way it points and that it is not the
+  inverse of a slot (package spec §7.2). §5.4 says what "language" and
+  "locale" each name; contract §9 what `choose` means in both options.
+  MIGRATIONS.md lists what a 0.7 Reader loses, checked by running one, and
+  advises repeating `status`, the window and `moca.concepts` in translations
+  while 0.7 Readers are in use. The vocabulary file gains its version, date,
+  preferred prefix and `rdfs:range`, and drops `owl:FunctionalProperty`
+  (two defaults are both ignored, not the same thing).
+
 ## [0.7.0] - 2026-11-22
 
 The 0.7.0 Spec Change Proposal:

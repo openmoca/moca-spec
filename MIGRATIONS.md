@@ -18,7 +18,7 @@ differently in more than one language, as the tables say.
 | Edition groups (package spec §7.4): in a composite package, a slot is a concept with `schema:workExample` values naming member packages that are editions of one work, and one `moca:defaultEdition`. A Reader shows one edition per slot, chosen by language, and a search with a locale keeps only that edition's records | `O006` (warning) | Optional. Put each edition in its own package, compose them, declare the slot and its editions in the composite's `structure.ttl`, list the slot on the reading order in place of the editions, and sign the composite with a key whose `ids` cover the editions: unsigned, the slot only groups. |
 | Relations `translationOf` and `editionOf` (package spec §7.2): this package is a translation of the target, or another edition of the work it stands for. They only report, so need no signer | — (`R005` from a 0.7 Reader) | Optional. Translators: declare `translationOf` the original, leaving out `version`. Use `crossReferences` instead if your package must read the same in 0.7 Readers, which report the new types as unknown (`R005`, info) and keep them. |
 | A translation can be retired on its own: mark it `status: deprecated`, or end its window. A reader in that language then gets the next match or the default file (Reader contract §9.2 step 5.4). In 0.7.0 the page was returned in no language, so retired translations had to be removed | — | Mark retired translations instead of deleting them, if you want readers in that language to see the original. |
-| Translations inherit `moca.concepts`, `status` and the validity window from their default file when they write none (package spec §5.4) | — | Nothing, if a translation should follow its original. A translation that should not (another topic, still live after the original is retired) writes its own key: `status: stable`, its own `moca.concepts` or window. |
+| Translations inherit `moca.concepts`, `status`, `stale_after`, the validity window and `moca.contested_by` from their default file when they write none (package spec §5.4) | — | **While 0.7 Readers are in use, repeat `status`, the window and `moca.concepts` in each translation:** a 0.7 Reader does not inherit, so a translation that relies on it stays live, unbounded and untopiced there (below). A translation that should not follow its original (another topic, still live after the original is retired) writes its own key: `status: stable`, its own `moca.concepts` or window. |
 
 ### Readers and hosts
 
@@ -46,10 +46,22 @@ differently in more than one language, as the tables say.
 
 ### What 0.7 Readers do with 0.8 packages
 
+Each line was checked by running the 0.7.0 reference Reader over the 0.8
+fixtures. None shows the wrong edition as if chosen; one shows content its
+author meant gone (the first).
+
+- **Inheritance is not applied.** A translation that writes no `status`,
+  window or `moca.concepts` of its own is live, unbounded and found by no
+  topic in a 0.7 Reader: a retired or ended original's translations are still
+  returned, `upTo` does not limit them, and `scope` does not find them. No code
+  says so. Repeat the keys in each translation while 0.7 Readers are in use.
+- **A retired translation does not fall back:** a 0.7 Reader returns the node
+  in no language, as in 0.7.0.
+- **Edition groups** are ignored (`schema:workExample` and `moca:defaultEdition` are terms a 0.7 Reader does not read): every edition is listed and searched. The slot is on the reading order and its editions are not, so `upTo` the composite limits none of them (no `S008`), and `scope` on the slot finds nothing.
 - **`translationOf` and `editionOf`** are unknown relation types (`R005`, info), kept and reported.
-- **Edition groups** are ignored (`schema:workExample` and `moca:defaultEdition` are terms a 0.7 Reader does not read): every edition is listed and searched.
 - **`moca.tracks`** is an unknown key, ignored: the media stands, and its tracks are not listed.
-- **`moca.language`** is ignored: the node's records are in the package's language.
+- **`moca.language`** is ignored: the node's records are in the package's language, so a Welsh page in an English package is labelled `en`, and a request for Welsh does not find it.
+- **A locale priority list** passed to a 0.7 Reader is not a tag: the TypeScript Reader throws a `TypeError`. Pass one tag to a 0.7 Reader. `localeMode` is ignored.
 - **`mocaVersion` `0.8`** is newer than the Reader (`M009`, warning); the package is read under the newest rules the Reader implements.
 
 ## From 0.6.0 to 0.7.0
