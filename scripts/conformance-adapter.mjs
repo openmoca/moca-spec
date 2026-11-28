@@ -158,7 +158,7 @@ export async function actualFor(root, c) {
       : o.hooks === 'hostile-ingress' ? hostileIngressHooks()
         : o.hooks === 'ontology-guided' ? ontologyGuided() : undefined;
     const s = c.search;
-    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, editions: s.editions, concepts: s.concepts, scope: s.scope, upTo: s.upTo, terms: s.terms };
+    const searchOptions = { limit: s.limit ?? 50, includeAll: s.includeAll ?? false, locale: s.locale, localeMode: s.localeMode, editions: s.editions, concepts: s.concepts, scope: s.scope, upTo: s.upTo, terms: s.terms };
     if (o.backend === 'store') {
       // Everything listed is ingested (each package on its own with
       // `ingestSeparately`); only the packages in `allow` are "loaded", and the

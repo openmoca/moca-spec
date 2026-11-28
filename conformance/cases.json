@@ -13048,6 +13048,190 @@
       }
     },
     {
+      "id": "languages-locale-mode-only",
+      "kind": "search",
+      "description": "Contract §9: localeMode only keeps only records in a matching language: the English edition drops out of a French search.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-only-fallback",
+      "kind": "search",
+      "description": "Contract §9: with localeMode only, a node with no file in the language drops out instead of passing in its default language.",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/locales@1.0.0#intro.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/locales@1.0.0#v1.2.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/locales@1.0.0#intro.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-locale-mode-only-region",
+      "kind": "search",
+      "description": "Contract §9: a record matches by the §5.4 lookup over its language, so pt-BR matches a pt-AO request.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/pt-BR",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "pt-AO",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first",
+      "kind": "search",
+      "description": "Contract §9: localeMode first puts the French edition before the English one; nothing is left out.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "localeMode": "first"
+      },
+      "expect": {
+        "count": 2,
+        "order": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first-list",
+      "kind": "search",
+      "description": "Contract §9: with a priority list, records are grouped by the first entry they match, then the next, then the rest.",
+      "packages": [
+        "fixtures/languages/editions/de",
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/pt-BR",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "fr",
+          "pt"
+        ],
+        "localeMode": "first"
+      },
+      "expect": {
+        "count": 4,
+        "order": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md"
+        ],
+        "include": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-first-limit",
+      "kind": "search",
+      "description": "Contract §9.2, Language first: the limit counts after ordering, so a limit of 1 keeps the French edition however the backend ranked it.",
+      "packages": [
+        "fixtures/languages/editions/en",
+        "fixtures/languages/editions/fr"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "localeMode": "first",
+        "limit": 1
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-locale-mode-no-locale",
+      "kind": "search",
+      "description": "Contract §9: without a locale, localeMode has no effect: every representation is searched.",
+      "packages": [
+        "fixtures/valid-locales"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "localeMode": "only"
+      },
+      "expect": {
+        "count": 4
+      }
+    },
+    {
       "id": "languages-edition-group-q1-baseline",
       "kind": "search",
       "description": "Package spec §7.4: the publisher's signed composite keeps the French edition for a French reader.",

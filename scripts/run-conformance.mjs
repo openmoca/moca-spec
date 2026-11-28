@@ -104,6 +104,11 @@ function checkSearch(e, actual) {
   for (const k of e.include ?? []) if (!keys.has(k)) problems.push(`missing ${k}`);
   for (const k of e.exclude ?? []) if (keys.has(k)) problems.push(`returned ${k}, which must never be returned`);
   if (e.count !== undefined && records.length !== e.count) problems.push(`expected ${e.count} result(s), got ${records.length}`);
+  // Contract §9, localeMode first: these results come in this order (others may come between them).
+  if (e.order) {
+    const at = e.order.map((k) => records.findIndex((r) => keyOf(r) === k));
+    if (at.some((i, n) => i < 0 || (n > 0 && i < at[n - 1]))) problems.push(`order: expected ${e.order.join(', ')}, got ${records.map(keyOf).join(', ')}`);
+  }
   for (const [k, status] of Object.entries(e.reviewStatus ?? {})) {
     const got = records.filter((r) => keyOf(r) === k).map((r) => r.trust?.reviewStatus);
     if (got.length === 0 || got.some((x) => x !== status)) problems.push(`${k}: expected reviewStatus ${status}, got [${got}]`);
