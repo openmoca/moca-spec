@@ -1,0 +1,10 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix moca: <https://w3id.org/moca/ns#> .
+
+<https://example.com/conformance/languages/near-miss#course> a skos:Concept ;
+  skos:prefLabel "The course"@en ;
+  <http://schema.org/workExample> <https://example.com/conformance/languages/near-miss#edition> ;
+  <https://www.schema.org/workExample> <https://example.com/conformance/languages/near-miss#edition> ;
+  moca:defaultedition <https://example.com/conformance/languages/near-miss#edition> .
+
+<https://example.com/conformance/languages/near-miss#edition> a skos:Concept .

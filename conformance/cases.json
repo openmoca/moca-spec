@@ -12478,7 +12478,7 @@
     },
     {
       "id": "languages-edition-group",
-      "description": "Package spec §7.4: a signed composite with two slots of editions, one of them by another publisher.",
+      "description": "Package spec §7.4: a signed composite with two slots of editions, one of them by another publisher. The slot lists a third party's translation that the composite's signers do not cover, so it is reported (O007, info): the slot groups it and hides none of its records.",
       "target": "fixtures/languages/course-signed",
       "options": {
         "members": [
@@ -12490,7 +12490,9 @@
       },
       "expect": {
         "valid": true,
-        "codes": [],
+        "codes": [
+          "O007_EDITION_NOT_COVERED"
+        ],
         "capabilities": [
           "core",
           "structured",
@@ -13003,7 +13005,7 @@
     },
     {
       "id": "languages-edition-group-invalid",
-      "description": "Package spec §7.4: a workExample that is not a member, a default that is not one of its slot's editions, two defaults on one slot, and a default on a concept with no editions are each O006; each statement is ignored.",
+      "description": "Package spec §7.4: a workExample that is not a member, a default that is not one of its slot's editions, two defaults on one slot, and a default on a concept with no editions are each O006; each statement is ignored. The slot lists a third party's translation that the composite's signers do not cover, so it is reported (O007, info): the slot groups it and hides none of its records.",
       "target": "fixtures/languages/course-invalid",
       "options": {
         "members": [
@@ -13014,7 +13016,8 @@
       "expect": {
         "valid": true,
         "codes": [
-          "O006_EDITION_GROUP_INVALID"
+          "O006_EDITION_GROUP_INVALID",
+          "O007_EDITION_NOT_COVERED"
         ],
         "capabilities": [
           "core",
@@ -14464,7 +14467,7 @@
     {
       "id": "languages-edition-group-q1-multilingual-edition",
       "kind": "search",
-      "description": "An English edition that carries its own French file, beside a German edition, the default. In 0.8.0 so far an edition's language is its manifest language only, so a French reader gets the German edition.",
+      "description": "Package spec §7.4, \"Choosing\": an edition is tagged with its manifest language and each of its locales, so the English edition that carries a French file is chosen for a French reader, and its French file is returned.",
       "packages": [
         "fixtures/languages/q1/c/multilingual"
       ],
@@ -14485,14 +14488,17 @@
         "codes": [],
         "count": 1,
         "include": [
-          "https://example.com/conformance/languages/q1/bread-de@1.0.0#lesson.md"
-        ]
+          "https://example.com/conformance/languages/q1/bread-en-multi@1.0.0#lesson.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/q1/bread-en-multi@1.0.0#lesson.md": "fr"
+        }
       }
     },
     {
       "id": "languages-edition-group-q1-default-unavailable",
       "kind": "search",
-      "description": "The default edition (zh) fails its pin, and no edition matches de: the edition with the lowest id (ar).",
+      "description": "Package spec §7.4, \"Choosing\": the default edition (zh) fails its pin and no edition matches de, so the edition the composite's own language (en) finds, before the lowest id (ar).",
       "packages": [
         "fixtures/languages/q1/c/default-bad-pin"
       ],
@@ -14513,7 +14519,7 @@
         "codes": [],
         "count": 1,
         "include": [
-          "https://example.com/conformance/languages/q1/bread-ar@1.0.0#lesson.md"
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
         ]
       }
     },
@@ -14571,6 +14577,139 @@
           "S012_EDITION_SLOT_EMPTY"
         ],
         "count": 0
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-key-without-ids-reported",
+      "description": "Package spec §7.4, \"Authority\": the composite is signed by a trusted key with no ids, which covers no package, so each edition its slot lists is reported (O007, info): the slot groups and folds nothing.",
+      "target": "fixtures/languages/q1/c/key-no-ids",
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root-no-ids.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O007_EDITION_NOT_COVERED"
+        ],
+        "capabilities": [
+          "composed",
+          "core",
+          "signed",
+          "structured"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-broad-ids-reported",
+      "description": "Attestations §6: the trust root gives the third party's key ids of \"https://\", which names no host, so the package it signs reports A011 (warning). The rule stands: the composite folds the original.",
+      "target": "fixtures/languages/q1/c/third-party-broad",
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root-broad.json"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "A011_SIGNER_SCOPE_WIDE"
+        ],
+        "capabilities": [
+          "composed",
+          "core",
+          "signed",
+          "structured"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-near-miss",
+      "description": "Package spec §7.4, \"Problems\": schema:workExample written with http:// or www., and moca:defaultedition, are near misses: each is reported (O006) and ignored, so no slot is read.",
+      "target": "fixtures/languages/near-miss",
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O006_EDITION_GROUP_INVALID"
+        ],
+        "capabilities": [
+          "core"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-multilingual-edition-store",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-multilingual-edition, through a store: the state carries each member's locales.",
+      "packages": [
+        "fixtures/languages/q1/c/multilingual"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allow": [
+          "fixtures/languages/q1/c/multilingual",
+          "fixtures/languages/q1/p/en-multi",
+          "fixtures/languages/q1/p/de"
+        ]
+      },
+      "search": {
+        "query": "texte",
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en-multi@1.0.0#lesson.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/q1/bread-en-multi@1.0.0#lesson.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-edition-group-q1-default-unavailable-store",
+      "kind": "search",
+      "description": "As languages-edition-group-q1-default-unavailable, through a store: the state carries the composite's own language.",
+      "packages": [
+        "fixtures/languages/q1/c/default-bad-pin"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/q1/p",
+          "fixtures/languages/q1/t"
+        ],
+        "trustRoot": "fixtures/languages/q1/trust-root.json",
+        "allow": [
+          "fixtures/languages/q1/c/default-bad-pin",
+          "fixtures/languages/q1/p/ar",
+          "fixtures/languages/q1/p/en"
+        ]
+      },
+      "search": {
+        "query": "bread",
+        "locale": "de"
+      },
+      "expect": {
+        "codes": [],
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/q1/bread-en@1.0.0#lesson.md"
+        ]
       }
     },
     {
