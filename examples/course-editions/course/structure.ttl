@@ -1,0 +1,33 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# The course, with its two language editions as parts. Each edition is its own
+# package, with its own reading order; the course lists no order of its own.
+<https://example.com/moca/bread-course#course> a skos:Concept ;
+  skos:prefLabel "Bread at home"@en , "Le pain maison"@fr ;
+  dcterms:hasPart <https://example.com/moca/bread-course/en> ,
+                  <https://example.com/moca/bread-course/fr> .
+
+<https://example.com/moca/bread-course/en> a skos:Concept ;
+  skos:prefLabel "English edition"@en , "Édition anglaise"@fr .
+<https://example.com/moca/bread-course/fr> a skos:Concept ;
+  skos:prefLabel "French edition"@en , "Édition française"@fr .
+
+# Topics both editions are filed under. The editions differ in shape: the
+# French lesson 1 covers what the English lessons 1 and 2 cover.
+<https://example.com/moca/bread-course#dough> a skos:Concept ;
+  skos:prefLabel "Making the dough"@en , "La pâte"@fr ;
+  dcterms:hasPart <https://example.com/moca/bread-course/en#lessons/1-flour-water-salt.md> ,
+                  <https://example.com/moca/bread-course/en#lessons/2-kneading-and-rising.md> ,
+                  <https://example.com/moca/bread-course/fr#lecons/1-la-pate.md> .
+
+<https://example.com/moca/bread-course#baking> a skos:Concept ;
+  skos:prefLabel "Shaping and baking"@en , "Façonner et cuire"@fr ;
+  dcterms:hasPart <https://example.com/moca/bread-course/en#lessons/3-shaping-and-baking.md> ,
+                  <https://example.com/moca/bread-course/fr#lecons/2-faconner-et-cuire.md> .
+
+<https://example.com/moca/bread-course/en#lessons/1-flour-water-salt.md> a skos:Concept .
+<https://example.com/moca/bread-course/en#lessons/2-kneading-and-rising.md> a skos:Concept .
+<https://example.com/moca/bread-course/en#lessons/3-shaping-and-baking.md> a skos:Concept .
+<https://example.com/moca/bread-course/fr#lecons/1-la-pate.md> a skos:Concept .
+<https://example.com/moca/bread-course/fr#lecons/2-faconner-et-cuire.md> a skos:Concept .

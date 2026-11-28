@@ -1,0 +1,37 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.7",
+  "id": "https://example.com/moca/bread-course",
+  "version": "1.0.0",
+  "title": "Bread at home",
+  "description": "A first loaf of bread, in two language editions: three lessons in English and two in French, with one recipe card for both.",
+  "language": "en",
+  "locales": [
+    "fr"
+  ],
+  "translations": {
+    "fr": {
+      "title": "Le pain maison",
+      "description": "Un premier pain, en deux éditions : trois leçons en anglais et deux en français, avec une fiche recette commune."
+    }
+  },
+  "license": "CC-BY-4.0",
+  "datePublished": "2026-11-27",
+  "publisher": {
+    "name": "Crumb Example School",
+    "url": "https://example.com/crumb",
+    "description": "A small, made-up baking school. It exists only in this example."
+  },
+  "members": [
+    {
+      "id": "https://example.com/moca/bread-course/en",
+      "version": "1.0.0",
+      "digest": "sha256:e3a7aa17326b6cabe0d3de9c79078b29712f14c269a0bab81e8a2b0b44f624f5"
+    },
+    {
+      "id": "https://example.com/moca/bread-course/fr",
+      "version": "1.0.0",
+      "digest": "sha256:234ae3a3f842c915f21cd00b6a614284735933582edb93e1f17df9277794d8bb"
+    }
+  ]
+}

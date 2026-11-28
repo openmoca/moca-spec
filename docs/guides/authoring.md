@@ -324,6 +324,11 @@ The info is a suggestion, not a problem: a French reader sees the English
 title until the manifest's `translations` gives a French one
 ([catalogue](#how-the-package-appears-in-a-catalogue)).
 
+A translation is the same page in another language. When the French is its
+own work, with its own presenter or order, make it a separate package instead:
+[content in more than one language](languages.md) gives a recipe for each
+case, and the limits to know.
+
 ## 6. Check and pack
 
 Before you ship, check with `--strict`, which treats warnings as errors, so an
@@ -463,6 +468,8 @@ a Reader treats the content.
 ## Next
 
 - [Structure](structure.md): topics, parts, order and what requires what.
+- [Content in more than one language](languages.md): translations, language
+  editions, sign language and captions.
 - [Signing and review](signing-and-review.md): prove who published it and who
   checked it.
 - [Capabilities](capabilities.md): which of these your use needs.

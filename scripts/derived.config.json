@@ -34,6 +34,24 @@
       ]
     },
     {
+      "package": "examples/course-editions/english",
+      "search": [
+        "examples/course-editions"
+      ]
+    },
+    {
+      "package": "examples/course-editions/french",
+      "search": [
+        "examples/course-editions"
+      ]
+    },
+    {
+      "package": "examples/course-editions/course",
+      "search": [
+        "examples/course-editions"
+      ]
+    },
+    {
       "package": "conformance/fixtures/composed-members/book",
       "search": [
         "conformance/fixtures/composed-members"
@@ -90,6 +108,22 @@
     },
     {
       "package": "examples/rock-pools",
+      "key": "publisher"
+    },
+    {
+      "package": "examples/course-editions/handout",
+      "key": "publisher"
+    },
+    {
+      "package": "examples/course-editions/english",
+      "key": "publisher"
+    },
+    {
+      "package": "examples/course-editions/french",
+      "key": "publisher"
+    },
+    {
+      "package": "examples/course-editions/course",
       "key": "publisher"
     },
     {

@@ -33,6 +33,7 @@ sources and terms with their work, wherever it goes.
 | [Protected sources](guides/protected-sources.md) | Package protected content sealed, or as reference nodes that only point to the original |
 | [The creator's terms](guides/creators-terms.md) | AI use, ratings and rights that travel with the work; how they resolve, and who decides |
 | [Credits and dates](guides/credits-and-dates.md) | The publisher, contributors and their roles, licence and copyright, `datePublished` and `datePackaged` |
+| [Content in more than one language](guides/languages.md) | Translations and language editions: a recipe for each case, what a Reader does with it, and today's limits |
 | [Machine-made content](guides/machine-made.md) | Mark what a machine made, with which model, and what a person checked |
 | [Showing terms honestly](guides/showing-terms.md) | For app builders: apply terms before content goes anywhere, and show them without making a label look like a lock |
 | [Consuming packages](guides/consuming.md) | Use a Reader in TypeScript, .NET or Python: read and verify, search, citation records, your own store, MCP |

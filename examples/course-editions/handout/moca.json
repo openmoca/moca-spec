@@ -1,0 +1,16 @@
+{
+  "$schema": "https://w3id.org/moca/schemas/v1/manifest.schema.json",
+  "mocaVersion": "0.7",
+  "id": "https://example.com/moca/bread-course/handout",
+  "version": "1.0.0",
+  "title": "Bread at home: the recipe card",
+  "description": "One loaf's quantities and timings, used by both editions of the course.",
+  "language": "en",
+  "license": "CC-BY-4.0",
+  "datePublished": "2026-11-27",
+  "publisher": {
+    "name": "Crumb Example School",
+    "url": "https://example.com/crumb",
+    "description": "A small, made-up baking school. It exists only in this example."
+  }
+}
