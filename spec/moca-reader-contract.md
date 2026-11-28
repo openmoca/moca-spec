@@ -583,7 +583,10 @@ out material that comes after that point:
   that loads only its own packages MAY allow unsigned composing packages to
   limit their members, with the same option that allows unsigned relations.
   So a package loaded beside a member can never hide the member's records
-  from an `upTo` search unless it speaks for that member.
+  from an `upTo` search unless it speaks for that member. A composing package
+  that the default retrieval policy leaves out at package level (out of force,
+  or superseded by a loaded package) limits nothing
+  ([package spec §7.4](moca-package-spec.md#74-edition-groups)).
 - **Unresolved.** If no loaded package's reading order places `upTo`, it
   limits nothing, and the Reader reports `S008_UPTO_UNRESOLVED` (warning)
   for that search, so it never fails silently.
@@ -668,11 +671,13 @@ Each search runs these steps, in order
       the default retrieval policy excludes are candidates too. Then, unless
       the caller asked for `editions: "all"`, apply each loaded composite package's
       edition groups ([package spec §7.4](moca-package-spec.md#74-edition-groups)):
-      for each slot whose composite's signers cover the record's package `id`
-      (or with the host's option that allows unsigned relations), a record from
-      one or more of the slot's editions, or their members at any depth,
-      passes only when the edition the slot chooses for the locale is one of
-      them. Records from no slot's editions are not affected;
+      for each slot whose composite is in force and not superseded, and whose
+      signers cover the record's package `id` (or with the host's option that
+      allows unsigned relations), a record from one or more of the slot's
+      editions, or their members at any depth, passes only when the edition
+      the slot chooses for the locale, among the editions this search can
+      return, is one of them, or when another such slot leaves out the chosen
+      edition (`S013`). Records from no slot's editions are not affected;
    5. when the caller named concepts or a scope, keep only records bound to
       them. Concepts and scope set by an ingress hook narrow the search
       ("Ingress narrowing", below) but never bind the gate: the gate follows
@@ -809,7 +814,13 @@ its broader concepts and the concepts it is a part of in the package's
 structure ([package spec §5.6](moca-package-spec.md#56-structure)); each
 member's `language`; and the composing package's edition groups: for each
 slot, its IRI, its editions' ids and its default edition, when it names one
-([package spec §7.4](moca-package-spec.md#74-edition-groups)). So a
+([package spec §7.4](moca-package-spec.md#74-edition-groups)). Every state
+also carries the package's own `validFrom` and `validUntil`, so a store search
+knows whether a composite is in force, and a summary of what its files can
+return: each distinct combination, over all its files, of `status`, the window
+a file ends up with and its audience label (with the node's path when the
+package's terms have node-level entries), so a slot chooses only among
+editions the search can return. So a
 store search applies `concepts`, `scope`, `upTo` and edition groups to
 members' records as a library search does, and the state grows with the structure and the members,
 not with their product (§3). A Reader produces a package's state from the package
@@ -940,8 +951,8 @@ Terms and meanings are in
 | `narrower(iri, { transitive })` | Narrower concepts; transitively, breadth first, each level ordered by IRI. |
 | `broader(iri)`, `related(iri)` | Direct broader concepts; related concepts in either direction. Ordered by IRI. |
 | `sequence(iri)` | The members of the ordered collection `iri`, in list order; nothing if `iri` is not an ordered collection. |
-| `editions(iri)` | The editions of the slot `iri` ([package spec §7.4](moca-package-spec.md#74-edition-groups)), each `{ id, version, language, title, default }` (`language` and `title` absent when the edition's manifest has none; `default` true only for the slot's default edition), ordered by `id`: only editions that resolved, matched their pin and are valid. Empty when `iri` is no slot of a loaded package. When several loaded composite packages declare the same slot, the first loaded one answers. |
-| `chooseEdition(iri, locale)` | The `id` of the edition of the slot `iri` that a search with that locale keeps (package spec §7.4, "Choosing"), or nothing when `iri` is no slot or has no edition that can be chosen. |
+| `editions(iri)` | The editions of the slot `iri` ([package spec §7.4](moca-package-spec.md#74-edition-groups)), each `{ id, version, language, title, default }` (`language` and `title` absent when the edition's manifest has none; `default` true only for the slot's default edition), ordered by `id`: only editions that resolved, matched their pin and are valid. Empty when `iri` is no slot of a loaded package. A slot is declared only by a composite whose `id` its IRI starts with; of several loaded versions of that composite, the one package spec §7.4 ("Display") names answers. |
+| `chooseEdition(iri, locale)` | The `id` of the edition of the slot `iri` that a search with that locale and no audience set keeps (package spec §7.4, "Choosing"): among the editions that resolved, matched their pin and are valid, and are loaded with a record that passes the default retrieval policy. Nothing when `iri` is no slot or has no edition that can be chosen. |
 | `nodes(iri, { include })` | Citation records of the nodes bound to `iri`, by their own `moca.concepts` or by composition ([package spec §5.6](moca-package-spec.md#56-structure)), and, with `include` of `narrower`, `parts` or `both`, to its descendants, with the default retrieval policy applied, ordered by `node.ref`. |
 
 Every concept item carries its `iri`, its preferred `label` (absent when the
@@ -1079,7 +1090,7 @@ withhold only the `structured` capability.
 | `O002_CONCEPT_UNDECLARED` | warning | A relation, ordered collection or node binding uses a concept that is not declared as a `skos:Concept`. |
 | `O003_REMOTE_REFERENCE` | warning | `structure.ttl` or a node binding relies on something a Reader would have to fetch or resolve: `owl:imports`, or an IRI that is not absolute. |
 | `O005_STRUCTURE_CYCLE` | warning | `requires`, `broader` or `hasPart` forms a cycle ([package spec §5.6](moca-package-spec.md#56-structure)). |
-| `O006_EDITION_GROUP_INVALID` | warning | A `schema:workExample` names no member of the composite package, or a `moca:defaultEdition` names no edition of its slot, or a slot names two default editions; the statement is ignored ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
+| `O006_EDITION_GROUP_INVALID` | warning | A `schema:workExample` names no member of the composite package, or a slot's IRI is not in the composite's own namespace, or a `moca:defaultEdition` names no edition of its slot, or a slot names two default editions; the statement is ignored ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
 | `S001_SIDECAR_INVALID` | error | index.json does not validate against the sidecar schema. |
 | `S002_SIDECAR_TARGET_MISMATCH` | error | The sidecar is bound to a different package id or version. |
 | `S003_SIDECAR_STALE` | warning | The sidecar digest does not match the package; the sidecar is ignored. |
@@ -1091,6 +1102,8 @@ withhold only the `structured` capability.
 | `S009_SIDECAR_ITEMS_REPLACED` | info | A sidecar built from the publisher's package is bound to an issued copy, and the items of the files the issuer changed were replaced by each file's whole body, without a vector ([sidecar spec §5](moca-sidecar-index-spec.md#5-binding-and-staleness)). |
 | `S010_SEARCH_TRUNCATED` | warning | A search stopped at a bound the host set before `limit` records passed the gate; better-matching records that pass may exist (§9.2). |
 | `S011_STATE_MISSING` | warning | A store search withheld records because a package state each depends on (its own package's, a composing package's, or one whose relations act on it) was asked for and not given (§9.4). |
+| `S012_EDITION_SLOT_EMPTY` | info | An edition group left out records for its chosen edition, and the search returned nothing from that edition ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
+| `S013_EDITION_SLOTS_DISAGREE` | warning | Two edition groups that may leave out records chose different editions, so one of them left nothing out ([package spec §7.4](moca-package-spec.md#74-edition-groups)). |
 | `U001_TERMS_INVALID` | warning | A field of `terms` is malformed ([package spec §4.14](moca-package-spec.md#414-terms)). The package stays valid; the field counts as its strictest value when terms are applied (§15). |
 | `U002_TERMS_LOOSENED` | warning | A `terms.nodes` entry, or a composing package, is looser than the package for a permission; the stricter value stands (§15.3). |
 | `U003_TERMS_UNKNOWN_VALUE` | warning | A `terms` field has a value this version does not know, such as one from a later release. It is exposed, and counts as its strictest value when terms are applied (§15). |

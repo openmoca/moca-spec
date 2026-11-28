@@ -29,7 +29,12 @@ Content in more than one language. Each change is a Spec Change Proposal.
   holds editions of one work; a Reader chooses one per slot by language, and a
   search with a locale keeps only that edition where the composite's signers
   cover it. Reader contract §9.2, §9.4, §10 (`editions`, `chooseEdition`) and
-  §11 (`O006_EDITION_GROUP_INVALID`).
+  §11 (`O006_EDITION_GROUP_INVALID`). A slot's IRI is in its composite's own
+  namespace; a slot chooses only among editions the search can return, so it
+  never leaves a reader who could see one of its editions with none; a
+  composite that is superseded or out of force neither folds nor limits; slots
+  that disagree do not hide each other's choice. `S012_EDITION_SLOT_EMPTY`
+  (info) and `S013_EDITION_SLOTS_DISAGREE` (warning).
 - [The moca: vocabulary](vocabulary/README.md) (`https://w3id.org/moca/ns#`), as
   a page and as Turtle (`vocabulary/ns.ttl`): `moca:defaultEdition`.
 

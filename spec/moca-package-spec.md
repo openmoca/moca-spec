@@ -1760,7 +1760,9 @@ Reader shows one edition per slot, chosen by language, and offers the others.
 ```
 
 - **A slot** is a concept in the composite's own `structure.ttl` with one or
-  more `schema:workExample` values. schema.org defines `workExample` as "an
+  more `schema:workExample` values, and an IRI in the composite's own
+  namespace: its `id` followed by `#` or `/`. A slot belongs to the composite
+  that declares it, so no other package can speak for it. schema.org defines `workExample` as "an
   example/instance/realization/derivation of the concept of this creative
   work"; it is the link from a work to its expressions in IFLA LRM. Each value
   MUST be the `id` of one of the composite's own `members`, declared as a
@@ -1779,14 +1781,40 @@ Reader shows one edition per slot, chosen by language, and offers the others.
   editions, each tagged with its `language`; with no match, the default
   edition; when the slot names none, or it cannot be chosen, the edition with
   the lowest `id` in code-point order. Only an edition that resolved, matched
-  its pin and is valid (§7.1) can be chosen.
+  its pin and is valid (§7.1) can be chosen. In a search, only an edition the
+  search can return can be chosen: it is loaded (for a store search, its
+  state is supplied), and at least one record of it, or of a member under it
+  at any depth, passes steps 5.1 to 5.3 of the gate and, with a terms request,
+  the terms gate
+  ([Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate)).
+  So an edition that is out of force, superseded, deprecated, outside the
+  host's audience set or not on a store's allowlist falls back as a retired
+  translation does (§5.4), and a slot with no edition the search can return
+  leaves nothing out.
+- **The rule.** A slot never leaves a reader who could see one of its
+  editions with none. Choosing, the next two rules and "Authority" all
+  serve it.
 - **Search.** When the caller names a locale, a search keeps, of the records
   from a slot's editions and their members at any depth, only those from the
   chosen edition and its members (a member shared by two editions is the chosen
   one's too)
   ([Reader contract §9.2](moca-reader-contract.md#92-the-pipeline-and-the-gate),
   step 5.4); with no locale, every edition is searched. The caller MAY keep
-  every edition with a locale (`editions: "all"`).
+  every edition with a locale (`editions: "all"`). When a slot left out
+  records and the search returned nothing from its chosen edition (none of it
+  matched the query, for example), the Reader reports
+  `S012_EDITION_SLOT_EMPTY` (info), so a short result is never silent.
+- **Only a composite in force.** A composite that the default retrieval
+  policy leaves out at package level (its window has ended or not begun, or a
+  loaded package supersedes it) neither leaves out its editions' records nor
+  limits its members by `upTo`. Two versions of one composite therefore never
+  both fold once the newer one supersedes the older.
+- **Slots that disagree.** When two slots that may leave out records hold the
+  same editions and choose differently (two composites by one publisher, or
+  two versions in force at once), a slot does not leave out a record when its
+  own chosen edition is left out by another such slot, and the Reader reports
+  `S013_EDITION_SLOTS_DISAGREE` (warning). So disagreeing slots show more,
+  never nothing.
 - **Authority.** Leaving an edition out hides content, so a slot leaves out a
   record only when the composite's signers speak for the record's package:
   when the `ids` of its valid package attestations' signers cover the record's
@@ -1794,13 +1822,21 @@ Reader shows one edition per slot, chosen by language, and offers the others.
   [Reader contract §9](moca-reader-contract.md#9-search)), or when the host
   allows unsigned relations. Otherwise the slot still groups its editions for
   display, and hides nothing.
+- **Display.** `editions(slot)` and `chooseEdition(slot, locale)`
+  ([Reader contract §10](moca-reader-contract.md#10-structure)) answer from
+  the composite that declares the slot. Only versions of one composite can
+  declare the same slot IRI; of those loaded, the one in force and not
+  superseded answers, and of several such, the highest `version` (SemVer
+  precedence), then the lowest digest.
 - **Never changes the editions.** Grouping changes no edition's bytes,
   digest, trust or relations, and no edition is signed again.
 - **Problems.** Each of these is `O006_EDITION_GROUP_INVALID` (warning), and
   the statement it names is ignored: a `schema:workExample` value that is not
-  the `id` of one of the composite's own members; a `moca:defaultEdition` on a
-  concept that has no editions, or that names something other than one of
-  them; a second `moca:defaultEdition` on one slot (both are ignored).
+  the `id` of one of the composite's own members; a slot whose IRI is not in
+  the composite's own namespace (the slot is not read); a
+  `moca:defaultEdition` on a concept that has no editions, or that names
+  something other than one of them; a second `moca:defaultEdition` on one slot
+  (both are ignored).
 
 **Who could hide or swap an edition, and what stops them.**
 
@@ -1811,7 +1847,13 @@ Reader shows one edition per slot, chosen by language, and offers the others.
 | The composite's own signer | Choose which of its editions is shown | Allowed: it speaks for those packages, as it does when its reading order limits them. |
 | A host | Give a key `ids` that cover other publishers' packages | That key can then fold their packages, as it can retire them with `supersedes`: the host's trust root decides ([attestations §6](moca-attestations.md#6-trust-roots)). |
 | Anyone | Fold with an unsigned composite | Nothing is hidden unless the host allows unsigned relations, which is safe only for a library of its own packages. |
-| Two composites | Group one edition differently | Each leaves out only records it speaks for; a record passes when, for every slot that may leave it out and lists its edition, that edition is the one chosen. |
+| Two composites | Group one edition differently | Each leaves out only records it speaks for. Where two slots that may leave a record out choose differently, a slot whose own choice the other leaves out hides nothing (`S013`), so the reader sees both editions rather than neither. A composite that is superseded or out of force folds nothing. |
+| A third party | Declare the publisher's slot IRI in its own composite, so `editions` and `chooseEdition` list its translation, or a `scope` search on the slot returns its records | A slot's IRI must be in the declaring composite's own namespace; any other is not read (`O006`). Only the publisher's composite can declare the publisher's slot. |
+| The publisher, by mistake | Choose an edition the reader cannot see (retired, out of force, outside the audience, or not on a store's allowlist), so every edition of the slot is hidden | A slot chooses only among editions the search can return, and a slot with none hides nothing. A slot that hides records while its chosen edition returns none in a search is reported (`S013`). |
+| The publisher or a store | Keep an old composite version, or a composite whose window has ended, beside the current one, so two slots disagree and hide everything | A composite that is superseded or out of force neither folds nor limits; slots that still disagree do not hide each other's choice (`S013`). |
+| A store | Search with package states that leave an edition out (a partial allowlist), or with a composite's state out of date | An edition whose state is not supplied cannot be chosen, so its slot falls back to an edition the store holds. The states and the relation index come from the same trust root: a host rebuilds both when it changes ([Reader contract §9.4](moca-reader-contract.md#94-store-backends)). |
+| A host | Trust a key with no `ids`, or allow unsigned relations | A key with no `ids` covers no package, so its composite groups and never folds. The unsigned opt-in lets every loaded composite fold: use it only for a library of the host's own packages. |
+| Anyone who can break an edition's resolution | Make an edition fail its pin, or remove it, so its readers are sent to the default | The edition is then not chosen and its readers get another edition, never none. A pinned edition changes only with a new composite version, which its publisher signs. |
 
 ## 8. No agent material
 
