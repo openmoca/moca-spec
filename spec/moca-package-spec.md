@@ -1030,6 +1030,7 @@ moca:
 | `profiles` | Profile URI to that profile's node-level data (§9). |
 | `media` | Descriptions of the node's audio and video sources, hosted outside the package or not (§5.7): a list of `{ source, type, duration?, digest?, transcript? }`. |
 | `date_published` | When the node's content was first published, in the form of `datePublished` (§4.12). A value that does not parse is `C005_FIELD_INVALID` and treated as absent. |
+| `language` | Only in a default-language file: the node's language, a BCP 47 tag (`mul` for several, `zxx` for none), when it is not the package's (§5.4). In a translation it is ignored and reported (`C005_FIELD_INVALID`): the file's suffix says its language. A tag that does not parse is `C005` and treated as absent. |
 | `contributors` | People and organisations credited for this node, in the shape of the manifest's `contributors` (§4.13), at most 32. A list that does not match is `C005_FIELD_INVALID` and treated as absent. |
 
 ### 5.4 Locales
@@ -1065,8 +1066,9 @@ evidence, `generated`, `verified`, `stale_after` and `moca.contested_by`.
 priority list of them, most preferred first (`["fr-CA", "en"]`), as RFC 4647
 §3.4 Lookup takes a priority list; one tag is the list of that one tag, and an
 empty list is no request. Each representation has a tag: a translation its
-`<tag>`, and the default representation the manifest's `language`, when it has
-one (a default representation with no tag is matched only by the last step).
+`<tag>`, and the default representation its node's language: its own
+`moca.language` (§5.3), else the manifest's `language`, when there is one (a
+default representation with no tag is matched only by the last step).
 A Reader compares tags case-insensitively and, for each entry of the list in
 turn, for the entry and then the entry truncated one subtag at a time (RFC 4647
 §3.4: `fr-CA`, then `fr`), takes the first of:
@@ -1083,6 +1085,12 @@ step 5.4). So `fr-CA` finds
 `fr` before `fr-BE`; `pt` and `pt-AO` find `pt-BR` when the files are `pt-BR`
 and `pt-PT`; and a request for `en`, in a package whose `language` is `en`,
 finds the default representation before an `en-GB` file.
+
+**A node in another language.** A package in one language may hold a page
+that is in another, as its own node and not a translation of one: a Welsh page
+in an English package, or a bilingual glossary (`mul`). Its default file says
+so with `moca.language`. Where the languages are separate works, make them
+editions instead (§7.4).
 
 A locale representation without a
 default-language file is reported as `C009_LOCALE_ORPHAN` (warning).

@@ -118,6 +118,14 @@ contract:
   manifest passes its schema; absent otherwise
   ([package spec §4.12](moca-package-spec.md#412-publication-and-packaging-dates)).
   Informative only;
+- `localeCoverage`: for each language the package's nodes come in, how many
+  nodes have a representation in it, and of how many nodes
+  (`{ "fr": { "nodes": 12, "of": 40 } }`). Its keys are the languages of the
+  default files (each node's `moca.language`, else the manifest's `language`)
+  and the tags in `locales`, as written; a node counts once under its default
+  file's language and once under each tag it has a translation for. `of` is
+  the number of nodes. Absent when the package has no nodes or no language at
+  all ([package spec §5.4](moca-package-spec.md#54-locales));
 - `publisher`, `url` and `contributors`: the manifest's credits, as written,
   less any image that failed its check, when the manifest passes its schema;
   each absent otherwise
