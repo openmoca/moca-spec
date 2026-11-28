@@ -567,7 +567,9 @@ package spec §5.4's lookup for that entry, over that one tag, selects it (so
 `fr` matches `fr-CA`, and `pt-BR` matches `pt-AO`). With no locale, every
 representation and every edition is searched, in score order.
 
-`editions` is `"choose"` (the default) or `"all"`. With a locale and
+`editions` is `"choose"` (the default) or `"all"`. In both options `"choose"`
+means "one of several": one representation per node for `localeMode`, one
+edition per slot for `editions`. With a locale and
 `"choose"`, a composite package's edition groups keep one edition per slot
 ([package spec §7.4](moca-package-spec.md#74-edition-groups)); `"all"` keeps
 every edition. Without a locale it has no effect.

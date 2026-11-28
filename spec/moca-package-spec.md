@@ -1073,6 +1073,11 @@ its sources, media, evidence, `generated` and `verified`.
 language. It is reported as `C012_TRANSLATION_SAME_TAG` (warning) and ignored:
 the default file answers for that language.
 
+**Language and locale.** A package, a node and a file are each *in* a
+**language** (`language`, `moca.language`, a translation's `<tag>`); a reader
+asks for a **locale** (`locale`, a tag or a priority list). Both are BCP 47
+tags, and the lookup below matches one against the other.
+
 **Choosing a representation.** A request for a locale is a language tag or a
 priority list of them, most preferred first (`["fr-CA", "en"]`), as RFC 4647
 §3.4 Lookup takes a priority list; one tag is the list of that one tag, and an
@@ -1635,7 +1640,7 @@ What composition means for nodes and trust:
 | `crossReferences` | Informative link. | None. |
 | `isPartOf` | This package is part of the target: an episode of a show, a volume of a book series, a lesson of a course. The name follows Dublin Core's `dcterms:isPartOf` and schema.org's `isPartOf`. The target's `members`, which pins this package by digest, is what composes it (§7.1, §7.3). | None beyond reporting the relation. |
 | `translationOf` | This package's content is translated from the target. The name follows schema.org's `translationOfWork`. | None beyond reporting the relation. |
-| `editionOf` | This package is an edition of the work the target stands for, made for another language or audience, and not a translation of it: another presenter, other slides, another order. The name follows schema.org's `exampleOfWork` and Wikidata's "edition or translation of". | None beyond reporting the relation. |
+| `editionOf` | This package is another edition of the work the target stands for, made for another language or audience. "Edition" is the wide word: a translation is one kind of edition, as in IFLA LRM, and a package translated from the target says so with `translationOf`, which says more. So `editionOf` is for an edition that is not a translation of the target: another presenter, other slides, another order. The target is the composite package that holds the work's edition group when there is one, else the work's earliest edition; sibling editions each point at it, never at each other. The name follows Wikidata's "edition or translation of" (P629). It is not the inverse of a slot's `schema:workExample` and gives no authority. | None beyond reporting the relation. |
 
 `version`, when present, limits the relation to that exact target version.
 Profiles MAY define further types. A Reader preserves every relation. It
