@@ -12122,6 +12122,222 @@
       }
     },
     {
+      "id": "languages-inherit-concepts-lexical",
+      "kind": "search",
+      "description": "As languages-inherit-concepts, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "texte",
+        "locale": "fr",
+        "scope": "https://example.com/conformance/languages/inherit#topic"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-1.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-2.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-1.md": "fr",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-2.md": "fr",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-status-lexical",
+      "kind": "search",
+      "description": "As languages-inherit-status, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "texte",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 3,
+        "exclude": [
+          "https://example.com/conformance/languages/inherit@1.0.0#retired.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#ended.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-inherit-up-to-lexical",
+      "kind": "search",
+      "description": "As languages-inherit-up-to, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "texte",
+        "upTo": "https://example.com/conformance/languages/inherit#lesson-2"
+      },
+      "expect": {
+        "exclude": [
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-inherit-own-status-lexical",
+      "kind": "search",
+      "description": "As languages-inherit-own-status, with the Reader's lexical backend.",
+      "packages": [
+        "fixtures/languages/inherit-own"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "lexical"
+      },
+      "search": {
+        "query": "texte",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/inherit-own@1.0.0#kept.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/inherit-own@1.0.0#later.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/inherit-own@1.0.0#kept.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-concepts-store",
+      "kind": "search",
+      "description": "As languages-inherit-concepts, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/inherit"
+        ]
+      },
+      "search": {
+        "query": "texte",
+        "locale": "fr",
+        "scope": "https://example.com/conformance/languages/inherit#topic"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-1.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-2.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-1.md": "fr",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-2.md": "fr",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-status-store",
+      "kind": "search",
+      "description": "As languages-inherit-status, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/inherit"
+        ]
+      },
+      "search": {
+        "query": "texte",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 3,
+        "exclude": [
+          "https://example.com/conformance/languages/inherit@1.0.0#retired.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#ended.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-inherit-up-to-store",
+      "kind": "search",
+      "description": "As languages-inherit-up-to, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/inherit"
+        ]
+      },
+      "search": {
+        "query": "texte",
+        "upTo": "https://example.com/conformance/languages/inherit#lesson-2"
+      },
+      "expect": {
+        "exclude": [
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-inherit-own-status-store",
+      "kind": "search",
+      "description": "As languages-inherit-own-status, through a store with package states (contract §9.4).",
+      "packages": [
+        "fixtures/languages/inherit-own"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "allow": [
+          "fixtures/languages/inherit-own"
+        ]
+      },
+      "search": {
+        "query": "texte",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/inherit-own@1.0.0#kept.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/inherit-own@1.0.0#later.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/inherit-own@1.0.0#kept.md": "fr"
+        }
+      }
+    },
+    {
       "id": "languages-lookup-region-sibling-lexical",
       "kind": "search",
       "description": "Package spec §5.4 with the Reader's lexical backend, which applies locale itself (contract §9.5): a sibling region: pt-AO finds pt-BR.",
