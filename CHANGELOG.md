@@ -6,7 +6,7 @@ conformance corpus. The format follows [Keep a Changelog](https://keepachangelog
 
 ## [Unreleased]
 
-For 0.8.0. The Spec Change Proposal: a store search that cannot get a package state (issue to come).
+For 0.8.0. The Spec Change Proposal: [a store search that cannot get a package state](https://github.com/openmoca/moca-spec/issues/65).
 
 ### Changed
 

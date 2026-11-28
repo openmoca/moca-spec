@@ -21,7 +21,7 @@
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"!**/node_modules/**\""
   },
   "devDependencies": {
-    "@openmoca/moca-core": "^0.7.0",
+    "@openmoca/moca-core": "file:../moca-reader-typescript",
     "@openmoca/moca-index": "^0.7.0",
     "@openmoca/moca-lint": "^0.7.0",
     "@openmoca/moca-sign": "^0.7.0",

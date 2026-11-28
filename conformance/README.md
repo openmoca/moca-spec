@@ -93,6 +93,7 @@ runs. Results are named `<package id>@<version>#<node path>`.
 | `options.hooks` | `ontology-guided`: the Reader's default ontology-guided hooks. `hostile`: an egress hook that returns every node of every loaded package plus a record whose digest is not loaded; the gate must remove all that policy and audience exclude. `hostile-ingress`: an ingress hook that asks for the opt-in to excluded content, a limit of 1000, the locale `fr` and no `upTo`, as far as the language's hook type lets it; the gate must still follow the caller. |
 | `options.structure` | With `backend: store`: packages read (with `options.members`) into a small library that is the search's structure source ([contract §9.4](../spec/moca-reader-contract.md#94-store-backends)): the hooks see its structure; it adds no records. |
 | `options.allow` | With `backend: store`: the packages the host has loaded. The search gets their package states ([contract §9.4](../spec/moca-reader-contract.md#94-store-backends)). |
+| `options.withhold` | With `backend: store`: packages in `options.allow` whose states the host cannot give when the search asks ([contract §9.4](../spec/moca-reader-contract.md#94-store-backends)): they stay loaded, and their states are never supplied. |
 | `options.ingestSeparately` | With `backend: store`: each package is ingested on its own, so its stored records know nothing of the other packages. |
 | `options.backend` | `store`: every listed package is ingested into a store that keeps whole citation records; the search resolves hits from those records, with only `options.allow` loaded. `lexical`: the Reader's own lexical search. `all`: a test backend that ignores every filter, declares no features, and returns one hit with score 1 for every representation of every loaded package, plus one hit from the digest `sha256:000…0`, which is not loaded. `dense`: dense search over `options.sidecar` with the conformance embedder. `hybrid`: the Reader's hybrid backend over its lexical backend and that dense backend. |
 | `options.hybrid` | With `backend: hybrid`: `k` and `weights` (`lexical`, `dense`) for the fusion; absent values take the defaults (60, 1, 1). |
@@ -274,6 +275,7 @@ expected by at least one case or is listed below as untestable.
 | Library identity | Contract §7 | `search-identity-conflict` |
 | Default retrieval policy | Contract §8 | `search-default-policy`, `search-include-all`, `search-recheck`, `search-gate-representations` |
 | Audience | Contract §8 | `audience-rules`, `search-audience*` |
+| A state a store search cannot get; `S011_STATE_MISSING` | Contract §9.4 | `search-store-state-missing-*` |
 | The search pipeline, hooks and backends | Contract §9 | `search-concepts`, `search-scope`, `search-upto-*`, `search-ontology-guided`, `search-hostile-*`, `search-store-*`, `search-hybrid*` |
 | Dense search and the model check | Contract §9.3, sidecar spec | `search-dense*` |
 | Sidecars | Sidecar spec | `sidecar-*`, `search-sidecar-no-text` |
