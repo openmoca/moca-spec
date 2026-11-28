@@ -377,6 +377,7 @@ and `profiles`, are left out, as they are in a real record):
   | `node.copyright` | The node's copyright statement, as written: the `rights.copyright` of its `terms.nodes` entry, else `terms.rights.copyright`; a value with a terms problem at or under its path is skipped. Absent when neither gives one. |
   | `node.contributors` | The node's `moca.contributors`, as written, less any image that failed its check, when they match the node schema; absent otherwise ([package spec §4.13](moca-package-spec.md#413-credits)). The package's contributors are never copied to it. |
   | `node.media` | The node's valid media descriptions ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ source, resource, type, duration?, digest?, transcript?, alternateOf?, sync? }`, where `resource` is the source's `resource` as written. A valid alternate carries `alternateOf` and its `sync`, which is `[{ "at": 0, "offset": 0 }]` when the node gave none. Absent when there are none. |
+  | `node.tracks` | The node's timed text tracks that stand ([package spec §5.7](moca-package-spec.md#57-media)), in order, each `{ media, source, language, kind, label? }`, with `kind` `subtitles` when the node gave none. Absent when there are none. |
 
   A consumer of citation records (a store, an application) SHOULD ignore
   properties it does not know: later versions add fields. An AG-UI client
