@@ -99,6 +99,27 @@
       "search": [
         "conformance/fixtures/terms/composite/member"
       ]
+    },
+    {
+      "package": "conformance/fixtures/languages/course-signed",
+      "search": [
+        "conformance/fixtures/languages/editions",
+        "conformance/fixtures/languages/relations"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/course-unsigned",
+      "search": [
+        "conformance/fixtures/languages/editions",
+        "conformance/fixtures/languages/relations"
+      ]
+    },
+    {
+      "package": "conformance/fixtures/languages/course-invalid",
+      "search": [
+        "conformance/fixtures/languages/editions",
+        "conformance/fixtures/languages/relations"
+      ]
     }
   ],
   "sign": [
@@ -196,6 +217,10 @@
     },
     {
       "package": "conformance/fixtures/terms/composite/hides",
+      "key": "publisher"
+    },
+    {
+      "package": "conformance/fixtures/languages/course-signed",
       "key": "publisher"
     }
   ],

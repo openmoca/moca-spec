@@ -1,0 +1,18 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema: <https://schema.org/> .
+@prefix moca: <https://w3id.org/moca/ns#> .
+
+<https://example.com/conformance/languages/course-invalid#not-a-member> a skos:Concept ;
+  schema:workExample <https://example.com/conformance/languages/editions/en> , <https://example.com/conformance/languages/editions/it> ;
+  moca:defaultEdition <https://example.com/conformance/languages/editions/it> .
+
+<https://example.com/conformance/languages/course-invalid#two-defaults> a skos:Concept ;
+  schema:workExample <https://example.com/conformance/languages/editions/en> , <https://example.com/conformance/languages/editions/fr> ;
+  moca:defaultEdition <https://example.com/conformance/languages/editions/en> , <https://example.com/conformance/languages/editions/fr> .
+
+<https://example.com/conformance/languages/course-invalid#no-editions> a skos:Concept ;
+  moca:defaultEdition <https://example.com/conformance/languages/editions/en> .
+
+<https://example.com/conformance/languages/editions/en> a skos:Concept .
+<https://example.com/conformance/languages/editions/fr> a skos:Concept .
+<https://example.com/conformance/languages/editions/it> a skos:Concept .

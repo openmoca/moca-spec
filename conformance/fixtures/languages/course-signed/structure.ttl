@@ -1,0 +1,23 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix schema: <https://schema.org/> .
+@prefix moca: <https://w3id.org/moca/ns#> .
+
+<https://example.com/conformance/languages/course-signed#course> a skos:Concept ;
+  skos:prefLabel "The course"@en , "Le cours"@fr ;
+  schema:workExample <https://example.com/conformance/languages/editions/en> , <https://example.com/conformance/languages/editions/fr> , <https://example.com/conformance/languages/editions/pt-BR> , <https://example.com/conformance/languages/editions/pt-PT> ;
+  moca:defaultEdition <https://example.com/conformance/languages/editions/fr> .
+
+<https://example.com/conformance/languages/course-signed#follow-up> a skos:Concept ;
+  skos:prefLabel "The follow-up"@en ;
+  schema:workExample <https://example.com/conformance/languages/editions/de> , <https://translations.example.org/course-fr> ;
+  moca:defaultEdition <https://example.com/conformance/languages/editions/de> .
+
+<https://example.com/conformance/languages/course-signed#order> a skos:OrderedCollection ;
+  skos:memberList ( <https://example.com/conformance/languages/course-signed#course> <https://example.com/conformance/languages/course-signed#follow-up> ) .
+
+<https://example.com/conformance/languages/editions/en> a skos:Concept .
+<https://example.com/conformance/languages/editions/fr> a skos:Concept .
+<https://example.com/conformance/languages/editions/pt-BR> a skos:Concept .
+<https://example.com/conformance/languages/editions/pt-PT> a skos:Concept .
+<https://example.com/conformance/languages/editions/de> a skos:Concept .
+<https://translations.example.org/course-fr> a skos:Concept .

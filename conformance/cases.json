@@ -12478,6 +12478,576 @@
       }
     },
     {
+      "id": "languages-edition-group",
+      "description": "Package spec §7.4: a signed composite with two slots of editions, one of them by another publisher.",
+      "target": "fixtures/languages/course-signed",
+      "options": {
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json",
+        "now": "2026-11-28T00:00:00Z"
+      },
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "structured",
+          "composed",
+          "signed"
+        ],
+        "digest": "sha256:ab504c65810c31fbf976a3b19fbb658261805142a7ebebdd5110bba993e7e1a1"
+      }
+    },
+    {
+      "id": "languages-edition-group-locale",
+      "kind": "search",
+      "description": "Package spec §7.4: with a locale, one edition per slot: fr picks the French edition of the course; in the follow-up slot it picks the other publisher's French translation, so the German edition is left out.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://translations.example.org/course-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-PT@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-pt-AO",
+      "kind": "search",
+      "description": "Package spec §7.4 and §5.4: pt-AO picks the lowest pt- edition (pt-BR) by the fixed lookup. The follow-up slot has no Portuguese edition, so its default (de) is kept, and the other publisher's translation, which the composite's signer does not speak for, is not left out.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "pt-AO"
+      },
+      "expect": {
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md",
+          "https://translations.example.org/course-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-PT@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-default",
+      "kind": "search",
+      "description": "Package spec §7.4: a locale no edition matches gets the slot's default edition (fr for the course, though the composite is in en and en has the lowest id).",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "it"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md",
+          "https://translations.example.org/course-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-PT@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-list",
+      "kind": "search",
+      "description": "Package spec §7.4: a priority list: it matches nothing, then pt-PT is tried before en.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": [
+          "it",
+          "pt-PT",
+          "en"
+        ]
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/languages/editions/pt-PT@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-no-locale",
+      "kind": "search",
+      "description": "Package spec §7.4: with no locale, every edition is searched.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything"
+      },
+      "expect": {
+        "count": 6,
+        "include": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-PT@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md",
+          "https://translations.example.org/course-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-all",
+      "kind": "search",
+      "description": "Contract §9: editions: all keeps every edition with a locale.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "editions": "all"
+      },
+      "expect": {
+        "count": 6
+      }
+    },
+    {
+      "id": "languages-edition-group-unsigned",
+      "kind": "search",
+      "description": "Package spec §7.4, Authority: an unsigned composite groups its editions but hides nothing.",
+      "packages": [
+        "fixtures/languages/course-unsigned"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 6
+      }
+    },
+    {
+      "id": "languages-edition-group-unsigned-allowed",
+      "kind": "search",
+      "description": "Package spec §7.4: with the host's option that allows unsigned relations, an unsigned composite folds as a signed one does.",
+      "packages": [
+        "fixtures/languages/course-unsigned"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json",
+        "allowUnsignedRelations": true
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 2,
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://translations.example.org/course-fr@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-scope",
+      "kind": "search",
+      "description": "Package spec §7.4: an edition is bound to its slot as a part is, so scope on the slot finds every edition with no locale.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "scope": "https://example.com/conformance/languages/course-signed#course"
+      },
+      "expect": {
+        "count": 4,
+        "include": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-PT@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-scope-locale",
+      "kind": "search",
+      "description": "Package spec §7.4: scope on the slot with a locale finds only the chosen edition.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "scope": "https://example.com/conformance/languages/course-signed#course",
+        "locale": "en"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-up-to",
+      "kind": "search",
+      "description": "Package spec §7.4: editions take their slot's place on the reading order; upTo the course leaves out the follow-up's German edition, which the composite's signer speaks for, but not the other publisher's translation.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "search": {
+        "query": "anything",
+        "upTo": "https://example.com/conformance/languages/course-signed#course"
+      },
+      "expect": {
+        "count": 5,
+        "include": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-PT@1.0.0#lesson.md",
+          "https://translations.example.org/course-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-store",
+      "kind": "search",
+      "description": "Contract §9.4: package states carry the edition groups and each member's language, so a store search folds as a library search does.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "store",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json",
+        "allow": [
+          "fixtures/languages/course-signed",
+          "fixtures/languages/editions/en",
+          "fixtures/languages/editions/fr",
+          "fixtures/languages/editions/pt-BR",
+          "fixtures/languages/editions/pt-PT",
+          "fixtures/languages/editions/de",
+          "fixtures/languages/relations/translation"
+        ]
+      },
+      "search": {
+        "query": "lesson leçon",
+        "locale": "fr"
+      },
+      "expect": {
+        "include": [
+          "https://example.com/conformance/languages/editions/fr@1.0.0#lesson.md",
+          "https://translations.example.org/course-fr@1.0.0#lesson.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/editions/en@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-BR@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/pt-PT@1.0.0#lesson.md",
+          "https://example.com/conformance/languages/editions/de@1.0.0#lesson.md"
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-editions",
+      "kind": "structure",
+      "description": "Contract §10: a slot's editions, ordered by id, with the default marked.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "op": "editions",
+      "iri": "https://example.com/conformance/languages/course-signed#course",
+      "expect": {
+        "codes": [],
+        "result": [
+          {
+            "id": "https://example.com/conformance/languages/editions/en",
+            "version": "1.0.0",
+            "language": "en",
+            "title": "Course (en edition)",
+            "default": false
+          },
+          {
+            "id": "https://example.com/conformance/languages/editions/fr",
+            "version": "1.0.0",
+            "language": "fr",
+            "title": "Course (fr edition)",
+            "default": true
+          },
+          {
+            "id": "https://example.com/conformance/languages/editions/pt-BR",
+            "version": "1.0.0",
+            "language": "pt-BR",
+            "title": "Course (pt-BR edition)",
+            "default": false
+          },
+          {
+            "id": "https://example.com/conformance/languages/editions/pt-PT",
+            "version": "1.0.0",
+            "language": "pt-PT",
+            "title": "Course (pt-PT edition)",
+            "default": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "languages-edition-group-choose",
+      "kind": "structure",
+      "description": "Contract §10: chooseEdition for pt-AO is pt-BR by the fixed lookup.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "op": "chooseEdition",
+      "iri": "https://example.com/conformance/languages/course-signed#course",
+      "args": {
+        "locale": "pt-AO"
+      },
+      "expect": {
+        "codes": [],
+        "result": "https://example.com/conformance/languages/editions/pt-BR"
+      }
+    },
+    {
+      "id": "languages-edition-group-choose-default",
+      "kind": "structure",
+      "description": "Contract §10: chooseEdition for a language no edition has is the slot's default.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ],
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "op": "chooseEdition",
+      "iri": "https://example.com/conformance/languages/course-signed#course",
+      "args": {
+        "locale": "ja"
+      },
+      "expect": {
+        "codes": [],
+        "result": "https://example.com/conformance/languages/editions/fr"
+      }
+    },
+    {
+      "id": "languages-edition-group-choose-unresolved",
+      "kind": "structure",
+      "description": "Package spec §7.4: only an edition that resolved can be chosen: without a member resolver, the slot has no edition to choose.",
+      "packages": [
+        "fixtures/languages/course-signed"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "trustRoot": "fixtures/trust-root.json"
+      },
+      "op": "chooseEdition",
+      "iri": "https://example.com/conformance/languages/course-signed#course",
+      "args": {
+        "locale": "fr"
+      },
+      "expect": {
+        "codes": [],
+        "result": null
+      }
+    },
+    {
+      "id": "languages-edition-group-invalid",
+      "description": "Package spec §7.4: a workExample that is not a member, a default that is not one of its slot's editions, two defaults on one slot, and a default on a concept with no editions are each O006; each statement is ignored.",
+      "target": "fixtures/languages/course-invalid",
+      "options": {
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ]
+      },
+      "expect": {
+        "valid": true,
+        "codes": [
+          "O006_EDITION_GROUP_INVALID"
+        ],
+        "capabilities": [
+          "core",
+          "composed"
+        ],
+        "digest": "sha256:5f6f2d6cd3f834507ee180ca3c8975c9f9719516aec3f173bfe710398b1d5dce"
+      }
+    },
+    {
+      "id": "languages-edition-group-invalid-default",
+      "kind": "structure",
+      "description": "Package spec §7.4: a slot whose two defaults are both ignored chooses by lookup, then the lowest id.",
+      "packages": [
+        "fixtures/languages/course-invalid"
+      ],
+      "options": {
+        "members": [
+          "fixtures/languages/editions",
+          "fixtures/languages/relations"
+        ]
+      },
+      "op": "chooseEdition",
+      "iri": "https://example.com/conformance/languages/course-invalid#two-defaults",
+      "args": {
+        "locale": "de"
+      },
+      "expect": {
+        "codes": [],
+        "result": "https://example.com/conformance/languages/editions/en"
+      }
+    },
+    {
       "id": "languages-inherit-concepts-lexical",
       "kind": "search",
       "description": "As languages-inherit-concepts, with the Reader's lexical backend.",
