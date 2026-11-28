@@ -29,6 +29,9 @@ Content in more than one language. Each change is a Spec Change Proposal.
   with the manifest's `language`, and each truncation of the request also
   finds tags that start with it (`pt-AO` finds `pt-BR`). See
   [MIGRATIONS.md](MIGRATIONS.md).
+- Reader contract §9.4: a store search keeps one representation per node by
+  the same lookup, with the default file as the fallback, as a library search
+  does. A package state lists the files of each node that has more than one.
 
 ## [0.7.0] - 2026-11-22
 

@@ -768,7 +768,14 @@ package, its digest, `id`, `version`, default language, relations, relation
 scopes (§7.2 of the package spec), signers, current reviews, node-level
 `moca.contested_by`, its `issuedCopy`, and, when `readingOrder` resolves,
 its members in order and the position of each concept on it, so a store
-search applies `upTo` as a library search does. For a package with members,
+search applies `upTo` as a library search does. For each node with more than
+one file, it carries the tag of each file, the default file marked, so a store
+search keeps one representation per node by
+[package spec §5.4](moca-package-spec.md#54-locales)'s lookup, with the
+default file as the fallback, exactly as a library search does (§9.2 step
+5.4): a stored record whose file the lookup does not select is not returned,
+and a node with no file in the requested languages is returned in its default
+language. For a package with members,
 the state also carries every member that resolved, matched its pin and is
 valid, at any depth and once each: its digest and `id`, whether the package's
 structure declares that `id` as a concept, the paths of its nodes whose
