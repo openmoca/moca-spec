@@ -17,9 +17,11 @@ their own. Each edition lists it as a member, pinned by its digest
 ([package spec §7.1](../../spec/moca-package-spec.md#71-members)), so both
 point at exactly the same bytes.
 
-This guide describes OpenMOCA 0.7.0 as it is. It gives a recipe for each way
-of using more than one language, says what a Reader does with it today, and
-says plainly where the format stops and what to do instead. The
+This guide describes OpenMOCA 0.7.0 as it is, with what 0.8.0 changes marked
+**fixed in 0.8.0** (the details are in
+[MIGRATIONS.md](../../MIGRATIONS.md#from-070-to-080)). It gives a recipe for
+each way of using more than one language, says what a Reader does with it
+today, and says plainly where the format stops and what to do instead. The
 [worked example](#worked-example-a-course-in-two-editions) at the end builds
 a course in two editions, signs it, and asks a Reader for it in English and in
 French.
@@ -96,7 +98,9 @@ step 4). Each citation record says which language it is in, as `node.locale`
 
 ## Today's limits
 
-These hold in OpenMOCA 0.7.0. Each recipe below works within them.
+These hold in OpenMOCA 0.7.0. Each recipe below works within them. Four of
+the five are **fixed in 0.8.0**; a package that must also work in 0.7 Readers
+keeps to the 0.7.0 recipes.
 
 1. **A translation inherits only its audience.** A translation with no
    `moca.audience` of its own has its default file's. Every other field is its
@@ -115,11 +119,24 @@ These hold in OpenMOCA 0.7.0. Each recipe below works within them.
    node, translations included
    ([package spec §5.6](../../spec/moca-package-spec.md#56-structure)). The
    node's own `moca.concepts` bind only the file that carries them.
+
+   **Fixed in 0.8.0:** a translation that writes none of `moca.concepts`,
+   `status`, `moca.valid_from` and `moca.valid_until` takes each from its
+   default file, as it takes `moca.audience`
+   ([package spec §5.4](../../spec/moca-package-spec.md#54-locales)). Write a
+   key in the translation only when it should differ.
 2. **`locale` chooses; it never leaves anything out.** It picks one file per
    node. A node that has no French file passes a French search in its default
    language. So with an English edition and a French edition loaded, a French
    search returns both, interleaved by score. To keep to one edition, search
    with `scope` set to that edition's package `id`, or load only that edition.
+
+   **Fixed in 0.8.0:** an edition group in a composite keeps one edition per
+   slot for a locale
+   ([package spec §7.4](../../spec/moca-package-spec.md#74-edition-groups)),
+   and the search option `localeMode` puts a language first (`first`) or keeps
+   only it (`only`)
+   ([Reader contract §9](../../spec/moca-reader-contract.md#9-search)).
 3. **Two lookup cases surprise people.**
    - `pt-AO` gets the default, although `pt-BR` and `pt-PT` exist. Step 2
      makes it `pt`, and no file is tagged `pt`; step 3 looks for tags that
@@ -130,6 +147,12 @@ These hold in OpenMOCA 0.7.0. Each recipe below works within them.
      `"language": "en"` and `"locales": ["en-GB"]`, the default file is not
      tagged, so step 3 finds `en-GB` first. Ask with the full tag the person
      uses: `en-US` falls through to the default.
+
+   **Fixed in 0.8.0:** each truncation of the request also finds tags that
+   start with it, so `pt-AO` finds `pt-BR`; the default file is tagged with the
+   manifest's `language`, so `en` finds it before `en-GB`; and a request may be
+   a priority list (`["fr-CA", "en"]`)
+   ([package spec §5.4](../../spec/moca-package-spec.md#54-locales)).
 4. **A translation cannot carry its own licence.** Every file of a node has
    the node's terms, licence and copyright
    ([package spec §4.14](../../spec/moca-package-spec.md#414-terms)). A
@@ -142,9 +165,15 @@ These hold in OpenMOCA 0.7.0. Each recipe below works within them.
    Delete the French file instead, in the next version, and French readers
    fall back to the English.
 
+   **Fixed in 0.8.0:** a search chooses the language among the files it may
+   return, so a retired French file falls back to the English, as a missing
+   one does ([Reader contract §9.2](../../spec/moca-reader-contract.md#92-the-pipeline-and-the-gate),
+   step 5.4). Mark it; there is no need to delete it.
+
 The specification says nothing on several points this guide meets: which
-edition to show a person, the direction of text, and how to label a media
-file as a dub, a description or a signer. Where it is silent, the recipes say
+edition to show a person (**fixed in 0.8.0** by edition groups), the
+direction of text, and how to label a media file as a dub, a description or a
+signer. Where it is silent, the recipes say
 so, and what your app can do.
 
 ## Translated text and media
@@ -212,6 +241,10 @@ each record's `node.locale` says whether the French was found
 mark each answer that is in another language than the one asked for.
 
 **Limits:** the count is the host's to make; the package does not carry one.
+
+**Fixed in 0.8.0:** the package result's `localeCoverage` gives the count for
+each language, worked out by the Reader, so every host shows the same number
+([Reader interface §4](../../spec/moca-reader-interface.md#4-reading)).
 
 ### Dubbed media
 
@@ -403,6 +436,15 @@ lists both and a search returns near-duplicates from both. Show one in your
 app by choosing the edition as in [a language edition](#a-language-edition),
 and offer the other as a switch.
 
+**Fixed in 0.8.0:** make the item a slot. Name its editions with
+`schema:workExample` instead of `dcterms:hasPart`, and its default with
+`moca:defaultEdition`
+([package spec §7.4](../../spec/moca-package-spec.md#74-edition-groups)). A
+Reader then chooses one edition per slot by locale, a search with a locale
+keeps only that one (when the composite's signers cover the editions), and
+`editions(slot)` lists the others for the switch. A 0.7 Reader reads the slot
+as before, listing both.
+
 ### An edition published later
 
 **When:** the French edition comes out three months after the English.
@@ -447,6 +489,10 @@ as the Reader knows: a French page in an English package has
 
 **Limits:** no field gives one node its own language. When the languages are
 really separate works, use editions.
+
+**Fixed in 0.8.0:** `moca.language` in a node's default file gives it its own
+language (`cy`, or `mul` for several), which its records carry as
+`node.locale` ([package spec §5.3](../../spec/moca-package-spec.md#53-the-moca-mapping)).
 
 ### Easy-read versions
 
@@ -503,6 +549,14 @@ captions. Time ranges cited from the French file are checked against them.
 a caption menu reads every translation of the node; one record never lists
 all the tracks.
 
+**Fixed in 0.8.0:** a media description lists its tracks in `captions`, each
+with its `language` and its HTML track `kind` (`subtitles`, `captions`,
+`descriptions`, `chapters`), and one record carries them all
+([package spec §5.7](../../spec/moca-package-spec.md#57-media)). **If a
+package must work in 0.7 Readers, don't add `captions` yet:** a 0.7 Reader
+reports the newer `mocaVersion` (`M009`) and drops the whole description
+(`C005`), with its transcript and its time-range checks.
+
 ### Transcript and translated captions
 
 **When:** the transcript in the language spoken, and captions in other
@@ -536,6 +590,10 @@ descriptions, add a WebVTT file as a source of the node.
 **Limits:** no field marks an alternate as described, or a WebVTT file as
 descriptions rather than captions. Say it in the text and the source's
 `title`.
+
+**Fixed in 0.8.0, in part:** a text description track is a `captions` entry
+with `kind: descriptions`. An alternate still has no field that marks it as
+described.
 
 ## Scripts and regions
 
@@ -573,6 +631,9 @@ code-point order.
 
 **Limits:** [limit 3](#todays-limits). A package cannot say which variant it
 prefers for a base language, except by providing the plain file.
+
+**Fixed in 0.8.0:** `pt-AO` finds `pt-BR` without a plain file (the lowest
+`pt-` tag); a plain `pt` file still comes first.
 
 ### Script variants
 
@@ -616,6 +677,13 @@ publisher agrees, their composite can list it as a member.
 **Limits:** nothing says "translation of". A `crossReferences` relation is an
 informative link that anyone can make, so it confirms nothing about the
 original publisher's agreement. Show it as the translator's claim.
+
+**Fixed in 0.8.0:** the relation `translationOf` says it, and `editionOf` says
+"another edition of" ([package spec §7.2](../../spec/moca-package-spec.md#72-relations)).
+They only report, so the translator declares them without the original
+publisher; show who signed the claim. Hiding the original is never possible
+this way: only an edition group whose signers cover both can choose between
+them.
 
 ### A translation with different rights
 
@@ -675,6 +743,10 @@ To keep to one language's edition, use `scope`, as in
 yourself after the search breaks "filters come before the limit"
 ([Reader contract §9.2](../../spec/moca-reader-contract.md#92-the-pipeline-and-the-gate)):
 you get fewer results than `limit` while good ones exist. Use `scope`.
+
+**Fixed in 0.8.0:** `localeMode: "only"` keeps only this language and
+`localeMode: "first"` puts it first, both before the limit
+([Reader contract §9](../../spec/moca-reader-contract.md#9-search)).
 
 ## Worked example: a course in two editions
 
