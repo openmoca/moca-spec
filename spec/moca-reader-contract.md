@@ -653,7 +653,12 @@ Each search runs these steps, in order
    3. remove records outside the host's audience set, and, when the host
       made a terms request, the records the terms gate removes (§15.4);
    4. when the caller named a locale, keep only the representation that
-      package spec §5.4's lookup selects for it, for each node;
+      package spec §5.4's lookup selects for it, for each node, **among the
+      node's representations that pass steps 5.1 to 5.3**. So a retired or
+      out-of-audience translation is treated as a missing one: a reader in
+      that language gets the next match, or the default representation. With
+      the host's opt-in to excluded content, the representations the default
+      retrieval policy excludes are candidates too;
    5. when the caller named concepts or a scope, keep only records bound to
       them. Concepts and scope set by an ingress hook narrow the search
       ("Ingress narrowing", below) but never bind the gate: the gate follows
@@ -846,6 +851,10 @@ to it:
 Pushdown is an optimisation. The gate (§9.2) still runs on every candidate.
 Whether or not a backend applies the filters, the result is the same (§9.2,
 "Filters come before the limit").
+A backend that applies `locale` cannot see which representations the gate's
+steps 5.1 to 5.3 remove, so when a loaded node has a representation they
+remove and another they keep, the Reader passes no `locale` filter and applies
+the locale itself in the gate (§9.2 step 5.4).
 A record bound to a concept by composition
 ([package spec §5.6](moca-package-spec.md#56-structure)) does not carry that
 concept itself, so when any loaded package binds members by composition, the

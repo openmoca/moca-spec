@@ -35,6 +35,10 @@ Content in more than one language. Each change is a Spec Change Proposal.
 - Package spec §5.4: a translation inherits its default file's
   `moca.concepts`, `status` and validity window when it writes none, as it
   already did `moca.audience`.
+- Reader contract §9.2 step 5.4: a search chooses a node's representation
+  among those that pass the default retrieval policy and the audience set, so
+  a retired translation falls back as a missing one does; §9.5: `locale` is
+  not pushed down when a node's representations differ in those steps.
 
 ## [0.7.0] - 2026-11-22
 
