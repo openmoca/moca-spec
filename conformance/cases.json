@@ -11730,7 +11730,7 @@
     {
       "id": "languages-inherit-concepts",
       "kind": "search",
-      "description": "In 0.7.0 a translation is bound only by its own moca.concepts: a French search with scope keeps no French file, and so falls back to nothing.",
+      "description": "Package spec §5.4: a translation with no moca.concepts is bound as its default file is, so a French search with scope keeps the French files. In 0.7.0 it kept none.",
       "packages": [
         "fixtures/languages/inherit"
       ],
@@ -11744,13 +11744,23 @@
         "scope": "https://example.com/conformance/languages/inherit#topic"
       },
       "expect": {
-        "count": 0
+        "count": 3,
+        "include": [
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-1.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-2.md",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-1.md": "fr",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-2.md": "fr",
+          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md": "fr"
+        }
       }
     },
     {
       "id": "languages-inherit-status",
       "kind": "search",
-      "description": "In 0.7.0 a translation has its own status and validity window: with the English page deprecated and another ended, both French files are still returned.",
+      "description": "Package spec §5.4: a translation with no status or validity window of its own has its default file's, so it is retired with the original. In 0.7.0 both French files were returned.",
       "packages": [
         "fixtures/languages/inherit"
       ],
@@ -11763,21 +11773,17 @@
         "locale": "fr"
       },
       "expect": {
-        "count": 5,
-        "include": [
+        "count": 3,
+        "exclude": [
           "https://example.com/conformance/languages/inherit@1.0.0#retired.md",
           "https://example.com/conformance/languages/inherit@1.0.0#ended.md"
-        ],
-        "locales": {
-          "https://example.com/conformance/languages/inherit@1.0.0#retired.md": "fr",
-          "https://example.com/conformance/languages/inherit@1.0.0#ended.md": "fr"
-        }
+        ]
       }
     },
     {
       "id": "languages-inherit-up-to",
       "kind": "search",
-      "description": "In 0.7.0 a translation has no place on the reading order: at lesson 2, the French lesson 3 is returned, the English one is not.",
+      "description": "Package spec §5.4: a translation is placed on the reading order by its default file's concepts, so at lesson 2 neither lesson 3 is returned. In 0.7.0 the French one was.",
       "packages": [
         "fixtures/languages/inherit"
       ],
@@ -11790,12 +11796,9 @@
         "upTo": "https://example.com/conformance/languages/inherit#lesson-2"
       },
       "expect": {
-        "include": [
+        "exclude": [
           "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md"
-        ],
-        "locales": {
-          "https://example.com/conformance/languages/inherit@1.0.0#lesson-3.md": "fr"
-        }
+        ]
       }
     },
     {
@@ -12014,6 +12017,108 @@
       },
       "expect": {
         "count": 4
+      }
+    },
+    {
+      "id": "languages-inherit-status-included",
+      "kind": "search",
+      "description": "With the host's opt-in to excluded content, the retired translations are returned, flagged as their originals are.",
+      "packages": [
+        "fixtures/languages/inherit"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "includeAll": true
+      },
+      "expect": {
+        "count": 5,
+        "locales": {
+          "https://example.com/conformance/languages/inherit@1.0.0#retired.md": "fr",
+          "https://example.com/conformance/languages/inherit@1.0.0#ended.md": "fr"
+        },
+        "fields": {
+          "https://example.com/conformance/languages/inherit@1.0.0#retired.md": {
+            "trust.status": "deprecated"
+          },
+          "https://example.com/conformance/languages/inherit@1.0.0#ended.md": {
+            "trust.inForce": false,
+            "trust.validUntil": "2026-01-01T00:00:00Z"
+          }
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-own",
+      "description": "Translations that write their own status, or their own start with the original's end.",
+      "target": "fixtures/languages/inherit-own",
+      "expect": {
+        "valid": true,
+        "codes": [],
+        "capabilities": [
+          "core",
+          "localized"
+        ],
+        "digest": "sha256:8d0b96f5df9c11d4b6884bc22af9b7e1290b7f34d7e52202f459234719b981de"
+      }
+    },
+    {
+      "id": "languages-inherit-own-status",
+      "kind": "search",
+      "description": "Package spec §5.4: a key the translation writes is its own: status: stable keeps the French page live although the English one is deprecated.",
+      "packages": [
+        "fixtures/languages/inherit-own"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr"
+      },
+      "expect": {
+        "count": 1,
+        "include": [
+          "https://example.com/conformance/languages/inherit-own@1.0.0#kept.md"
+        ],
+        "exclude": [
+          "https://example.com/conformance/languages/inherit-own@1.0.0#later.md"
+        ],
+        "locales": {
+          "https://example.com/conformance/languages/inherit-own@1.0.0#kept.md": "fr"
+        }
+      }
+    },
+    {
+      "id": "languages-inherit-own-window",
+      "kind": "search",
+      "description": "Package spec §5.4: each bound on its own: the French page's own valid_from, with the English valid_until, is the window it ends up with.",
+      "packages": [
+        "fixtures/languages/inherit-own"
+      ],
+      "options": {
+        "now": "2026-11-28T00:00:00Z",
+        "backend": "all"
+      },
+      "search": {
+        "query": "anything",
+        "locale": "fr",
+        "includeAll": true
+      },
+      "expect": {
+        "count": 2,
+        "fields": {
+          "https://example.com/conformance/languages/inherit-own@1.0.0#later.md": {
+            "trust.validFrom": "2026-03-01T00:00:00Z",
+            "trust.validUntil": "2026-06-01T00:00:00Z",
+            "trust.inForce": false
+          }
+        }
       }
     },
     {
